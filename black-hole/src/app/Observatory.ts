@@ -161,7 +161,10 @@ export class Observatory {
 
   private restoreObservation() {
     const saved = readSession<Record<string, unknown>>('black-hole');
-    if (!saved) return;
+    if (!saved) {
+      this.camera.toggleCruise();
+      return;
+    }
     if (typeof saved.paused === 'boolean') this.clock.paused = saved.paused;
     if (typeof saved.time === 'number' && Number.isFinite(saved.time) && saved.time >= 0 && saved.time <= 1e12) this.clock.setTime(saved.time);
     if (typeof saved.speed === 'number' && [0.25,0.5,1,2,4].includes(saved.speed)) this.clock.speed = saved.speed;

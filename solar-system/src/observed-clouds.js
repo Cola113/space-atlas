@@ -44,6 +44,7 @@ async function textureFromBlob(blob) {
 export function createObservedClouds({ dynamics, isPaused, reducedMotion, onChange, initialEnabled = true, autoStart = true }) {
   let enabled = initialEnabled, current = null, previous = null, pending = null;
   let mix = 1, busy = false, failed = false, server = null, lastPoll = 0, disposed = false;
+  let started = false;
   const original = dynamics.earthCloudTexture();
   const publish = () => dynamics.setEarthClouds({ enabled,
     available: Boolean(current), previous: previous?.texture || current?.texture || original,
@@ -71,6 +72,7 @@ export function createObservedClouds({ dynamics, isPaused, reducedMotion, onChan
     else if (enabled && pending) detail += "新云图已就绪，继续播放后更新。";
     else if (enabled && frame && server?.error) detail += "卫星源暂不可达，保留最近一帧。";
     $("cloud-detail").textContent = detail;
+    $("cloud-refresh").hidden = !enabled;
     $("cloud-refresh").disabled = busy || Boolean(server?.refreshing);
     $("cloud-refresh").textContent = busy || server?.refreshing ? "更新中" : "检查更新";
     $("cloud-mode").value = enabled ? "observed" : "simulation";
@@ -94,7 +96,7 @@ export function createObservedClouds({ dynamics, isPaused, reducedMotion, onChan
     void storedFrame({ frame, blob });
   }
   async function poll(force = false) {
-    if (busy || disposed) return;
+    if (busy || disposed || !enabled) return;
     busy = true; lastPoll = Date.now(); renderStatus();
     try {
       if (force) {
@@ -121,7 +123,10 @@ export function createObservedClouds({ dynamics, isPaused, reducedMotion, onChan
     finally { busy = false; renderStatus(); }
   }
   async function start() {
+    if (started || disposed) return;
+    started = true;
     const saved = await storedFrame();
+    if (disposed) return;
     if (saved) {
       try { await accept(saved.frame, saved.blob); } catch { /* Corrupt browser cache is replaceable. */ }
     }
@@ -129,13 +134,17 @@ export function createObservedClouds({ dynamics, isPaused, reducedMotion, onChan
   }
   const timer = autoStart ? setInterval(() => {
     renderStatus();
-    if (!document.hidden && Date.now() - lastPoll >= (server?.refreshing || !current ? 15000 : 60000)) void poll();
+    if (enabled && !document.hidden && Date.now() - lastPoll >= (server?.refreshing || !current ? 15000 : 60000)) void poll();
   }, 5000) : null;
-  const reconnect = () => { if (!document.hidden) void poll(); };
+  const reconnect = () => { if (autoStart && enabled && !document.hidden) void poll(); };
   const disconnected = () => { failed = true; renderStatus(); };
   const modeChanged = () => {
     enabled = $("cloud-mode").value === "observed";
     publish(); onChange(enabled); renderStatus();
+    if (enabled && autoStart) {
+      if (started) void poll();
+      else void start();
+    }
   };
   const refreshClicked = () => { void poll(true); };
   $("cloud-mode").addEventListener("change", modeChanged);
@@ -143,7 +152,7 @@ export function createObservedClouds({ dynamics, isPaused, reducedMotion, onChan
   window.addEventListener("online", reconnect);
   window.addEventListener("offline", disconnected);
   document.addEventListener("visibilitychange", reconnect);
-  publish(); renderStatus(); if (autoStart) void start();
+  publish(); renderStatus(); if (autoStart && enabled) void start();
   return {
     get enabled() { return enabled; },
     update(dt) {

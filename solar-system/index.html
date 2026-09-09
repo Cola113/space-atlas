@@ -81,10 +81,10 @@
           <p class="planet-description" id="planet-description"></p>
           <dl class="planet-facts" id="planet-facts"></dl>
           <section id="cloud-panel" class="cloud-panel" aria-label="地球云层数据" hidden>
-            <div class="cloud-heading"><label for="cloud-mode">地球云层</label><span id="cloud-status" role="status">正在获取</span></div>
+            <div class="cloud-heading"><label for="cloud-mode">地球云层</label><span id="cloud-status" role="status">动态模拟</span></div>
             <div class="cloud-controls">
-              <select id="cloud-mode" aria-label="云层模式"><option value="observed">卫星观测</option><option value="simulation">动态模拟</option></select>
-              <button id="cloud-refresh" type="button">检查更新</button>
+              <select id="cloud-mode" aria-label="云层模式"><option value="observed">卫星观测</option><option value="simulation" selected>动态模拟</option></select>
+              <button id="cloud-refresh" type="button" hidden>检查更新</button>
             </div>
             <div class="cloud-time">观测时间 <time id="cloud-observed-at">等待卫星影像</time></div>
             <p id="cloud-detail"></p>
@@ -209,10 +209,10 @@
           <i data-lucide="orbit"></i>
         </button>
         <button
-          class="icon-button active"
+          class="icon-button"
           id="label-toggle"
           aria-label="显示名称"
-          aria-pressed="true"
+          aria-pressed="false"
           data-tip="显示名称"
         >
           <i data-lucide="tags"></i>
@@ -274,11 +274,11 @@
               id="time-speed"
               type="range"
               min="0"
-              max="4"
+              max="5"
               step="1"
               value="1"
               aria-label="时间流速"
-            /><output id="speed-value">1×</output
+            /><output id="speed-value">0.5×</output
             ><time id="simulation-date"></time>
           </div>
         </div>

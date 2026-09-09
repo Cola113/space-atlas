@@ -4,6 +4,8 @@
 
 线上地址：[space.colafun.xyz](https://space.colafun.xyz/)，备用地址：[space-atlas-pi.vercel.app](https://space-atlas-pi.vercel.app/)。Vercel 项目已连接本仓库，`main` 分支更新后会自动触发生产部署。
 
+首次访问时，太阳系默认隐藏星体名称、以 0.5× 轨道流速运行，地球云层使用动态模拟；可手动切换为卫星观测。背景采用细小的程序星点，突出实际天体。黑洞默认开启镜头巡游，拖动或缩放即可接管镜头；系统开启减少动态效果时，初始运动暂停。当前标签页中已保存的观察状态优先恢复。
+
 ## 运行
 
 需要 Node.js 22.12 或更高版本，以及支持 WebGL 2 的浏览器。
@@ -37,14 +39,14 @@ solar-system/src/          太阳系、行星与卫星、动态与观测云层
 solar-system/server/       EUMETSAT 云图处理与缓存
 black-hole/src/            Schwarzschild 光线积分、吸积盘、截图与画质
 server/                    同域静态网页与云图 API 服务
-public/shared/             共用的合成星空
+public/shared/             黑洞使用的合成星空纹理
 public/solar-system/       行星与卫星纹理
 public/licenses/           第三方素材及库许可证
 tests/                     平台状态与正式服务测试
 scripts/                   星空生成和浏览器集成验证
 ```
 
-采用多入口构建和页面级场景隔离。每页只导入本场景引擎，Three.js、图标和星空共享缓存；没有 iframe，也不会同时运行两套渲染循环。离开时保存场景会话并释放 GPU 资源。返回缓存页面时重新建立渲染上下文，按保存状态恢复；更换横竖屏时重新适配距离。太阳系卫星观测仍使用当前观测时间，黑洞保留其独立的无量纲模拟时间，两者不强行共享坐标或时间单位。
+采用多入口构建和页面级场景隔离。每页只导入本场景引擎，Three.js 和图标共享缓存；没有 iframe，也不会同时运行两套渲染循环。离开时保存场景会话并释放 GPU 资源。返回缓存页面时重新建立渲染上下文，按保存状态恢复；更换横竖屏时重新适配距离。太阳系卫星观测仍使用当前观测时间，黑洞保留其独立的无量纲模拟时间，两者不强行共享坐标或时间单位。
 
 未来增加场景：新增独立的 `<scene-id>/index.html` 和引擎目录，在 `platform/scenes.js` 注册路径与能力，调用 `mountNavigation`，接入 `readSession` / `rememberScene`，提供退出时的清理。注册表同时生成构建入口和导航，新增模块不需要修改已有场景的渲染代码。新增跨场景功能应通过能力列表选择支持的场景；数据请求放入服务层，避免在场景着色器或导航中耦合接口。
 
@@ -58,4 +60,4 @@ scripts/                   星空生成和浏览器集成验证
 
 太阳系轨道间距和天体大小采用展示比例，动态活动部分为示意；卫星云图带有来源、时间与缺测说明。黑洞使用非旋转 Schwarzschild 模型，不是某个已观测黑洞的实时画面。背景是固定种子生成的合成星空，不是真实星表。
 
-完整科学说明与素材来源见 [太阳系说明](solar-system/README.md) 和 [黑洞说明](black-hole/README.md)。行星贴图含 Solar System Scope 的 CC BY 4.0 素材，以及 NASA/JPL 等影像加工；详细作者、来源链接与修改方式均保留。共享星空可通过 `node scripts/generate-stars.mjs` 重建。宣传视频、录制帧、临时日志、云图缓存与凭据不属于此应用源码。
+完整科学说明与素材来源见 [太阳系说明](solar-system/README.md) 和 [黑洞说明](black-hole/README.md)。行星贴图含 Solar System Scope 的 CC BY 4.0 素材，以及 NASA/JPL 等影像加工；详细作者、来源链接与修改方式均保留。黑洞星空纹理可通过 `node scripts/generate-stars.mjs` 重建。宣传视频、录制帧、临时日志、云图缓存与凭据不属于此应用源码。

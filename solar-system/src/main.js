@@ -44,7 +44,6 @@ import {
 import { physicalData } from "./physical-scale.js";
 import { createObservedClouds } from "./observed-clouds.js";
 import { alignObservedEarth, subsolarPoint } from "./earth-observation.js";
-import { createStarfield } from "./starfield.js";
 
 const icons = {
   Orbit,
@@ -78,9 +77,9 @@ const state = {
   selected: null,
   close: false,
   playing: !reducedMotion,
-  speed: 1,
+  speed: 0.5,
   orbits: true,
-  labels: true,
+  labels: false,
   atlas: false,
   date: Date.now(),
   ready: false,
@@ -93,9 +92,9 @@ const state = {
   system: false,
   catalog: "planets",
   satelliteTime: 0,
-  observedEarth: !window.__promoOffline,
+  observedEarth: false,
 };
-const speeds = [0.25, 1, 4, 16, 64];
+const speeds = [0.25, 0.5, 1, 4, 16, 64];
 const objects = new Map();
 const highTextures = new Map();
 const highInFlight = new Map();
@@ -473,7 +472,11 @@ function createStars() {
       depthWrite: false,
     }),
   );
-  stars = createStarfield(stars, renderer);
+  stars.name = "Distant point stars";
+  stars.renderOrder = -1000;
+  stars.frustumCulled = false;
+  stars.userData.mode = "points";
+  stars.userData.textureWidth = 0;
   scene.add(stars);
   const beltBodies = bodies.filter((body) => ["vesta", "ceres"].includes(body.id));
   const beltInner = Math.min(...beltBodies.map((body) => body.orbit - body.radius)) - 0.35;
