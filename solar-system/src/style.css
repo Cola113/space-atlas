@@ -1,0 +1,2283 @@
+@import url("https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&display=swap");
+
+:root {
+  font-family: Barlow, "Microsoft YaHei", "PingFang SC", sans-serif;
+  color: #eef1f0;
+  background: #07090b;
+  font-synthesis: none;
+  --muted: #828b8c;
+  --accent: #bbebd2;
+  --line: rgba(210, 231, 226, 0.13);
+  --panel: #0e1315;
+  letter-spacing: 0;
+  color-scheme: dark;
+}
+* {
+  box-sizing: border-box;
+  letter-spacing: 0;
+}
+html,
+body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+button,
+input,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+button {
+  font: inherit;
+  cursor: pointer;
+  color: inherit;
+  border: 0;
+  background: none;
+}
+button:disabled {
+  cursor: default;
+  opacity: 0.35;
+}
+button:focus-visible,
+a:focus-visible,
+input:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 5px;
+}
+a {
+  color: var(--accent);
+  text-underline-offset: 4px;
+}
+button svg {
+  width: 18px;
+  height: 18px;
+  stroke-width: 1.55;
+  flex-shrink: 0;
+}
+button {
+  touch-action: manipulation;
+}
+button:hover {
+  color: #fff;
+}
+[hidden] {
+  display: none !important;
+}
+#app {
+  --explorer-height: 192px;
+  height: 100dvh;
+  position: relative;
+  overflow: hidden;
+}
+#universe,
+#planet-labels {
+  position: absolute;
+  inset: 0;
+}
+#universe canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+  cursor: grab;
+}
+#universe canvas:active {
+  cursor: grabbing;
+}
+#planet-labels {
+  pointer-events: none;
+  overflow: hidden;
+}
+.topbar {
+  position: absolute;
+  top: 0;
+  left: 36px;
+  right: 36px;
+  height: 88px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--line);
+  z-index: 12;
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  padding: 0;
+  font-size: 18px;
+  font-weight: 600;
+  text-align: left;
+}
+.brand-mark {
+  width: 37px;
+  height: 37px;
+  color: var(--accent);
+  stroke-width: 1.3;
+}
+.brand small {
+  display: block;
+  font-size: 9px;
+  color: #919b98;
+  margin-top: 6px;
+  font-weight: 500;
+}
+.view-switch {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 7px;
+  height: 38px;
+  padding: 3px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: #0b1010cc;
+}
+.view-switch button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  padding: 0 18px;
+  color: #8d9694;
+  font-size: 12px;
+  border-radius: 3px;
+  white-space: nowrap;
+}
+.view-switch button.active {
+  background: #27332e;
+  color: #ddf0e6;
+}
+.view-switch svg {
+  width: 16px;
+  height: 16px;
+}
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+}
+.live-state {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  color: #a1aca7;
+  font-size: 10px;
+  margin-right: 16px;
+}
+.live-state b,
+.status-dot {
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+.icon-button {
+  width: 36px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 5px;
+  position: relative;
+  color: #9ba5a1;
+  transition:
+    background 0.18s,
+    color 0.18s;
+  flex-shrink: 0;
+}
+.icon-button:hover {
+  background: #26322bbf;
+  color: var(--accent);
+}
+.icon-button.active {
+  color: var(--accent);
+  background: #1c2a24;
+}
+.icon-button[data-tip]:hover:after,
+.icon-button[data-tip]:focus-visible:after {
+  content: attr(data-tip);
+  position: absolute;
+  right: calc(100% + 10px);
+  top: 50%;
+  transform: translateY(-50%);
+  white-space: nowrap;
+  padding: 7px 10px;
+  font-size: 11px;
+  background: #1a2420;
+  border: 1px solid #35443c;
+  border-radius: 4px;
+  color: #e4ede8;
+  pointer-events: none;
+  z-index: 30;
+}
+.header-actions .icon-button[data-tip]:after {
+  right: 0;
+  top: calc(100% + 12px);
+  transform: none;
+}
+.intro {
+  position: absolute;
+  z-index: 3;
+  top: 150px;
+  left: 54px;
+  width: 270px;
+  pointer-events: none;
+}
+.intro button {
+  pointer-events: auto;
+}
+.eyebrow {
+  color: #a7b2ac;
+  font-size: 10px;
+  font-weight: 500;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.tiny-cross {
+  font-size: 17px;
+  font-weight: 400;
+  color: var(--accent);
+}
+.intro h1 {
+  font-size: 49px;
+  font-weight: 500;
+  line-height: 1.2;
+  margin: 24px 0 18px;
+}
+.intro h1 span {
+  display: block;
+  font-size: 20px;
+  color: #a0aaa4;
+  margin-top: 11px;
+  font-weight: 400;
+}
+.intro p {
+  font-size: 12px;
+  line-height: 2.1;
+  color: #929c97;
+  margin: 0;
+}
+.overview-stats {
+  display: flex;
+  gap: 34px;
+  margin-top: 31px;
+}
+.overview-stats > div {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.overview-stats strong {
+  font-size: 30px;
+  font-weight: 400;
+  line-height: 1.1;
+}
+.overview-stats strong small {
+  font-size: 11px;
+  color: #9aa7a0;
+  padding-left: 5px;
+}
+.overview-stats span {
+  font-size: 10px;
+  color: #7e8c84;
+}
+.text-action {
+  margin-top: 32px;
+  padding: 0 0 9px;
+  display: flex;
+  align-items: center;
+  gap: 33px;
+  color: var(--accent);
+  font-size: 12px;
+  border-bottom: 1px solid #52655a;
+}
+.text-action:hover {
+  border-color: var(--accent);
+}
+.text-action svg {
+  width: 16px;
+  height: 16px;
+}
+.planet-label {
+  position: absolute;
+  left: 0;
+  top: 0;
+  pointer-events: auto;
+  padding: 10px 13px;
+  min-width: 44px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  white-space: nowrap;
+  font-size: 11px;
+  color: #c5ccc6;
+  text-shadow:
+    0 1px 7px #000,
+    0 1px 4px #000;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  transition:
+    background 0.2s,
+    color 0.2s,
+    opacity 0.2s;
+}
+.planet-label:before {
+  content: "";
+  width: 4px;
+  height: 4px;
+  border: 1px solid var(--body-color);
+  border-radius: 50%;
+}
+.planet-label:hover {
+  background: #14211edb;
+  border-color: #33483c;
+  color: #fff;
+}
+.planet-label .label-en {
+  font-size: 9px;
+  color: #8b9892;
+  margin-left: 2px;
+}
+.scene-toolbar {
+  position: absolute;
+  right: 34px;
+  top: 43%;
+  transform: translateY(-50%);
+  z-index: 8;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  padding: 7px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: #0c1212c9;
+  backdrop-filter: blur(12px);
+}
+.toolbar-divider {
+  height: 1px;
+  background: var(--line);
+  margin: 3px 5px;
+}
+.observation-status {
+  position: absolute;
+  bottom: 214px;
+  left: 54px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 9px;
+  color: #98a49d;
+  pointer-events: none;
+}
+.status-separator {
+  color: #415248;
+  margin: 0 3px;
+}
+.explorer-bottom {
+  position: absolute;
+  bottom: 0;
+  left: 36px;
+  right: 36px;
+  height: var(--explorer-height);
+  z-index: 10;
+  background: linear-gradient(0deg, #07090b 7%, #07090bf5 60%, #07090b9c 100%);
+}
+.timeline {
+  height: 48px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid var(--line);
+}
+.timeline-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 11px;
+}
+.timeline-title small {
+  font-size: 9px;
+  color: #717e77;
+  margin-left: 9px;
+}
+.time-controls {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  font-size: 10px;
+  color: #86948b;
+}
+.time-controls .icon-button {
+  height: 28px;
+  width: 28px;
+}
+.time-controls svg {
+  width: 15px;
+  height: 15px;
+}
+.time-controls label {
+  font-size: 10px;
+}
+input[type="range"] {
+  width: 74px;
+  height: 3px;
+  accent-color: #c4e8d2;
+  cursor: pointer;
+}
+output {
+  font-family: Barlow, sans-serif;
+  color: #d5e7dd;
+  min-width: 22px;
+  font-size: 11px;
+}
+#simulation-date {
+  font-size: 10px;
+  border-left: 1px solid var(--line);
+  padding-left: 16px;
+  min-width: 102px;
+  font-variant-numeric: tabular-nums;
+}
+.planet-dock {
+  height: 108px;
+  display: grid;
+  grid-template-columns: repeat(9, minmax(0, 1fr));
+  gap: 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.planet-dock::-webkit-scrollbar {
+  display: none;
+}
+.planet-choice {
+  height: 104px;
+  min-width: 0;
+  border: 1px solid transparent;
+  border-radius: 5px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  transition:
+    background 0.2s,
+    border-color 0.2s;
+}
+.planet-choice:hover {
+  background: #17201c91;
+  border-color: #24372d;
+}
+.planet-choice.selected {
+  background: #17251c9e;
+  border-color: #648572;
+}
+.planet-choice .choice-number {
+  position: absolute;
+  left: 10px;
+  top: 8px;
+  font-size: 9px;
+  color: #59685e;
+}
+.planet-choice.selected .choice-number {
+  color: var(--accent);
+}
+.planet-thumb {
+  display: block;
+  width: 43px;
+  height: 43px;
+  border-radius: 50%;
+  background-color: var(--body-color);
+  background-image: var(--texture);
+  background-size: auto 100%;
+  background-position: center;
+  box-shadow:
+    inset -10px -3px 13px #000b,
+    inset 2px 1px 6px #ffffff23;
+  position: relative;
+  flex-shrink: 0;
+}
+.planet-choice[data-body="sun"] .planet-thumb {
+  box-shadow:
+    0 0 15px #fc9c2830,
+    inset -4px 0 10px #4e210640;
+}
+.planet-thumb.saturn:after {
+  content: "";
+  position: absolute;
+  left: -15px;
+  right: -15px;
+  top: 13px;
+  height: 17px;
+  border: 6px solid #b9aa8070;
+  border-left-color: #d5c8aab0;
+  border-bottom-color: #d5c8aab0;
+  border-radius: 50%;
+  transform: rotate(-27deg);
+}
+.choice-name {
+  font-size: 11px;
+  margin-top: 3px;
+}
+.choice-en {
+  font-size: 8px;
+  color: #839088;
+}
+.bottom-meta {
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 9px;
+  color: #59665f;
+}
+.bottom-meta b {
+  margin: 0 9px;
+  color: #718b7a;
+}
+.planet-info {
+  position: absolute;
+  z-index: 6;
+  left: 54px;
+  top: 117px;
+  bottom: 220px;
+  width: 270px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #344c3d transparent;
+  padding-right: 4px;
+}
+.planet-info-content,
+.planet-info-actions {
+  display: contents;
+}
+@media (min-width: 761px) {
+  .planet-info {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    bottom: 244px;
+    overflow: visible;
+    padding-right: 0;
+  }
+  .planet-info-content {
+    display: block;
+    min-height: 0;
+    overflow-y: auto;
+    padding: 0 12px 6px 0;
+    scrollbar-width: thin;
+    scrollbar-color: #344c3d transparent;
+    scrollbar-gutter: stable;
+    scroll-padding-block: 6px;
+    overscroll-behavior-y: contain;
+  }
+  .planet-info-actions {
+    display: block;
+    flex-shrink: 0;
+    padding: 0 18px 6px 0;
+  }
+  .planet-info .planet-info-actions .primary-action {
+    margin-top: 0;
+  }
+  .observation-status {
+    line-height: 14px;
+  }
+}
+.back-button {
+  padding: 0;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  font-size: 10px;
+  color: #a7b8ae;
+  margin-bottom: 26px;
+}
+.back-button svg {
+  width: 15px;
+  height: 15px;
+}
+.planet-info .eyebrow {
+  color: var(--accent);
+  font-size: 10px;
+}
+.planet-info h1 {
+  font-size: 45px;
+  font-weight: 500;
+  margin: 13px 0 2px;
+  line-height: 1.3;
+}
+.planet-english {
+  font-size: 18px;
+  color: #85988c;
+}
+.planet-description {
+  color: #93a197;
+  font-size: 11px;
+  line-height: 2;
+  margin: 20px 0;
+}
+.planet-facts {
+  margin: 22px 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px 18px;
+}
+.planet-facts div {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.planet-facts dt {
+  color: #778a7d;
+  font-size: 9px;
+}
+.planet-facts dd {
+  margin: 0;
+  font-size: 17px;
+  font-variant-numeric: tabular-nums;
+  color: #e2e8e1;
+}
+.planet-facts dd small {
+  font-size: 10px;
+  margin-left: 4px;
+  color: #9dab9f;
+}
+.surface-feature {
+  border-top: 1px solid var(--line);
+  padding-top: 17px;
+  margin-top: 22px;
+}
+.feature-label {
+  color: #658270;
+  font-size: 9px;
+}
+.surface-feature h2 {
+  font-size: 14px;
+  font-weight: 500;
+  margin: 10px 0 7px;
+}
+.surface-feature p {
+  font-size: 10px;
+  color: #8d9f91;
+  line-height: 1.85;
+  margin: 0;
+}
+.primary-action {
+  margin-top: 21px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: var(--accent);
+  color: #162a1e;
+  min-height: 42px;
+  padding: 11px 16px;
+  width: 100%;
+  border-radius: 4px;
+  font-size: 12px;
+}
+.primary-action:hover {
+  background: #d0f4df;
+  color: #12251b;
+}
+.primary-action svg:last-child {
+  margin-left: auto;
+  width: 15px;
+}
+.primary-action svg:first-child {
+  width: 16px;
+}
+.layer-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 15px;
+  position: relative;
+  font-size: 10px;
+  color: #b2c2b6;
+  cursor: pointer;
+  padding: 7px 0;
+}
+.layer-toggle input {
+  position: absolute;
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  cursor: pointer;
+}
+.switch-track {
+  width: 29px;
+  height: 16px;
+  border-radius: 20px;
+  background: #344539;
+  position: relative;
+  pointer-events: none;
+}
+.switch-track:after {
+  content: "";
+  position: absolute;
+  left: 3px;
+  top: 3px;
+  width: 10px;
+  height: 10px;
+  background: #afbeb3;
+  border-radius: 50%;
+  transition: transform 0.2s;
+}
+.layer-toggle input:checked + .switch-track {
+  background: #b3dbbd;
+}
+.layer-toggle input:checked + .switch-track:after {
+  transform: translateX(13px);
+  background: #23422a;
+}
+.layer-toggle input:focus-visible + .switch-track {
+  outline: 2px solid white;
+  outline-offset: 4px;
+}
+.focus-caption {
+  position: absolute;
+  right: 13%;
+  bottom: max(29%, calc(var(--explorer-height) + 16px));
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  pointer-events: none;
+  z-index: 2;
+}
+.caption-line {
+  width: 39px;
+  height: 1px;
+  background: #789282;
+}
+.focus-caption div {
+  font-size: 12px;
+  color: #c7d8cd;
+}
+.focus-caption small {
+  display: block;
+  color: #83998b;
+  font-size: 9px;
+  margin-top: 7px;
+}
+.atlas-panel {
+  position: absolute;
+  inset: 88px 0 192px;
+  z-index: 9;
+  background: #080c0ef0;
+  overflow-y: auto;
+  padding: 38px 54px 28px;
+  backdrop-filter: blur(15px);
+}
+.atlas-heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 25px;
+}
+.atlas-heading h1 {
+  font-size: 32px;
+  font-weight: 500;
+  margin: 10px 0 0;
+}
+.atlas-heading > span {
+  font-size: 12px;
+  color: #8f9f93;
+}
+.atlas-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 15px;
+}
+.atlas-item {
+  background: #111a16;
+  border: 1px solid #27382d;
+  border-radius: 6px;
+  text-align: left;
+  padding: 20px;
+  display: flex;
+  gap: 23px;
+  align-items: center;
+  min-height: 155px;
+  min-width: 0;
+}
+.atlas-item:hover {
+  border-color: #809d8b;
+  background: #18231d;
+}
+.atlas-item .planet-thumb {
+  width: 70px;
+  height: 70px;
+}
+.atlas-item .planet-thumb.saturn:after {
+  top: 26px;
+}
+.atlas-item h2 {
+  font-size: 17px;
+  font-weight: 400;
+  margin: 4px 0 5px;
+}
+.atlas-item small {
+  font-size: 9px;
+  color: #a3b5a9;
+}
+.atlas-item p {
+  font-size: 10px;
+  color: #7e9586;
+  margin: 10px 0 0;
+}
+.atlas-item > div {
+  min-width: 0;
+}
+dialog {
+  max-width: 490px;
+  width: calc(100% - 36px);
+  background: #111a16;
+  color: #e1e9e1;
+  border: 1px solid #3a5041;
+  border-radius: 7px;
+  padding: 35px;
+  z-index: 50;
+}
+dialog::backdrop {
+  background: #020603ba;
+  backdrop-filter: blur(7px);
+}
+dialog h2 {
+  font-size: 25px;
+  font-weight: 500;
+  margin: 20px 0;
+}
+dialog p {
+  font-size: 12px;
+  line-height: 2;
+  color: #a8b8ab;
+}
+dialog .dialog-close {
+  position: absolute;
+  top: 13px;
+  right: 13px;
+}
+.credits-signature {
+  display: block;
+  border-top: 1px solid var(--line);
+  padding-top: 20px;
+  margin-top: 23px;
+  font-size: 10px;
+  color: #7d9786;
+}
+.loading-screen {
+  position: absolute;
+  inset: 0;
+  background: #07090b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 23px;
+  z-index: 100;
+  transition: opacity 0.6s;
+}
+.loading-screen > svg {
+  width: 50px;
+  height: 50px;
+  color: var(--accent);
+  stroke-width: 1;
+  animation: orbit-loader 9s linear infinite;
+}
+.loading-screen > span {
+  font-size: 16px;
+}
+.loading-screen small {
+  font-size: 10px;
+  color: #728779;
+}
+.loading-track {
+  width: 180px;
+  height: 2px;
+  background: #24372b;
+}
+.loading-track > div {
+  height: 100%;
+  width: 0;
+  background: var(--accent);
+  transition: width 0.25s;
+}
+@keyframes orbit-loader {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.error-screen {
+  position: absolute;
+  inset: 0;
+  background: #090e0b;
+  z-index: 101;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  padding: 30px;
+  text-align: center;
+}
+.error-screen h1 {
+  font-size: 25px;
+}
+.error-screen p {
+  max-width: 380px;
+  line-height: 2;
+  font-size: 13px;
+  color: #a4b4a9;
+}
+.error-screen .primary-action {
+  max-width: 200px;
+}
+.toast {
+  position: absolute;
+  bottom: 205px;
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: calc(100% - 28px);
+  padding: 11px 18px;
+  z-index: 80;
+  font-size: 12px;
+  line-height: 1.6;
+  background: #21382a;
+  border: 1px solid #577560;
+  border-radius: 5px;
+  color: #e3f2e5;
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+@media (min-width: 1600px) {
+  .intro {
+    top: 19%;
+    left: 64px;
+  }
+  .intro h1 {
+    font-size: 56px;
+  }
+  .intro p {
+    font-size: 13px;
+  }
+  .planet-info {
+    top: 15%;
+    left: 64px;
+    width: 300px;
+  }
+  .observation-status {
+    left: 64px;
+  }
+  .planet-description {
+    font-size: 12px;
+  }
+  .surface-feature p {
+    font-size: 11px;
+  }
+  .planet-facts {
+    gap: 25px;
+  }
+  .planet-facts dd {
+    font-size: 20px;
+  }
+  .explorer-bottom {
+    left: 50px;
+    right: 50px;
+  }
+  .planet-dock {
+    max-width: 1450px;
+    margin: auto;
+  }
+}
+@media (max-width: 1100px) {
+  .topbar {
+    left: 24px;
+    right: 24px;
+  }
+  .live-state {
+    display: none;
+  }
+  .intro,
+  .planet-info {
+    left: 32px;
+    width: 235px;
+  }
+  .intro h1 {
+    font-size: 42px;
+  }
+  .scene-toolbar {
+    right: 24px;
+  }
+  .explorer-bottom {
+    left: 24px;
+    right: 24px;
+  }
+  .observation-status {
+    left: 32px;
+  }
+  .atlas-panel {
+    padding: 30px;
+  }
+  .atlas-item {
+    gap: 16px;
+    padding: 15px;
+    min-height: 145px;
+  }
+  .atlas-item .planet-thumb {
+    width: 51px;
+    height: 51px;
+  }
+  .atlas-grid {
+    gap: 10px;
+  }
+  .planet-info h1 {
+    font-size: 38px;
+  }
+  .planet-description {
+    margin: 15px 0;
+  }
+  .planet-facts {
+    margin: 17px 0;
+    gap: 15px;
+  }
+  .surface-feature {
+    margin-top: 17px;
+    padding-top: 13px;
+  }
+  .planet-info .primary-action {
+    margin-top: 15px;
+  }
+}
+@media (max-width: 760px) {
+  #app {
+    --explorer-height: 169px;
+  }
+  .topbar {
+    height: 72px;
+    left: 20px;
+    right: 20px;
+  }
+  .brand {
+    font-size: 15px;
+    gap: 9px;
+  }
+  .brand-mark {
+    width: 30px;
+    height: 30px;
+  }
+  .brand small {
+    font-size: 7px;
+    margin-top: 4px;
+  }
+  .header-actions {
+    gap: 2px;
+  }
+  .header-actions .icon-button {
+    width: 30px;
+  }
+  .header-actions #fullscreen {
+    display: none;
+  }
+  .view-switch {
+    left: auto;
+    right: 41px;
+    transform: none;
+    height: 33px;
+    gap: 0;
+  }
+  .view-switch button {
+    padding: 0 10px;
+    font-size: 10px;
+    gap: 6px;
+  }
+  .view-switch svg {
+    width: 13px;
+    height: 13px;
+  }
+  .intro {
+    left: 24px;
+    top: 105px;
+    width: 220px;
+  }
+  .intro .eyebrow {
+    font-size: 8px;
+  }
+  .intro h1 {
+    font-size: 35px;
+    margin: 16px 0 11px;
+  }
+  .intro h1 span {
+    font-size: 15px;
+    margin-top: 6px;
+  }
+  .intro p {
+    font-size: 10px;
+    line-height: 1.9;
+  }
+  .overview-stats {
+    margin-top: 20px;
+    gap: 26px;
+  }
+  .overview-stats strong {
+    font-size: 23px;
+  }
+  .overview-stats span {
+    font-size: 8px;
+  }
+  .overview-stats strong small {
+    font-size: 9px;
+  }
+  .text-action {
+    margin-top: 19px;
+    font-size: 10px;
+    gap: 20px;
+  }
+  .scene-toolbar {
+    right: 16px;
+    top: 40%;
+    gap: 5px;
+    padding: 5px;
+  }
+  .scene-toolbar .icon-button {
+    width: 29px;
+    height: 29px;
+  }
+  .scene-toolbar svg {
+    width: 16px;
+    height: 16px;
+  }
+  .observation-status {
+    left: 22px;
+    bottom: 187px;
+    font-size: 8px;
+    gap: 6px;
+  }
+  .explorer-bottom {
+    left: 18px;
+    right: 18px;
+  }
+  .timeline {
+    height: 41px;
+  }
+  .timeline-title {
+    font-size: 10px;
+    gap: 7px;
+  }
+  .timeline-title small {
+    display: none;
+  }
+  .time-controls {
+    gap: 8px;
+  }
+  .time-controls label {
+    display: none;
+  }
+  #simulation-date {
+    font-size: 8px;
+    padding-left: 8px;
+    min-width: 76px;
+  }
+  input[type="range"] {
+    width: 49px;
+  }
+  .time-controls output {
+    font-size: 9px;
+    min-width: 16px;
+  }
+  .planet-dock {
+    height: 100px;
+    display: flex;
+    gap: 6px;
+    scroll-snap-type: x proximity;
+  }
+  .planet-choice {
+    width: 77px;
+    min-width: 77px;
+    height: 96px;
+    scroll-snap-align: center;
+  }
+  .planet-thumb {
+    width: 37px;
+    height: 37px;
+  }
+  .planet-thumb.saturn:after {
+    left: -11px;
+    right: -11px;
+    top: 12px;
+    height: 14px;
+    border-width: 5px;
+  }
+  .planet-choice .choice-number {
+    font-size: 8px;
+    left: 7px;
+  }
+  .choice-name {
+    font-size: 10px;
+  }
+  .choice-en {
+    font-size: 7px;
+  }
+  .bottom-meta {
+    height: 27px;
+    font-size: 7px;
+  }
+  .planet-label {
+    font-size: 10px;
+    padding: 9px 10px;
+    gap: 5px;
+  }
+  .planet-label .label-en {
+    display: none;
+  }
+  .planet-info {
+    left: 22px;
+    right: 22px;
+    top: auto;
+    bottom: 185px;
+    width: auto;
+    height: 185px;
+    overflow-y: auto;
+    padding: 0 0 4px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 19px 39px 23px auto;
+    column-gap: 24px;
+    background: linear-gradient(90deg, #07090bf0, #07090bda 75%, #07090b9a);
+    border-top: 1px solid var(--line);
+    padding-top: 13px;
+  }
+  .back-button {
+    position: absolute;
+    right: 0;
+    top: 14px;
+    margin: 0;
+    font-size: 9px;
+  }
+  .planet-info .eyebrow {
+    font-size: 8px;
+    grid-column: 1;
+  }
+  .planet-info h1 {
+    font-size: 28px;
+    margin: 0;
+    grid-column: 1;
+    grid-row: 2;
+  }
+  .planet-english {
+    font-size: 13px;
+    grid-column: 1;
+    grid-row: 3;
+  }
+  .planet-description {
+    display: none;
+  }
+  .planet-facts {
+    grid-column: 2;
+    grid-row: 2/5;
+    margin: 8px 0 0;
+    gap: 10px 13px;
+    align-self: start;
+    padding-top: 6px;
+  }
+  .planet-facts dt {
+    font-size: 8px;
+  }
+  .planet-facts dd {
+    font-size: 13px;
+  }
+  .planet-facts dd small {
+    font-size: 8px;
+  }
+  .surface-feature {
+    display: none;
+  }
+  .planet-info .primary-action {
+    grid-column: 1;
+    grid-row: 4;
+    font-size: 10px;
+    min-height: 35px;
+    padding: 8px 11px;
+    margin: 9px 0 0;
+    align-self: start;
+    gap: 6px;
+    max-width: 165px;
+  }
+  .planet-info .primary-action svg {
+    width: 13px;
+  }
+  .layer-toggle {
+    grid-column: 1/3;
+    font-size: 9px;
+    margin-top: 8px;
+    justify-content: flex-start;
+    gap: 12px;
+  }
+  .planet-info:has(.layer-toggle:not([hidden])) {
+    height: 215px;
+  }
+  .focus-caption {
+    right: auto;
+    left: 24px;
+    top: 96px;
+    bottom: auto;
+    gap: 10px;
+  }
+  .caption-line {
+    width: 20px;
+  }
+  .focus-caption div {
+    font-size: 11px;
+  }
+  .focus-caption small {
+    font-size: 8px;
+  }
+  .focused .observation-status {
+    display: none;
+  }
+  .focused .scene-toolbar {
+    top: 29%;
+  }
+  .atlas-panel {
+    inset: 72px 0 169px;
+    padding: 28px 20px;
+  }
+  .atlas-heading {
+    align-items: flex-start;
+    margin-bottom: 22px;
+  }
+  .atlas-heading h1 {
+    font-size: 26px;
+  }
+  .atlas-heading .eyebrow {
+    font-size: 8px;
+  }
+  .atlas-heading > span {
+    font-size: 9px;
+    max-width: 80px;
+    line-height: 1.8;
+    margin-top: 19px;
+  }
+  .atlas-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+  .atlas-item {
+    min-height: 145px;
+    flex-direction: column;
+    justify-content: center;
+    gap: 7px;
+    padding: 16px 10px;
+    text-align: center;
+  }
+  .atlas-item h2 {
+    font-size: 13px;
+  }
+  .atlas-item p {
+    font-size: 8px;
+    margin-top: 5px;
+  }
+  .atlas-item small {
+    font-size: 8px;
+  }
+  .atlas-item .planet-thumb {
+    width: 47px;
+    height: 47px;
+  }
+  .toast {
+    bottom: 180px;
+    font-size: 11px;
+  }
+  .icon-button[data-tip]:hover:after {
+    font-size: 10px;
+  }
+}
+@media (max-width: 390px) {
+  .topbar {
+    left: 15px;
+    right: 15px;
+  }
+  .brand {
+    font-size: 13px;
+    gap: 6px;
+  }
+  .brand-mark {
+    width: 26px;
+  }
+  .view-switch button {
+    padding: 0 8px;
+  }
+  .intro {
+    top: 99px;
+  }
+  .intro h1 {
+    font-size: 31px;
+  }
+  .intro p {
+    font-size: 9px;
+  }
+  .overview-stats {
+    margin-top: 15px;
+  }
+  .text-action {
+    margin-top: 16px;
+  }
+  .planet-info {
+    column-gap: 15px;
+  }
+  .planet-facts {
+    column-gap: 8px;
+  }
+  .planet-info .primary-action {
+    font-size: 9px;
+  }
+}
+@media (max-height: 740px) and (min-width: 761px) {
+  .intro {
+    top: 117px;
+    bottom: calc(var(--explorer-height) + 44px);
+    overflow-y: auto;
+    pointer-events: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #344c3d transparent;
+  }
+  .intro h1 {
+    font-size: 36px;
+    margin: 17px 0 12px;
+  }
+  .intro h1 span {
+    font-size: 16px;
+  }
+  .overview-stats {
+    margin-top: 21px;
+  }
+  .text-action {
+    margin-top: 22px;
+  }
+  .planet-info {
+    top: 105px;
+  }
+  .planet-info .back-button {
+    margin-bottom: 16px;
+  }
+  .planet-info h1 {
+    font-size: 31px;
+    margin-top: 8px;
+  }
+  .planet-description {
+    font-size: 10px;
+    margin: 12px 0;
+  }
+  .planet-facts {
+    gap: 11px;
+    margin: 13px 0;
+  }
+  .surface-feature {
+    margin-top: 14px;
+  }
+  .surface-feature p {
+    font-size: 9px;
+  }
+  .planet-info .primary-action {
+    min-height: 35px;
+  }
+}
+@media (max-height: 690px) and (max-width: 760px) {
+  .intro {
+    top: 92px;
+  }
+  .intro h1 {
+    font-size: 28px;
+    margin: 10px 0;
+  }
+  .intro h1 span {
+    font-size: 13px;
+  }
+  .intro p,
+  .overview-stats,
+  .text-action {
+    display: none;
+  }
+  #app {
+    --explorer-height: 155px;
+  }
+  .planet-dock {
+    height: 92px;
+  }
+  .planet-choice {
+    height: 89px;
+  }
+  .bottom-meta {
+    height: 20px;
+  }
+  .planet-info {
+    bottom: 165px;
+    height: 168px;
+  }
+  .planet-info:has(.layer-toggle:not([hidden])) {
+    height: 194px;
+  }
+  .observation-status {
+    bottom: 172px;
+  }
+  .focus-caption {
+    top: 91px;
+  }
+  .atlas-panel {
+    bottom: 155px;
+  }
+  .planet-info .primary-action {
+    margin-top: 5px;
+  }
+  .scene-toolbar {
+    top: 37%;
+  }
+}
+.focused #universe::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    #07090bef 0,
+    #07090bcc 76px,
+    transparent 150px
+  );
+}
+@media (min-width: 761px) {
+  .focused #universe::after {
+    background:
+      linear-gradient(180deg, #07090bef 0, #07090bcc 76px, transparent 150px),
+      linear-gradient(90deg, #07090bee 0, #07090bee 325px, transparent 450px);
+  }
+}
+.planet-label {
+  width: 63px;
+  min-width: 0;
+  height: 28px;
+  padding: 5px 8px;
+  justify-content: center;
+  gap: 6px;
+}
+.planet-label .label-en {
+  display: none;
+}
+@media (max-width: 760px) {
+  .planet-label {
+    width: 55px;
+    padding: 5px 6px;
+    gap: 4px;
+  }
+  .planet-info {
+    grid-template-rows: 19px 39px 23px 44px 28px;
+    align-content: start;
+  }
+  .planet-facts dt {
+    font-size: 9px;
+  }
+  .planet-facts dd {
+    font-size: 15px;
+  }
+  .planet-facts dd small {
+    font-size: 9px;
+  }
+  .layer-toggle {
+    margin-top: 4px;
+  }
+  .icon-button[data-tip]:hover:after {
+    display: none;
+  }
+}
+.activity-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-height: 15px;
+}
+#activity-state {
+  font-size: 9px;
+  color: #91ac9a;
+  white-space: nowrap;
+}
+#activity-state.event-active {
+  color: #ebc47c;
+}
+.activity-controls {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 13px;
+  height: 34px;
+}
+.event-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  flex: 1;
+  min-width: 0;
+  height: 34px;
+  padding: 0 8px;
+  font-size: 10px;
+  border: 1px solid #486352;
+  background: #1c2b22;
+  color: #c6e9d0;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+.event-button:hover:not(:disabled) {
+  background: #2b4032;
+  border-color: #95b9a0;
+}
+.event-button svg {
+  width: 14px;
+  height: 14px;
+}
+.activity-controls .icon-button {
+  width: 32px;
+  height: 32px;
+}
+.activity-controls .icon-button[data-tip]:after {
+  top: auto;
+  bottom: calc(100% + 8px);
+  right: 0;
+  transform: none;
+}
+#activity-rate {
+  width: 55px;
+  height: 32px;
+  flex-shrink: 0;
+  padding: 0 3px;
+  background: #101a14;
+  color: #bbd5c3;
+  border: 1px solid #334b3b;
+  border-radius: 4px;
+  font: inherit;
+  font-size: 10px;
+  cursor: pointer;
+}
+@media (max-width: 760px) {
+  .planet-info {
+    height: 255px;
+    grid-template-rows: 19px 39px 23px 44px 28px 64px;
+  }
+  .planet-info:has(.layer-toggle:not([hidden])) {
+    height: 285px;
+  }
+  .planet-info .surface-feature {
+    display: block;
+    grid-column: 1 / 3;
+    grid-row: 6;
+    padding-top: 9px;
+    margin-top: 6px;
+  }
+  .planet-info:not(:has(.layer-toggle:not([hidden]))) .surface-feature {
+    grid-row: 5 / 7;
+  }
+  .surface-feature h2,
+  .surface-feature p {
+    display: none;
+  }
+  .activity-controls {
+    margin-top: 6px;
+    height: 32px;
+  }
+  .event-button {
+    height: 31px;
+    font-size: 10px;
+  }
+  .activity-heading .feature-label,
+  #activity-state {
+    font-size: 8px;
+  }
+  .focused .scene-toolbar {
+    top: 80px;
+    transform: none;
+  }
+  .focused #orbit-toggle,
+  .focused #label-toggle,
+  .focused .toolbar-divider {
+    display: none;
+  }
+}
+@media (max-width: 760px) and (max-height: 690px) {
+  .planet-info {
+    height: 235px;
+  }
+  .planet-info:has(.layer-toggle:not([hidden])) {
+    height: 250px;
+  }
+  .planet-info {
+    grid-template-rows: 17px 33px 18px 39px 25px 62px;
+  }
+  .planet-info h1 {
+    font-size: 25px;
+  }
+  .planet-info .surface-feature {
+    padding-top: 6px;
+    margin-top: 3px;
+  }
+}
+.observation-tools {
+  position: absolute;
+  z-index: 7;
+  top: 108px;
+  left: calc(61.5% - 195px);
+  width: 390px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  height: 36px;
+}
+.landmark-picker {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  height: 34px;
+  align-items: center;
+  gap: 7px;
+  padding: 0 8px;
+  background: #0c1211ed;
+  border: 1px solid #314039;
+  border-radius: 4px;
+}
+.landmark-picker > svg {
+  width: 15px;
+  height: 15px;
+  color: #bce8d4;
+  flex-shrink: 0;
+}
+#landmark-select {
+  min-width: 0;
+  width: 100%;
+  height: 32px;
+  color: #d5e4dc;
+  background: #0c1211;
+  border: 0;
+  font: inherit;
+  font-size: 11px;
+  cursor: pointer;
+}
+.observation-tools .icon-button {
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+  background: #0c1211ed;
+  border: 1px solid #314039;
+  border-radius: 4px;
+}
+.observation-tools .icon-button.active {
+  color: #bce8d4;
+  background: #253b30;
+}
+.observation-tools .icon-button[data-tip]:after {
+  top: calc(100% + 8px);
+  right: 0;
+  transform: none;
+}
+.detail-toggle {
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+  position: relative;
+  cursor: pointer;
+}
+.detail-toggle input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  cursor: pointer;
+}
+.detail-toggle > span {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  color: #6c8075;
+  background: #0c1211ed;
+  border: 1px solid #314039;
+  border-radius: 4px;
+  pointer-events: none;
+}
+.detail-toggle svg {
+  width: 16px;
+  height: 16px;
+}
+.detail-toggle input:checked + span {
+  background: #253b30;
+  color: #bce8d4;
+  border-color: #506f5e;
+}
+.detail-toggle input:focus-visible + span {
+  outline: 2px solid #bce8d4;
+  outline-offset: 3px;
+}
+.detail-toggle input:disabled + span {
+  opacity: 0.35;
+}
+.detail-toggle:has(input:disabled) {
+  cursor: default;
+}
+#landmark-markers {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 5;
+}
+.landmark-marker {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  pointer-events: auto;
+  color: #e2ece6;
+  background: transparent;
+}
+.landmark-dot {
+  width: 9px;
+  height: 9px;
+  border: 1px solid #dcf8e8;
+  border-radius: 50%;
+  background: #193c2d;
+  box-shadow: 0 0 0 3px #0a120caa;
+}
+.landmark-marker.active .landmark-dot {
+  background: #e7c271;
+  border-color: #fff0ca;
+  box-shadow: 0 0 0 5px #211e15b0;
+}
+.landmark-marker:hover .landmark-dot {
+  background: #bce8d4;
+}
+.landmark-name {
+  position: absolute;
+  left: 33px;
+  top: 11px;
+  padding: 3px 6px;
+  font-size: 10px;
+  line-height: 16px;
+  white-space: nowrap;
+  background: #0b1210d9;
+  border-radius: 3px;
+  pointer-events: none;
+}
+.landmark-marker.label-left .landmark-name {
+  left: auto;
+  right: 33px;
+}
+.landmark-source {
+  display: inline-block;
+  margin-left: 7px;
+  color: #bad6c5;
+  text-underline-offset: 3px;
+}
+@media (max-width: 1050px) and (min-width: 761px) {
+  .observation-tools {
+    width: 340px;
+    left: calc(61.5% - 150px);
+  }
+}
+@media (max-width: 760px) {
+  .observation-tools {
+    top: 80px;
+    left: 22px;
+    right: 22px;
+    width: auto;
+    gap: 5px;
+  }
+  .landmark-picker {
+    padding: 0 6px;
+    gap: 4px;
+  }
+  #landmark-select {
+    font-size: 10px;
+  }
+  .focused .scene-toolbar {
+    top: 126px;
+  }
+  .focused:has(.observation-tools:not([hidden])) .focus-caption {
+    display: none;
+  }
+  .landmark-name {
+    display: none;
+  }
+  .landmark-marker.active .landmark-name {
+    display: block;
+    font-size: 9px;
+  }
+  .has-landmark .planet-facts {
+    display: none;
+  }
+  .has-landmark .planet-description {
+    display: block;
+    grid-column: 2;
+    grid-row: 2 / 5;
+    margin: 4px 0 0;
+    font-size: 10px;
+    line-height: 1.75;
+    min-height: 0;
+    overflow-y: auto;
+  }
+  .has-landmark .landmark-source {
+    margin-left: 0;
+    display: block;
+  }
+  .layer-toggle {
+    grid-row: 5;
+  }
+}
+@media (max-width: 760px) and (max-height: 690px) {
+  .planet-info {
+    height: 205px;
+  }
+  .back-button {
+    right: 50px;
+  }
+  .planet-info:has(.layer-toggle:not([hidden])) {
+    height: 220px;
+  }
+  .focused .scene-toolbar {
+    top: 120px;
+    padding: 5px;
+    gap: 2px;
+  }
+  .focused .scene-toolbar .icon-button {
+    width: 28px;
+    height: 28px;
+  }
+}
+.family-picker {
+  display: flex;
+  flex: 0 1 142px;
+  min-width: 98px;
+  height: 34px;
+  align-items: center;
+  gap: 5px;
+  padding: 0 6px;
+  border: 1px solid #385248;
+  background: #0c1211ed;
+  border-radius: 4px;
+}
+.family-picker > svg {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+  color: #bce8d4;
+}
+#family-select,
+#catalog-filter,
+#atlas-filter {
+  color: #dce9e2;
+  font: inherit;
+  font-size: 11px;
+  background: #0c1211;
+  border: 0;
+  cursor: pointer;
+  height: 32px;
+}
+#family-select {
+  width: 100%;
+  min-width: 0;
+}
+#catalog-filter {
+  width: 106px;
+  background: transparent;
+}
+#catalog-filter option {
+  background: #101815;
+}
+.atlas-filters {
+  display: flex;
+  gap: 12px;
+  margin: 0 0 22px;
+}
+#atlas-search,
+#atlas-filter {
+  height: 36px;
+  border: 1px solid #34483e;
+  border-radius: 4px;
+  padding: 0 12px;
+}
+#atlas-search {
+  width: 250px;
+  min-width: 0;
+  font: inherit;
+  font-size: 12px;
+  color: #e2ece7;
+  background: #0c1211;
+}
+#atlas-filter {
+  width: 130px;
+}
+.atlas-empty {
+  font-size: 13px;
+  color: #95a99e;
+  margin-top: 48px;
+  text-align: center;
+}
+.atlas-item .planet-thumb {
+  flex-shrink: 0;
+}
+.choice-en {
+  max-width: 100%;
+  overflow: hidden;
+}
+.system-view .surface-feature {
+  display: none;
+}
+@media (min-width: 761px) {
+  .planet-dock {
+    grid-template-columns: none;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(90px, calc((100% - 64px) / 9));
+    justify-content: start;
+  }
+  .atlas-item p {
+    line-height: 1.6;
+  }
+}
+@media (max-width: 760px) {
+  .family-picker {
+    flex-basis: 125px;
+    min-width: 90px;
+    padding: 0 4px;
+    gap: 3px;
+  }
+  #family-select {
+    font-size: 10px;
+  }
+  #catalog-filter {
+    width: 98px;
+    font-size: 10px;
+  }
+  .atlas-filters {
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  #atlas-search {
+    flex: 1;
+    width: 0;
+  }
+  #atlas-filter {
+    width: 118px;
+  }
+  .system-view .planet-info {
+    height: 99px;
+    grid-template-rows: 18px 40px;
+    column-gap: 12px;
+  }
+  .system-view .planet-label {
+    display: flex;
+  }
+  .system-view .planet-facts,
+  .system-view .planet-english,
+  .system-view .planet-info .surface-feature {
+    display: none;
+  }
+  .system-view .planet-info .primary-action {
+    grid-column: 2;
+    grid-row: 2;
+    margin-top: 0;
+    max-width: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+    animation: none !important;
+    scroll-behavior: auto !important;
+  }
+}
+.cloud-panel {
+  margin-top: 18px;
+  padding: 13px 0 0;
+  border-top: 1px solid #2a3e34;
+  font-size: 11px;
+  color: #9cad9f;
+}
+.cloud-heading, .cloud-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.cloud-heading { color: #d5e5d9; margin-bottom: 10px; }
+#cloud-status { color: #b9efcf; font-size: 10px; }
+.cloud-panel[data-status="stale"] #cloud-status { color: #e1bb7b; }
+.cloud-controls select, .cloud-controls button {
+  min-width: 0;
+  min-height: 34px;
+  border: 1px solid #3a5545;
+  border-radius: 4px;
+  background: #111f18;
+  color: #c9e7d2;
+  font: inherit;
+  padding: 5px 9px;
+}
+.cloud-controls select { flex: 1; }
+.cloud-controls button { cursor: pointer; }
+.cloud-controls button:disabled { opacity: .55; cursor: default; }
+.cloud-time { margin-top: 10px; font-size: 10px; }
+.cloud-time time { color: #d0ded4; display: block; margin-top: 3px; }
+#cloud-detail { font-size: 10px; line-height: 1.65; margin: 7px 0; }
+.cloud-source { font-size: 10px; line-height: 1.7; }
+.cloud-source summary { color: #91b9a0; cursor: pointer; }
+.cloud-source a { color: #b8e4c7; text-decoration: underline; }
+.cloud-source p { margin: 6px 0; }
+#time-speed:disabled { opacity: .35; }
+@media (max-width: 760px) {
+  #planet-info.earth-cloud-view {
+    display: flex;
+    flex-direction: column;
+    height: 194px;
+    overflow: hidden;
+    gap: 5px;
+  }
+  .earth-cloud-view .planet-info-content { display: block; min-height: 0; overflow-y: auto; }
+  .earth-cloud-view .planet-info-actions { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+  .earth-cloud-view .planet-info-actions .primary-action { margin: 0; flex: 1; }
+  .earth-cloud-view .planet-info-actions .layer-toggle { margin: 0; font-size: 10px; gap: 8px; }
+  .earth-cloud-view .planet-description, .earth-cloud-view .planet-facts,
+  .earth-cloud-view .planet-english, .earth-cloud-view #planet-category { display: none; }
+  .earth-cloud-view #planet-title { font-size: 25px; line-height: 1.2; margin: 3px 0; }
+  .earth-cloud-view .cloud-panel { margin-top: 6px; padding-top: 7px; }
+  .earth-cloud-view .cloud-heading { margin-bottom: 5px; }
+  .earth-cloud-view .cloud-heading label { display: none; }
+  .earth-cloud-view #cloud-status { position: absolute; top: 23px; left: 60px; }
+  .earth-cloud-view .cloud-controls select, .earth-cloud-view .cloud-controls button { min-height: 32px; }
+  .earth-cloud-view .cloud-time { display: flex; gap: 8px; margin-top: 6px; }
+  .earth-cloud-view .cloud-time time { margin: 0; }
+  .earth-cloud-view #cloud-detail { margin: 4px 0; }
+}
+
+/* Short landscape windows use a scrollable sidebar above a compact dock.
+   Keep captions and status text outside both regions, including during resize. */
+@media (min-width: 560px) and (max-height: 540px) {
+  #app { --explorer-height: 112px; }
+  .topbar { height: 64px; }
+  .timeline { height: 36px; }
+  .planet-dock { height: 76px; }
+  .planet-choice { height: 72px; gap: 2px; }
+  .planet-choice .planet-thumb { width: 30px; height: 30px; }
+  .planet-choice .planet-thumb.saturn:after {
+    left: -9px;
+    right: -9px;
+    top: 9px;
+    height: 12px;
+    border-width: 4px;
+  }
+  .planet-choice .choice-number { top: 5px; font-size: 7px; }
+  .choice-name { font-size: 10px; }
+  .choice-en { font-size: 7px; }
+  .bottom-meta { display: none; }
+  .intro {
+    top: 80px;
+    left: 24px;
+    bottom: calc(var(--explorer-height) + 44px);
+    width: 220px;
+    overflow-y: auto;
+    pointer-events: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #344c3d transparent;
+  }
+  .intro h1 { font-size: 28px; margin: 10px 0; }
+  .intro h1 span { font-size: 13px; margin-top: 6px; }
+  .intro p { display: block; font-size: 10px; line-height: 1.9; }
+  .intro .overview-stats { display: none; }
+  .intro .text-action { display: flex; margin-top: 14px; font-size: 10px; }
+  .observation-status {
+    left: 24px;
+    bottom: calc(var(--explorer-height) + 14px);
+  }
+  #planet-info {
+    top: 80px;
+    left: 24px;
+    right: auto;
+    bottom: calc(var(--explorer-height) + 44px);
+    width: 220px;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 0;
+    border: 0;
+    overflow: hidden;
+    background: linear-gradient(90deg, #07090be6, #07090b80);
+  }
+  #planet-info .planet-info-content {
+    display: block;
+    min-height: 0;
+    overflow-y: auto;
+    padding: 0 8px 4px 0;
+    scrollbar-width: thin;
+    scrollbar-color: #344c3d transparent;
+    scrollbar-gutter: stable;
+    overscroll-behavior-y: contain;
+  }
+  #planet-info .planet-info-actions {
+    display: block;
+    flex-shrink: 0;
+    padding: 0 8px 0 0;
+  }
+  #planet-info .back-button { position: static; margin: 0 0 12px; }
+  #planet-info h1 { font-size: 28px; margin: 6px 0 2px; }
+  #planet-info .planet-english { font-size: 13px; }
+  #planet-info .planet-info-actions .primary-action {
+    margin: 0;
+    max-width: none;
+    min-height: 34px;
+    padding: 8px 11px;
+    font-size: 10px;
+  }
+  #planet-info .planet-info-actions .layer-toggle { margin: 6px 0 0; padding: 4px 0; }
+  #planet-info.earth-cloud-view { height: auto; }
+  .earth-cloud-view #cloud-status { position: static; }
+  .earth-cloud-view .cloud-heading label { display: block; }
+  .scene-toolbar,
+  .focused .scene-toolbar {
+    top: 76px;
+    transform: none;
+    max-height: calc(100% - 84px - var(--explorer-height));
+    overflow-y: auto;
+    scrollbar-width: none;
+    padding: 5px;
+    gap: 2px;
+  }
+  .scene-toolbar .icon-button { width: 28px; height: 28px; }
+  .observation-tools {
+    top: 76px;
+    left: 260px;
+    right: 76px;
+    width: auto;
+    gap: 5px;
+  }
+  .focus-caption {
+    top: auto;
+    left: auto;
+    right: 13%;
+    bottom: max(29%, calc(var(--explorer-height) + 16px));
+  }
+  .atlas-panel { top: 64px; bottom: var(--explorer-height); }
+  .toast { bottom: calc(var(--explorer-height) + 12px); }
+}

@@ -1,0 +1,447 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#07090b" />
+    <meta
+      name="description"
+      content="漫游太阳系，近距离观察行星、矮行星、小行星与天然卫星的地貌和动态。"
+    />
+    <title>星际图鉴 · 太阳系</title>
+    <link rel="icon" href="data:," />
+  </head>
+  <body>
+    <main id="app">
+      <div id="universe" aria-label="可交互的三维太阳系"></div>
+      <div id="planet-labels"></div>
+      <div id="landmark-markers" aria-label="星球地标"></div>
+      <header class="topbar">
+        <div id="scene-navigation"></div>
+        <nav class="view-switch" aria-label="观测视图">
+          <button id="overview-tab" class="active" aria-pressed="true">
+            <i data-lucide="orbit"></i><span>太阳系</span>
+          </button>
+          <button id="atlas-tab" aria-pressed="false">
+            <i data-lucide="gallery-horizontal-end"></i><span>天体图鉴</span>
+          </button>
+        </nav>
+        <div class="header-actions">
+          <span class="live-state"><b></b><span id="scene-mode-label">动态模拟</span></span>
+          <button
+            class="icon-button"
+            id="info-button"
+            aria-label="资料来源"
+            data-tip="资料来源"
+          >
+            <i data-lucide="info"></i>
+          </button>
+          <button
+            class="icon-button"
+            id="fullscreen"
+            aria-label="全屏"
+            data-tip="全屏"
+          >
+            <i data-lucide="maximize"></i>
+          </button>
+        </div>
+      </header>
+
+      <section class="intro" id="intro" aria-labelledby="overview-title">
+        <div class="eyebrow">
+          <span class="tiny-cross">+</span> 银河系 / 猎户臂
+        </div>
+        <h1 id="overview-title">太阳系<span>Solar System</span></h1>
+        <p>一颗恒星，八颗行星。<br />46 亿年的宇宙故事，仍在继续。</p>
+        <div class="overview-stats">
+          <div><strong>08</strong><span>大行星</span></div>
+          <div>
+            <strong>46<small>亿年</small></strong
+            ><span>太阳系年龄 · 约</span>
+          </div>
+        </div>
+        <button class="text-action" id="explore-earth">
+          从地球出发<i data-lucide="arrow-up-right"></i>
+        </button>
+      </section>
+
+      <aside
+        id="planet-info"
+        class="planet-info"
+        hidden
+        aria-labelledby="planet-title"
+      >
+        <div id="planet-info-content" class="planet-info-content">
+          <button class="back-button" id="back-button">
+            <i data-lucide="arrow-left"></i>返回太阳系
+          </button>
+          <div class="eyebrow" id="planet-category"></div>
+          <h1 id="planet-title"></h1>
+          <div class="planet-english" id="planet-english"></div>
+          <p class="planet-description" id="planet-description"></p>
+          <dl class="planet-facts" id="planet-facts"></dl>
+          <section id="cloud-panel" class="cloud-panel" aria-label="地球云层数据" hidden>
+            <div class="cloud-heading"><label for="cloud-mode">地球云层</label><span id="cloud-status" role="status">正在获取</span></div>
+            <div class="cloud-controls">
+              <select id="cloud-mode" aria-label="云层模式"><option value="observed">卫星观测</option><option value="simulation">动态模拟</option></select>
+              <button id="cloud-refresh" type="button">检查更新</button>
+            </div>
+            <div class="cloud-time">观测时间 <time id="cloud-observed-at">等待卫星影像</time></div>
+            <p id="cloud-detail"></p>
+            <details class="cloud-source"><summary>来源与覆盖范围</summary>
+              <p><a href="https://user.eumetsat.int/catalogue/EO:EUM:DAT:0330" target="_blank" rel="noreferrer">EUMETSAT 全球红外拼接</a> · CC BY 4.0。每小时检查，源数据通常每 3 小时一帧。</p>
+              <p>红外云系估计，并非完整云量或云高测量。低云、冰雪及冷地表可能存在误差；极区和部分拼接区域缺测，空白不代表晴空。观测模式不叠加模拟风暴或闪电。</p>
+              <p>云层厚度与照明为展示效果，城市夜光来自 2016 年合成图。</p>
+            </details>
+          </section>
+          <div class="surface-feature" id="simulation-feature">
+            <div class="activity-heading">
+              <span class="feature-label">动态模拟</span
+              ><span id="activity-state">活动演变</span>
+            </div>
+            <h2 id="feature-title"></h2>
+            <p id="feature-description"></p>
+            <div class="activity-controls">
+              <button id="event-trigger" class="event-button">
+                <i data-lucide="zap"></i><span id="event-label">模拟活动</span>
+              </button>
+              <button
+                id="rotation-toggle"
+                class="icon-button"
+                aria-label="固定自转"
+                aria-pressed="false"
+                data-tip="固定自转"
+              >
+                <i data-lucide="crosshair"></i>
+              </button>
+              <select id="activity-rate" aria-label="活动速度" title="活动速度">
+                <option value="0.5">0.5×</option>
+                <option value="1" selected>1×</option>
+                <option value="2">2×</option>
+                <option value="4">4×</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="planet-info-actions">
+          <button class="primary-action" id="surface-button">
+            <i data-lucide="scan-search"></i><span>近距离观测</span
+            ><i data-lucide="arrow-up-right"></i>
+          </button>
+          <label class="layer-toggle" id="layer-control" hidden
+            ><span id="layer-label">显示云层</span
+            ><input type="checkbox" id="layer-toggle" checked /><span
+              class="switch-track"
+            ></span
+          ></label>
+        </div>
+      </aside>
+
+      <div id="observation-tools" class="observation-tools" hidden>
+        <label id="family-picker" class="family-picker" hidden>
+          <i data-lucide="orbit"></i>
+          <select id="family-select" aria-label="所属系统与卫星"></select>
+        </label>
+        <label class="landmark-picker" hidden>
+          <i data-lucide="map-pin"></i>
+          <select id="landmark-select" aria-label="选择地标">
+            <option value="">选择地标</option>
+          </select>
+        </label>
+        <button
+          id="landmark-clear"
+          class="icon-button"
+          aria-label="退出地标观测"
+          data-tip="退出地标观测"
+          hidden
+        >
+          <i data-lucide="x"></i>
+        </button>
+        <button
+          id="night-view"
+          class="icon-button"
+          aria-label="观测夜侧"
+          data-tip="观测夜侧"
+          hidden
+        >
+          <i data-lucide="sun-moon"></i>
+        </button>
+        <label id="night-control" class="detail-toggle" title="城市夜光" hidden
+          ><input
+            id="night-toggle"
+            type="checkbox"
+            checked
+            aria-label="城市夜光" /><span><i data-lucide="moon-star"></i></span
+        ></label>
+        <label id="shadow-control" class="detail-toggle" title="云层投影" hidden
+          ><input
+            id="shadow-toggle"
+            type="checkbox"
+            checked
+            aria-label="云层投影" /><span><i data-lucide="layers"></i></span
+        ></label>
+      </div>
+
+      <div id="focus-caption" class="focus-caption" hidden>
+        <span class="caption-line"></span>
+        <div>
+          <span id="caption-title"></span><small id="caption-detail"></small>
+        </div>
+      </div>
+
+      <div class="scene-toolbar" role="toolbar" aria-label="场景控制">
+        <button
+          class="icon-button active"
+          id="activity-toggle"
+          aria-label="动态活动"
+          aria-pressed="true"
+          data-tip="动态活动"
+        >
+          <i data-lucide="waves"></i>
+        </button>
+        <button
+          class="icon-button active"
+          id="orbit-toggle"
+          aria-label="显示轨道"
+          aria-pressed="true"
+          data-tip="显示轨道"
+        >
+          <i data-lucide="orbit"></i>
+        </button>
+        <button
+          class="icon-button active"
+          id="label-toggle"
+          aria-label="显示名称"
+          aria-pressed="true"
+          data-tip="显示名称"
+        >
+          <i data-lucide="tags"></i>
+        </button>
+        <span class="toolbar-divider"></span>
+        <button
+          class="icon-button"
+          id="zoom-in"
+          aria-label="放大"
+          data-tip="放大"
+        >
+          <i data-lucide="plus"></i>
+        </button>
+        <button
+          class="icon-button"
+          id="zoom-out"
+          aria-label="缩小"
+          data-tip="缩小"
+        >
+          <i data-lucide="minus"></i>
+        </button>
+        <button
+          class="icon-button"
+          id="reset-camera"
+          aria-label="重置视角"
+          data-tip="重置视角"
+        >
+          <i data-lucide="scan"></i>
+        </button>
+      </div>
+
+      <div class="observation-status">
+        <span class="status-dot"></span
+        ><span id="view-status">日心轨道视图</span
+        ><span class="status-separator">/</span
+        ><span id="resolution-status">距离与大小为示意比例</span>
+      </div>
+
+      <footer class="explorer-bottom">
+        <div class="timeline">
+          <div class="timeline-title">
+            <select id="catalog-filter" aria-label="天体分类">
+              <option value="planets">太阳与行星</option>
+              <option value="moons">天然卫星</option>
+              <option value="others">其它天体</option></select
+            ><small id="body-count">22 个可探索天体</small>
+          </div>
+          <div class="time-controls">
+            <button
+              class="icon-button"
+              id="play-toggle"
+              aria-label="暂停运动"
+              aria-pressed="false"
+              data-tip="暂停运动"
+            >
+              <i data-lucide="pause"></i></button
+            ><label for="time-speed">轨道流速</label
+            ><input
+              id="time-speed"
+              type="range"
+              min="0"
+              max="4"
+              step="1"
+              value="1"
+              aria-label="时间流速"
+            /><output id="speed-value">1×</output
+            ><time id="simulation-date"></time>
+          </div>
+        </div>
+        <nav class="planet-dock" id="planet-dock" aria-label="选择天体"></nav>
+        <div class="bottom-meta">
+          <span>在星辰之间，发现我们的世界。</span
+          ><span>SOLAR ATLAS <b>·</b> 2026</span>
+        </div>
+      </footer>
+
+      <section
+        class="atlas-panel"
+        id="atlas-panel"
+        hidden
+        aria-labelledby="atlas-title"
+      >
+        <div class="atlas-heading">
+          <div>
+            <span class="eyebrow">THE SOLAR COLLECTION</span>
+            <h1 id="atlas-title">天体图鉴</h1>
+          </div>
+          <span id="atlas-count" role="status">22 个天体</span>
+        </div>
+        <div class="atlas-filters">
+          <input
+            id="atlas-search"
+            type="search"
+            aria-label="搜索天体"
+            placeholder="搜索天体"
+            autocomplete="off"
+          />
+          <select id="atlas-filter" aria-label="图鉴分类">
+            <option value="all">全部天体</option>
+            <option value="planets">太阳与行星</option>
+            <option value="moons">天然卫星</option>
+            <option value="others">其它天体</option>
+          </select>
+        </div>
+        <div class="atlas-grid" id="atlas-grid"></div>
+        <p id="atlas-empty" class="atlas-empty" hidden>没有匹配的天体</p>
+      </section>
+
+      <dialog id="credits-dialog">
+        <button
+          class="icon-button dialog-close"
+          id="close-credits"
+          aria-label="关闭"
+        >
+          <i data-lucide="x"></i>
+        </button>
+        <span class="eyebrow">ABOUT THE ATLAS</span>
+        <h2>关于星际图鉴</h2>
+        <p>
+          行星资料参考
+          <a
+            href="https://science.nasa.gov/solar-system/planets/"
+            target="_blank"
+            rel="noreferrer"
+            >NASA Science</a
+          >。位置使用
+          <a
+            href="https://github.com/cosinekitty/astronomy"
+            target="_blank"
+            rel="noreferrer"
+            >Astronomy Engine</a
+          >
+          计算八大行星与冥王星的日心方位。场景采用展示比例，压缩轨道距离并放大天体；资料中的公里和 AU 为实际物理数据。轨道线为示意圆轨道，并非精密轨道预报。
+        </p>
+        <p>
+          半径与平均轨道尺寸参考
+          <a href="https://ssd.jpl.nasa.gov/planets/phys_par.html" target="_blank" rel="noreferrer">JPL 行星物理参数</a>、
+          <a href="https://ssd.jpl.nasa.gov/sats/phys_par/" target="_blank" rel="noreferrer">卫星物理参数</a>与
+          <a href="https://ssd.jpl.nasa.gov/sats/elem/" target="_blank" rel="noreferrer">平均轨道根数</a>。
+          谷神星、灶神星和卫星仍采用倾斜圆轨道近似，不能用于确定它们的实际方位。卫星使用独立的演示时间，右下角日期对应日心位置。地球卫星观测模式使用当前时间对齐地表与日照，其它自转、风暴、喷发与大气厚度仍为视觉模拟。非球形天体仅匹配平均体积，外形为近似椭球。
+        </p>
+        <p>
+          纹理由
+          <a
+            href="https://www.solarsystemscope.com/textures/"
+            target="_blank"
+            rel="noreferrer"
+            >Solar System Scope</a
+          >
+          提供，基于航天影像制作，采用
+          <a
+            href="https://creativecommons.org/licenses/by/4.0/"
+            target="_blank"
+            rel="noreferrer"
+            >CC BY 4.0</a
+          >
+          许可。地图有色彩调整与局部补绘，地形明暗包含示意处理；近景为球面地图，并非可登陆的三维地形。
+        </p>
+        <p>
+          新增卫星地图来自
+          <a
+            href="https://space.jpl.nasa.gov/tmaps/"
+            target="_blank"
+            rel="noreferrer"
+            >NASA/JPL Solar System Simulator</a
+          >，土卫六为雾霾外观示意。 谷神星、灶神星与冥卫一地图提取自
+          <a
+            href="https://science.nasa.gov/3d-resources/"
+            target="_blank"
+            rel="noreferrer"
+            >NASA VTAD 三维资源</a
+          >。 冥王星采用
+          <a
+            href="https://science.nasa.gov/resource/pluto-3d-model/"
+            target="_blank"
+            rel="noreferrer"
+            >NASA VTAD 球面地图</a
+          >，土卫二采用
+          <a
+            href="https://science.nasa.gov/resource/map-of-enceladus-december-2011-unannotated/"
+            target="_blank"
+            rel="noreferrer"
+            >卡西尼号无标注地图</a
+          >。 冥王星与冥卫一缺测区域保留 NASA
+          模型中的低细节填色，不代表实测地貌。原始地图的拼接差异予以保留。火卫一与灶神星的外形为近似椭球；火山热点和南极喷流为现象示意，不代表实际发生的位置与时刻。
+        </p>
+        <p>
+          木星、土星、天王星与海王星没有可供登陆的固体表面，近景展示可见大气。金星地表采用雷达地形着色示意。
+        </p>
+        <p>
+          地球“卫星观测”采用 EUMETSAT 全球红外拼接数据（CC BY 4.0），每小时检查更新，源数据通常每 3 小时一帧。红外云系估计对低云和冷地表存在误差，极区与部分拼接区域缺测，空白不表示晴空。云层厚度和过渡为展示效果。其余云流、风暴、雷电、尘埃、太阳喷发和光环粒子为程序模拟，不同天体的演变速度不可直接作物理比较。
+        </p>
+        <p>
+          地球夜光来自
+          <a
+            href="https://science.nasa.gov/earth/earth-observatory/earth-at-night/maps/"
+            target="_blank"
+            rel="noreferrer"
+            >NASA Earth Observatory / Black Marble</a
+          >
+          的 2016 年全球合成图（3600 ×
+          1800），不是实时城市灯光。地球与土星主光取太阳方向，云影和环影为几何近似，仍保留展示补光；地球地标观测时会增强补光以辨认地形。
+        </p>
+        <p>
+          火星地标坐标参考
+          <a
+            href="https://planetarynames.wr.usgs.gov/"
+            target="_blank"
+            rel="noreferrer"
+            >IAU / USGS 行星地名录</a
+          >。地标对应球面地图，不表示已加载局部三维地形。
+        </p>
+        <span class="credits-signature">星际图鉴 / SOLAR ATLAS</span>
+      </dialog>
+
+      <div id="loading-screen" class="loading-screen">
+        <i data-lucide="orbit"></i><span>正在抵达太阳系</span>
+        <div class="loading-track"><div id="loading-progress"></div></div>
+        <small id="loading-text">准备星球纹理</small>
+      </div>
+      <div id="error-screen" class="error-screen" hidden>
+        <i data-lucide="orbit"></i>
+        <h1>星空暂时无法显示</h1>
+        <p id="error-message"></p>
+        <button class="primary-action" id="reload-button">重新加载</button>
+      </div>
+      <div class="toast" id="toast" role="status" hidden></div>
+      <div class="sr-only" id="selection-announcement" aria-live="polite"></div>
+    </main>
+    <script type="module" src="./src/main.js"></script>
+  </body>
+</html>

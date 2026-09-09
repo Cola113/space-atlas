@@ -1,0 +1,30 @@
+#scene-navigation { position: relative; flex: 0 0 auto; pointer-events: auto; }
+#scene-switcher { display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 0; border: 0; background: none; color: #e2ebe7; font-family: inherit; text-align: left; cursor: pointer; letter-spacing: 0; }
+#scene-switcher:hover { color: #bdebd9; }
+#scene-switcher:focus-visible { outline: 2px solid #bdebd9; outline-offset: 6px; border-radius: 4px; }
+.space-atlas-mark svg { display: block; width: 28px; height: 28px; stroke-width: 1.5; }
+.space-atlas-title { font-size: 18px; font-weight: 500; line-height: 1.3; letter-spacing: 0; white-space: nowrap; }
+.space-atlas-title small { display: block; font-size: 8px; color: #8caaa1; line-height: 1.5; margin-top: 5px; font-weight: 400; letter-spacing: 0; }
+.space-atlas-chevron svg { display: block; width: 14px; height: 14px; color: #8a9a94; }
+#scene-menu { position: fixed; inset: auto; margin: 0; padding: 12px; width: min(292px, calc(100vw - 24px)); box-sizing: border-box; border: 1px solid #35463e; border-radius: 8px; background: #0d1513f7; color: #e2ebe7; box-shadow: 0 16px 48px #0008; backdrop-filter: blur(20px); overflow: auto; font: 14px/1.4 system-ui, sans-serif; letter-spacing: 0; }
+#scene-menu::backdrop { background: #0003; }
+.space-atlas-menu-title { padding: 7px 10px 12px; font-size: 11px; color: #91a79d; }
+#scene-menu a { display: flex; align-items: center; gap: 14px; padding: 13px 10px; min-height: 64px; box-sizing: border-box; text-decoration: none; color: #d1ded7; border-radius: 5px; letter-spacing: 0; }
+#scene-menu a:hover, #scene-menu a:focus-visible { background: #26392f; outline: none; }
+#scene-menu a[aria-current] { background: #bce6d50c; color: #bce6d5; }
+#scene-menu a > span:nth-child(2) { flex: 1; }
+#scene-menu a small { display: block; margin-top: 5px; color: #82998d; font-size: 9px; letter-spacing: 0; }
+#scene-menu svg { width: 19px; height: 19px; flex: none; stroke-width: 1.5; }
+#scene-menu .space-atlas-destination-icon svg { display: block; width: 28px; height: 28px; }
+html[data-scene="black-hole"] .brand-name { letter-spacing: 0; }
+html[data-scene-ready="true"] #universe { animation: atlas-fade-in 380ms ease-out both; }
+@keyframes atlas-fade-in { from { opacity: 0; } }
+@media (max-width: 760px), (max-height: 540px) {
+  #scene-switcher { gap: 8px; min-height: 38px; }
+  .space-atlas-title { font-size: 15px; }
+  .space-atlas-title small { font-size: 7px; margin-top: 4px; }
+  .space-atlas-mark svg { width: 24px; height: 24px; }
+  .space-atlas-chevron svg { width: 12px; height: 12px; }
+}
+@media (max-width: 380px) { #scene-switcher { gap: 6px; } .space-atlas-mark { display: none; } }
+@media (prefers-reduced-motion: reduce) { html[data-scene-ready="true"] #universe { animation: none; } }

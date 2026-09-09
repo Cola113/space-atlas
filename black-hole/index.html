@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#07090b" />
+    <meta name="description" content="临界 · 黑洞观测站。一座可以自由探索的 Schwarzschild 黑洞。" />
+    <title>星际图鉴 · 黑洞</title>
+    <link rel="icon" href="data:," />
+  </head>
+  <body>
+    <main id="app">
+      <canvas id="universe" aria-label="可交互的三维黑洞场景" tabindex="0"></canvas>
+      <div id="loading" role="status"><span class="loading-ring"></span><p>正在建立观测场</p></div>
+      <div id="interface"></div>
+      <div id="notice" role="status" aria-live="polite" hidden></div>
+      <div id="fatal" role="alert" hidden></div>
+    </main>
+    <script type="module" src="./src/main.ts"></script>
+  </body>
+</html>
