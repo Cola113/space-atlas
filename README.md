@@ -2,7 +2,7 @@
 
 可交互的太阳系与黑洞观测站。首页直接进入太阳系，点击左上角的「星际图鉴」切换目的地。两个场景保留各自的三维渲染、相机和观测工具，切换时保存当前标签页的观察位置及设置。
 
-线上地址：[space-atlas-pi.vercel.app](https://space-atlas-pi.vercel.app/)。Vercel 项目已连接本仓库，`main` 分支更新后会自动触发生产部署。
+线上地址：[space.colafun.xyz](https://space.colafun.xyz/)，备用地址：[space-atlas-pi.vercel.app](https://space-atlas-pi.vercel.app/)。Vercel 项目已连接本仓库，`main` 分支更新后会自动触发生产部署。
 
 ## 运行
 
