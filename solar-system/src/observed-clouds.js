@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { CLOUD_BLEND_SECONDS, cloudAge, validCloudFrame } from "./cloud-policy.js";
+import { CLOUD_BLEND_SECONDS, cloudAge, validCloudFrame, cloudImageUrl } from "./cloud-policy.js";
 
 const CACHE_NAME = "solar-atlas-clouds-v1";
 const $ = id => document.getElementById(id);
@@ -110,7 +110,7 @@ export function createObservedClouds({ dynamics, isPaused, reducedMotion, onChan
       if (frame && !validCloudFrame(frame)) throw new Error("云图元数据无效");
       const newest = pending?.frame || current?.frame;
       if (frame && (!newest || Date.parse(frame.observedAt) > Date.parse(newest.observedAt))) {
-        const image = await fetch(`/api/clouds/images/${frame.file}`, { signal: AbortSignal.timeout(20000) });
+        const image = await fetch(cloudImageUrl(frame), { signal: AbortSignal.timeout(45000) });
         if (!image.ok || !image.headers.get("content-type")?.startsWith("image/png")) throw new Error("云图加载失败");
         const blob = await image.blob();
         if (blob.size > 12 * 1024 * 1024) throw new Error("云图过大");

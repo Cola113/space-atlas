@@ -94,6 +94,7 @@ async function download(url, fetcher) {
 }
 
 export function createCloudService({ directory, fetcher = fetch, now = Date.now } = {}) {
+  const pendingImages = new Map();
   let frame = null, checkedAt = null, lastError = null, running = null, timer = null;
   let nextCheck = 0, initializing = null;
   const initialize = () => initializing ??= (async () => {
@@ -187,7 +188,24 @@ export function createCloudService({ directory, fetcher = fetch, now = Date.now 
       return json({ error: "未找到接口" }, 404);
     } catch { return json({ error: "云图缓存暂不可用" }, 503); }
   }
-  return { refresh, snapshot, middleware,
+  async function image(file, observedAt) {
+    if (!/^clouds-[a-f0-9]{20}\.png$/.test(file)) return null;
+    try { return await readFile(join(directory, file)); } catch { /* Another serverless instance may own the original cache. */ }
+    const time = Date.parse(observedAt);
+    if (!Number.isFinite(time) || time < Date.UTC(2021, 0, 1) || time > now() + 300000) return null;
+    if (!pendingImages.has(file)) {
+      const recovery = (async () => {
+        const stamp = new Date(time).toISOString();
+        const { png } = await makeCloudTexture(await download(imageRequest(stamp), fetcher));
+        const hash = createHash("sha256").update(stamp).update(png).digest("hex").slice(0, 20);
+        // Never substitute a newer image at an immutable old image URL.
+        return file === `clouds-${hash}.png` ? png : null;
+      })().finally(() => pendingImages.delete(file));
+      pendingImages.set(file, recovery);
+    }
+    return pendingImages.get(file);
+  }
+  return { refresh, snapshot, middleware, image,
     async start() {
       await initialize();
       void refresh();

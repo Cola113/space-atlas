@@ -13,3 +13,12 @@ export function cloudAge(frame, now = Date.now()) {
   const ageMs = Math.max(0, now - Date.parse(frame.observedAt));
   return { ageMs, stale: ageMs > CLOUD_STALE_MS };
 }
+
+export function cloudImageUrl(frame) {
+  const path = `/api/clouds/images/${frame.file}`;
+  if (!frame.imageUrl) return path;
+  const url = new URL(frame.imageUrl, "https://cloud-cache.invalid");
+  if (url.origin !== "https://cloud-cache.invalid" || url.pathname !== path)
+    throw new Error("云图地址无效");
+  return url.pathname + url.search;
+}
