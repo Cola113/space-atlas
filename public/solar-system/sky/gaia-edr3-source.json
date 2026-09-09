@@ -1,0 +1,10 @@
+{
+  "source": "https://www.esa.int/var/esa/storage/images/esa_multimedia/images/2020/12/the_colour_of_the_sky_from_gaia_s_early_data_release_32/22358132-1-eng-GB/The_colour_of_the_sky_from_Gaia_s_Early_Data_Release_3.png",
+  "sourceSha256": "68fef2ee355015f84a43105bbf296f5a8d8b38d2fe8fe1a068ba1402e9ce5550",
+  "page": "https://www.esa.int/ESA_Multimedia/Images/2020/12/The_colour_of_the_sky_from_Gaia_s_Early_Data_Release_32",
+  "credit": "ESA/Gaia/DPAC; acknowledgement: A. Moitinho.",
+  "license": "CC BY-SA 3.0 IGO",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0/igo/",
+  "projection": "Galactic equirectangular; centre l=0,b=0; longitude increases to the left; north up",
+  "modifications": "2048x1024 median filter, 1024x512 resize, Gaussian blur, reduced saturation, WebP compression; display brightness further reduced in shader."
+}

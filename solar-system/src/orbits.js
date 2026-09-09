@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import { Ecliptic, HelioVector } from "astronomy-engine";
+import { DISPLAY_LONGITUDE_OFFSET } from "./sky-coordinates.js";
 
 const TAU = Math.PI * 2;
 const axis = new THREE.Vector3(0, 0, 1);
@@ -18,7 +19,7 @@ export function updatePrimaryOrbits(objects, date) {
     if (!body.orbit || body.parent) continue;
     if (body.body) {
       const vector = Ecliptic(HelioVector(body.body, date));
-      const longitude = THREE.MathUtils.degToRad(vector.elon) - 2;
+      const longitude = THREE.MathUtils.degToRad(vector.elon) - DISPLAY_LONGITUDE_OFFSET;
       const latitude = THREE.MathUtils.degToRad(vector.elat) * 0.3;
       body.root.position.set(
         Math.cos(longitude) * Math.cos(latitude) * body.orbit,

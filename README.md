@@ -4,7 +4,7 @@
 
 线上地址：[space.colafun.xyz](https://space.colafun.xyz/)，备用地址：[space-atlas-pi.vercel.app](https://space-atlas-pi.vercel.app/)。Vercel 项目已连接本仓库，`main` 分支更新后会自动触发生产部署。
 
-首次访问时，太阳系默认隐藏星体名称、以 0.5× 轨道流速运行，地球云层使用动态模拟；可手动切换为卫星观测。背景采用细小的程序星点，突出实际天体。黑洞默认开启镜头巡游，拖动或缩放即可接管镜头；系统开启减少动态效果时，初始运动暂停。当前标签页中已保存的观察状态优先恢复。
+首次访问时，太阳系默认隐藏星体名称、以 0.5× 轨道流速运行，地球云层使用动态模拟；可手动切换为卫星观测。背景采用 HYG 真实亮星与经过压暗的 Gaia 银河图，星点保持细小，突出实际天体。黑洞默认开启镜头巡游，拖动或缩放即可接管镜头；系统开启减少动态效果时，初始运动暂停。当前标签页中已保存的观察状态优先恢复。
 
 ## 运行
 
@@ -40,7 +40,7 @@ solar-system/server/       EUMETSAT 云图处理与缓存
 black-hole/src/            Schwarzschild 光线积分、吸积盘、截图与画质
 server/                    同域静态网页与云图 API 服务
 public/shared/             黑洞使用的合成星空纹理
-public/solar-system/       行星与卫星纹理
+public/solar-system/       行星与卫星纹理、HYG 亮星与 Gaia 银河图
 public/licenses/           第三方素材及库许可证
 tests/                     平台状态与正式服务测试
 scripts/                   星空生成和浏览器集成验证
@@ -58,6 +58,6 @@ scripts/                   星空生成和浏览器集成验证
 
 ## 数据与边界
 
-太阳系轨道间距和天体大小采用展示比例，动态活动部分为示意；卫星云图带有来源、时间与缺测说明。黑洞使用非旋转 Schwarzschild 模型，不是某个已观测黑洞的实时画面。背景是固定种子生成的合成星空，不是真实星表。
+太阳系轨道间距和天体大小采用展示比例，动态活动部分为示意；卫星云图带有来源、时间与缺测说明。太阳系背景使用 HYG v4.1 的 8,920 颗亮星（CC BY-SA 4.0）与滤波后的 Gaia EDR3 全天图（CC BY-SA 3.0 IGO），坐标随模拟日期转换，亮度与星点尺寸为显示近似。完整数据、许可和修改说明见 [星空数据](public/solar-system/sky/README.md)，可用 `node scripts/build-solar-sky.mjs` 重建，原始下载仅缓存到忽略提交的 `test-results/sky-sources/`。黑洞使用非旋转 Schwarzschild 模型，其背景仍为固定种子的合成星空，不是某个已观测黑洞的实时画面。
 
 完整科学说明与素材来源见 [太阳系说明](solar-system/README.md) 和 [黑洞说明](black-hole/README.md)。行星贴图含 Solar System Scope 的 CC BY 4.0 素材，以及 NASA/JPL 等影像加工；详细作者、来源链接与修改方式均保留。黑洞星空纹理可通过 `node scripts/generate-stars.mjs` 重建。宣传视频、录制帧、临时日志、云图缓存与凭据不属于此应用源码。

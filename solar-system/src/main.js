@@ -44,6 +44,7 @@ import {
 import { physicalData } from "./physical-scale.js";
 import { createObservedClouds } from "./observed-clouds.js";
 import { alignObservedEarth, subsolarPoint } from "./earth-observation.js";
+import { createStarfield } from "./starfield.js";
 
 const icons = {
   Orbit,
@@ -103,7 +104,7 @@ let scene,
   camera,
   renderer,
   controls,
-  stars,
+  starfield,
   belt,
   sunLight,
   keyLight,
@@ -206,6 +207,7 @@ function disposeScene() {
   disposed = true;
   contextLost = true;
   observedClouds?.dispose();
+  starfield?.dispose();
   controls?.dispose();
   dynamics?.dispose();
   const textures = new Set(highTextures.values());
@@ -430,54 +432,13 @@ function addAtmosphere(group, radius, color, strength = 0.5) {
 }
 
 function createStars() {
+  starfield = createStarfield(renderer);
+  scene.add(starfield.group);
   let seed = 7813;
   const random = () => {
     seed = (seed * 16807) % 2147483647;
     return (seed - 1) / 2147483646;
   };
-  const positions = [],
-    colors = [];
-  for (let index = 0; index < 6300; index++) {
-    const z = random() * 2 - 1;
-    const angle = random() * Math.PI * 2;
-    const radial = Math.sqrt(1 - z * z);
-    positions.push(
-      Math.cos(angle) * radial * 1100,
-      z * 1100,
-      Math.sin(angle) * radial * 1100,
-    );
-    const intensity = 0.16 + Math.pow(random(), 5) * 0.65;
-    const tint =
-      index % 9 === 0
-        ? [1, 0.81, 0.59]
-        : index % 11 === 0
-          ? [0.68, 0.82, 1]
-          : [0.84, 0.91, 0.88];
-    colors.push(...tint.map((channel) => channel * intensity));
-  }
-  const geometry = new THREE.BufferGeometry();
-  geometry.setAttribute(
-    "position",
-    new THREE.Float32BufferAttribute(positions, 3),
-  );
-  geometry.setAttribute("color", new THREE.Float32BufferAttribute(colors, 3));
-  stars = new THREE.Points(
-    geometry,
-    new THREE.PointsMaterial({
-      size: 1.4,
-      sizeAttenuation: false,
-      vertexColors: true,
-      transparent: true,
-      opacity: 0.85,
-      depthWrite: false,
-    }),
-  );
-  stars.name = "Distant point stars";
-  stars.renderOrder = -1000;
-  stars.frustumCulled = false;
-  stars.userData.mode = "points";
-  stars.userData.textureWidth = 0;
-  scene.add(stars);
   const beltBodies = bodies.filter((body) => ["vesta", "ceres"].includes(body.id));
   const beltInner = Math.min(...beltBodies.map((body) => body.orbit - body.radius)) - 0.35;
   const beltOuter = Math.max(...beltBodies.map((body) => body.orbit + body.radius)) + 0.35;
@@ -1796,6 +1757,26 @@ function updateLabels() {
   }
 }
 
+function brightSkyOccupancy() {
+  let occupancy = 0;
+  const sun = objects.get("sun").root.position;
+  for (const body of objects.values()) {
+    if (!body.root.visible || body.parent) continue;
+    const view = body.root.position.clone().applyMatrix4(camera.matrixWorldInverse);
+    if (view.z >= -body.radius) continue;
+    const radius = body.radius * height / (-2 * view.z * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)));
+    if (radius < 5) continue;
+    const center = body.root.position.clone().project(camera);
+    const x = (center.x + 1) * width / 2, y = (1 - center.y) * height / 2;
+    const visibleWidth = Math.max(0, Math.min(width, x + radius) - Math.max(0, x - radius));
+    const visibleHeight = Math.max(0, Math.min(height, y + radius) - Math.max(0, y - radius));
+    const phase = body.id === "sun" ? 1 : 0.5 + 0.5 * sun.clone().sub(body.root.position).normalize()
+      .dot(camera.position.clone().sub(body.root.position).normalize());
+    occupancy += visibleWidth * visibleHeight * Math.PI / 4 / (width * height) * phase;
+  }
+  return Math.min(1, occupancy);
+}
+
 function animate(now) {
   if (contextLost) return;
   requestAnimationFrame(animate);
@@ -1872,7 +1853,8 @@ function animate(now) {
   });
   objects.get("sun").root.getWorldPosition(sunLight.position);
   dynamics.updateLighting(state);
-  stars.position.copy(camera.position);
+  camera.updateMatrixWorld();
+  starfield.update({ camera, date: state.date, dt, brightOccupancy: brightSkyOccupancy() });
   renderer.render(scene, camera);
   updateLabels();
   const reserved = [
@@ -1995,10 +1977,7 @@ async function init() {
         subsolarPoint: observedSun,
         orbits: state.orbits,
         labels: state.labels,
-        starfield: {
-          mode: stars.userData.mode,
-          textureWidth: stars.userData.textureWidth,
-        },
+        starfield: starfield.snapshot(),
         atlas: state.atlas,
         lockSpin: state.lockSpin,
         nightLights: state.nightLights,
