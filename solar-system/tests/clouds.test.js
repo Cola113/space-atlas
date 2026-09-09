@@ -7,7 +7,8 @@ import { createServer } from "node:http";
 import sharp from "sharp";
 import * as THREE from "three";
 import { createCloudService, makeCloudTexture, observationTime, imageRequest } from "../server/cloud-service.js";
-import { cloudAge, CLOUD_CHECK_MS } from "../src/cloud-policy.js";
+import { cloudAge, cloudImageUrl, CLOUD_CHECK_MS } from "../src/cloud-policy.js";
+import { createCloudHandler } from "../../server/vercel-clouds.js";
 import { alignObservedEarth, subsolarPoint } from "../src/earth-observation.js";
 import { updatePrimaryOrbits } from "../src/orbits.js";
 
@@ -24,6 +25,57 @@ for (const [x, value, alpha] of [[100,40,255],[1000,200,255],[1500,255,255],[170
 }
 const fixture = await sharp(raw, { raw: { width, height, channels: 4 } }).png().toBuffer();
 const xml = time => `<WMS_Capabilities><Layer><Name>mumi:worldcloudmap_ir108</Name><Dimension name="time" default="${time}"/></Layer></WMS_Capabilities>`;
+
+test("serverless cold requests finish refresh and images recover across isolated instances", async t => {
+  const directory = await mkdtemp(join(tmpdir(), "atlas-vercel-test-"));
+  const time = "2026-09-08T15:00:00Z";
+  const now = () => Date.parse("2026-09-08T17:00:00Z");
+  let imageCalls = 0;
+  const fetcher = async url => {
+    if (url.includes("GetCapabilities")) return new Response(xml(time));
+    imageCalls++;
+    assert.equal(new URL(url).searchParams.get("time"), new Date(time).toISOString());
+    return new Response(fixture);
+  };
+  const first = createCloudService({ directory: join(directory, "first"), fetcher, now });
+  const second = createCloudService({ directory: join(directory, "second"), fetcher, now });
+  const http = createServer(createCloudHandler(first));
+  await new Promise(resolve => http.listen(0, "127.0.0.1", resolve));
+  t.after(async () => {
+    await new Promise(resolve => http.close(resolve));
+    first.stop(); second.stop();
+    const target = resolve(directory);
+    assert.ok(target.startsWith(resolve(tmpdir()) + sep) && target.includes("atlas-vercel-test-"));
+    await rm(target, { recursive: true, force: true });
+  });
+  const base = `http://127.0.0.1:${http.address().port}`;
+  const response = await fetch(base + "/api/clouds");
+  const status = await response.json();
+  assert.ok(status.frame, "Cold request must not return before its refresh finishes");
+  assert.equal(status.refreshing, false);
+  assert.match(response.headers.get("vercel-cdn-cache-control"), /max-age=3600/);
+  assert.equal(status.frame.observedAt, new Date(time).toISOString());
+  const file = status.frame.file;
+  assert.equal(cloudImageUrl(status.frame), status.frame.imageUrl);
+  const original = await readFile(join(directory, "first", file));
+  imageCalls = 0;
+  const recovered = await Promise.all([second.image(file, status.frame.observedAt), second.image(file, status.frame.observedAt)]);
+  assert.equal(imageCalls, 1);
+  assert.deepEqual(recovered[0], original);
+  assert.deepEqual(recovered[1], original);
+  assert.equal(second.snapshot().frame, null);
+  assert.equal(await second.image(file, "invalid"), null);
+  assert.equal(await second.image("clouds-00000000000000000000.png", status.frame.observedAt), null);
+  const image = await fetch(base + status.frame.imageUrl);
+  assert.equal(image.status, 200);
+  const rewritten = new URL(base + "/api/clouds");
+  rewritten.searchParams.set("route", `images/${file}`);
+  rewritten.searchParams.set("observedAt", status.frame.observedAt);
+  assert.equal((await fetch(rewritten)).status, 200);
+  assert.equal((await fetch(base + "/api/clouds?route=refresh", { method: "POST" })).status, 200);
+  assert.equal((await fetch(base + "/api/clouds?route=invalid")).status, 404);
+  assert.throws(() => cloudImageUrl({ ...status.frame, imageUrl: "https://example.com/cloud.png" }));
+});
 
 test("cloud texture preserves coordinates and masks warm/saturated/unobserved samples", async () => {
   const { png, coveragePercent } = await makeCloudTexture(fixture);

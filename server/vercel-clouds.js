@@ -11,9 +11,8 @@ export function createCloudHandler(service) {
     };
     try {
       if ((path === '/api/clouds' && req.method === 'GET') || (path === '/api/clouds/refresh' && req.method === 'POST')) {
-        // Return the last known state quickly. Refresh work continues on this warm
-        // function instance and is picked up by the next browser poll.
-        void service.refresh(req.method === 'POST');
+        await service.refresh(req.method === 'POST');
+        // Read the state after refresh() has cleared its in-flight guard.
         const snapshot = service.snapshot();
         const frame = snapshot.frame && { ...snapshot.frame,
           imageUrl: `${snapshot.frame.imageUrl}?observedAt=${encodeURIComponent(snapshot.frame.observedAt)}` };
