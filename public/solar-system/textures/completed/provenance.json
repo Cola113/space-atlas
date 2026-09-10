@@ -1,0 +1,269 @@
+{
+  "version": 1,
+  "date": "2026-09-10",
+  "provider": "Bafang API",
+  "model": "gpt-image-2",
+  "requestedDimensions": [
+    4096,
+    2048
+  ],
+  "returnedDimensions": [
+    3840,
+    1920
+  ],
+  "note": "AI artistic completion for visualization. Protected pixels refer to the explicitly resampled source inside reviewed editing masks. Masks are not certified scientific coverage maps. Titan is wholly illustrative atmospheric haze.",
+  "bodies": [
+    {
+      "id": "charon",
+      "name": "冥卫一",
+      "base": "charon-1920.webp",
+      "high": "charon-3840.webp",
+      "originalSource": "2k_charon.jpg",
+      "originalDimensions": [
+        1264,
+        632
+      ],
+      "originalSourceSha256": "d839aeac21603c73410b83981bb33f6f0a744109f5816440c5349ca8bc097bd8",
+      "finalPixelSha256": "cd569de0eb7731e83ab98c2cf87d764be379f0e1c40ca3d74f4b027732ae4971",
+      "protectedPixelCount": 1479945,
+      "protectedMaxChannelChange": 0,
+      "protectedReferenceSha256": "874d3fd45349ab21659ba5ff4a1a8231062025d5bea33ee8301beac6df6e7d56",
+      "protectedResultSha256": "874d3fd45349ab21659ba5ff4a1a8231062025d5bea33ee8301beac6df6e7d56",
+      "seamAfter": {
+        "edge_mean_absolute_difference": 1.041319489479065,
+        "neighbor_mean_absolute_difference": 1.0343749523162842,
+        "edge_to_neighbor_ratio": 1.0067137479782104,
+        "sixteen_pixel_band_mean_difference": 4.4413628578186035
+      },
+      "policy": "Selected mapped central terrain and canyon are protected; the blurred perimeter and flat fill are artistic reconstruction. This selection is a visual editing mask, not a scientifically certified coverage map.",
+      "illustrative": false,
+      "baseBytes": 335588,
+      "highBytes": 6204332,
+      "export": "1920x960 lossy WebP overview; 3840x1920 lossless WebP detail, decoded RGB matches processed PNG exactly."
+    },
+    {
+      "id": "pluto",
+      "name": "冥王星",
+      "base": "pluto-1920.webp",
+      "high": "pluto-3840.webp",
+      "originalSource": "4k_pluto.jpg",
+      "originalDimensions": [
+        4096,
+        2048
+      ],
+      "originalSourceSha256": "3cee5c04151addf48aa5949cc541b1d061ff1058ad506a0a1f57395d78ce23b8",
+      "finalPixelSha256": "0c3e6fadc9a37da2d368bee8e1c618c0bfd0030b415123b3d39de9676ddf6a15",
+      "protectedPixelCount": 1573220,
+      "protectedMaxChannelChange": 0,
+      "protectedReferenceSha256": "7c25c4fe6dc110d8b457009fb9986843691da2f192128df7c3ac4b2319d79a62",
+      "protectedResultSha256": "7c25c4fe6dc110d8b457009fb9986843691da2f192128df7c3ac4b2319d79a62",
+      "seamAfter": {
+        "edge_mean_absolute_difference": 2.097395896911621,
+        "neighbor_mean_absolute_difference": 2.0883679389953613,
+        "edge_to_neighbor_ratio": 1.0043230056762695,
+        "sixteen_pixel_band_mean_difference": 8.509428977966309
+      },
+      "policy": "The clear central encounter hemisphere, heart-shaped feature and neighboring mapped terrain are protected. Blurred fill is artistically completed; original 4096-wide data is explicitly resampled to the returned output grid for comparison.",
+      "illustrative": false,
+      "baseBytes": 527802,
+      "highBytes": 8511972,
+      "export": "1920x960 lossy WebP overview; 3840x1920 lossless WebP detail, decoded RGB matches processed PNG exactly."
+    },
+    {
+      "id": "ganymede",
+      "name": "木卫三",
+      "base": "ganymede-1920.webp",
+      "high": "ganymede-3840.webp",
+      "originalSource": "2k_ganymede.jpg",
+      "originalDimensions": [
+        1440,
+        720
+      ],
+      "originalSourceSha256": "89b03ab207580953de5167d61987d86d5ab939896fb7f455d63da969d9ad7758",
+      "finalPixelSha256": "74d18e55c94cb8a540795be37aa24fe49f532b32a9d7ec20b4b10656a361bbc4",
+      "protectedPixelCount": 1594958,
+      "protectedMaxChannelChange": 0,
+      "protectedReferenceSha256": "cd4765b8f45277602771c587a82a8cb2b76cbfbc68bf23e67ab1d658171b2ff2",
+      "protectedResultSha256": "cd4765b8f45277602771c587a82a8cb2b76cbfbc68bf23e67ab1d658171b2ff2",
+      "seamAfter": {
+        "edge_mean_absolute_difference": 2.2840278148651123,
+        "neighbor_mean_absolute_difference": 2.2754340171813965,
+        "edge_to_neighbor_ratio": 1.0037767887115479,
+        "sixteen_pixel_band_mean_difference": 10.244596481323242
+      },
+      "policy": "Selected clear mosaic panels and recognizable central terrain are pixel-protected. Low-quality intervening panels and narrow perimeter repair bands are reconstructed. The mask is an editing decision, not a claim of missing observation coverage.",
+      "illustrative": false,
+      "baseBytes": 555608,
+      "highBytes": 7739596,
+      "export": "1920x960 lossy WebP overview; 3840x1920 lossless WebP detail, decoded RGB matches processed PNG exactly."
+    },
+    {
+      "id": "callisto",
+      "name": "木卫四",
+      "base": "callisto-1920.webp",
+      "high": "callisto-3840.webp",
+      "originalSource": "2k_callisto.jpg",
+      "originalDimensions": [
+        1440,
+        720
+      ],
+      "originalSourceSha256": "2a5f0d6afffc1b3055426468f0b129e9e9be399ad39df35b602f0793192e60f4",
+      "finalPixelSha256": "da2f9a9cee833c4dac11e3c77749a0d41bf689186346cc2e29415f4bbb7407fd",
+      "protectedPixelCount": 2774869,
+      "protectedMaxChannelChange": 0,
+      "protectedReferenceSha256": "1b5c94447c8eeb965a95f7c59707db684262f455f6a4a9e9e078911b9c5be36c",
+      "protectedResultSha256": "1b5c94447c8eeb965a95f7c59707db684262f455f6a4a9e9e078911b9c5be36c",
+      "seamAfter": {
+        "edge_mean_absolute_difference": 2.024305582046509,
+        "neighbor_mean_absolute_difference": 2.0171875953674316,
+        "edge_to_neighbor_ratio": 1.0035287141799927,
+        "sixteen_pixel_band_mean_difference": 8.335915565490723
+      },
+      "policy": "Clear central and right-hand cratered panels, including the ringed basin, are protected. Blurred bright strips and polar fill receive artistic completion.",
+      "illustrative": false,
+      "baseBytes": 548936,
+      "highBytes": 7010884,
+      "export": "1920x960 lossy WebP overview; 3840x1920 lossless WebP detail, decoded RGB matches processed PNG exactly."
+    },
+    {
+      "id": "europa",
+      "name": "木卫二",
+      "base": "europa-1920.webp",
+      "high": "europa-3840.webp",
+      "originalSource": "2k_europa.jpg",
+      "originalDimensions": [
+        1440,
+        720
+      ],
+      "originalSourceSha256": "a1774cf4d6aab90804fdaa35dfa8f2a59197ad0350cbc03abaa9ed70d80f426e",
+      "finalPixelSha256": "cf9c505bc18749d38f81f8f171ed31ee583ec6106889e1140714643f43e123f5",
+      "protectedPixelCount": 745500,
+      "protectedMaxChannelChange": 0,
+      "protectedReferenceSha256": "7ff72ef56c7ca2252823ef2527b2ee21ac5cccb3017169a7d1d17defd3fd6b91",
+      "protectedResultSha256": "7ff72ef56c7ca2252823ef2527b2ee21ac5cccb3017169a7d1d17defd3fd6b91",
+      "seamAfter": {
+        "edge_mean_absolute_difference": 1.998437523841858,
+        "neighbor_mean_absolute_difference": 2.0013887882232666,
+        "edge_to_neighbor_ratio": 0.9985253810882568,
+        "sixteen_pixel_band_mean_difference": 10.144715309143066
+      },
+      "policy": "Selected genuinely detailed left/right terrain is pixel-protected. The originally blurred center is not pixel-locked; its broad fracture layout is retained with a strong source-albedo anchor, and fine detail is artistic.",
+      "illustrative": false,
+      "baseBytes": 488482,
+      "highBytes": 8579874,
+      "export": "1920x960 lossy WebP overview; 3840x1920 lossless WebP detail, decoded RGB matches processed PNG exactly."
+    },
+    {
+      "id": "io",
+      "name": "木卫一",
+      "base": "io-1920.webp",
+      "high": "io-3840.webp",
+      "originalSource": "2k_io.jpg",
+      "originalDimensions": [
+        1440,
+        720
+      ],
+      "originalSourceSha256": "7ebc651bf202c1c44c11e57c0e8a27a28cb753cfe331e21f17a94a88bbd3766b",
+      "finalPixelSha256": "3a26dfde7b3d7a95f1f416a00d9def6f4ab7653386d9e40d7426b36da600508f",
+      "protectedPixelCount": 851543,
+      "protectedMaxChannelChange": 0,
+      "protectedReferenceSha256": "eb5c49f8ca97432b7c95cde89d090c09a6fe6a01dc6d94634bb684c19502ac3b",
+      "protectedResultSha256": "eb5c49f8ca97432b7c95cde89d090c09a6fe6a01dc6d94634bb684c19502ac3b",
+      "seamAfter": {
+        "edge_mean_absolute_difference": 1.0788193941116333,
+        "neighbor_mean_absolute_difference": 1.0865452289581299,
+        "edge_to_neighbor_ratio": 0.9928895235061646,
+        "sixteen_pixel_band_mean_difference": 5.0767903327941895
+      },
+      "policy": "The main reddish deposit, dark volcanic landmarks and selected clear sulfur/frost terrain are protected. Other low-resolution areas receive restrained synthetic detail; existing large color regions are retained through a low-frequency anchor.",
+      "illustrative": false,
+      "baseBytes": 353412,
+      "highBytes": 7682764,
+      "export": "1920x960 lossy WebP overview; 3840x1920 lossless WebP detail, decoded RGB matches processed PNG exactly."
+    },
+    {
+      "id": "phobos",
+      "name": "火卫一",
+      "base": "phobos-1920.webp",
+      "high": "phobos-3840.webp",
+      "originalSource": "2k_phobos.jpg",
+      "originalDimensions": [
+        1440,
+        720
+      ],
+      "originalSourceSha256": "8487d5b1c18c66297430d020ab9c713d8d492e77e5644743f198ce8f18962abd",
+      "finalPixelSha256": "cb37b77f25aadea2d2338602b13cdf37c480197e23814a4da888017e67b4a121",
+      "protectedPixelCount": 1706799,
+      "protectedMaxChannelChange": 0,
+      "protectedReferenceSha256": "dc34d3f89dc8c90d788e1d802e98566c0579c9429e20c530424d7fd07fe68a28",
+      "protectedResultSha256": "dc34d3f89dc8c90d788e1d802e98566c0579c9429e20c530424d7fd07fe68a28",
+      "seamAfter": {
+        "edge_mean_absolute_difference": 2.3057291507720947,
+        "neighbor_mean_absolute_difference": 2.316926956176758,
+        "edge_to_neighbor_ratio": 0.9951669573783875,
+        "sixteen_pixel_band_mean_difference": 8.501214981079102
+      },
+      "policy": "The large central-left crater and selected clear grooved/cratered terrain are protected. Low-resolution terrain and projection-edge repair bands are enhanced artistically; no claim of recovering measured topography.",
+      "illustrative": false,
+      "baseBytes": 478480,
+      "highBytes": 6777280,
+      "export": "1920x960 lossy WebP overview; 3840x1920 lossless WebP detail, decoded RGB matches processed PNG exactly."
+    },
+    {
+      "id": "titan",
+      "name": "土卫六",
+      "base": "titan-1920.webp",
+      "high": "titan-3840.webp",
+      "originalSource": "2k_titan.jpg",
+      "originalDimensions": [
+        720,
+        360
+      ],
+      "originalSourceSha256": "719ab3b17ca275ef8fca55ed0c7cafda8e8b6d371df456dbf1c4b23be7eddc9f",
+      "finalPixelSha256": "7711ad931e0e4ced947d3c48207043eeccbb0950840adfe02a458d09299d053d",
+      "protectedPixelCount": 0,
+      "protectedMaxChannelChange": null,
+      "protectedReferenceSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "protectedResultSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "seamAfter": {
+        "edge_mean_absolute_difference": 0.09878472238779068,
+        "neighbor_mean_absolute_difference": 0.08758680522441864,
+        "edge_to_neighbor_ratio": 1.1278493404388428,
+        "sixteen_pixel_band_mean_difference": 0.3146809935569763
+      },
+      "policy": "The source is wholly illustrative atmosphere, so no pixels are labelled as protected observations. The new map remains an explicitly artistic haze texture, with no invented visible ground.",
+      "illustrative": true,
+      "baseBytes": 19920,
+      "highBytes": 3858090,
+      "export": "1920x960 lossy WebP overview; 3840x1920 lossless WebP detail, decoded RGB matches processed PNG exactly."
+    },
+    {
+      "id": "triton",
+      "name": "海卫一",
+      "base": "triton-1920.webp",
+      "high": "triton-3840.webp",
+      "originalSource": "2k_triton.jpg",
+      "originalDimensions": [
+        1440,
+        720
+      ],
+      "originalSourceSha256": "a9e3ab9d51ff4fe284c0e49732b8ac2c966dbb8a920e73a96d03cd96cce8b7a7",
+      "finalPixelSha256": "26afaf2629f5c085a67a8f40cdc6583c921ebdccc97effceb047810502b3d580",
+      "protectedPixelCount": 1472043,
+      "protectedMaxChannelChange": 0,
+      "protectedReferenceSha256": "f594097077ea7ae1cb789c05cf2f6752148c69a4e1222824d59c2d312b732ab4",
+      "protectedResultSha256": "f594097077ea7ae1cb789c05cf2f6752148c69a4e1222824d59c2d312b732ab4",
+      "seamAfter": {
+        "edge_mean_absolute_difference": 0.9157986044883728,
+        "neighbor_mean_absolute_difference": 0.9125000238418579,
+        "edge_to_neighbor_ratio": 1.003614902496338,
+        "sixteen_pixel_band_mean_difference": 3.938368082046509
+      },
+      "policy": "Nonblack source coverage is protected, excluding two source pixels at the ambiguous JPEG boundary. Missing coverage is artistically reconstructed.",
+      "illustrative": false,
+      "baseBytes": 416904,
+      "highBytes": 6947104,
+      "export": "1920x960 lossy WebP overview; 3840x1920 lossless WebP detail, decoded RGB matches processed PNG exactly."
+    }
+  ]
+}

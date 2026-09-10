@@ -16,7 +16,8 @@ export const additionalBodies = [
     group: "others",
     color: "#c9b8a8",
     texture: "pluto",
-    high: "4k_pluto.jpg",
+    baseTexture: "completed/pluto-1920.webp",
+    high: "completed/pluto-3840.webp",
     radius: 0.7,
     orbit: 72,
     tilt: 119.6,
@@ -33,7 +34,7 @@ export const additionalBodies = [
     featureText:
       "斯普特尼克平原的氮冰在漫长时间尺度上缓慢流动，水冰构成坚硬的山地。",
     caption: "冥王星冰原",
-    detail: "NASA 球面地图 / 缺测区为低细节填色",
+    detail: "观测地貌保留 / AI 补绘",
     source: "dwarf-planets/pluto/facts/",
   },
   {
@@ -138,6 +139,8 @@ export const additionalBodies = [
     parent: "mars",
     color: "#9f9385",
     texture: "phobos",
+    baseTexture: "completed/phobos-1920.webp",
+    high: "completed/phobos-3840.webp",
     radius: 0.19,
     orbit: 2.25,
     shape: [1, 0.81, 0.67],
@@ -155,7 +158,7 @@ export const additionalBodies = [
     feature: "撞击坑与细长沟槽",
     featureText: "暗色风化层覆盖着坑洼表面。沟槽与撞击坑属于长期保存的地貌。",
     caption: "火卫一地表",
-    detail: "探测影像合成 / 外形为近似椭球",
+    detail: "探测影像与 AI 补绘 / 近似椭球",
     source: "mars/moons/phobos/",
   },
   {
@@ -167,6 +170,8 @@ export const additionalBodies = [
     parent: "jupiter",
     color: "#ded18b",
     texture: "io",
+    baseTexture: "completed/io-1920.webp",
+    high: "completed/io-3840.webp",
     radius: 0.43,
     orbit: 4.6,
     period: 1.769,
@@ -183,7 +188,7 @@ export const additionalBodies = [
     feature: "火山与硫质平原",
     featureText: "火山口与熔岩不断改变局部地表，羽状喷发将物质送向高空。",
     caption: "木卫一火山世界",
-    detail: "探测影像合成 / 火山热点为动态示意",
+    detail: "探测影像与 AI 补绘 / 火山为示意",
     source: "jupiter/moons/io/",
   },
   {
@@ -195,6 +200,8 @@ export const additionalBodies = [
     parent: "jupiter",
     color: "#d6c6ad",
     texture: "europa",
+    baseTexture: "completed/europa-1920.webp",
+    high: "completed/europa-3840.webp",
     radius: 0.39,
     orbit: 6.2,
     period: 3.551,
@@ -212,7 +219,7 @@ export const additionalBodies = [
     featureText:
       "裂纹、脊线和破碎冰块记录了冰壳受力与重塑的历史，短期观测中地貌保持稳定。",
     caption: "木卫二冰壳",
-    detail: "旅行者号合成地图 / 色彩经过处理",
+    detail: "探测影像 / AI 细节补绘",
     source: "jupiter/moons/europa/",
   },
   {
@@ -224,6 +231,8 @@ export const additionalBodies = [
     parent: "jupiter",
     color: "#b0a69b",
     texture: "ganymede",
+    baseTexture: "completed/ganymede-1920.webp",
+    high: "completed/ganymede-3840.webp",
     radius: 0.57,
     orbit: 8,
     period: 7.155,
@@ -241,7 +250,7 @@ export const additionalBodies = [
     featureText:
       "暗色地形保留密集撞击坑，明亮区域中的成组沟槽反映了冰壳曾经历的变形。",
     caption: "木卫三地貌",
-    detail: "旅行者号合成地图 / 明暗地形",
+    detail: "探测影像 / AI 细节补绘",
     source: "jupiter/moons/ganymede/",
   },
   {
@@ -253,6 +262,8 @@ export const additionalBodies = [
     parent: "jupiter",
     color: "#9e978e",
     texture: "callisto",
+    baseTexture: "completed/callisto-1920.webp",
+    high: "completed/callisto-3840.webp",
     radius: 0.53,
     orbit: 10,
     period: 16.689,
@@ -270,7 +281,7 @@ export const additionalBodies = [
     featureText:
       "瓦尔哈拉盆地周围的同心环结构源自巨大撞击，冰壳保存了漫长的撞击记录。",
     caption: "木卫四古老表面",
-    detail: "旅行者号合成地图 / 撞击盆地",
+    detail: "探测影像 / AI 细节补绘",
     source: "jupiter/moons/callisto/",
   },
   {
@@ -312,6 +323,8 @@ export const additionalBodies = [
     parent: "saturn",
     color: "#d6b777",
     texture: "titan",
+    baseTexture: "completed/titan-1920.webp",
+    high: "completed/titan-3840.webp",
     radius: 0.57,
     orbit: 9.2,
     period: 15.945,
@@ -329,7 +342,7 @@ export const additionalBodies = [
     featureText:
       "雾霾遮挡可见光中的地表，甲烷在大气与地面之间参与类似水循环的过程。",
     caption: "土卫六大气",
-    detail: "JPL 雾霾外观示意 / 非地表影像",
+    detail: "AI 雾霾外观示意 / 非地表影像",
     closeName: "观测大气",
     source: "saturn/moons/titan/",
   },
@@ -342,6 +355,8 @@ export const additionalBodies = [
     parent: "neptune",
     color: "#c9c5bc",
     texture: "triton",
+    baseTexture: "completed/triton-1920.webp",
+    high: "completed/triton-3840.webp",
     radius: 0.38,
     orbit: 4.4,
     viewUv: [0.49, 0.72],
@@ -359,9 +374,9 @@ export const additionalBodies = [
     ],
     feature: "氮冰极冠与古老喷流痕迹",
     featureText:
-      "旅行者 2 号曾观测到喷流。这里展示其冰质地貌与日照变化，黑色区域没有影像覆盖。",
+      "旅行者 2 号曾观测到喷流。这里保留部分探测影像，缺测区域用 AI 示意补全。",
     caption: "海卫一冰冻表面",
-    detail: "旅行者 2 号地图 / 黑色区域缺测",
+    detail: "旅行者 2 号影像 / AI 补全缺测区",
     source: "neptune/moons/triton/",
   },
   {
@@ -373,6 +388,8 @@ export const additionalBodies = [
     parent: "pluto",
     color: "#b9b0aa",
     texture: "charon",
+    baseTexture: "completed/charon-1920.webp",
+    high: "completed/charon-3840.webp",
     radius: 0.36,
     orbit: 2.7,
     viewUv: [0.48, 0.67],
@@ -391,7 +408,7 @@ export const additionalBodies = [
     featureText:
       "北极的深色物质与赤道附近的峡谷系统，记录了冰质表面复杂的演化历史。",
     caption: "冥卫一地表",
-    detail: "新视野号影像 / NASA 展示地图",
+    detail: "观测地貌保留 / AI 补绘",
     source: "dwarf-planets/pluto/moons/charon/",
   },
 ].map((body) => ({ ...body, group: body.parent ? "moons" : "others" }));

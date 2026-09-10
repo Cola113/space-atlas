@@ -225,7 +225,7 @@ function disposeScene() {
 }
 
 function thumb(body) {
-  return `<span class="planet-thumb ${body.id}" style="--body-color:${body.color};--texture:url('/solar-system/textures/2k_${body.texture}.jpg')" aria-hidden="true"></span>`;
+  return `<span class="planet-thumb ${body.id}" style="--body-color:${body.color};--texture:url('/solar-system/textures/${body.baseTexture || `2k_${body.texture}.jpg`}')" aria-hidden="true"></span>`;
 }
 
 function makeNavigation() {
@@ -364,7 +364,7 @@ function configureTexture(texture, color = true, longitude = true) {
 async function loadBaseTextures() {
   const names = [
     ...new Set([
-      ...bodies.map((body) => `2k_${body.texture}.jpg`),
+      ...bodies.map((body) => body.baseTexture || `2k_${body.texture}.jpg`),
       "2k_earth_clouds.jpg",
       "2k_venus_surface.jpg",
       "2k_saturn_ring_alpha.png",
@@ -477,7 +477,7 @@ function createBodies(textures) {
     const tilted = new THREE.Group();
     tilted.rotation.z = THREE.MathUtils.degToRad(body.tilt);
     root.add(tilted);
-    const map = textures.get(`2k_${body.texture}.jpg`);
+    const map = textures.get(body.baseTexture || `2k_${body.texture}.jpg`);
     const material =
       body.id === "sun"
         ? new THREE.MeshBasicMaterial({
