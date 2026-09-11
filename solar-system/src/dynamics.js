@@ -278,7 +278,7 @@ function gasMap(id) {
       center: [".22", ".65"],
       size: [".16", ".12"],
       swirl: 0.02,
-      cloud: 0.045,
+      cloud: 0.07,
     },
     venus: {
       bands: 6,
@@ -936,6 +936,12 @@ export function createDynamics(objects) {
       record.uniforms.uActivityDetail.value = active ? 1 : 0.12;
       record.uniforms.uActivityEvent.value = observed ? 0 : envelope;
       record.uniforms.uActivityProgress.value = inEvent ? progress : -1;
+      if (id === "titan" && record.body.clouds) {
+        // A second, slower haze layer gives Titan's generated atmospheric map
+        // visible motion without changing the dated body rotation.
+        record.body.clouds.rotation.y = record.time * 0.00055;
+        record.body.clouds.material.opacity = 0.24 + 0.08 * (0.5 + 0.5 * Math.sin(record.time * 0.17));
+      }
       for (const extra of record.extras) extra.visible = active;
       for (const particle of record.particles) {
         particle.mesh.geometry.setDrawRange(

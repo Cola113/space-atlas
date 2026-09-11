@@ -373,6 +373,7 @@ async function loadBaseTextures() {
       "2k_venus_surface.jpg",
       "2k_saturn_ring_alpha.png",
       "earth_night_2016.jpg",
+      "2k_titan-haze.png",
     ]),
   ];
   let loaded = 0;
@@ -524,6 +525,20 @@ function createBodies(textures) {
       clouds.rotation.y = mesh.rotation.y;
       tilted.add(clouds);
       addAtmosphere(tilted, body.radius, "#489dd8", 0.74);
+    }
+    if (body.id === "titan") {
+      clouds = new THREE.Mesh(
+        sphere,
+        new THREE.MeshStandardMaterial({
+          map: textures.get("2k_titan-haze.png"),
+          transparent: true,
+          opacity: 0.3,
+          depthWrite: false,
+          roughness: 1,
+        }),
+      );
+      clouds.scale.setScalar(body.radius * 1.028);
+      tilted.add(clouds);
     }
     if (body.id === "sun") {
       const corona = new THREE.Mesh(
