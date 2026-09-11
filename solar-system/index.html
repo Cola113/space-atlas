@@ -128,6 +128,9 @@
             <i data-lucide="scan-search"></i><span>近距离观测</span
             ><i data-lucide="arrow-up-right"></i>
           </button>
+          <button class="landing-action" id="landing-button" hidden>
+            <i data-lucide="map-pin"></i><span>降落到表面</span>
+          </button>
           <label class="layer-toggle" id="layer-control" hidden
             ><span id="layer-label">显示云层</span
             ><input type="checkbox" id="layer-toggle" checked /><span
@@ -274,11 +277,11 @@
               id="time-speed"
               type="range"
               min="0"
-              max="5"
+              max="4"
               step="1"
               value="1"
               aria-label="时间流速"
-            /><output id="speed-value">0.5×</output
+            /><output id="speed-value" for="time-speed">1k×</output
             ><time id="simulation-date"></time>
           </div>
         </div>
@@ -352,7 +355,7 @@
           <a href="https://ssd.jpl.nasa.gov/planets/phys_par.html" target="_blank" rel="noreferrer">JPL 行星物理参数</a>、
           <a href="https://ssd.jpl.nasa.gov/sats/phys_par/" target="_blank" rel="noreferrer">卫星物理参数</a>与
           <a href="https://ssd.jpl.nasa.gov/sats/elem/" target="_blank" rel="noreferrer">平均轨道根数</a>。
-          谷神星、灶神星和卫星仍采用倾斜圆轨道近似，不能用于确定它们的实际方位。卫星使用独立的演示时间，右下角日期对应日心位置。地球卫星观测模式使用当前时间对齐地表与日照，其它自转、风暴、喷发与大气厚度仍为视觉模拟。非球形天体仅匹配平均体积，外形为近似椭球。
+          谷神星、灶神星和卫星仍采用倾斜圆轨道近似，不能用于确定它们的实际方位。卫星公转和行星自转使用右下角同一模拟日期；轨道与地表共用真实时间倍率，默认 1k×，可选择 500×、1k×、5k×、20k×、100k×。地球卫星观测模式使用当前时间对齐地表与日照，其它风暴、喷发与大气厚度仍为视觉模拟。非球形天体仅匹配平均体积，外形为近似椭球。
         </p>
         <p>
           纹理由
