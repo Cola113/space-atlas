@@ -11,6 +11,13 @@ const catalogSatellite = (body) => ({
   ...body,
 });
 
+const artisticTextures = new Set([
+  "miranda", "phoebe", "ariel", "umbriel", "oberon", "hyperion", "proteus",
+  "makemake", "haumea", "eris", "deimos", "amalthea", "thebe", "adrastea", "metis",
+  "himalia", "janus", "epimetheus", "prometheus", "pandora", "atlas", "pan", "nereid",
+  "styx", "nix", "kerberos", "hydra",
+]);
+
 export const additionalBodies = [
   {
     ...rock,
@@ -568,4 +575,16 @@ export const additionalBodies = [
     id, name, english, category: `${parent === "uranus" ? "天王星" : parent === "neptune" ? "海王星" : "冥王星"} / 天然卫星`, parent, color: "#aaa39a", texture: id, radius, orbit, period, orbitPhase: 0.8 + radius * 9, inclination: 0.5,
     shape: [1, 0.78, 0.68], description: `${name}是${parent === "uranus" ? "天王星" : parent === "neptune" ? "海王星" : "冥王星"}系统中的小型卫星，表面资料有限。`, facts: [["平均半径 · 约", `${Math.round(radius * 2820)}`, "km"], ["公转周期 · 约", `${period.toFixed(2)}`, "天"], ["所属天体", parent === "uranus" ? "天王星" : parent === "neptune" ? "海王星" : "冥王星", ""], ["资料状态", "有限", ""]], feature: "撞击地貌与冰质表面", featureText: "该卫星缺少完整全球测绘，当前以低对比度程序化表面表达其已知外观。", caption: `${name}轨道`, detail: "观测资料有限 / 程序化补全", source: `${parent}/moons/${id}/`
   })),
-].map((body) => ({ ...body, group: body.parent ? "moons" : "others" }));
+].map((body) => ({
+  ...body,
+  group: body.parent ? "moons" : "others",
+  ...(artisticTextures.has(body.id) ? {
+    baseTexture: `artistic/${body.id}-1920.webp`,
+    high: `artistic/${body.id}-3840.webp`,
+    caption: `${body.name}地表`,
+    detail: "AI 艺术重绘 / 完整地表",
+    featureText: body.featureText.includes("低对比度程序化表面")
+      ? "该卫星缺少完整全球测绘，图中地貌为艺术构建，呈现冰质平原、裂隙与撞击结构。"
+      : body.featureText,
+  } : {}),
+}));
