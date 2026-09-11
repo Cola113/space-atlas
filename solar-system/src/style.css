@@ -2281,3 +2281,4 @@ dialog .dialog-close {
   .atlas-panel { top: 64px; bottom: var(--explorer-height); }
   .toast { bottom: calc(var(--explorer-height) + 12px); }
 }
+.landing-action{display:flex;justify-content:center;align-items:center;gap:10px;width:100%;padding:11px 16px;margin-top:9px;border:1px solid #bea98266;border-radius:6px;background:#b59e7515;color:#dac49e;cursor:pointer;font:inherit;font-size:12px;letter-spacing:1px}.landing-action:hover{background:#b59e7530}.landing-action[hidden]{display:none}.landing-action:disabled{opacity:.6;cursor:wait}

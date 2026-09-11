@@ -40,11 +40,14 @@ import {
   orbitPoint,
   updatePrimaryOrbits,
   updateSatelliteOrbits,
+  updateBodyRotations,
 } from "./orbits.js";
 import { physicalData } from "./physical-scale.js";
 import { createObservedClouds } from "./observed-clouds.js";
 import { alignObservedEarth, subsolarPoint } from "./earth-observation.js";
 import { createStarfield } from "./starfield.js";
+import { simulationElapsed, simulationRates, defaultSimulationRate, restoreSimulationRate,
+  defaultSimulationDate, restoreSimulationDate, formatSimulationRate, simulationRateEquivalent } from "./simulation-time.js";
 
 const icons = {
   Orbit,
@@ -78,11 +81,11 @@ const state = {
   selected: null,
   close: false,
   playing: !reducedMotion,
-  speed: 0.5,
+  speed: defaultSimulationRate,
   orbits: true,
   labels: false,
   atlas: false,
-  date: Date.now(),
+  date: defaultSimulationDate,
   ready: false,
   dynamics: true,
   lockSpin: false,
@@ -92,10 +95,8 @@ const state = {
   nightView: false,
   system: false,
   catalog: "planets",
-  satelliteTime: 0,
   observedEarth: false,
 };
-const speeds = [0.25, 0.5, 1, 4, 16, 64];
 const objects = new Map();
 const highTextures = new Map();
 const highInFlight = new Map();
@@ -132,17 +133,20 @@ const cameraRight = new THREE.Vector3();
 const cameraUp = new THREE.Vector3();
 const epochDate = new Date(state.date);
 let disposed = false;
+let surfaceView = null;
+let landingBusy = false;
+let surfaceOrbitPose = null;
 
 function saveObservation() {
   const body = objects.get(state.selected);
   const center = body?.root.position || new THREE.Vector3();
   return {
     selected: state.selected, system: state.system, close: state.close,
-    playing: state.playing, speed: state.speed, orbits: state.orbits, labels: state.labels,
+    playing: state.playing, speed: state.speed, speedUnit: "realtime", orbits: state.orbits, labels: state.labels,
     dynamics: state.dynamics, lockSpin: state.lockSpin, activityRate: state.activityRate,
     nightLights: state.nightLights, shadows: state.shadows, nightView: state.nightView,
-    observedEarth: state.observedEarth, date: state.date, satelliteTime: state.satelliteTime,
-    offset: (flight?.endOffset || camera.position.clone().sub(center)).toArray(),
+    observedEarth: state.observedEarth, date: state.date, timelineEpoch: defaultSimulationDate,
+    offset: (flight?.endOffset || surfaceOrbitPose?.offsetFromBody || camera.position.clone().sub(center)).toArray(),
     portrait: width < height,
     rotations: [...objects.values()].map(item => [item.id, item.mesh.rotation.y]),
     layerVisible: body?.layerVisible,
@@ -154,10 +158,9 @@ function restoreObservation() {
   if (!saved) return;
   for (const key of ["playing", "orbits", "labels", "dynamics", "lockSpin", "nightLights", "shadows"])
     if (typeof saved[key] === "boolean") state[key] = saved[key];
-  if (speeds.includes(saved.speed)) state.speed = saved.speed;
+  state.speed = restoreSimulationRate(saved);
   if ([0.5, 1, 2, 4].includes(saved.activityRate)) state.activityRate = saved.activityRate;
-  if (Number.isFinite(saved.date) && saved.date > 0 && saved.date < 8e13) state.date = saved.date;
-  if (Number.isFinite(saved.satelliteTime) && saved.satelliteTime >= 0 && saved.satelliteTime < 1e10) state.satelliteTime = saved.satelliteTime;
+  state.date = restoreSimulationDate(saved);
   if (typeof saved.observedEarth === "boolean") {
     $("cloud-mode").value = saved.observedEarth ? "observed" : "simulation";
     $("cloud-mode").dispatchEvent(new Event("change"));
@@ -172,7 +175,7 @@ function restoreObservation() {
       if (typeof saved.layerVisible === "boolean") setLayer(saved.layerVisible);
     }
   }
-  if (Array.isArray(saved.rotations)) for (const entry of saved.rotations) {
+  if (saved.timelineEpoch === defaultSimulationDate && Array.isArray(saved.rotations)) for (const entry of saved.rotations) {
     if (Array.isArray(entry) && objects.has(entry[0]) && Number.isFinite(entry[1]))
       objects.get(entry[0]).mesh.rotation.y = entry[1];
   }
@@ -195,7 +198,7 @@ function restoreObservation() {
     $(id).classList.toggle("active", state[key]);
     $(id).setAttribute("aria-pressed", String(state[key]));
   }
-  $("time-speed").value = String(speeds.indexOf(state.speed));
+  updateTimeRateUi();
   $("activity-rate").value = String(state.activityRate);
   dynamics.setEnabled(state.dynamics);
   dynamics.setRate(state.activityRate);
@@ -206,6 +209,7 @@ function disposeScene() {
   if (disposed) return;
   disposed = true;
   contextLost = true;
+  surfaceView?.dispose();
   observedClouds?.dispose();
   starfield?.dispose();
   controls?.dispose();
@@ -611,9 +615,10 @@ function updatePositions() {
   updatePrimaryOrbits(objects, date);
   updateSatelliteOrbits(
     objects,
-    state.satelliteTime,
+    date,
     state.lockSpin ? state.selected : null,
   );
+  updateBodyRotations(objects,date,state.lockSpin ? state.selected : null);
 }
 
 function updateSimulationDate() {
@@ -621,8 +626,9 @@ function updateSimulationDate() {
   const label = `${date.getUTCFullYear()}.${String(date.getUTCMonth() + 1).padStart(2, "0")}.${String(date.getUTCDate()).padStart(2, "0")}`;
   if ($("simulation-date").textContent !== label) {
     $("simulation-date").textContent = label;
-    $("simulation-date").dateTime = date.toISOString();
   }
+  $("simulation-date").dateTime = date.toISOString();
+  $("simulation-date").title = date.toISOString().replace("T", " ").slice(0,19) + " UTC";
 }
 
 function isEarthObservation() {
@@ -644,10 +650,23 @@ function updateCloudUi() {
   $("planet-info").classList.toggle("earth-cloud-view", earth);
   $("simulation-feature").hidden = earth && state.observedEarth;
   $("scene-mode-label").textContent = isEarthObservation() ? "卫星云层观测" : "动态模拟";
-  $("time-speed").disabled = isEarthObservation();
-  $("time-speed").title = isEarthObservation() ? "卫星观测使用当前时间" : "轨道流速";
-  $("speed-value").textContent = isEarthObservation() ? "实时" : `${state.speed}×`;
+  updateTimeRateUi();
   observedClouds?.renderStatus();
+}
+
+function updateTimeRateUi() {
+  const observed = isEarthObservation();
+  const rate = observed ? 1 : state.speed;
+  const slider = $("time-speed");
+  slider.min = "0";
+  slider.max = String(simulationRates.length - 1);
+  slider.step = "1";
+  slider.value = String(observed ? 0 : simulationRates.indexOf(rate));
+  slider.disabled = observed;
+  slider.title = observed ? "卫星观测使用当前时间" : `与地表同步 · ${simulationRateEquivalent(rate)}`;
+  slider.setAttribute("aria-valuetext", `${rate} 倍真实时间，${simulationRateEquivalent(rate)}`);
+  $("speed-value").textContent = formatSimulationRate(rate);
+  $("speed-value").title = slider.title;
 }
 
 function changeCloudMode(enabled) {
@@ -1278,6 +1297,7 @@ function triggerActivity() {
 function updateObservationTools() {
   updateCloudUi();
   const id = state.selected;
+  $("landing-button").hidden = state.system || !["moon", "europa"].includes(id);
   const family = familyOf(objects.get(id));
   const visible =
     id &&
@@ -1354,6 +1374,73 @@ function selectLandmark(id) {
   loadHighTexture(body);
 }
 
+async function landOnSurface() {
+  if (!state.ready || landingBusy || surfaceView || !["moon", "europa"].includes(state.selected)) return;
+  const id = state.selected;
+  const body = objects.get(id);
+  const previousControls = controls.enabled;
+  const pose = { position: camera.position.clone(), target: controls.target.clone(),
+    quaternion: camera.quaternion.clone(), offset: viewOffset.clone(), width, height };
+  const center = body.root.position.clone();
+  surfaceOrbitPose = {offsetFromBody:pose.position.clone().sub(center)};
+  const bearing = pose.position.clone().sub(center).normalize();
+  const destination = center.clone().addScaledVector(bearing, (body.renderRadius || body.radius) * 1.14);
+  const descentPath = cameraPath(pose.position, center, destination.clone().sub(center), [...objects.values()]);
+  const recover = () => {
+    surfaceOrbitPose = null;
+    camera.position.copy(pose.position);camera.quaternion.copy(pose.quaternion);
+    controls.target.copy(pose.target);
+    viewOffset.copy(width===pose.width&&height===pose.height?pose.offset:desiredOffset());
+    applyViewOffset();
+    $("app").classList.remove("surface-journey-background");$("app").inert=false;
+    controls.enabled=previousControls;
+  };
+  landingBusy = true;
+  controls.enabled = false;
+  $("app").inert = true;
+  $("landing-button").disabled = true;
+  try {
+    const { createSurfaceView } = await import("./surface/SurfaceView.js");
+    if (disposed) return;
+    $("app").classList.add("surface-journey-background");
+    surfaceView = createSurfaceView(id, {
+      initialDate: state.date,
+      initialRate: state.speed,
+      onRateChange: rate => {
+        state.speed = rate;
+        updateTimeRateUi();
+      },
+      onTimeChange: time => {
+        state.date = time;
+        updateSimulationDate();
+      },
+      renderOrbit: progress => {
+        descentPath(progress,camera.position);
+        controls.target.lerpVectors(pose.target,center,progress);
+        viewOffset.copy(pose.offset).multiplyScalar(1-progress);
+        applyViewOffset();camera.lookAt(controls.target);
+        renderer.render(scene,camera);
+      },
+      onClosed: finalTime => {
+        if (Number.isFinite(finalTime)) state.date = finalTime;
+        surfaceView = null;recover();
+        const previous = body.root.position.clone();
+        updatePositions();
+        const delta = body.root.position.clone().sub(previous);
+        camera.position.add(delta);controls.target.add(delta);
+        updateSimulationDate();
+        $("landing-button").focus();
+      },
+    });
+  } catch {
+    recover();
+    toast("着陆场景未能加载，请稍后重试。");
+  } finally {
+    landingBusy = false;
+    $("landing-button").disabled = false;
+  }
+}
+
 function bindEvents() {
   $("catalog-filter").addEventListener("change", (event) =>
     setCatalog(event.target.value),
@@ -1372,6 +1459,7 @@ function bindEvents() {
   });
   $("explore-earth").addEventListener("click", () => selectBody("earth"));
   $("surface-button").addEventListener("click", toggleClose);
+  $("landing-button").addEventListener("click", landOnSurface);
   $("event-trigger").addEventListener("click", triggerActivity);
   $("activity-toggle").addEventListener("click", () => {
     state.dynamics = !state.dynamics;
@@ -1431,8 +1519,8 @@ function bindEvents() {
     observedClouds?.renderStatus();
   });
   $("time-speed").addEventListener("input", (event) => {
-    state.speed = speeds[Number(event.target.value)];
-    $("speed-value").textContent = `${state.speed}×`;
+    state.speed = simulationRates[Number(event.target.value)];
+    updateTimeRateUi();
   });
   $("orbit-toggle").addEventListener("click", () => {
     state.orbits = !state.orbits;
@@ -1480,6 +1568,7 @@ function bindEvents() {
     }
   });
   document.addEventListener("keydown", (event) => {
+    if (surfaceView || landingBusy) return;
     if (
       $("credits-dialog").open ||
       /INPUT|TEXTAREA|SELECT/.test(event.target.tagName)
@@ -1509,6 +1598,7 @@ function resize() {
   camera.aspect = width / height;
   renderer.setSize(width, height);
   renderer.setPixelRatio(Math.min(devicePixelRatio, mobile ? 1.75 : 2));
+  if (surfaceView || landingBusy) { camera.updateProjectionMatrix(); return; }
   viewOffset.copy(desiredOffset());
   applyViewOffset();
   if (state.ready) {
@@ -1780,26 +1870,17 @@ function brightSkyOccupancy() {
 function animate(now) {
   if (contextLost) return;
   requestAnimationFrame(animate);
-  const dt = Math.min((now - (lastFrame || now)) / 1000, 0.05);
+  const elapsed = Math.max(0, now - (lastFrame || now));
+  const dt = Math.min(elapsed / 1000, 0.05);
   lastFrame = now;
-  if (document.hidden) return;
+  if (document.hidden || surfaceView || landingBusy) return;
   const focused = objects.get(state.selected);
   const previous = focused?.root.position.clone();
   if (state.playing && !state.atlas && !$("credits-dialog").open) {
     if (isEarthObservation()) state.date = Date.now();
-    else state.date += dt * state.speed * 3 * 86400000;
-    state.satelliteTime += dt * state.speed;
-    for (const body of objects.values()) {
-      if (state.lockSpin && body.id === state.selected) continue;
-      if (body.parent) continue;
-      if (body.id === "earth" && isEarthObservation()) continue;
-      body.mesh.rotation.y += dt * body.spin;
-      if (body.clouds) {
-        if (state.observedEarth) body.clouds.rotation.copy(body.mesh.rotation);
-        else body.clouds.rotation.y += dt * body.spin * 1.07;
-      }
-    }
-    belt.rotation.y += dt * 0.004 * state.speed;
+    else if (elapsed <= 1000) state.date += simulationElapsed(elapsed, state.speed);
+    // The asteroid belt is also keyed to the shared simulation date.
+    belt.rotation.y = ((state.date - Date.UTC(2000, 0, 1, 12)) / 86400000) * 0.001333;
     updatePositions();
     if (isEarthObservation()) syncObservedEarth();
   }
@@ -1945,6 +2026,7 @@ async function init() {
     state.ready = true;
     state.date = epochDate.getTime();
     restoreObservation();
+    updateTimeRateUi();
     document.documentElement.dataset.sceneReady = "true";
     rememberScene("solar-system", saveObservation);
     window.addEventListener("pagehide", disposeScene);
@@ -1967,7 +2049,6 @@ async function init() {
         close: state.close,
         system: state.system,
         catalog: state.catalog,
-        satelliteTime: state.satelliteTime,
         scale: "display",
         playing: state.playing,
         speed: state.speed,

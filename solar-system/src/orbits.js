@@ -6,7 +6,18 @@ const TAU = Math.PI * 2;
 const axis = new THREE.Vector3(0, 0, 1);
 const offset = new THREE.Vector3();
 const plane = new THREE.Quaternion();
-const epoch = Date.UTC(2000, 0, 1, 12);
+export const SIMULATION_EPOCH = Date.UTC(2000, 0, 1, 12);
+const DAY = 86400000;
+
+// The old scene advanced satellite angles with a separate wall-clock timer.
+// Keep one date as the source of truth so a given speed has the same meaning
+// in the orbit view and on a surface.
+export const ROTATION_PERIOD_DAYS = Object.freeze({
+  sun: 25.38, mercury: 58.646, venus: -243.025, earth: .99726968,
+  mars: 1.02595675, jupiter: .41354, saturn: .44401, uranus: -.71833,
+  neptune: .67125, pluto: 6.387, ceres: .37809, vesta: .22258,
+});
+const ROTATION_PHASE = Object.freeze({ earth: 3.3, jupiter: -1 });
 
 export function orbitPoint(body, angle, target = new THREE.Vector3()) {
   return target
@@ -27,22 +38,21 @@ export function updatePrimaryOrbits(objects, date) {
         -Math.sin(longitude) * Math.cos(latitude) * body.orbit,
       );
     } else {
-      const phase = ((date.getTime() - epoch) / 86400000 / body.orbitDays) % 1;
+      const phase = ((date.getTime() - SIMULATION_EPOCH) / DAY / body.orbitDays) % 1;
       orbitPoint(body, body.orbitPhase + phase * TAU, body.root.position);
     }
     body.orbitCenter.copy(body.root.position);
   }
 }
 
-export function updateSatelliteOrbits(objects, elapsed, lockedId) {
+export function updateSatelliteOrbits(objects, date, lockedId) {
   for (const body of objects.values()) {
     if (!body.parent) continue;
     const parent = objects.get(body.parent);
-    // Compress the range of periods so small satellite systems remain observable.
-    const period = 24 * Math.sqrt(body.period);
+    const period = body.period;
     const angle =
       body.orbitPhase +
-      ((elapsed / period) % 1) * TAU * (body.retrograde ? -1 : 1);
+      (((date.getTime() - SIMULATION_EPOCH) / DAY / period) % 1) * TAU * (body.retrograde ? -1 : 1);
     orbitPoint(body, angle, offset).applyQuaternion(parent.tilted.quaternion);
     if (body.id === "charon") {
       parent.root.position
@@ -59,5 +69,17 @@ export function updateSatelliteOrbits(objects, elapsed, lockedId) {
     if (body.id !== lockedId) body.mesh.rotation.y = -angle;
     body.orbitLine.position.copy(parent.root.position);
     body.orbitLine.quaternion.copy(parent.tilted.quaternion);
+  }
+}
+
+export function updateBodyRotations(objects, date, lockedId = null) {
+  const days = (date.getTime() - SIMULATION_EPOCH) / DAY;
+  for (const body of objects.values()) {
+    if (body.parent || body.id === lockedId) continue;
+    const period = ROTATION_PERIOD_DAYS[body.id];
+    if (!period) continue;
+    body.mesh.rotation.y = (ROTATION_PHASE[body.id] || 0) + days * TAU / period;
+    if (body.clouds && body.id !== 'earth') body.clouds.rotation.y = body.mesh.rotation.y;
+    if (body.clouds && body.id === 'earth') body.clouds.rotation.y = body.mesh.rotation.y;
   }
 }
