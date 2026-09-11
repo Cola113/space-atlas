@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="theme-color" content="#06090c"><title>星际图鉴 · 猎户座星云</title><link rel="icon" href="data:,"></head>
+<body><main id="app">
+<canvas id="universe" aria-label="猎户座星云自动巡游画面"></canvas>
+<div id="interface">
+<header class="topbar"><div id="scene-navigation"></div><div class="top-actions">
+<button id="settings-button" class="icon-button" aria-label="观测设置" data-tip="观测设置" aria-expanded="false"><i data-lucide="sliders-horizontal"></i></button>
+<button id="science-button" class="icon-button" aria-label="影像与资料" data-tip="影像与资料" aria-expanded="false"><i data-lucide="info"></i></button>
+<button id="fullscreen-button" class="icon-button" aria-label="全屏" data-tip="全屏"><i data-lucide="expand"></i></button>
+</div></header>
+<section class="scene-title"><span>M42 / NGC 1976</span><h1>猎户座星云</h1><p>ORION NEBULA</p></section>
+<div class="view-caption"><span id="view-index">01 / 全景</span><p id="view-description">恒星诞生的云海</p></div>
+<nav class="dock" aria-label="巡游播放控制">
+<button id="cruise-button" class="icon-button" aria-label="暂停巡游" data-tip="暂停巡游"><i data-lucide="pause"></i></button>
+<button id="capture-button" class="icon-button" aria-label="保存画面" data-tip="保存画面"><i data-lucide="camera"></i></button>
+</nav>
+<footer class="readout"><span>M42 / 三维结构示意</span><span id="live-status">自动巡游中</span></footer>
+<p class="image-credit"><a href="https://esahubble.org/images/heic0601a/" target="_blank" rel="noreferrer">NASA, ESA, M. Robberto (Space Telescope Science Institute/ESA) and the Hubble Space Telescope Orion Treasury Project Team</a></p>
+<aside id="settings-panel" class="panel" aria-labelledby="settings-title" hidden>
+<div class="panel-header"><h2 id="settings-title">观测设置</h2><button class="icon-button close-panel" aria-label="关闭设置"><i data-lucide="x"></i></button></div>
+<label class="range-label" for="exposure">曝光 <output id="exposure-value">1.25</output></label><input id="exposure" type="range" min=".5" max="2.2" step=".05" value="1.25">
+<label class="range-label" for="stars">星光 <output id="stars-value">0.70</output></label><input id="stars" type="range" min="0" max="1.5" step=".05" value=".7">
+<label class="select-row" for="quality">画质<select id="quality"><option value="auto">自动适配</option><option value="low">节能</option><option value="high">精细</option></select></label>
+<div class="metrics"><span id="quality-value">精细</span><span><b id="fps-value">0</b> FPS</span></div>
+</aside>
+<aside id="science-panel" class="panel science-panel" aria-labelledby="science-title" hidden>
+<div class="panel-header"><h2 id="science-title">猎户座星云</h2><button class="icon-button close-panel" aria-label="关闭资料"><i data-lucide="x"></i></button></div>
+<img src="/orion-nebula/observation.webp" alt="哈勃望远镜拍摄的猎户座星云原始合成影像" width="2048" height="2048" loading="lazy">
+<div class="facts"><span>天体编号<strong>M42 / NGC 1976</strong></span><span>类型<strong>恒星形成区</strong></span></div>
+<p>年轻恒星的辐射照亮周围气体，暗色尘埃遮挡部分星光。明亮核心中的梯形星群正在塑造云内空腔。</p>
+<p>以上为哈勃及地面观测的合成影像。正面云气的轮廓、暗带与颜色参考这幅影像。云壁深度、外围延伸、内部、背面与恒星距离为展示示意，不是测量得到的完整三维地图。</p>
+<p>年轻恒星周围的气体呈现明暗相间的云壁，尘埃会遮暗后方星光。影像采集于 2004–2005 年，场景不代表实时观测。</p>
+<p><a href="https://esahubble.org/images/heic0601a/" target="_blank" rel="noreferrer">影像来源与完整署名</a> · <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noreferrer">CC BY 4.0</a></p>
+</aside>
+</div>
+<div id="notice" role="status" hidden></div><div id="loading" role="status">正在建立星云观测场</div><div id="fatal" role="alert" hidden></div>
+</main><script type="module" src="./src/main.ts"></script></body></html>

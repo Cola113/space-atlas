@@ -1,4 +1,4 @@
-import { createElement, Orbit, Aperture, ChevronDown, Check } from 'lucide';
+import { createElement, Orbit, Aperture, Sparkles, ChevronDown, Check } from 'lucide';
 import { scenes, sceneById } from './scenes.js';
 import './style.css';
 
@@ -25,7 +25,7 @@ export function mountNavigation(id: string) {
     link.href = item.path;
     link.dataset.sceneLink = item.id;
     link.innerHTML = `<span class="space-atlas-destination-icon" aria-hidden="true"></span><span>${item.name}<small>${item.english}</small></span>`;
-    link.querySelector('.space-atlas-destination-icon')!.append(createElement(item.icon === 'aperture' ? Aperture : Orbit));
+    link.querySelector('.space-atlas-destination-icon')!.append(createElement(item.icon === 'aperture' ? Aperture : item.icon === 'sparkles' ? Sparkles : Orbit));
     if (item.id === id) { link.setAttribute('aria-current', 'page'); link.append(createElement(Check)); }
     menu.append(link);
   }

@@ -14,6 +14,7 @@
     { "source": "/api/clouds/:route+", "destination": "/api/clouds?route=:route" }
   ],
   "redirects": [
+    { "source": "/orion-nebula", "destination": "/orion-nebula/", "permanent": false },
     { "source": "/", "destination": "/solar-system/", "permanent": false },
     { "source": "/solar-system", "destination": "/solar-system/", "permanent": false },
     { "source": "/black-hole", "destination": "/black-hole/", "permanent": false }

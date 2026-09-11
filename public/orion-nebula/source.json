@@ -1,0 +1,33 @@
+{
+  "source": "https://cdn.esahubble.org/archives/images/publicationjpg/heic0601a.jpg",
+  "page": "https://esahubble.org/images/heic0601a/",
+  "license": "CC BY 4.0",
+  "sourceSha256": "db35758ed21509a16974d0ad36383ee0dd515c88c806f83fd1a4ad5ad5ae1477",
+  "originalDimensions": [
+    4000,
+    4000
+  ],
+  "observationDimensions": [
+    2048,
+    2048
+  ],
+  "emissionDimensions": [
+    1536,
+    1536
+  ],
+  "generatedWithAI": false,
+  "starCandidates": 307,
+  "detailDimensions": [
+    1024,
+    1024
+  ],
+  "cloudGuideDimensions": [
+    1536,
+    1536
+  ],
+  "densityGuideDimensions": [
+    320,
+    320
+  ],
+  "modifications": "Resizing, local stellar-peak replacement, median filtering, and stellar peak extraction. The observation guides cloud color, column density and authored cloud-wall depth. Surrounding gas, depth, internal geometry and added stellar distances are illustrative."
+}

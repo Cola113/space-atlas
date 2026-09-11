@@ -1,6 +1,6 @@
 # 星际图鉴 · Space Atlas
 
-可交互的太阳系与黑洞观测站。首页直接进入太阳系，点击左上角的「星际图鉴」切换目的地。两个场景保留各自的三维渲染、相机和观测工具，切换时保存当前标签页的观察位置及设置。
+可交互的太阳系、黑洞与猎户座星云观测站。首页直接进入太阳系，点击左上角的「星际图鉴」切换目的地。三个场景保留各自的三维渲染、相机和观测工具，切换时保存当前标签页的观察位置及设置。
 
 线上地址：[space.colafun.xyz](https://space.colafun.xyz/)，备用地址：[space-atlas-pi.vercel.app](https://space-atlas-pi.vercel.app/)。Vercel 项目已连接本仓库，`main` 分支更新后会自动触发生产部署。
 
@@ -15,7 +15,7 @@ npm ci
 npm run dev
 ```
 
-打开终端给出的地址。`/solar-system/` 与 `/black-hole/` 都支持直接访问、刷新和浏览器前进后退。切换菜单支持鼠标、触摸、键盘和全屏；减少动态效果的系统设置会关闭页面转场动画。
+打开终端给出的地址。`/solar-system/`、`/black-hole/` 和 `/orion-nebula/` 都支持直接访问、刷新和浏览器前进后退。切换菜单支持鼠标、触摸、键盘和全屏；减少动态效果的系统设置会关闭页面转场动画。
 
 ```sh
 npm test
@@ -29,7 +29,7 @@ npm start
 
 云图会在运行期间自动检查更新；`CLOUD_CACHE_DIR` 可指定持久缓存目录，默认为 `data/clouds/`。缓存不提交到 Git。数据源暂不可用时，接口返回状态并保留已有缓存，前端说明数据是否过期，不用模拟云伪装成实时观测。
 
-仅上传 `dist/` 可提供两个三维场景，但**卫星云图功能还需要 Node 服务**，或将 `/api/clouds` 代理到该服务。当前构建面向域名根路径，不配置到任意深层子目录。
+仅上传 `dist/` 可提供三个三维场景，但**卫星云图功能还需要 Node 服务**，或将 `/api/clouds` 代理到该服务。当前构建面向域名根路径，不配置到任意深层子目录。
 
 ## 结构
 
@@ -38,9 +38,11 @@ platform/                  场景注册表、统一导航、会话状态
 solar-system/src/          太阳系、行星与卫星、动态与观测云层
 solar-system/server/       EUMETSAT 云图处理与缓存
 black-hole/src/            Schwarzschild 光线积分、吸积盘、截图与画质
+orion-nebula/src/          三维密度场、体积云壁、自动巡游与截图
 server/                    同域静态网页与云图 API 服务
 public/shared/             黑洞使用的合成星空纹理
 public/solar-system/       行星与卫星纹理、HYG 亮星与 Gaia 银河图
+public/orion-nebula/       哈勃影像派生素材与来源记录
 public/licenses/           第三方素材及库许可证
 tests/                     平台状态与正式服务测试
 scripts/                   星空生成和浏览器集成验证
@@ -52,11 +54,13 @@ scripts/                   星空生成和浏览器集成验证
 
 ## 验证
 
-`npm test` 覆盖原有云图、日照、黑洞物理关系、计时和画质逻辑，以及新增的状态隔离和正式路由。`npm run build` 包含黑洞与平台 TypeScript 检查。
+`npm test` 覆盖云图、日照、黑洞物理关系、计时和画质逻辑，以及星云镜头、状态隔离和正式路由。`npm run build` 包含黑洞、星云与平台 TypeScript 检查。
 
 服务启动后执行 `npm run test:browser`，默认访问 `http://127.0.0.1:5190`；可通过 `ATLAS_URL` 覆盖。验证桌面、手机与矮视口、页面切换、状态恢复、按需加载及画布像素变化。截图与结果在 `test-results/`，不提交仓库。
 
 ## 数据与边界
+
+猎户座星云参考哈勃合成影像构建三维云体，包含独立星点与尘埃消光。通过约 96 秒的自动巡游展示正面核心、云壁和远景；支持暂停与截图，不提供拖动或缩放。深度及星点距离为视觉示意。详情见 [星云说明](orion-nebula/README.md)。
 
 太阳系轨道间距和天体大小采用展示比例，动态活动部分为示意；卫星云图带有来源、时间与缺测说明。太阳系背景使用 HYG v4.1 的 8,920 颗亮星（CC BY-SA 4.0）与滤波后的 Gaia EDR3 全天图（CC BY-SA 3.0 IGO），坐标随模拟日期转换，亮度与星点尺寸为显示近似。完整数据、许可和修改说明见 [星空数据](public/solar-system/sky/README.md)，可用 `node scripts/build-solar-sky.mjs` 重建，原始下载仅缓存到忽略提交的 `test-results/sky-sources/`。黑洞使用非旋转 Schwarzschild 模型，其背景仍为固定种子的合成星空，不是某个已观测黑洞的实时画面。
 

@@ -9,7 +9,7 @@ const output = new URL('../test-results/', import.meta.url);
 await mkdir(output, { recursive: true });
 const browser = await chromium.launch({ channel: 'msedge', headless: true });
 const report = [];
-const settle = page => page.waitForFunction(() => window.solarAtlas?.snapshot().ready || window.observatory?.getState().ready, null, { timeout: 90000 });
+const settle = page => page.waitForFunction(() => window.solarAtlas?.snapshot().ready || window.observatory?.getState().ready || window.orionAtlas?.snapshot().ready, null, { timeout: 90000 });
 async function screenshot(page, name) {
   await page.screenshot({ path: fileURLToPath(new URL(name + '.png', output)), animations: 'disabled' });
 }
@@ -93,6 +93,23 @@ try {
     await page.goBack({ waitUntil:'domcontentloaded' });
     await settle(page);
     assert.equal(await page.evaluate(() => window.solarAtlas.snapshot().selected), 'saturn');
+    await switchScene(page, 'orion-nebula');
+    await checkHeader(page);
+    await page.waitForFunction(() => window.orionAtlas.snapshot().frames > 80);
+    await screenshot(page, name + '-orion');
+    await canvasPixels(page);
+    await page.locator('#cruise-button').click();
+    const nebula = await page.evaluate(() => window.orionAtlas.snapshot());
+    await switchScene(page, 'solar-system');
+    assert.equal(await page.evaluate(() => window.solarAtlas.snapshot().selected), 'saturn');
+    await switchScene(page, 'orion-nebula');
+    const nebulaRestored = await page.evaluate(() => window.orionAtlas.snapshot());
+    assert.equal(nebulaRestored.mode, 'cruise');
+    assert.equal(nebulaRestored.cruiseTime, nebula.cruiseTime);
+    assert.equal(nebulaRestored.cruise, false);
+    for (const key of ['position','target']) nebula.pose[key].forEach((value,index) => {
+      assert.ok(Math.abs(nebulaRestored.pose[key][index]-value)<1e-8, 'Nebula camera was not restored');
+    });
     assert.deepEqual(errors, []);
     report.push({name, viewport, passed:true, solarBodies:returned.bodies.length, browserErrors:errors});
     console.log(`${name}: passed`);
