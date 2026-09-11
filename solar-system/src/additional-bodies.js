@@ -558,4 +558,14 @@ export const additionalBodies = [
     id, name, english, category: "土星 / 环卫星", parent: "saturn", color: "#aaa197", texture: id, radius, orbit, period, orbitPhase: phase, inclination: 0.2,
     shape: [1, 0.78, 0.65], description: `${name}是土星环系统中的小型卫星，轨道与环粒相互作用。`, facts: [["平均半径 · 约", `${Math.round(radius * 2820)}`, "km"], ["绕土周期 · 约", `${period.toFixed(3)}`, "天"], ["所属天体", "土星", ""], ["分类", "环卫星", ""]], feature, featureText, caption: `${name}轨道`, detail: "卡西尼号影像 / 程序化补全", source: `saturn/moons/${id}/`
   })),
+  ...[
+    ["ariel", "天卫一", "ARIEL", "uranus", 0.16, 4.2, 2.5204], ["umbriel", "天卫二", "UMBRIEL", "uranus", 0.18, 5.1, 4.1442],
+    ["titania", "天卫三", "TITANIA", "uranus", 0.23, 6.2, 8.7059], ["oberon", "天卫四", "OBERON", "uranus", 0.23, 7.3, 13.4632],
+    ["nereid", "海卫二", "NEREID", "neptune", 0.11, 9.4, 360.13], ["proteus", "海卫八", "PROTEUS", "neptune", 0.15, 3.2, 1.1223],
+    ["styx", "冥卫二", "STYX", "pluto", 0.045, 4.2, 20.1616], ["nix", "冥卫三", "NIX", "pluto", 0.06, 5.1, 24.8546],
+    ["kerberos", "冥卫四", "KERBEROS", "pluto", 0.035, 6.1, 32.1676], ["hydra", "冥卫五", "HYDRA", "pluto", 0.065, 7.0, 38.2018],
+  ].map(([id,name,english,parent,radius,orbit,period]) => catalogSatellite({
+    id, name, english, category: `${parent === "uranus" ? "天王星" : parent === "neptune" ? "海王星" : "冥王星"} / 天然卫星`, parent, color: "#aaa39a", texture: id, radius, orbit, period, orbitPhase: 0.8 + radius * 9, inclination: 0.5,
+    shape: [1, 0.78, 0.68], description: `${name}是${parent === "uranus" ? "天王星" : parent === "neptune" ? "海王星" : "冥王星"}系统中的小型卫星，表面资料有限。`, facts: [["平均半径 · 约", `${Math.round(radius * 2820)}`, "km"], ["公转周期 · 约", `${period.toFixed(2)}`, "天"], ["所属天体", parent === "uranus" ? "天王星" : parent === "neptune" ? "海王星" : "冥王星", ""], ["资料状态", "有限", ""]], feature: "撞击地貌与冰质表面", featureText: "该卫星缺少完整全球测绘，当前以低对比度程序化表面表达其已知外观。", caption: `${name}轨道`, detail: "观测资料有限 / 程序化补全", source: `${parent}/moons/${id}/`
+  })),
 ].map((body) => ({ ...body, group: body.parent ? "moons" : "others" }));
