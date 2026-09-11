@@ -444,18 +444,32 @@ output {
 }
 .planet-dock {
   height: 108px;
+  min-width: 0;
+  max-width: 100%;
   display: grid;
   grid-template-columns: repeat(9, minmax(0, 1fr));
   gap: 8px;
   overflow-x: auto;
-  scrollbar-width: none;
+  overflow-y: hidden;
+  overscroll-behavior-x: contain;
+  touch-action: pan-x;
+  scrollbar-width: thin;
+  scrollbar-color: #3d5748 transparent;
 }
 .planet-dock::-webkit-scrollbar {
-  display: none;
+  height: 4px;
+}
+.planet-dock::-webkit-scrollbar-track {
+  background: transparent;
+}
+.planet-dock::-webkit-scrollbar-thumb {
+  background: #3d5748;
+  border-radius: 99px;
 }
 .planet-choice {
   height: 104px;
   min-width: 0;
+  touch-action: pan-x;
   border: 1px solid transparent;
   border-radius: 5px;
   position: relative;
@@ -1200,6 +1214,9 @@ dialog .dialog-close {
     display: flex;
     gap: 6px;
     scroll-snap-type: x proximity;
+    overflow-x: auto;
+    overflow-y: hidden;
+    touch-action: pan-x;
   }
   .planet-choice {
     width: 77px;
@@ -2051,6 +2068,7 @@ dialog .dialog-close {
     grid-auto-flow: column;
     grid-auto-columns: minmax(90px, calc((100% - 64px) / 9));
     justify-content: start;
+    scrollbar-width: thin;
   }
   .atlas-item p {
     line-height: 1.6;
