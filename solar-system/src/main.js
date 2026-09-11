@@ -2099,7 +2099,7 @@ async function init() {
             id: body.id,
             meshId: body.mesh.uuid,
             radius: body.radius,
-            radiusKm: physicalData[body.id].radiusKm,
+            radiusKm: physicalData[body.id]?.radiusKm ?? null,
             renderRadius: body.renderRadius || body.radius,
             parent: body.parent || null,
             position: body.root.position.toArray(),

@@ -72,6 +72,24 @@ export const landmarks = {
       source: "https://science.nasa.gov/resource/pluto-global-color-map/",
     },
   ],
+  mimas: [
+    { id: "herschel", name: "赫歇尔撞击坑", uv: geographic(-1.4, 114.4), location: "赤道附近 / 巨型撞击坑", text: "直径约 130 千米的赫歇尔撞击坑几乎占据土卫一半球，坑中央峰在低角度光照下尤其醒目。", source: "https://science.nasa.gov/saturn/moons/mimas/" },
+  ],
+  tethys: [
+    { id: "odysseus", name: "奥德修斯撞击坑", uv: geographic(-32, 128), location: "西半球 / 多环盆地", text: "巨大的奥德修斯撞击坑横跨土卫三表面，低地形起伏让它看起来像一只浅色的眼睛。", source: "https://science.nasa.gov/saturn/moons/tethys/" },
+  ],
+  dione: [
+    { id: "wispy", name: "亮纹地形", uv: geographic(-10, 235), location: "背土半球 / 构造条纹", text: "明亮的条纹沿断裂地形延展，可能由冰质物质沿裂缝暴露或喷出形成。", source: "https://science.nasa.gov/saturn/moons/dione/" },
+  ],
+  rhea: [
+    { id: "rhea-craters", name: "稠密撞击坑区", uv: geographic(-18, 35), location: "南半球 / 古老高地", text: "土卫五的古老冰壳保存着密集撞击坑，坑壁上的亮色冰屑在晨昏线附近最容易辨认。", source: "https://science.nasa.gov/saturn/moons/rhea/" },
+  ],
+  iapetus: [
+    { id: "cassini-regio", name: "卡西尼区域", uv: geographic(5, 240), location: "前进半球 / 深暗地形", text: "卡西尼区域的暗色覆盖与明亮冰质地形形成强烈边界，是土卫八最独特的全球特征。", source: "https://science.nasa.gov/saturn/moons/iapetus/" },
+  ],
+  miranda: [
+    { id: "verona-rupes", name: "维罗纳断崖", uv: geographic(-18, 316), location: "南半球 / 巨型断崖", text: "维罗纳断崖是太阳系最高的已知悬崖之一，冰质断层在斜射光下呈现出清晰阴影。", source: "https://science.nasa.gov/uranus/moons/miranda/" },
+  ],
 };
 
 export function landmarkDirection(feature, body) {
