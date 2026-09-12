@@ -43,6 +43,7 @@ import {
   updateBodyRotations,
 } from "./orbits.js";
 import { physicalData } from "./physical-scale.js";
+import { createBodyGeometry, createNarrowRing } from './body-geometry.js';
 import { createObservedClouds } from "./observed-clouds.js";
 import { alignObservedEarth, subsolarPoint } from "./earth-observation.js";
 import { createStarfield } from "./starfield.js";
@@ -284,7 +285,7 @@ function filterAtlas() {
     const body = bodies.find((item) => item.id === button.dataset.body);
     const visible =
       (group === "all" || (body.group || "planets") === group) &&
-      `${body.name} ${body.english} ${body.category}`
+      `${body.id} ${body.name} ${body.english} ${body.category}`
         .toLocaleLowerCase()
         .includes(query);
     button.hidden = !visible;
@@ -500,7 +501,7 @@ function createBodies(textures) {
       material.bumpMap = map;
       material.bumpScale = body.radius * 0.025;
     }
-    const geometry = body.shape ? sphere.clone().scale(...body.shape) : sphere;
+    const geometry = createBodyGeometry(body, sphere);
     const mesh = new THREE.Mesh(geometry, material);
     mesh.scale.setScalar(body.radius);
     mesh.rotation.y =
@@ -586,6 +587,9 @@ function createBodies(textures) {
       );
       ring.rotation.x = -Math.PI / 2;
       ring.userData.bodyId = body.id;
+      tilted.add(ring);
+    } else if (body.rings) {
+      ring = createNarrowRing(body);
       tilted.add(ring);
     }
     let orbitLine = null;
@@ -773,7 +777,7 @@ function focusedOffset(body, close = false) {
   const focalLength =
     height / (2 * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)));
   let distance = body.radius * Math.sqrt(1 + (focalLength / targetRadius) ** 2);
-  if (body.id === "saturn" && !close) distance *= 1.6;
+  if ((body.id === "saturn" || body.rings) && !close) distance *= 1.6;
   if (body.id === "sun" && !close) distance *= 1.2;
   if (body.id === "enceladus" && !close) distance *= 1.25;
   if (close) distance *= mobile ? 0.64 : 0.62;
@@ -800,7 +804,7 @@ function focusedOffset(body, close = false) {
         new THREE.Vector3(0, 1, 0),
         body.id === "earth" ? 0.95 : 0.72,
       );
-    if (body.id === "saturn") {
+    if (body.id === "saturn" || body.rings) {
       const normal = new THREE.Vector3(0, 1, 0).applyQuaternion(
         body.tilted.getWorldQuaternion(new THREE.Quaternion()),
       );
@@ -821,8 +825,10 @@ function currentFocusOffset(body) {
         .filter((item) => item.parent === body.id)
         .map((item) => item.orbit + item.radius),
     );
-    const distance = focusedOffset({ ...body, id: "system", radius }).length();
-    return new THREE.Vector3(0.15, 0.85, 1)
+    // The system radius already encloses the rings and moons; do not apply the
+    // close-up ring margin again. Frame the new dwarf systems from their day side.
+    const distance = focusedOffset({ ...body, id: "system", radius, rings: null }).length();
+    return (body.rings || body.id === 'eris' ? focusedOffset(body) : new THREE.Vector3(0.15, 0.85, 1))
       .normalize()
       .multiplyScalar(distance);
   }
@@ -2128,6 +2134,9 @@ async function init() {
             occluded: projected.occluded,
             labelVisible: !body.label.hidden,
             rotation: body.mesh.rotation.y,
+            orientation: body.mesh.quaternion.toArray(),
+            ringVisible: Boolean(body.ring?.visible && body.root.visible),
+            ringOuterRadius: body.rings ? body.radius * body.rings.outer : null,
             textureWidth: body.mesh.material.map?.image?.width || 0,
             cloudsVisible: body.clouds?.visible,
             cloudRotation: body.clouds?.rotation.y,
