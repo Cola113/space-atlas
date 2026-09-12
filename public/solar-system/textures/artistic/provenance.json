@@ -103,6 +103,30 @@
       "mode": "original artistic terrain"
     },
     {
+      "id": "titania",
+      "processingVersion": 2,
+      "base": "titania-1920.webp",
+      "high": "titania-3840.webp",
+      "generatedDimensions": [
+        3840,
+        1920
+      ],
+      "baseDimensions": [
+        1920,
+        960
+      ],
+      "sourceReference": null,
+      "generatedSha256": "a190090e96743865258b61152b20149bc40e3bc686e05731cd1b0c1f5cdc5209",
+      "baseSha256": "f7c2507f19f0ca4bff39ffc6460fd62b1c1685d6c8b8caf50be3f5f5f2935652",
+      "highSha256": "5084f23cfe2f94d81f20c31554b695a4c5f0d147b4414cb4b46a9bc174db7167",
+      "baseBytes": 538272,
+      "highBytes": 9993162,
+      "longitudeEdgeMeanDifferenceBefore": 16.1015625,
+      "longitudeEdgeMaxDifferenceAfter": 0,
+      "lowestCoverageTileMean": 124.2576171875,
+      "mode": "original artistic terrain"
+    },
+    {
       "id": "oberon",
       "processingVersion": 2,
       "base": "oberon-1920.webp",

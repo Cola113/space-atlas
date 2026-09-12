@@ -12,7 +12,7 @@ const catalogSatellite = (body) => ({
 });
 
 const artisticTextures = new Set([
-  "miranda", "phoebe", "ariel", "umbriel", "oberon", "hyperion", "proteus",
+  "miranda", "phoebe", "ariel", "umbriel", "titania", "oberon", "hyperion", "proteus",
   "makemake", "haumea", "eris", "deimos", "amalthea", "thebe", "adrastea", "metis",
   "himalia", "janus", "epimetheus", "prometheus", "pandora", "atlas", "pan", "nereid",
   "styx", "nix", "kerberos", "hydra",
