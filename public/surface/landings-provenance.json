@@ -1,0 +1,161 @@
+{
+  "generatedOn": "2026-09-12",
+  "assets": [
+    {
+      "id": "io",
+      "mode": "text-to-image",
+      "sourceDimensions": [
+        3840,
+        2160
+      ],
+      "deliveredDimensions": [
+        3840,
+        1920
+      ],
+      "sourceSha256": "991014f4ad83f523b49854fcce2fc6ea057d31f81f93e26fe70157b0747363ac",
+      "file": "io.webp",
+      "sha256": "fa285cf340f5bf9e1403ef1fea71a04ff12189e740f67e75792c4b083e1bf68c",
+      "bytes": 1630276,
+      "processing": "Complete 3840x2160 generated panorama reparameterized to 360x180 at 3840x1920; top-connected black sky removed; narrow wrap blend; nadir smoothing; WebP encoding.",
+      "model": "gpt-image-2.5-sunburst",
+      "requestedQuality": "high",
+      "requestedSize": "3840x1920",
+      "qualityExecutionVerified": false
+    },
+    {
+      "id": "titan",
+      "mode": "text-to-image",
+      "sourceDimensions": [
+        3840,
+        2160
+      ],
+      "deliveredDimensions": [
+        3840,
+        1920
+      ],
+      "sourceSha256": "1cd06f61ef0df9607c37c08fd831f2cf6f4650235aa6846a55e75eac54db0c36",
+      "file": "titan.webp",
+      "sha256": "f4b9bb71ece730023c559718496e4a9f671b779d32a1bae9ad95213b71a95695",
+      "bytes": 1257412,
+      "processing": "Complete 3840x2160 generated panorama reparameterized to 360x180 at 3840x1920; top-connected black sky removed; narrow wrap blend; nadir smoothing; WebP encoding.",
+      "model": "gpt-image-2.5-sunburst",
+      "requestedQuality": "high",
+      "requestedSize": "3840x1920",
+      "qualityExecutionVerified": false
+    },
+    {
+      "id": "enceladus",
+      "mode": "text-to-image",
+      "sourceDimensions": [
+        3840,
+        2160
+      ],
+      "deliveredDimensions": [
+        3840,
+        1920
+      ],
+      "sourceSha256": "0b221b5b5c6deba628151aa70a4a84edf903c164e389b851df4e3d7f7dbea9f4",
+      "file": "enceladus.webp",
+      "sha256": "07c8e91a343b0b55f68ec5f75d33eab7fbd8a22d23ca55f41781abd51698c6c4",
+      "bytes": 1447022,
+      "processing": "Complete 3840x2160 generated panorama reparameterized to 360x180 at 3840x1920; top-connected black sky removed; narrow wrap blend; nadir smoothing; WebP encoding.",
+      "model": "gpt-image-2.5-sunburst",
+      "requestedQuality": "high",
+      "requestedSize": "3840x1920",
+      "qualityExecutionVerified": false
+    },
+    {
+      "id": "pluto",
+      "mode": "text-to-image",
+      "sourceDimensions": [
+        3840,
+        2160
+      ],
+      "deliveredDimensions": [
+        3840,
+        1920
+      ],
+      "sourceSha256": "e0a50edf2368efd9e0211c70a9f70c2c33c934d2e696bc27623d17cd9695fb39",
+      "file": "pluto.webp",
+      "sha256": "79b6fe9ed9044f3310253721ca3ed4396bddad1d27f40feaff17cf4999aa7425",
+      "bytes": 1387888,
+      "processing": "Complete 3840x2160 generated panorama reparameterized to 360x180 at 3840x1920; top-connected black sky removed; narrow wrap blend; nadir smoothing; WebP encoding.",
+      "model": "gpt-image-2.5-sunburst",
+      "requestedQuality": "high",
+      "requestedSize": "3840x1920",
+      "qualityExecutionVerified": false
+    },
+    {
+      "id": "miranda",
+      "mode": "text-to-image",
+      "sourceDimensions": [
+        3840,
+        2160
+      ],
+      "deliveredDimensions": [
+        3840,
+        1920
+      ],
+      "sourceSha256": "112beddb7ce8f9b9114e7ef6b140eaea5695a4dee28199dc95fac5216df3a900",
+      "file": "miranda.webp",
+      "sha256": "123146be361a6885baa9f6bef258f299621a42dfb167b62bb73627003a071b8d",
+      "bytes": 1857052,
+      "processing": "Complete 3840x2160 generated panorama reparameterized to 360x180 at 3840x1920; top-connected black sky removed; narrow wrap blend; nadir smoothing; WebP encoding.",
+      "model": "gpt-image-2.5-sunburst",
+      "requestedQuality": "high",
+      "requestedSize": "3840x1920",
+      "qualityExecutionVerified": false
+    },
+    {
+      "id": "mercury",
+      "mode": "text-to-image",
+      "sourceDimensions": [
+        3840,
+        2160
+      ],
+      "deliveredDimensions": [
+        3840,
+        1920
+      ],
+      "sourceSha256": "3f379857a1da8ef17a58c370a9e47cdb10d561b5fbcb3377a083f1852253d2cf",
+      "file": "mercury.webp",
+      "sha256": "6ec521a5564fdad6c7998db9cad701c224068360fb0d1f8d9421594cdce3919e",
+      "bytes": 1969786,
+      "processing": "Complete 3840x2160 generated panorama reparameterized to 360x180 at 3840x1920; top-connected black sky removed; narrow wrap blend; nadir smoothing; WebP encoding.",
+      "model": "gpt-image-2.5-sunburst",
+      "requestedQuality": "high",
+      "requestedSize": "3840x1920",
+      "qualityExecutionVerified": false
+    },
+    {
+      "id": "mars",
+      "mode": "NASA photographic mosaic with multi-image AI missing-ground fill",
+      "sourceDimensions": [
+        29239,
+        8234
+      ],
+      "deliveredDimensions": [
+        8192,
+        4096
+      ],
+      "sourceSha256": "77d292963d9eeeefbbc265271669c2e89edefc28c1a7666c1f27eead5db569c7",
+      "file": "mars.webp",
+      "sha256": "25adcd1e0dd5f053f812606f4b95dff33001d664229e6dedb8bdb620c1911122",
+      "bytes": 6480870,
+      "processing": "PIA26410 (341 Mastcam frames, 2024-09-21/22, Earth white balance); approximate cylindrical/equirectangular projection, traced skyline combined conservatively with reference-edit silhouette; observed upper terrain preserved through local compositing, missing near-ground/rover region blended with multi-image reference-generated sediment. Fill response cropped from 3840x2160 to 3840x1920 to match reference pixel-scale framing, then resampled; wrap and nadir blend. Approximate heading, not survey geometry.",
+      "model": "gpt-image-2.5-sunburst",
+      "requestedQuality": "high",
+      "qualityExecutionVerified": false,
+      "requestedSize": "3840x1920",
+      "fillSourceDimensions": [
+        3840,
+        2160
+      ],
+      "fillSourceSha256": "bbe9ebfb92f300dc58356c2dd7be4a5b6524ecde7b6b57c567941cbdcdf77d6f",
+      "referenceInputs": [
+        "3840x1920 prepared composition with temporary near-ground fill",
+        "1920x541 PIA26410 photographic mosaic preview"
+      ]
+    }
+  ]
+}

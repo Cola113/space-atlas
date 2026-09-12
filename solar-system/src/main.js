@@ -43,6 +43,7 @@ import {
   updateBodyRotations,
 } from "./orbits.js";
 import { physicalData } from "./physical-scale.js";
+import { landableBodyIds } from './surface/sites.js';
 import { catalogSections, dockCatalogs, dockCatalogFor, matchesCatalog, satelliteSystems, systemMembers, systemName } from './catalog.js';
 import { createBodyGeometry, createNarrowRing } from './body-geometry.js';
 import { createObservedClouds } from "./observed-clouds.js";
@@ -1340,7 +1341,7 @@ function triggerActivity() {
 function updateObservationTools() {
   updateCloudUi();
   const id = state.selected;
-  $("landing-button").hidden = state.system || !["moon", "europa"].includes(id);
+  $("landing-button").hidden = state.system || !landableBodyIds.includes(id);
   const family = familyOf(objects.get(id));
   const visible =
     id &&
@@ -1418,7 +1419,7 @@ function selectLandmark(id) {
 }
 
 async function landOnSurface() {
-  if (!state.ready || landingBusy || surfaceView || !["moon", "europa"].includes(state.selected)) return;
+  if (!state.ready || landingBusy || surfaceView || !landableBodyIds.includes(state.selected)) return;
   const id = state.selected;
   const body = objects.get(id);
   const previousControls = controls.enabled;

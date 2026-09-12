@@ -1,5 +1,6 @@
 import * as THREE from 'three';
-import { landingSites, surfaceFrame, angularDiameter, horizonAngles, lookDirection } from './geometry.js';
+import { landingSites, surfaceFrame, angularDiameter, horizonAngles, lookDirection, nextDaylight } from './geometry.js';
+import { createIcons, ArrowLeft, Info, X, RotateCcw, Camera, Sunrise, ArrowUpRight } from 'lucide';
 import { SurfaceClock } from './SurfaceClock.js';
 import { simulationRates, formatSimulationRate, simulationRateEquivalent } from '../simulation-time.js';
 import { SurfaceJourney } from './SurfaceJourney.js';
@@ -29,9 +30,9 @@ export function createSurfaceView(id, {renderOrbit,onClosed,initialDate,initialR
     <div class="surface-canvas"></div>
     <div class="surface-vignette" aria-hidden="true"></div>
     <header class="surface-header">
-      <button class="surface-exit" type="button">← <span>返回轨道</span></button>
+      <button class="surface-exit" type="button"><i data-lucide="arrow-left"></i><span>返回轨道</span></button>
       <span class="surface-mode"><b></b> SURFACE EXPLORER</span>
-      <button class="surface-info-button" type="button" aria-expanded="false" aria-controls="surface-details">观景说明 <span>ⓘ</span></button>
+      <button class="surface-info-button" type="button" aria-label="观景资料" title="观景资料" aria-expanded="false" aria-controls="surface-details"><i data-lucide="info"></i></button>
     </header>
     <div class="surface-location"><span class="surface-eyebrow">${site.english}</span>
       <h1>${site.name}<span>·</span><small>${site.title}</small></h1>
@@ -39,14 +40,14 @@ export function createSurfaceView(id, {renderOrbit,onClosed,initialDate,initialR
     <div class="surface-target" hidden><span></span><small></small></div>
     <div class="surface-crosshair" aria-hidden="true"></div>
     <section class="surface-details" id="surface-details" aria-label="观景说明" hidden>
-      <button class="surface-details-close" type="button" aria-label="关闭观景说明">×</button>
+      <button class="surface-details-close" type="button" aria-label="关闭观景说明"><i data-lucide="x"></i></button>
       <span class="surface-eyebrow">这个视野从哪里来</span><h2>${site.title}</h2>
       <p>${site.description}</p>
       <dl><div><dt>表面模拟时间</dt><dd class="surface-details-time"></dd></div>
-      <div><dt>落点坐标</dt><dd>${site.latitude.toFixed(4)}° N / ${site.longitude.toFixed(4)}° E</dd></div>
+      <div><dt>落点坐标</dt><dd>${Math.abs(site.latitude).toFixed(4)}° ${site.latitude<0?'S':'N'} / ${site.longitude.toFixed(4)}° E</dd></div>
       <div><dt>${site.parentName}视直径 / 高度角</dt><dd class="surface-parent-data"></dd></div>
       <div><dt>太阳高度角</dt><dd class="surface-sun-data"></dd></div></dl>
-      <p>${site.notes}</p><p>太阳、恒星、卫星方位与天体自转随星历更新，云层与云带流动为视觉模拟。地表随太阳升落和遮挡整体调光；照片中已有的阴影保持原样，不能当作动态地形投影。星点曝光经过增强。</p>
+      <p>${site.notes}</p><p>${site.coordinateNote||''} 天空随模拟日期与对应天体模型更新。地表随日照和遮挡整体调光，原图中的局部阴影保持原样；曝光与大气散射是展示近似。</p>
       <p class="surface-credit">${site.credit}</p>
       <p class="surface-links"><a href="${site.source}" target="_blank" rel="noreferrer">地表资料 ↗</a><a href="/surface/README.md" target="_blank" rel="noreferrer">加工与来源 ↗</a></p>
     </section>
@@ -58,22 +59,24 @@ export function createSurfaceView(id, {renderOrbit,onClosed,initialDate,initialR
       <p class="surface-rate-equivalent"></p>
       <div class="surface-clock-actions"><button type="button" class="surface-pause" aria-pressed="false">暂停时间</button><button type="button" class="surface-rewind">回到着陆时刻</button></div>
     </section>
-    <footer class="surface-footer"><div class="surface-bearing"><span>朝向</span><strong></strong><small>视点固定 · 眼高 1.65 m</small></div>
-      <div class="surface-actions"><button type="button" class="surface-parent">望向${site.parentName} ↗</button>
-        <button type="button" class="surface-reset" aria-label="恢复着陆视角">重置视角</button>
-        <button type="button" class="surface-photo">留张照片</button></div>
+    <footer class="surface-footer"><div class="surface-bearing"><span>朝向</span><strong></strong><small>眼高 1.65 m</small></div>
+      <div class="surface-actions"><button type="button" class="surface-parent"><span>望向${site.parentName}</span><i data-lucide="arrow-up-right"></i></button>
+        <button type="button" class="surface-daylight" aria-label="前往下一次日照" title="前往下一次日照"><i data-lucide="sunrise"></i></button>
+        <button type="button" class="surface-reset" aria-label="恢复着陆视角" title="恢复着陆视角"><i data-lucide="rotate-ccw"></i></button>
+        <button type="button" class="surface-photo" aria-label="留张照片" title="留张照片"><i data-lucide="camera"></i></button></div>
       <div class="surface-time-row"><button type="button" class="surface-time-toggle" aria-expanded="false" aria-controls="surface-clock-panel">地表流速 · ${formatSimulationRate(clock.rate)}</button><time class="surface-time-readout"></time></div>
-      <p class="surface-hint">拖动环顾 · ↑ ↓ ← → 转头 · Esc 返回</p></footer>
+      </footer>
     <div class="surface-message" role="status" hidden></div>
     <div class="surface-transition-cover" aria-hidden="true"></div>
     <div class="surface-journey-caption" role="status"><span class="surface-eyebrow">DESTINATION / ${site.english}</span><strong>准备前往${site.name}</strong><p>准备地表全景与天空</p><div class="surface-journey-track"><b></b></div></div>
     <button type="button" class="surface-skip">跳过动画</button>`;
   document.body.append(root);
+  createIcons({root,icons:{ArrowLeft,Info,X,RotateCcw,Camera,Sunrise,ArrowUpRight}});
   root.showModal();
   const $ = selector => root.querySelector(selector);
   const events = new AbortController();
   const textures = new Set();
-  let renderer, sky, disposed = false, loaded = false, raf = 0, noticeTimer = 0;
+  let renderer, sky, disposed = false, loaded = false, raf = 0, noticeTimer = 0, groundMask;
   let lastFrame = null, lastDraw = -Infinity, lastSkyUpdate = -Infinity, skyTime = null, lastOrbit = null, dirty = true, lastReadout = '';
   let resetExposure = true, exposureElapsed = 0;
   const initialPitch = () => site.initialPitch + (id === 'europa' && innerWidth < 600 ? 8 : 0);
@@ -175,15 +178,23 @@ export function createSurfaceView(id, {renderOrbit,onClosed,initialDate,initialR
     root.dataset.heading = heading.toFixed(2); root.dataset.pitch = pitch.toFixed(2);
     const parent=frame.targets[site.parent];
     const point = parent.direction.clone().multiplyScalar(500).project(camera);
-    const inView = parent.direction.dot(lookDirection(heading,pitch)) > 0 && Math.abs(point.x)<.85 && Math.abs(point.y)<.72;
+    const angles=horizonAngles(parent.direction);
+    const inView = !site.obscuredParent&&angles.altitude>0&&parent.direction.dot(lookDirection(heading,pitch)) > 0 && Math.abs(point.x)<.85 && Math.abs(point.y)<.72;
     const label = $('.surface-target');
-    label.hidden = !inView;
+    const u=THREE.MathUtils.euclideanModulo((angles.azimuth-site.panoramaCenter)/360+.5,1);
+    const v=THREE.MathUtils.clamp(.5-angles.altitude/180,0,.999);
+    const occluded=groundMask&&groundMask[(Math.floor(v*256)*512+Math.floor(u*512))*4+3]>128;
+    label.hidden = !inView||occluded;
     if (inView) {
       label.style.left = `${(point.x*.5+.5)*innerWidth}px`;
       const disc = Math.tan(angularDiameter(site.parentRadiusKm,parent.distanceKm)/2) / Math.tan(rad(camera.fov/2)) * innerHeight*.5;
       label.style.top = `${(-point.y*.5+.5)*innerHeight+disc+17}px`;
       label.querySelector('span').textContent = site.parentName;
       label.querySelector('small').textContent = `${(parent.distanceKm/10000).toFixed(1)} 万公里`;
+      const bounds=label.getBoundingClientRect();
+      if(bounds.bottom>$('.surface-footer').getBoundingClientRect().top-12||bounds.top<78)label.hidden=true;
+      const location=$('.surface-location').getBoundingClientRect();
+      if(bounds.left<location.right&&bounds.right>location.left&&bounds.top<location.bottom&&bounds.bottom>location.top)label.hidden=true;
     }
   }
   function render(now = performance.now()) {
@@ -237,7 +248,17 @@ export function createSurfaceView(id, {renderOrbit,onClosed,initialDate,initialR
     else motion={heading,pitch,delta,targetPitch,elapsed:0,duration};
     lastFrame=null;invalidate();
   }
-  listen($('.surface-parent'),'click',()=>{const angles=horizonAngles(frame.targets[site.parent].direction);aim(angles.azimuth,angles.altitude);});
+  listen($('.surface-parent'),'click',()=>{
+    if(site.obscuredParent){notice(`${site.parentName}被浓厚雾霾遮蔽。`);return;}
+    const angles=horizonAngles(frame.targets[site.parent].direction);
+    if(angles.altitude<0){notice(`${site.parentName}目前位于地平线下。`);return;}
+    aim(angles.azimuth,angles.altitude);
+  });
+  listen($('.surface-daylight'),'click',()=>{
+    const time=nextDaylight(site,clock.time);
+    if(time===null){notice('未来两个当地太阳日内，太阳仍未升到适合观景的高度。');return;}
+    clock.time=time;clock.suspend();onTimeChange?.(time);lastSkyUpdate=-Infinity;resetExposure=true;exposureElapsed=0;invalidate();
+  });
   listen($('.surface-reset'),'click',()=>aim(site.initialHeading,initialPitch()));
   listen(root,'keydown',event=>{
     if (journey.phase!=='landed'||!$('.surface-details').hidden||/INPUT|TEXTAREA|SELECT/.test(event.target.tagName)) return;
@@ -260,28 +281,35 @@ export function createSurfaceView(id, {renderOrbit,onClosed,initialDate,initialR
       const canvas=renderer.domElement;
       canvas.setAttribute('aria-label',`${site.name}固定观景点，拖动改变朝向`);canvas.tabIndex=0;
       $('.surface-canvas').append(canvas);
-      const groundUrl=id==='moon'&&(innerWidth<=760||renderer.capabilities.maxTextureSize<8192)?'/surface/moon-4k.webp':site.texture;
-      const pending=await Promise.allSettled([texture(groundUrl),texture(site.parentTexture),
-        ...(id==='moon'?[texture('/solar-system/textures/2k_earth_clouds.jpg')]:[])]);
+      const compact=innerWidth<=760||renderer.capabilities.maxTextureSize<(site.textureWidth||8192);
+      const groundUrl=compact?(site.mobileTexture||(id==='moon'?'/surface/moon-4k.webp':site.texture)):site.texture;
+      const pending=await Promise.allSettled([texture(groundUrl),site.parentTexture?texture(site.parentTexture):Promise.resolve(null),
+        id==='moon'?texture('/solar-system/textures/2k_earth_clouds.jpg'):Promise.resolve(null),
+        site.parent==='Saturn'?texture('/solar-system/textures/2k_saturn_ring_alpha.png'):Promise.resolve(null)]);
       if(disposed)return;
       for(const result of pending)if(result.status==='rejected')throw new Error('全景或天体纹理未能加载，请返回轨道后重试。');
-      const [ground,parentMap,cloudMap]=pending.map(x=>x.value);
+      const [ground,parentMap,cloudMap,ringMap]=pending.map(x=>x.value);
+      const mask=document.createElement('canvas');mask.width=512;mask.height=256;
+      const maskContext=mask.getContext('2d',{willReadFrequently:true});maskContext.drawImage(ground.image,0,0,512,256);
+      groundMask=maskContext.getImageData(0,0,512,256).data;
       ground.wrapS=THREE.RepeatWrapping;
       const dome=new THREE.Mesh(new THREE.SphereGeometry(100,128,64),new THREE.ShaderMaterial({
-        uniforms:{panorama:{value:ground},center:{value:rad(site.panoramaCenter)},daylight:{value:1}},
+        uniforms:{panorama:{value:ground},center:{value:rad(site.panoramaCenter)},daylight:{value:1},activityTime:{value:0},lava:{value:site.activity==='lava'?1:0}},
         vertexShader:'varying vec3 direction; void main(){direction=position;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}',
-        fragmentShader:`uniform sampler2D panorama;uniform float center;uniform float daylight;varying vec3 direction;
+        fragmentShader:`uniform sampler2D panorama;uniform float center;uniform float daylight;uniform float activityTime;uniform float lava;varying vec3 direction;
           void main(){vec3 d=normalize(direction);vec2 uv=vec2((atan(d.x,-d.z)-center)/6.28318530718+.5,.5+asin(clamp(d.y,-1.,1.))/3.14159265359);
           // Correct the longitude derivative across the wrap, avoiding a
           // full-texture mip sample that would draw a vertical seam in the sky.
           vec2 dx=dFdx(uv),dy=dFdy(uv);dx.x-=round(dx.x);dy.x-=round(dy.x);
           vec4 c=textureGrad(panorama,uv,dx,dy);if(c.a<.03)discard;
-          c.rgb*=daylight*mix(vec3(.7,.79,1.),vec3(1.),smoothstep(.015,.25,daylight));gl_FragColor=c;
+          float hot=lava*step(c.g*3.,c.r)*step(c.b*2.,c.g)*step(.12,c.r)*(1.-step(.18,c.g));
+          vec3 emission=hot*c.rgb*(.7+.2*sin(mod(activityTime,86400.)*.0007+uv.x*31.));
+          c.rgb*=daylight*mix(vec3(.7,.79,1.),vec3(1.),smoothstep(.015,.25,daylight));c.rgb+=emission;gl_FragColor=c;
           #include <colorspace_fragment>
           }`,
         side:THREE.BackSide,transparent:true,depthWrite:false,depthTest:false,
       }));dome.renderOrder=20;scene.add(dome);
-      sky=createSurfaceSky({scene,renderer,site,parentMap,cloudMap,groundMaterial:dome.material,signal:events.signal,
+      sky=createSurfaceSky({scene,renderer,site,parentMap,cloudMap,ringMap,groundMaterial:dome.material,signal:events.signal,
         onCatalogueReady:()=>{lastSkyUpdate=-Infinity;invalidate();},
         onCatalogueError:()=>{notice('完整星表暂未加载，已显示主要亮星。');invalidate();}});
       listen(canvas,'pointerdown',event=>{

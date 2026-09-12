@@ -45,3 +45,17 @@
 @media(max-width:760px){.surface-clock-panel{bottom:180px}.surface-time-row{gap:9px;flex-wrap:wrap}.surface-time-readout{font-size:9px;letter-spacing:0}.surface-view .surface-footer{row-gap:12px}.surface-message{bottom:205px}.surface-journey-caption strong{font-size:21px}.surface-journey-caption .surface-eyebrow{letter-spacing:1px}.surface-details{max-height:calc(100dvh - 245px)}}
 @media(max-height:500px){.surface-location{top:78px}.surface-location h1{font-size:25px;margin:8px 0}.surface-footer{bottom:14px}.surface-view .surface-footer{row-gap:7px}.surface-clock-panel{bottom:105px;max-height:calc(100dvh - 170px);overflow:auto}.surface-hint{display:none}.surface-details{max-height:calc(100dvh - 140px)}}
 @media(prefers-reduced-motion:reduce){.surface-view[data-phase=landed] .surface-location,.surface-view[data-phase=landed] .surface-footer,.surface-view[data-phase=preparing] .surface-journey-track b{animation:none}}
+.surface-view *{letter-spacing:0!important}
+.surface-view button{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:40px}
+.surface-view button svg{width:17px;height:17px;flex:0 0 17px}
+.surface-actions button:not(.surface-parent),.surface-header .surface-info-button{width:42px;height:42px;padding:10px}
+.surface-exit span{margin-left:0}
+.surface-location{max-width:calc(100% - 96px)}
+.surface-location h1{display:flex;align-items:baseline;flex-wrap:wrap;gap:10px;font-size:32px}
+.surface-location h1>span{margin:0}
+.surface-location h1 small{font-size:16px;overflow-wrap:anywhere}
+.surface-location p{line-height:1.6;max-width:100%}
+.surface-details,.surface-clock-panel{border-radius:8px}
+.surface-details .surface-details-close{min-height:32px}
+@media(max-width:760px){.surface-location{max-width:calc(100% - 48px);top:85px}.surface-location h1{font-size:26px;gap:8px}.surface-location h1 small{font-size:13px}.surface-actions{gap:7px}.surface-actions .surface-parent{flex:1;max-width:156px;white-space:nowrap}.surface-view .surface-footer{row-gap:10px}}
+@media(max-height:500px){.surface-location{top:62px}.surface-location h1{font-size:23px;margin:4px 0}.surface-location p{font-size:9px}.surface-bearing{display:none}.surface-footer{grid-template-columns:1fr;justify-items:center}.surface-time-row{grid-column:1}.surface-view .surface-footer{row-gap:3px}.surface-clock-panel{bottom:91px;max-height:calc(100dvh - 158px)}}
