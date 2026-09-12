@@ -257,11 +257,11 @@
       <footer class="explorer-bottom">
         <div class="timeline">
           <div class="timeline-title">
-            <select id="catalog-filter" aria-label="天体分类">
+            <select id="catalog-filter" aria-label="底部快捷列表">
               <option value="planets">太阳与行星</option>
-              <option value="moons">天然卫星</option>
-              <option value="others">其它天体</option></select
-            ><small id="body-count">22 个可探索天体</small>
+              <option value="dwarfs">矮行星</option>
+              <option value="asteroids">小行星</option></select
+            ><small id="body-count">正在加载天体</small>
           </div>
           <div class="time-controls">
             <button
@@ -285,9 +285,13 @@
             ><time id="simulation-date"></time>
           </div>
         </div>
-        <nav class="planet-dock" id="planet-dock" aria-label="选择天体"></nav>
+        <div class="dock-strip">
+          <button id="dock-prev" class="dock-scroll" aria-label="向前浏览天体" aria-controls="planet-dock" disabled>‹</button>
+          <nav class="planet-dock" id="planet-dock" aria-label="选择天体"></nav>
+          <button id="dock-next" class="dock-scroll" aria-label="向后浏览天体" aria-controls="planet-dock" disabled>›</button>
+        </div>
         <div class="bottom-meta">
-          <span>在星辰之间，发现我们的世界。</span
+          <span id="dock-order">按距太阳由近到远</span
           ><span>SOLAR ATLAS <b>·</b> 2026</span>
         </div>
       </footer>
@@ -303,22 +307,24 @@
             <span class="eyebrow">THE SOLAR COLLECTION</span>
             <h1 id="atlas-title">天体图鉴</h1>
           </div>
-          <span id="atlas-count" role="status">22 个天体</span>
+          <div class="atlas-tools"><span id="atlas-count" role="status">正在加载天体</span><button id="atlas-reset" hidden>清除筛选</button></div>
         </div>
         <div class="atlas-filters">
           <input
             id="atlas-search"
             type="search"
             aria-label="搜索天体"
-            placeholder="搜索天体"
+            placeholder="搜索中英文名称或所属主星"
             autocomplete="off"
           />
-          <select id="atlas-filter" aria-label="图鉴分类">
-            <option value="all">全部天体</option>
+          <select id="atlas-filter" aria-label="图鉴类型">
+            <option value="all">全部类型</option>
             <option value="planets">太阳与行星</option>
+            <option value="dwarfs">矮行星</option>
+            <option value="asteroids">小行星</option>
             <option value="moons">天然卫星</option>
-            <option value="others">其它天体</option>
           </select>
+          <select id="atlas-system" aria-label="图鉴所属系统"><option value="all">全部系统</option></select>
         </div>
         <div class="atlas-grid" id="atlas-grid"></div>
         <p id="atlas-empty" class="atlas-empty" hidden>没有匹配的天体</p>

@@ -1,0 +1,28 @@
+// Period sources, uncertainty and the limits of the display models are recorded
+// in BODY_MODELS.md. Shape ratios affect rendering, never catalogue radii.
+export const bodyModels = {
+  pluto: { tidalPartner: 'charon' },
+  makemake: { spinDays: 22.8266 / 24, spinNote: '自转约 22.8 小时（采用双峰解）' },
+  haumea: { spinDays: 3.915341 / 24, shape: [1, 0.442, 0.734], rings: {inner: 1.94, outer: 2.08}, spinNote: '自转约 3.92 小时' },
+  eris: { spinDays: 15.7859, tidalPartner: 'dysnomia', spinNote: '自转约 15.8 天，与阋卫一同步' },
+  phoebe: { spinDays: 9.3 / 24, spinNote: '独立自转约 9.3 小时' },
+  himalia: { spinDays: 7.7819 / 24, spinNote: '独立自转约 7.78 小时' },
+  nereid: { spinDays: 11.594 / 24, shape: [1, .9, .94], spinNote: '独立自转约 11.6 小时' },
+  hyperion: { spinDays: 13, tumbling: true, shape: [1, .57, .76], spinNote: '非规则翻滚示意，不能预测实际朝向' },
+  ariel: { shape: [1, 1, 1], description: '天王星的主要冰质卫星之一，近球形的表面交织着峡谷、断裂和撞击坑。' },
+  umbriel: { shape: [1, 1, 1], description: '天王星的主要冰质卫星之一，近球形的深暗表面保存了密集的古老撞击坑。' },
+  titania: { shape: [1, 1, 1], description: '天王星最大的卫星，近球形的冰岩世界，表面留有巨大断裂和撞击痕迹。' },
+  oberon: { shape: [1, 1, 1], description: '天王星外侧的主要卫星，近球形的古老地表布满撞击坑和明亮喷出物。' },
+  proteus: { shape: [1, .91, .96] },
+  atlas: { shape: [1, .65, .92], ridge: {height: .30, width: .11} },
+  pan: { shape: [1, .72, .93], ridge: {height: .32, width: .12} },
+  janus: { orbit: 3.15, coorbital: true, shape: [1, .765, .98], spinNote: '内外轨道约每 4 年交换，画面放大轨道差异以便观察' },
+  epimetheus: { orbit: 3.15, coorbital: true, shape: [1, .69, .84], spinNote: '内外轨道约每 4 年交换，画面放大轨道差异以便观察' },
+  styx: { spinDays: 3.24, tumbling: true, orbitFrame: 'barycenter', shape: [1, .5, .56] },
+  nix: { spinDays: 1.83, tumbling: true, orbitFrame: 'barycenter', shape: [1, .65, .70] },
+  kerberos: { spinDays: 5.31, tumbling: true, orbitFrame: 'barycenter', shape: [1, .47, .53] },
+  hydra: { spinDays: .43, tumbling: true, orbitFrame: 'barycenter', shape: [1, .47, .59] },
+  hiiaka: { spinDays: 9.8 / 24, shape: [1, .8, .9], spinNote: '独立自转约 9.8 小时' },
+  namaka: { shape: [1, .82, .9], spinNote: '自转周期未测定，采用同步自转示意' },
+  dysnomia: { spinNote: '采用与公转同步的自转示意' },
+};

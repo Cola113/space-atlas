@@ -1,3 +1,6 @@
+import { physicalData } from './physical-scale.js';
+import { bodyModels } from './body-models.js';
+
 const rock = {
   high: null,
   tilt: 0,
@@ -563,20 +566,35 @@ export const additionalBodies = [
     ["pan", "土卫十八", "PAN", 0.035, 2.52, 0.575, 0.1, "恩克缝牧卫星", "土卫十八在恩克缝中运行，赤道堆积的环粒形成明显的馒头状外形。"],
   ].map(([id,name,english,radius,orbit,period,phase,feature,featureText]) => catalogSatellite({
     id, name, english, category: "土星 / 环卫星", parent: "saturn", color: "#aaa197", texture: id, radius, orbit, period, orbitPhase: phase, inclination: 0.2,
-    shape: [1, 0.78, 0.65], description: `${name}是土星环系统中的小型卫星，轨道与环粒相互作用。`, facts: [["平均半径 · 约", `${Math.round(radius * 2820)}`, "km"], ["绕土周期 · 约", `${period.toFixed(3)}`, "天"], ["所属天体", "土星", ""], ["分类", "环卫星", ""]], feature, featureText, caption: `${name}轨道`, detail: "卡西尼号影像 / 程序化补全", source: `saturn/moons/${id}/`
+    shape: [1, 0.78, 0.65], description: `${name}是土星环系统中的小型卫星，轨道与环粒相互作用。`, facts: [["平均半径 · 约", String(physicalData[id].radiusKm), "km"], ["绕土周期 · 约", `${period.toFixed(3)}`, "天"], ["所属天体", "土星", ""], ["分类", "环卫星", ""]], feature, featureText, caption: `${name}轨道`, detail: "卡西尼号影像 / 程序化补全", source: `saturn/moons/${id}/`
   })),
   ...[
     ["ariel", "天卫一", "ARIEL", "uranus", 0.16, 4.2, 2.5204], ["umbriel", "天卫二", "UMBRIEL", "uranus", 0.18, 5.1, 4.1442],
     ["titania", "天卫三", "TITANIA", "uranus", 0.23, 6.2, 8.7059], ["oberon", "天卫四", "OBERON", "uranus", 0.23, 7.3, 13.4632],
     ["nereid", "海卫二", "NEREID", "neptune", 0.11, 9.4, 360.13], ["proteus", "海卫八", "PROTEUS", "neptune", 0.15, 3.2, 1.1223],
-    ["styx", "冥卫二", "STYX", "pluto", 0.045, 4.2, 20.1616], ["nix", "冥卫三", "NIX", "pluto", 0.06, 5.1, 24.8546],
-    ["kerberos", "冥卫四", "KERBEROS", "pluto", 0.035, 6.1, 32.1676], ["hydra", "冥卫五", "HYDRA", "pluto", 0.065, 7.0, 38.2018],
+    ["styx", "冥卫五", "STYX", "pluto", 0.045, 4.2, 20.1616], ["nix", "冥卫二", "NIX", "pluto", 0.06, 5.1, 24.8546],
+    ["kerberos", "冥卫四", "KERBEROS", "pluto", 0.035, 6.1, 32.1676], ["hydra", "冥卫三", "HYDRA", "pluto", 0.065, 7.0, 38.2018],
   ].map(([id,name,english,parent,radius,orbit,period]) => catalogSatellite({
     id, name, english, category: `${parent === "uranus" ? "天王星" : parent === "neptune" ? "海王星" : "冥王星"} / 天然卫星`, parent, color: "#aaa39a", texture: id, radius, orbit, period, orbitPhase: 0.8 + radius * 9, inclination: 0.5,
-    shape: [1, 0.78, 0.68], description: `${name}是${parent === "uranus" ? "天王星" : parent === "neptune" ? "海王星" : "冥王星"}系统中的小型卫星，表面资料有限。`, facts: [["平均半径 · 约", `${Math.round(radius * 2820)}`, "km"], ["公转周期 · 约", `${period.toFixed(2)}`, "天"], ["所属天体", parent === "uranus" ? "天王星" : parent === "neptune" ? "海王星" : "冥王星", ""], ["资料状态", "有限", ""]], feature: "撞击地貌与冰质表面", featureText: "该卫星缺少完整全球测绘，当前以低对比度程序化表面表达其已知外观。", caption: `${name}轨道`, detail: "观测资料有限 / 程序化补全", source: `${parent}/moons/${id}/`
+    shape: [1, 0.78, 0.68], description: `${name}是${parent === "uranus" ? "天王星" : parent === "neptune" ? "海王星" : "冥王星"}系统中的小型卫星，表面资料有限。`, facts: [["平均半径 · 约", String(physicalData[id].radiusKm), "km"], ["公转周期 · 约", `${period.toFixed(2)}`, "天"], ["所属天体", parent === "uranus" ? "天王星" : parent === "neptune" ? "海王星" : "冥王星", ""], ["资料状态", "有限", ""]], feature: "撞击地貌与冰质表面", featureText: "该卫星缺少完整全球测绘，当前以低对比度程序化表面表达其已知外观。", caption: `${name}轨道`, detail: "观测资料有限 / 程序化补全", source: `${parent}/moons/${id}/`
+  })),
+  ...[
+    ['hiiaka', '妊卫一', "HIʻIAKA", 'haumea', .105, 3.55, 49.462, 0, 'haumea', '妊神星较大的外侧卫星，遥感光谱显示丰富的水冰，旋转明显快于绕行。'],
+    ['namaka', '妊卫二', 'NAMAKA', 'haumea', .07, 2.4, 18.2783, 13, 'haumea', '妊神星较小的内侧卫星。画面以倾斜轨道展示它与妊卫一不同的运行平面。'],
+    ['dysnomia', '阋卫一', 'DYSNOMIA', 'eris', .15, 2.4, 15.7859, 0, 'umbriel', '阋神星的卫星，约每 15.8 天完成一次绕行；主星的同一面始终朝向它。'],
+  ].map(([id, name, english, parent, radius, orbit, period, inclination, texture, description]) => catalogSatellite({
+    id, name, english, parent, radius, orbit, period, inclination, orbitPhase: id === 'namaka' ? 3.1 : 1.2,
+    category: `${parent === 'haumea' ? '妊神星' : '阋神星'} / 天然卫星`, color: '#c9c7c3', texture,
+    baseTexture: `artistic/${texture}-1920.webp`, high: `artistic/${texture}-3840.webp`,
+    description, facts: [['半径估计', '—', 'km'], ['公转周期 · 约', String(period), '天'], ['所属天体', parent === 'haumea' ? '妊神星' : '阋神星', ''], ['地表资料', '未测绘', '']],
+    feature: '卫星绕行与冰质地表示意', featureText: '尚无完整地表测绘，画面沿用冰质艺术地表来展示体积与光照。轨道与外形为示意。',
+    caption: `${name}地表示意`, detail: '共享艺术地表 / 非实测地图', source: `dwarf-planets/${parent}/`,
   })),
 ].map((body) => ({
   ...body,
+  ...bodyModels[body.id],
+  facts: body.facts.map(([label, value, unit]) => [label,
+    label.includes('半径') ? physicalData[body.id].radiusKm.toLocaleString('en-US', {maximumFractionDigits: 1}) : value, unit]),
   group: body.parent ? "moons" : "others",
   ...(artisticTextures.has(body.id) ? {
     baseTexture: `artistic/${body.id}-1920.webp`,
@@ -587,4 +605,4 @@ export const additionalBodies = [
       ? "该卫星缺少完整全球测绘，图中地貌为艺术构建，呈现冰质平原、裂隙与撞击结构。"
       : body.featureText,
   } : {}),
-}));
+})).map(body => ({...body, featureText: `${body.featureText}${body.spinNote ? ` ${body.spinNote}。` : body.tumbling ? ' 自转采用观测周期附近的非规则翻滚示意，不用于姿态预测。' : ''}`}));

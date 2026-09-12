@@ -268,7 +268,7 @@ export const bodies = [
 let outerEdge = 0;
 for (const body of bodies.filter((body) => !body.parent).sort((a, b) => a.orbit - b.orbit)) {
   const extent = Math.max(
-    body.radius * (body.id === "saturn" ? 2.35 : 1),
+    body.radius * (body.id === "saturn" ? 2.35 : body.rings?.outer || 1),
     ...bodies.filter((moon) => moon.parent === body.id).map((moon) => moon.orbit + moon.radius),
   );
   if (body.orbit) body.orbit = Math.max(body.orbit, outerEdge + extent + 1);

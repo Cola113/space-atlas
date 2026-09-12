@@ -43,6 +43,8 @@ import {
   updateBodyRotations,
 } from "./orbits.js";
 import { physicalData } from "./physical-scale.js";
+import { catalogSections, dockCatalogs, dockCatalogFor, matchesCatalog, satelliteSystems, systemMembers, systemName } from './catalog.js';
+import { createBodyGeometry, createNarrowRing } from './body-geometry.js';
 import { createObservedClouds } from "./observed-clouds.js";
 import { alignObservedEarth, subsolarPoint } from "./earth-observation.js";
 import { createStarfield } from "./starfield.js";
@@ -141,7 +143,7 @@ function saveObservation() {
   const body = objects.get(state.selected);
   const center = body?.root.position || new THREE.Vector3();
   return {
-    selected: state.selected, system: state.system, close: state.close,
+    selected: state.selected, system: state.system, close: state.close, catalog: state.catalog,
     playing: state.playing, speed: state.speed, speedUnit: "realtime", orbits: state.orbits, labels: state.labels,
     dynamics: state.dynamics, lockSpin: state.lockSpin, activityRate: state.activityRate,
     nightLights: state.nightLights, shadows: state.shadows, nightView: state.nightView,
@@ -175,6 +177,7 @@ function restoreObservation() {
       if (typeof saved.layerVisible === "boolean") setLayer(saved.layerVisible);
     }
   }
+  if (dockCatalogs.some(catalog => catalog.id === saved.catalog)) setCatalog(saved.catalog);
   if (saved.timelineEpoch === defaultSimulationDate && Array.isArray(saved.rotations)) for (const entry of saved.rotations) {
     if (Array.isArray(entry) && objects.has(entry[0]) && Number.isFinite(entry[1]))
       objects.get(entry[0]).mesh.rotation.y = entry[1];
@@ -233,18 +236,21 @@ function thumb(body) {
 }
 
 function makeNavigation() {
+  $("catalog-filter").innerHTML = `<optgroup label="天体分类">${dockCatalogs.filter(c => !c.id.startsWith('system:')).map(c => `<option value="${c.id}">${c.title}</option>`).join('')}</optgroup>` +
+    `<optgroup label="主星与卫星">${dockCatalogs.filter(c => c.id.startsWith('system:')).map(c => `<option value="${c.id}">${c.title}</option>`).join('')}</optgroup>`;
+  $("atlas-system").innerHTML = '<option value="all">全部系统</option>' + satelliteSystems.map(parent => `<option value="${parent.id}">${systemName(parent)}</option>`).join('');
   $("planet-dock").innerHTML = bodies
     .map(
-      (body, index) =>
-        `<button class="planet-choice" data-body="${body.id}" aria-label="探索${body.name}" aria-pressed="false"><span class="choice-number">${String(index).padStart(2, "0")}</span>${thumb(body)}<span class="choice-name">${body.name}</span><span class="choice-en">${body.english}</span></button>`,
-    )
-    .join("");
-  $("atlas-grid").innerHTML = bodies
-    .map(
       (body) =>
-        `<button class="atlas-item" data-body="${body.id}" aria-label="近距离探索${body.name}">${thumb(body)}<div><small>${body.english}</small><h2>${body.name}</h2><p>${body.category}</p></div></button>`,
+        `<button class="planet-choice" data-body="${body.id}" aria-label="探索${body.name}" aria-pressed="false">${thumb(body)}<span class="choice-name">${body.name}</span><span class="choice-en">${body.english}</span></button>`,
     )
     .join("");
+  $("atlas-grid").innerHTML = catalogSections.map(section =>
+    `<section class="atlas-section" data-section="${section.id}" aria-labelledby="section-${section.id}">
+      <div class="atlas-section-heading"><h2 id="section-${section.id}">${section.title}</h2><span class="section-count"></span><small>${section.order}</small></div>
+      <div class="atlas-section-items">${section.items.map(body =>
+        `<button class="atlas-item" data-body="${body.id}" aria-label="近距离探索${body.name}" aria-pressed="false">${thumb(body)}<div><small>${body.english}</small><h3>${body.name}</h3><p>${body.category}</p></div></button>`).join('')}</div>
+    </section>`).join('');
   document
     .querySelectorAll("[data-body]")
     .forEach((button) =>
@@ -262,36 +268,63 @@ function makeNavigation() {
   }
   refreshIcons();
   setCatalog(state.catalog);
-  $("body-count").textContent = `${bodies.length} 个可探索天体`;
   filterAtlas();
 }
 
 function setCatalog(group) {
-  state.catalog = group;
-  $("catalog-filter").value = group;
-  document.querySelectorAll(".planet-choice").forEach((button) => {
-    const body = bodies.find((item) => item.id === button.dataset.body);
-    button.hidden = (body.group || "planets") !== group;
-  });
-  $("planet-dock").scrollLeft = 0;
+  const catalog = dockCatalogs.find(item => item.id === group) || dockCatalogs[0];
+  const changed = state.catalog !== catalog.id;
+  state.catalog = catalog.id;
+  $("catalog-filter").value = catalog.id;
+  const dock = $("planet-dock");
+  if (dock.dataset.catalog !== catalog.id) {
+    for (const button of dock.querySelectorAll('.planet-choice')) button.hidden = true;
+    for (const body of catalog.items) {
+      const button = dock.querySelector(`[data-body="${body.id}"]`);
+      button.hidden = false;
+      dock.append(button);
+    }
+    dock.dataset.catalog = catalog.id;
+  }
+  dock.setAttribute('aria-label', `${catalog.title} · 选择天体`);
+  $("body-count").textContent = `${catalog.items.length} 个天体`;
+  $("dock-order").textContent = catalog.order;
+  if (changed) dock.scrollLeft = 0;
+  requestAnimationFrame(() => { revealDockSelection(); updateDockScroll(); });
+}
+
+function revealDockSelection() {
+  const dock = $("planet-dock");
+  const button = dock.querySelector(`[data-body="${state.selected}"]`);
+  if (!button || button.hidden) return;
+  const target = button.getBoundingClientRect(), bounds = dock.getBoundingClientRect();
+  dock.scrollTo({left: dock.scrollLeft + target.left - bounds.left - (dock.clientWidth - button.clientWidth) / 2,
+    behavior: reducedMotion ? 'instant' : 'smooth'});
+}
+
+function updateDockScroll() {
+  const dock = $("planet-dock");
+  $("dock-prev").disabled = dock.scrollLeft <= 1;
+  $("dock-next").disabled = dock.scrollLeft + dock.clientWidth >= dock.scrollWidth - 1;
 }
 
 function filterAtlas() {
-  const query = $("atlas-search").value.trim().toLocaleLowerCase();
-  const group = $("atlas-filter").value;
+  const filters = {query: $("atlas-search").value, type: $("atlas-filter").value, system: $("atlas-system").value};
   let count = 0;
   document.querySelectorAll(".atlas-item").forEach((button) => {
     const body = bodies.find((item) => item.id === button.dataset.body);
-    const visible =
-      (group === "all" || (body.group || "planets") === group) &&
-      `${body.name} ${body.english} ${body.category}`
-        .toLocaleLowerCase()
-        .includes(query);
+    const visible = matchesCatalog(body, filters);
     button.hidden = !visible;
     if (visible) count++;
   });
-  $("atlas-count").textContent = `${count} 个天体`;
+  for (const section of document.querySelectorAll('.atlas-section')) {
+    const matches = section.querySelectorAll('.atlas-item:not([hidden])').length;
+    section.hidden = matches === 0;
+    section.querySelector('.section-count').textContent = `${matches} 个`;
+  }
+  $("atlas-count").textContent = `${count} / ${bodies.length} 个天体`;
   $("atlas-empty").hidden = count !== 0;
+  $("atlas-reset").hidden = !filters.query.trim() && filters.type === 'all' && filters.system === 'all';
 }
 
 function familyOf(body) {
@@ -306,10 +339,8 @@ function updateFamilyPicker() {
   const parent = familyOf(objects.get(state.selected));
   $("family-picker").hidden = !parent;
   if (!parent) return;
-  const name = parent.id === "earth" ? "地月系" : `${parent.name}系`;
-  const members = [parent, ...objects.values()].filter(
-    (item, index) => index === 0 || item.parent === parent.id,
-  );
+  const name = systemName(parent);
+  const members = systemMembers(parent.id);
   $("family-select").innerHTML =
     `<option value="">${name}${state.system ? "全景" : ""}</option>` +
     `<option value="system:${parent.id}">${name}全景</option>` +
@@ -500,7 +531,7 @@ function createBodies(textures) {
       material.bumpMap = map;
       material.bumpScale = body.radius * 0.025;
     }
-    const geometry = body.shape ? sphere.clone().scale(...body.shape) : sphere;
+    const geometry = createBodyGeometry(body, sphere);
     const mesh = new THREE.Mesh(geometry, material);
     mesh.scale.setScalar(body.radius);
     mesh.rotation.y =
@@ -586,6 +617,9 @@ function createBodies(textures) {
       );
       ring.rotation.x = -Math.PI / 2;
       ring.userData.bodyId = body.id;
+      tilted.add(ring);
+    } else if (body.rings) {
+      ring = createNarrowRing(body);
       tilted.add(ring);
     }
     let orbitLine = null;
@@ -773,7 +807,7 @@ function focusedOffset(body, close = false) {
   const focalLength =
     height / (2 * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)));
   let distance = body.radius * Math.sqrt(1 + (focalLength / targetRadius) ** 2);
-  if (body.id === "saturn" && !close) distance *= 1.6;
+  if ((body.id === "saturn" || body.rings) && !close) distance *= 1.6;
   if (body.id === "sun" && !close) distance *= 1.2;
   if (body.id === "enceladus" && !close) distance *= 1.25;
   if (close) distance *= mobile ? 0.64 : 0.62;
@@ -800,7 +834,7 @@ function focusedOffset(body, close = false) {
         new THREE.Vector3(0, 1, 0),
         body.id === "earth" ? 0.95 : 0.72,
       );
-    if (body.id === "saturn") {
+    if (body.id === "saturn" || body.rings) {
       const normal = new THREE.Vector3(0, 1, 0).applyQuaternion(
         body.tilted.getWorldQuaternion(new THREE.Quaternion()),
       );
@@ -821,8 +855,10 @@ function currentFocusOffset(body) {
         .filter((item) => item.parent === body.id)
         .map((item) => item.orbit + item.radius),
     );
-    const distance = focusedOffset({ ...body, id: "system", radius }).length();
-    return new THREE.Vector3(0.15, 0.85, 1)
+    // The system radius already encloses the rings and moons; do not apply the
+    // close-up ring margin again. Frame the new dwarf systems from their day side.
+    const distance = focusedOffset({ ...body, id: "system", radius, rings: null }).length();
+    return (body.rings || body.id === 'eris' ? focusedOffset(body) : new THREE.Vector3(0.15, 0.85, 1))
       .normalize()
       .multiplyScalar(distance);
   }
@@ -1007,6 +1043,8 @@ function arrivalOffset(body) {
 
 function setAtlas(open) {
   state.atlas = open;
+  $("app").classList.toggle('atlas-open', open);
+  if (!open) requestAnimationFrame(() => { revealDockSelection(); updateDockScroll(); });
   $("atlas-panel").hidden = !open;
   $("atlas-tab").classList.toggle("active", open);
   $("atlas-tab").setAttribute("aria-pressed", String(open));
@@ -1118,7 +1156,7 @@ function selectBody(id) {
     updatePositions();
     syncObservedEarth();
   }
-  setCatalog(body.group || "planets");
+  setCatalog(dockCatalogFor(body, state.catalog));
   state.nightView = false;
   $("app").classList.add("focused");
   $("intro").hidden = true;
@@ -1147,21 +1185,10 @@ function selectBody(id) {
   $("view-status").textContent = `${body.name} / 近轨道观测`;
   $("selection-announcement").textContent =
     `已选中${body.name}，${body.feature}。`;
-  document.querySelectorAll(".planet-choice").forEach((button) => {
+  document.querySelectorAll(".planet-choice, .atlas-item").forEach((button) => {
     const selected = button.dataset.body === id;
     button.classList.toggle("selected", selected);
     button.setAttribute("aria-pressed", String(selected));
-  });
-  const dockButton = document.querySelector(
-    `.planet-choice[data-body="${id}"]`,
-  );
-  const dock = $("planet-dock");
-  dock.scrollTo({
-    left:
-      dockButton.offsetLeft -
-      dock.offsetLeft -
-      (dock.clientWidth - dockButton.clientWidth) / 2,
-    behavior: reducedMotion ? "instant" : "smooth",
   });
   controls.minDistance = body.radius * 1.09;
   controls.maxDistance = 600 * ORBIT_SPACING;
@@ -1185,6 +1212,7 @@ function goOverview() {
   setAtlas(false);
   clearLandmark();
   state.selected = null;
+  setCatalog('planets');
   state.close = false;
   state.system = false;
   $("app").classList.remove("system-view");
@@ -1198,7 +1226,7 @@ function goOverview() {
   updateObservationTools();
   $("view-status").textContent = "日心轨道视图";
   $("resolution-status").textContent = "距离与大小为示意比例";
-  document.querySelectorAll(".planet-choice").forEach((button) => {
+  document.querySelectorAll(".planet-choice, .atlas-item").forEach((button) => {
     button.classList.remove("selected");
     button.setAttribute("aria-pressed", "false");
   });
@@ -1457,11 +1485,24 @@ async function landOnSurface() {
 }
 
 function bindEvents() {
+  $("planet-dock").addEventListener('scroll', updateDockScroll, {passive: true});
+  for (const [id, direction] of [['dock-prev', -1], ['dock-next', 1]]) $(id).addEventListener('click', () => {
+    const dock = $("planet-dock");
+    dock.scrollBy({left: direction * dock.clientWidth * .8, behavior: reducedMotion ? 'instant' : 'smooth'});
+  });
   $("catalog-filter").addEventListener("change", (event) =>
     setCatalog(event.target.value),
   );
   $("atlas-filter").addEventListener("change", filterAtlas);
+  $("atlas-system").addEventListener("change", filterAtlas);
   $("atlas-search").addEventListener("input", filterAtlas);
+  $("atlas-reset").addEventListener('click', () => {
+    $("atlas-search").value = '';
+    $("atlas-filter").value = 'all';
+    $("atlas-system").value = 'all';
+    filterAtlas();
+    $("atlas-search").focus();
+  });
   $("family-select").addEventListener("change", (event) => {
     const value = event.target.value;
     if (value.startsWith("system:")) selectSystem(value.slice(7));
@@ -1606,6 +1647,7 @@ function bindEvents() {
 }
 
 function resize() {
+  requestAnimationFrame(() => { revealDockSelection(); updateDockScroll(); });
   if (!renderer) return;
   width = innerWidth;
   height = innerHeight;
@@ -2128,6 +2170,9 @@ async function init() {
             occluded: projected.occluded,
             labelVisible: !body.label.hidden,
             rotation: body.mesh.rotation.y,
+            orientation: body.mesh.quaternion.toArray(),
+            ringVisible: Boolean(body.ring?.visible && body.root.visible),
+            ringOuterRadius: body.rings ? body.radius * body.rings.outer : null,
             textureWidth: body.mesh.material.map?.image?.width || 0,
             cloudsVisible: body.clouds?.visible,
             cloudRotation: body.clouds?.rotation.y,
