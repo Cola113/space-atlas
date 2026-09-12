@@ -1,5 +1,7 @@
 # 贴图导入记录
 
+后续生成、重绘、修缝及接入验收遵循本项目的 [贴图工作流程](TEXTURE_WORKFLOW.md)。通用生图 skill 只维护接口使用，不存储项目贴图规范。
+
 本次从 `C:\Users\买辣条送的电脑\.zcode\workspace\default\iapetus-miranda-preview\assets` 导入并处理了以下公开探测贴图：
 
 - 土卫一 Mimas、土卫三 Tethys、土卫四 Dione、土卫五 Rhea、土卫八 Iapetus：保留 4K 版本，运行默认加载 2K JPEG。
