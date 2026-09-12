@@ -1,0 +1,682 @@
+{
+  "version": 1,
+  "date": "2026-09-12",
+  "provider": "Bafang API",
+  "model": "gpt-image-2",
+  "policy": "Artistic completeness takes priority over measured geographic accuracy. Entire maps are synthetic/repainted; no original pixels are protected. Not observation data.",
+  "processing": "Native 3840x1920 output; no upscaling. Smooth mirrored terrain blending in the outer 3.5% longitude bands; polar convergence in the outer 2.5% latitude bands. Lossless high map and lossy overview.",
+  "textures": [
+    {
+      "id": "miranda",
+      "processingVersion": 2,
+      "base": "miranda-1920.webp",
+      "high": "miranda-3840.webp",
+      "generatedDimensions": [
+        3840,
+        1920
+      ],
+      "baseDimensions": [
+        1920,
+        960
+      ],
+      "sourceReference": "2k_miranda.jpg",
+      "generatedSha256": "f576862fbd58ec7bc9778bd6fd865757141862b1ab9a5957471c7afc2d7ecd4a",
+      "baseSha256": "5fe83cbcbd236bcc71a0d4ace6d81a4fd07234ebbd4912bd4a277ce68efa43ae",
+      "highSha256": "9a8cbccdb3fb578ddfe473487a3712805ae0162e795014a7c2ea9d3aecf34929",
+      "baseBytes": 632814,
+      "highBytes": 10943388,
+      "longitudeEdgeMeanDifferenceBefore": 22.914583206176758,
+      "longitudeEdgeMaxDifferenceAfter": 0,
+      "lowestCoverageTileMean": 123.82837239583333,
+      "mode": "whole-map artistic repaint"
+    },
+    {
+      "id": "phoebe",
+      "processingVersion": 2,
+      "base": "phoebe-1920.webp",
+      "high": "phoebe-3840.webp",
+      "generatedDimensions": [
+        3840,
+        1920
+      ],
+      "baseDimensions": [
+        1920,
+        960
+      ],
+      "sourceReference": "2k_phoebe.jpg",
+      "generatedSha256": "f50fcf8b7783bf05eeda49b0cfd03359db84b08cb8b5591fa0d4cc49f904d164",
+      "baseSha256": "96fdd84ed6b27bc6c031b1036699fe426138ac61b5c6ceab49d072fb8220c9a9",
+      "highSha256": "d1e4ac7441a5f86850a25835b58f4883b8df3df41761f3fd0f19cf2af2ace751",
+      "baseBytes": 674870,
+      "highBytes": 11054526,
+      "longitudeEdgeMeanDifferenceBefore": 23.83940887451172,
+      "longitudeEdgeMaxDifferenceAfter": 0,
+      "lowestCoverageTileMean": 70.35014322916666,
+      "mode": "whole-map artistic repaint"
+    },
+    {
+      "id": "ariel",
+      "processingVersion": 2,
+      "base": "ariel-1920.webp",
+      "high": "ariel-3840.webp",
+      "generatedDimensions": [
+        3840,
+        1920
+      ],
+      "baseDimensions": [
+        1920,
+        960
+      ],
+      "sourceReference": null,
+      "generatedSha256": "fc20f9d6856385fa31c8f6438b1fe145350923df385b7169140db9fa66a64a28",
+      "baseSha256": "dd127d409c0fb08ef0abf4af161fb77d8c183d0fea94db873836202701dc0b62",
+      "highSha256": "b43f6d6edba73049b16ebfefe1413d70eae78d842855183259b157c08760b37c",
+      "baseBytes": 611370,
+      "highBytes": 10265490,
+      "longitudeEdgeMeanDifferenceBefore": 28.692188262939453,
+      "longitudeEdgeMaxDifferenceAfter": 0,
+      "lowestCoverageTileMean": 148.91065104166665,
+      "mode": "original artistic terrain"
+    },
+    {
+      "id": "umbriel",
+      "processingVersion": 2,
+      "base": "umbriel-1920.webp",
+      "high": "umbriel-3840.webp",
+      "generatedDimensions": [
+        3840,
+        1920
+      ],
+      "baseDimensions": [
+        1920,
+        960
+      ],
+      "sourceReference": null,
+      "generatedSha256": "ade4b9890ef42e90050135fcd6f54e459ee582b2e8858c6c50365d2d29f32ce2",
+      "baseSha256": "cb8c41e40b76e1cfb517f5f9163194598bd593af91120fdfeaeaaf18f9c6bfce",
+      "highSha256": "448c3d508171757b214c4c0b24e29b7cf9351a7ef515619370e75643a09c5e8f",
+      "baseBytes": 663070,
+      "highBytes": 12536180,
+      "longitudeEdgeMeanDifferenceBefore": 22.420312881469727,
+      "longitudeEdgeMaxDifferenceAfter": 0,
+      "lowestCoverageTileMean": 71.7923046875,
+      "mode": "original artistic terrain"
+    },
+    {
+      "id": "titania",
+      "processingVersion": 2,
+      "base": "titania-1920.webp",
+      "high": "titania-3840.webp",
+      "generatedDimensions": [
+        3840,
+        1920
+      ],
+      "baseDimensions": [
+        1920,
+        960
+      ],
+      "sourceReference": null,
+      "generatedSha256": "a190090e96743865258b61152b20149bc40e3bc686e05731cd1b0c1f5cdc5209",
+      "baseSha256": "f7c2507f19f0ca4bff39ffc6460fd62b1c1685d6c8b8caf50be3f5f5f2935652",
+      "highSha256": "5084f23cfe2f94d81f20c31554b695a4c5f0d147b4414cb4b46a9bc174db7167",
+      "baseBytes": 538272,
+      "highBytes": 9993162,
+      "longitudeEdgeMeanDifferenceBefore": 16.1015625,
+      "longitudeEdgeMaxDifferenceAfter": 0,
+      "lowestCoverageTileMean": 124.2576171875,
+      "mode": "original artistic terrain"
+    },
+    {
+      "id": "oberon",
+      "processingVersion": 2,
+      "base": "oberon-1920.webp",
+      "high": "oberon-3840.webp",
+      "generatedDimensions": [
+        3840,
+        1920
+      ],
+      "baseDimensions": [
+        1920,
+        960
+      ],
+      "sourceReference": null,
+      "generatedSha256": "308c0bfee34489f3b29cf605834c4d1ace20deb0a2d6a42c02745ca5e7ffcf51",
+      "baseSha256": "ac7c59fed36f85d281960db529afa89c24184b9f3445b48250c11fe7b70a92d7",
+      "highSha256": "e3d198b76264d429767615092dcdb5d5155f39ca5824c4efd1f1699f0f0c1b04",
+      "baseBytes": 519170,
+      "highBytes": 9202824,
+      "longitudeEdgeMeanDifferenceBefore": 19.38888931274414,
+      "longitudeEdgeMaxDifferenceAfter": 0,
+      "lowestCoverageTileMean": 105.16975260416666,
+      "mode": "original artistic terrain"
+    },
+    {
+      "id": "hyperion",
+      "processingVersion": 2,
+      "base": "hyperion-1920.webp",
+      "high": "hyperion-3840.webp",
+      "generatedDimensions": [
+        3840,
+        1920
+      ],
+      "baseDimensions": [
+        1920,
+        960
+      ],
+      "sourceReference": null,
+      "generatedSha256": "541c0994637705eefb3c4183e27f769fd754a77c12b1c817f7b91066d6ebee50",
+      "baseSha256": "12a583d2f62ef6d3611ef49c37026f237842e94679a75a00d8b6d0898e3c104b",
+      "highSha256": "f1ff53dce5a33be2dd17fb7ab09a2f0899219d816a2f4561b4f9eaa358294f2f",
+      "baseBytes": 691678,
+      "highBytes": 11306932,
+      "longitudeEdgeMeanDifferenceBefore": 35.1538200378418,
+      "longitudeEdgeMaxDifferenceAfter": 0,
+      "lowestCoverageTileMean": 90.24006510416666,
+      "mode": "original artistic terrain"
+    },
+    {
+      "id": "proteus",
+      "processingVersion": 2,
+      "base": "proteus-1920.webp",
+      "high": "proteus-3840.webp",
+      "generatedDimensions": [
+        3840,
+        1920
+      ],
+      "baseDimensions": [
+        1920,
+        960
+      ],
+      "sourceReference": null,
+      "generatedSha256": "23685c41452414ff6ac8d0f6bd31d10f268740fd5e8fac689565d3488082bfd9",
+      "baseSha256": "975f0e6d048839d7b8836218ad9a67f222c893762e1e6328a1ef0b685fda529b",
+      "highSha256": "3500da9220682804532e1d29a2aaa2ce61996898d9241e80ebc3c82986a2ea07",
+      "baseBytes": 504896,
+      "highBytes": 9973324,
+      "longitudeEdgeMeanDifferenceBefore": 15.67517375946045,
+      "longitudeEdgeMaxDifferenceAfter": 0,
+      "lowestCoverageTileMean": 66.84630208333333,
+      "mode": "original artistic terrain"
+    },
+    {
+      "id": "makemake",
+      "processingVersion": 2,
+      "base": "makemake-1920.webp",
+      "high": "makemake-3840.webp",
+      "generatedDimensions": [
+        3840,
+        1920
+      ],
+      "baseDimensions": [
+        1920,
+        960
+      ],
+      "sourceReference": null,
+      "generatedSha256": "0ef12b03cdc8aa608bac6dd12552883eb4cb50374acd1b735081b57f6f18e821",
+      "baseSha256": "d26096d6f97cb9e3bb1754c4eb9088f158526f7f03ba2cd9f084d658f60d64da",
+      "highSha256": "6e304505d69c69965b30e1215db686f70e00059fc3ab45374d6126b7ad483aae",
+      "baseBytes": 458284,
+      "highBytes": 9803022,
+      "longitudeEdgeMeanDifferenceBefore": 17.1237850189209,
+      "longitudeEdgeMaxDifferenceAfter": 0,
+      "lowestCoverageTileMean": 111.03845052083334,
+      "mode": "original artistic terrain"
+    },
+    {
+      "id": "haumea",
+      "processingVersion": 2,
+      "base": "haumea-1920.webp",
+      "high": "haumea-3840.webp",
+      "generatedDimensions": [
+        3840,
+        1920
+      ],
+      "baseDimensions": [
+        1920,
+        960
+      ],
+      "sourceReference": null,
+      "generatedSha256": "f88678f0aa7c924918759aa557499cd2212c13533c63018b6c559dd73c7a7da7",
+      "baseSha256": "49694251157152b6a70f34b31f31768bd616ee1cfa5fc7271044ccc5c89661e0",
+      "highSha256": "815ddcfafeb21905f933a6c7a14b79896a8121d0584fe07aed8d36d126e57fba",
+      "baseBytes": 611776,
+      "highBytes": 10338238,
+      "longitudeEdgeMeanDifferenceBefore": 29.313020706176758,
+      "longitudeEdgeMaxDifferenceAfter": 0,
+      "lowestCoverageTileMean": 130.72069010416666,
+      "mode": "original artistic terrain"
+    },
+    {
+      "id": "eris",
+      "processingVersion": 2,
+      "base": "eris-1920.webp",
+      "high": "eris-3840.webp",
+      "generatedDimensions": [
+        3840,
+        1920
+      ],
+      "baseDimensions": [
+        1920,
+        960
+      ],
+      "sourceReference": null,
+      "generatedSha256": "dfcae527547f5ee4f26d1d77962fb474de7f4b71c5403660d6a4d15c1a0bdb44",
+      "baseSha256": "5621264b8c23fc141cf01f68ae8c4f6618b3e22b1d1e3a57867a21335827b8e7",
+      "highSha256": "cc955b3c448374d75a62dc83569f7ca061880d8d4efd15dfea3dc37353ff1b54",
+      "baseBytes": 400926,
+      "highBytes": 8885798,
+      "longitudeEdgeMeanDifferenceBefore": 13.795833587646484,
+      "longitudeEdgeMaxDifferenceAfter": 0,
+      "lowestCoverageTileMean": 177.15713541666668,
+      "mode": "original artistic terrain"
+    },
+    {
+      "id": "deimos",
+      "processingVersion": 2,
+      "base": "deimos-1920.webp",
+      "high": "deimos-3840.webp",
+      "generatedDimensions": [
+        3840,
+        1920
+      ],
+      "baseDimensions": [
+        1920,
+        960
+      ],
+      "sourceReference": null,
+      "generatedSha256": "1e37ad7931d6d936949c0be389caa5a863ed817b1c3f34050a9f2771270d7f7f",
+      "baseSha256": "9305a14d40f633318610fd1c70e25078eeac0731b4b86c5afc9fa62e1ab4cfeb",
+      "highSha256": "558a2a02af5d83cbed03e539cb2702b9041f11fd126e15646a0e71ea7dc4d833",
+      "baseBytes": 369412,
+      "highBytes": 8977118,
+      "longitudeEdgeMeanDifferenceBefore": 10.858160018920898,
+      "longitudeEdgeMaxDifferenceAfter": 0,
+      "lowestCoverageTileMean": 120.10546875,
+      "mode": "original artistic terrain"
+    },
+    {
+      "id": "amalthea",
+      "processingVersion": 2,
+      "base": "amalthea-1920.webp",
+      "high": "amalthea-3840.webp",
+      "generatedDimensions": [
+        3840,
+        1920
+      ],
+      "baseDimensions": [
+        1920,
+        960
+      ],
+      "sourceReference": null,
+      "generatedSha256": "83d98fc6c5aca8e51e0865d7e4d998bda0337ae5725fc8611151f937db4fcdd6",
+      "baseSha256": "f3ff2ebb6b72c09bb3549754f04babb0739acfe080e33cd6ec9cf77a00ee44e6",
+      "highSha256": "110e6c5fcfcad370ecd17c2e03f940275274e46394991fc5c3ed3f50b003df92",
+      "baseBytes": 505496,
+      "highBytes": 10222488,
+      "longitudeEdgeMeanDifferenceBefore": 15.410590171813965,
+      "longitudeEdgeMaxDifferenceAfter": 0,
+      "lowestCoverageTileMean": 78.79048177083334,
+      "mode": "original artistic terrain"
+    },
+    {
+      "id": "thebe",
+      "processingVersion": 2,
+      "base": "thebe-1920.webp",
+      "high": "thebe-3840.webp",
+      "generatedDimensions": [
+        3840,
+        1920
+      ],
+      "baseDimensions": [
+        1920,
+        960
+      ],
+      "sourceReference": null,
+      "generatedSha256": "72643089f362e5c617febf38b691545529ac702a0e0e0fd37f4044ab254c3c2c",
+      "baseSha256": "80da865e305d2bea9dc515ae18bad8e3ff978f614def957ac5430f5f06f28bbb",
+      "highSha256": "74eea5f5cd3206f0e19f5b72d66e28998ab8d1fcf4962c3e41385c1fb18dabfb",
+      "baseBytes": 483072,
+      "highBytes": 9713738,
+      "longitudeEdgeMeanDifferenceBefore": 14.565451622009277,
+      "longitudeEdgeMaxDifferenceAfter": 0,
+      "lowestCoverageTileMean": 87.81635416666667,
+      "mode": "original artistic terrain"
+    },
+    {
+      "id": "adrastea",
+      "processingVersion": 2,
+      "base": "adrastea-1920.webp",
+      "high": "adrastea-3840.webp",
+      "generatedDimensions": [
+        3840,
+        1920
+      ],
+      "baseDimensions": [
+        1920,
+        960
+      ],
+      "sourceReference": null,
+      "generatedSha256": "878452b28e39b99fc621b2c29d720502b10c8813f1c928fa09e7cb8758327ec9",
+      "baseSha256": "ac8512125fdfacc5c1a1842353fc99099074821b3bd0cb129321261c92a2a2e7",
+      "highSha256": "530c7d38c7aaa3f2e3f54215c53ac4fd88b5f9de069ba7eea2dd18e5aaf535a8",
+      "baseBytes": 577048,
+      "highBytes": 10338614,
+      "longitudeEdgeMeanDifferenceBefore": 20.681249618530273,
+      "longitudeEdgeMaxDifferenceAfter": 0,
+      "lowestCoverageTileMean": 133.77365885416665,
+      "mode": "original artistic terrain"
+    },
+    {
+      "id": "metis",
+      "processingVersion": 2,
+      "base": "metis-1920.webp",
+      "high": "metis-3840.webp",
+      "generatedDimensions": [
+        3840,
+        1920
+      ],
+      "baseDimensions": [
+        1920,
+        960
+      ],
+      "sourceReference": null,
+      "generatedSha256": "a552361ddc4fd29b01b9c46a436e90e2863a10ba4e4a9739cddbd243c084a67a",
+      "baseSha256": "77607237c452db940b74a1bb5be9f417ef8e090bb646c3d50a4a7e7d510978c0",
+      "highSha256": "dd9c0107673cb88da26a541dd8312460fd28fae5e4a12434bbc1ae15843c3c68",
+      "baseBytes": 538810,
+      "highBytes": 9647902,
+      "longitudeEdgeMeanDifferenceBefore": 17.258159637451172,
+      "longitudeEdgeMaxDifferenceAfter": 0,
+      "lowestCoverageTileMean": 74.26854166666666,
+      "mode": "original artistic terrain"
+    },
+    {
+      "id": "himalia",
+      "processingVersion": 2,
+      "base": "himalia-1920.webp",
+      "high": "himalia-3840.webp",
+      "generatedDimensions": [
+        3840,
+        1920
+      ],
+      "baseDimensions": [
+        1920,
+        960
+      ],
+      "sourceReference": null,
+      "generatedSha256": "4bb79ad92d9508bffc0c3860b9f83eacfe5005bf40ca473e97746656264a6f4f",
+      "baseSha256": "8bc545a71a746a52fa0df4155e15d0626a3999b5c6a580f9d147f1ba323c25e2",
+      "highSha256": "09ea31a98893dbe8412b729c38def310a5d0f437f5cb4bbe8c2e6bb05bd1aa67",
+      "baseBytes": 531488,
+      "highBytes": 11253326,
+      "longitudeEdgeMeanDifferenceBefore": 17.6171875,
+      "longitudeEdgeMaxDifferenceAfter": 0,
+      "lowestCoverageTileMean": 108.16385416666667,
+      "mode": "original artistic terrain"
+    },
+    {
+      "id": "janus",
+      "processingVersion": 2,
+      "base": "janus-1920.webp",
+      "high": "janus-3840.webp",
+      "generatedDimensions": [
+        3840,
+        1920
+      ],
+      "baseDimensions": [
+        1920,
+        960
+      ],
+      "sourceReference": null,
+      "generatedSha256": "6f1868351d550e31ae338d600da02b962f6ea1e294758bd5b811d7f9de4f9a96",
+      "baseSha256": "63565054179bd89c336c494a3aee93cfcbf2c0d675e59146c9c158245c759058",
+      "highSha256": "9151f0512c6adfbc8b94a3b99e5f4a7b3fe67947c161f85e60246aaa3fc370aa",
+      "baseBytes": 471966,
+      "highBytes": 9266686,
+      "longitudeEdgeMeanDifferenceBefore": 17.234027862548828,
+      "longitudeEdgeMaxDifferenceAfter": 0,
+      "lowestCoverageTileMean": 149.8230859375,
+      "mode": "original artistic terrain"
+    },
+    {
+      "id": "epimetheus",
+      "processingVersion": 2,
+      "base": "epimetheus-1920.webp",
+      "high": "epimetheus-3840.webp",
+      "generatedDimensions": [
+        3840,
+        1920
+      ],
+      "baseDimensions": [
+        1920,
+        960
+      ],
+      "sourceReference": null,
+      "generatedSha256": "88ca08a72c30dddc012d402ae97269983c671549f1ec3cc20be5c2705fb13b7d",
+      "baseSha256": "04267451daec09a8c0fd13e89f9bc7c112b52121f0db963063d622552dbeed18",
+      "highSha256": "ef6666b6d47fa2bb7970d605684cd56616a8f9809ced8b1583be50365e193150",
+      "baseBytes": 581814,
+      "highBytes": 9902120,
+      "longitudeEdgeMeanDifferenceBefore": 21.12899398803711,
+      "longitudeEdgeMaxDifferenceAfter": 0,
+      "lowestCoverageTileMean": 143.42608072916667,
+      "mode": "original artistic terrain"
+    },
+    {
+      "id": "prometheus",
+      "processingVersion": 2,
+      "base": "prometheus-1920.webp",
+      "high": "prometheus-3840.webp",
+      "generatedDimensions": [
+        3840,
+        1920
+      ],
+      "baseDimensions": [
+        1920,
+        960
+      ],
+      "sourceReference": null,
+      "generatedSha256": "934bd4ed3c31df70eaa0f41e0f2859386fa4ea9c589c26ff75f9bdcb523af1fd",
+      "baseSha256": "e8b146d97f591c7e52af6a68a55df256511cb81623f3c7df5c17d69fcff1efd6",
+      "highSha256": "c15adaaea15015e400140438fc6313663cc576c913afb6d210443ae7d9c998c0",
+      "baseBytes": 568226,
+      "highBytes": 9712210,
+      "longitudeEdgeMeanDifferenceBefore": 21.457813262939453,
+      "longitudeEdgeMaxDifferenceAfter": 0,
+      "lowestCoverageTileMean": 155.9934375,
+      "mode": "original artistic terrain"
+    },
+    {
+      "id": "pandora",
+      "processingVersion": 2,
+      "base": "pandora-1920.webp",
+      "high": "pandora-3840.webp",
+      "generatedDimensions": [
+        3840,
+        1920
+      ],
+      "baseDimensions": [
+        1920,
+        960
+      ],
+      "sourceReference": null,
+      "generatedSha256": "4863e3a0043df5c6f90349ab5d40d33da2660b4e8a1625bc4f1dc74b48e77514",
+      "baseSha256": "291906b61eb646c4ca2bdafae61a19031898b5ebed2c84afa5223acb8eecf0de",
+      "highSha256": "676075d1f9575e8356373b53a032fb98fef6fe66cd9395e6aea9964cfaa7c688",
+      "baseBytes": 529408,
+      "highBytes": 10189876,
+      "longitudeEdgeMeanDifferenceBefore": 16.937326431274414,
+      "longitudeEdgeMaxDifferenceAfter": 0,
+      "lowestCoverageTileMean": 141.6553125,
+      "mode": "original artistic terrain"
+    },
+    {
+      "id": "atlas",
+      "processingVersion": 2,
+      "base": "atlas-1920.webp",
+      "high": "atlas-3840.webp",
+      "generatedDimensions": [
+        3840,
+        1920
+      ],
+      "baseDimensions": [
+        1920,
+        960
+      ],
+      "sourceReference": null,
+      "generatedSha256": "7d75f41f82f992ecf25ce0a4fb87979fb448aeb6b2600a8291dafe2fd3dce11e",
+      "baseSha256": "93964b13b7b97aa90d95b46e8ca5bf215c7fb5f8408e186851b9f4ef1e5779d2",
+      "highSha256": "0b8506897cace89aa704e424ba55272f652c2c42b828af99c39e64d0f9eac553",
+      "baseBytes": 555242,
+      "highBytes": 9691514,
+      "longitudeEdgeMeanDifferenceBefore": 21.939929962158203,
+      "longitudeEdgeMaxDifferenceAfter": 0,
+      "lowestCoverageTileMean": 158.4361328125,
+      "mode": "original artistic terrain"
+    },
+    {
+      "id": "pan",
+      "processingVersion": 2,
+      "base": "pan-1920.webp",
+      "high": "pan-3840.webp",
+      "generatedDimensions": [
+        3840,
+        1920
+      ],
+      "baseDimensions": [
+        1920,
+        960
+      ],
+      "sourceReference": null,
+      "generatedSha256": "ed78a8604b6110ab07bbd5b1364ca93684d1ace2bdf022e055e47524b9bd792c",
+      "baseSha256": "cf7dcfbfd39b0aa8f2fa39c817c9daf54e0fc109250145fdbd269f3d94943062",
+      "highSha256": "5cc6a449c7dad4a0940943a11005ce1c0b3febbc77085f784555b15e6863b451",
+      "baseBytes": 421920,
+      "highBytes": 8209570,
+      "longitudeEdgeMeanDifferenceBefore": 15.433680534362793,
+      "longitudeEdgeMaxDifferenceAfter": 0,
+      "lowestCoverageTileMean": 187.75265625,
+      "mode": "original artistic terrain"
+    },
+    {
+      "id": "nereid",
+      "processingVersion": 2,
+      "base": "nereid-1920.webp",
+      "high": "nereid-3840.webp",
+      "generatedDimensions": [
+        3840,
+        1920
+      ],
+      "baseDimensions": [
+        1920,
+        960
+      ],
+      "sourceReference": null,
+      "generatedSha256": "3047b9735135bfcdcc2dc755611f14868bdfba81e3e6af8712edbc5e4cf5aa74",
+      "baseSha256": "6dbf62647c4b569e62c938bda8eaca61c10ba67f7c4c9187fc1b5de931d29d42",
+      "highSha256": "9e333079d312cad0721dd15a0011c85ee7f9ff2559d08bd6c6a5ce3caf9e934d",
+      "baseBytes": 717186,
+      "highBytes": 11222098,
+      "longitudeEdgeMeanDifferenceBefore": 33.40034866333008,
+      "longitudeEdgeMaxDifferenceAfter": 0,
+      "lowestCoverageTileMean": 117.78071614583334,
+      "mode": "original artistic terrain"
+    },
+    {
+      "id": "styx",
+      "processingVersion": 2,
+      "base": "styx-1920.webp",
+      "high": "styx-3840.webp",
+      "generatedDimensions": [
+        3840,
+        1920
+      ],
+      "baseDimensions": [
+        1920,
+        960
+      ],
+      "sourceReference": null,
+      "generatedSha256": "9946643b69f88d7d18a0172d72909e0c1f05226fe5f70e48f380fb8d8b683e44",
+      "baseSha256": "a0d15f44f0472a1e0904903de8c9aadd7f67d2a269453bdb95034359f349cddd",
+      "highSha256": "0231831f4b9b168cc46252bf60d1d99faa45c6a1ecf7f83a0e19052e4ab6c5db",
+      "baseBytes": 596960,
+      "highBytes": 10346464,
+      "longitudeEdgeMeanDifferenceBefore": 25.0456600189209,
+      "longitudeEdgeMaxDifferenceAfter": 0,
+      "lowestCoverageTileMean": 139.31279947916667,
+      "mode": "original artistic terrain"
+    },
+    {
+      "id": "nix",
+      "processingVersion": 2,
+      "base": "nix-1920.webp",
+      "high": "nix-3840.webp",
+      "generatedDimensions": [
+        3840,
+        1920
+      ],
+      "baseDimensions": [
+        1920,
+        960
+      ],
+      "sourceReference": null,
+      "generatedSha256": "4b64213cbb5d35501c07daea3b761a9a2dca5ea16cc037734dfc9676a3e2579a",
+      "baseSha256": "e5a32ca5ae4bf526622ab14eced41cc31c85d56d82e92362616d3ed10e3d5154",
+      "highSha256": "26af3f8101d8c12b88cc5b308017c6cf18ebc4fd67f30fe67c89abdd3f569c21",
+      "baseBytes": 538272,
+      "highBytes": 10298322,
+      "longitudeEdgeMeanDifferenceBefore": 16.821006774902344,
+      "longitudeEdgeMaxDifferenceAfter": 0,
+      "lowestCoverageTileMean": 137.68717447916666,
+      "mode": "original artistic terrain"
+    },
+    {
+      "id": "kerberos",
+      "processingVersion": 2,
+      "base": "kerberos-1920.webp",
+      "high": "kerberos-3840.webp",
+      "generatedDimensions": [
+        3840,
+        1920
+      ],
+      "baseDimensions": [
+        1920,
+        960
+      ],
+      "sourceReference": null,
+      "generatedSha256": "3f8c3ae0ae1a98adb1cf701518b6fe7cbdf9432e7d40bdb65c7c54a948bc93db",
+      "baseSha256": "94c60151cafe2c1e74c2458c7485f6fca0311e9544a04805c0972d47d02eb134",
+      "highSha256": "07903567f3ab61ef7181e17ec72c60d52aa2172ce81f50f3d79b4a2ce03b59bc",
+      "baseBytes": 513936,
+      "highBytes": 9748860,
+      "longitudeEdgeMeanDifferenceBefore": 17.470659255981445,
+      "longitudeEdgeMaxDifferenceAfter": 0,
+      "lowestCoverageTileMean": 156.35907552083333,
+      "mode": "original artistic terrain"
+    },
+    {
+      "id": "hydra",
+      "processingVersion": 2,
+      "base": "hydra-1920.webp",
+      "high": "hydra-3840.webp",
+      "generatedDimensions": [
+        3840,
+        1920
+      ],
+      "baseDimensions": [
+        1920,
+        960
+      ],
+      "sourceReference": null,
+      "generatedSha256": "7ded3e7cf84752458a22f68191116103e4e60f173fb8855c2311c6b3b0cac35f",
+      "baseSha256": "990be089c7f6280a95ce5615f41accc360b3123155b9b5484685346aa04f7dab",
+      "highSha256": "aa323d332f1ea7ba2c6a7aaf1777a4aa68bd675a542fd1d7d93e3b6daf4f46e3",
+      "baseBytes": 685038,
+      "highBytes": 11361804,
+      "longitudeEdgeMeanDifferenceBefore": 24.078645706176758,
+      "longitudeEdgeMaxDifferenceAfter": 0,
+      "lowestCoverageTileMean": 170.43305989583334,
+      "mode": "original artistic terrain"
+    }
+  ]
+}
