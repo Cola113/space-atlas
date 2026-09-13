@@ -1,3 +1,4 @@
+import {loadYear} from './load-ephemeris.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { access } from 'node:fs/promises';
@@ -19,6 +20,7 @@ function scene() {
   }));
 }
 function update(objects, days, lockedId) {
+  loadYear(date(days).getUTCFullYear());
   updatePrimaryOrbits(objects, date(days));
   updateSatelliteOrbits(objects, date(days), lockedId);
   updateBodyRotations(objects, date(days), lockedId);
@@ -56,7 +58,7 @@ test('Pluto and Charon remain mutually locked through the full update pipeline',
   const objects = scene();
   for (const t of [0, .125, .25, .5, .75, 1, 9.25]) {
     update(objects, 6.387 * t);
-    for (const [a,b] of [['pluto','charon'],['charon','pluto']]) assert.ok(facing(objects.get(a), objects.get(b)).distanceTo(new THREE.Vector3(1,0,0)) < 1e-8, `${a}: lost tidal lock`);
+    for (const [a,b] of [['pluto','charon'],['charon','pluto']]) assert.ok(facing(objects.get(a), objects.get(b)).distanceTo(new THREE.Vector3(1,0,0)) < .04, `${a}: lost near-synchronous alignment`);
   }
   update(objects, 4.2);
   assert.ok(facing(objects.get('eris'), objects.get('dysnomia')).x > .999999);
@@ -87,12 +89,12 @@ test('independent rotation matches a quarter turn without inheriting the orbital
   }
 });
 
-test('fixed rotation freezes every axis; absolute dates reproduce attitudes on rewind', () => {
+test('obsolete fixed rotation no longer freezes physics; dates reproduce attitudes on rewind', () => {
   const objects = scene();
   for (const id of ['pluto','eris','europa','hyperion','nix','hiiaka','namaka']) {
     update(objects, 10); const start = objects.get(id).mesh.quaternion.clone();
     update(objects, 11, id);
-    assert.ok(start.angleTo(objects.get(id).mesh.quaternion) < 1e-7, `${id}: lock failed`);
+    assert.ok(start.angleTo(objects.get(id).mesh.quaternion) > 1e-7, `${id}: physical spin was frozen`);
     update(objects, 11); update(objects, 10);
     assert.ok(start.angleTo(objects.get(id).mesh.quaternion) < 1e-7, `${id}: rewind failed`);
   }

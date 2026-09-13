@@ -10,6 +10,7 @@
 <button id="fullscreen-button" class="icon-button" aria-label="全屏" data-tip="全屏"><i data-lucide="expand"></i></button>
 </div></header>
 <section class="scene-title"><span>M42 / NGC 1976</span><h1>猎户座星云</h1><p>ORION NEBULA</p></section>
+<button id="quality-indicator" class="quality-indicator" aria-label="调整画质">自动 · 节能</button>
 <div class="view-caption"><span id="view-index">01 / 全景</span><p id="view-description">恒星诞生的云海</p></div>
 <nav class="dock" aria-label="巡游播放控制">
 <button id="cruise-button" class="icon-button" aria-label="暂停巡游" data-tip="暂停巡游"><i data-lucide="pause"></i></button>
@@ -21,7 +22,7 @@
 <div class="panel-header"><h2 id="settings-title">观测设置</h2><button class="icon-button close-panel" aria-label="关闭设置"><i data-lucide="x"></i></button></div>
 <label class="range-label" for="exposure">曝光 <output id="exposure-value">1.25</output></label><input id="exposure" type="range" min=".5" max="2.2" step=".05" value="1.25">
 <label class="range-label" for="stars">星光 <output id="stars-value">0.70</output></label><input id="stars" type="range" min="0" max="1.5" step=".05" value=".7">
-<label class="select-row" for="quality">画质<select id="quality"><option value="auto">自动适配</option><option value="low">节能</option><option value="high">精细</option></select></label>
+<label class="select-row" for="quality">画质<select id="quality"><option value="auto">自动适配</option><option value="minimal">极简</option><option value="lite">流畅</option><option value="low">节能</option><option value="high">精细</option></select></label>
 <div class="metrics"><span id="quality-value">精细</span><span><b id="fps-value">0</b> FPS</span></div>
 </aside>
 <aside id="science-panel" class="panel science-panel" aria-labelledby="science-title" hidden>

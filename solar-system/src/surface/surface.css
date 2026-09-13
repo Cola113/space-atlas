@@ -59,3 +59,15 @@
 .surface-details .surface-details-close{min-height:32px}
 @media(max-width:760px){.surface-location{max-width:calc(100% - 48px);top:85px}.surface-location h1{font-size:26px;gap:8px}.surface-location h1 small{font-size:13px}.surface-actions{gap:7px}.surface-actions .surface-parent{flex:1;max-width:156px;white-space:nowrap}.surface-view .surface-footer{row-gap:10px}}
 @media(max-height:500px){.surface-location{top:62px}.surface-location h1{font-size:23px;margin:4px 0}.surface-location p{font-size:9px}.surface-bearing{display:none}.surface-footer{grid-template-columns:1fr;justify-items:center}.surface-time-row{grid-column:1}.surface-view .surface-footer{row-gap:3px}.surface-clock-panel{bottom:91px;max-height:calc(100dvh - 158px)}}
+
+.surface-view button{min-width:44px!important;min-height:44px!important}
+.surface-view .surface-actions{gap:8px;flex-wrap:wrap}
+.surface-view .surface-footer{row-gap:10px}
+.surface-zoom{grid-column:1/-1;display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;font-size:11px;color:#d2dacd}
+.surface-zoom button{padding:0 9px;border:1px solid #576550;background:#101a16d9;border-radius:5px}
+.surface-zoom button[aria-pressed=true]{background:#365443;border-color:#d2deb6;color:#fff}
+.surface-angle-scale{min-width:96px;font-variant-numeric:tabular-nums}
+.surface-data-retry{position:absolute;top:78px;right:20px;z-index:20;background:#2b382b!important}
+.surface-view .surface-clock-panel,.surface-view .surface-details{max-height:calc(100dvh - 120px);overflow-y:auto;z-index:22}
+@media(max-width:760px){.surface-view .surface-footer{bottom:max(12px,env(safe-area-inset-bottom));left:16px;right:16px}.surface-zoom{gap:8px}.surface-zoom>span{display:none}.surface-angle-scale{width:100%;text-align:center}.surface-clock-panel{bottom:260px}.surface-view .surface-location{top:82px}.surface-view .surface-message{bottom:265px}}
+@media(max-height:500px){.surface-view .surface-footer{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;bottom:10px}.surface-actions{order:1}.surface-zoom{order:2}.surface-time-row{order:3;width:100%}.surface-angle-scale{width:auto}.surface-clock-panel{bottom:112px}.surface-view .surface-location p{display:none}.surface-zoom>span{display:none}.surface-view .surface-location h1{font-size:20px}}

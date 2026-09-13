@@ -1,4 +1,7 @@
 import "./style.css";
+import {ensureEphemeris,hasEphemeris} from "./ephemeris/local.js";
+import {localEphemerisBodies} from "./physical-state.js";
+import { AssetQueue } from "./asset-queue.js";
 import { mountNavigation } from "../../platform/navigation.ts";
 import { readSession, rememberScene } from "../../platform/session.ts";
 import * as THREE from "three";
@@ -91,7 +94,7 @@ const state = {
   date: defaultSimulationDate,
   ready: false,
   dynamics: true,
-  lockSpin: false,
+  followSpin: false,
   activityRate: 1,
   nightLights: true,
   shadows: true,
@@ -146,12 +149,12 @@ function saveObservation() {
   return {
     selected: state.selected, system: state.system, close: state.close, catalog: state.catalog,
     playing: state.playing, speed: state.speed, speedUnit: "realtime", orbits: state.orbits, labels: state.labels,
-    dynamics: state.dynamics, lockSpin: state.lockSpin, activityRate: state.activityRate,
+    dynamics: state.dynamics, followSpin: state.followSpin, activityRate: state.activityRate,
     nightLights: state.nightLights, shadows: state.shadows, nightView: state.nightView,
     observedEarth: state.observedEarth, date: state.date, timelineEpoch: defaultSimulationDate,
     offset: (flight?.endOffset || surfaceOrbitPose?.offsetFromBody || camera.position.clone().sub(center)).toArray(),
     portrait: width < height,
-    rotations: [...objects.values()].map(item => [item.id, item.mesh.rotation.y]),
+    physicsVersion: 2,
     layerVisible: body?.layerVisible,
   };
 }
@@ -159,8 +162,9 @@ function saveObservation() {
 function restoreObservation() {
   const saved = readSession("solar-system");
   if (!saved) return;
-  for (const key of ["playing", "orbits", "labels", "dynamics", "lockSpin", "nightLights", "shadows"])
+  for (const key of ["playing", "orbits", "labels", "dynamics", "followSpin", "nightLights", "shadows"])
     if (typeof saved[key] === "boolean") state[key] = saved[key];
+  state.followSpin = typeof saved.followSpin === "boolean" ? saved.followSpin : saved.lockSpin === true;
   state.speed = restoreSimulationRate(saved);
   if ([0.5, 1, 2, 4].includes(saved.activityRate)) state.activityRate = saved.activityRate;
   state.date = restoreSimulationDate(saved);
@@ -179,10 +183,6 @@ function restoreObservation() {
     }
   }
   if (dockCatalogs.some(catalog => catalog.id === saved.catalog)) setCatalog(saved.catalog);
-  if (saved.timelineEpoch === defaultSimulationDate && Array.isArray(saved.rotations)) for (const entry of saved.rotations) {
-    if (Array.isArray(entry) && objects.has(entry[0]) && Number.isFinite(entry[1]))
-      objects.get(entry[0]).mesh.rotation.y = entry[1];
-  }
   if (isEarthObservation()) syncObservedEarth();
   if (Array.isArray(saved.offset) && saved.offset.length === 3 && saved.offset.every(n => Number.isFinite(n) && Math.abs(n) < 1e5)) {
     const offset = new THREE.Vector3().fromArray(saved.offset);
@@ -210,6 +210,7 @@ function restoreObservation() {
 }
 
 function disposeScene() {
+  assetQueue.dispose();
   if (disposed) return;
   disposed = true;
   contextLost = true;
@@ -232,8 +233,13 @@ function disposeScene() {
   renderer?.forceContextLoss();
 }
 
+const previewName = name => name.replaceAll("/","_")+".webp";
+const coreIds = new Set(["sun","mercury","venus","earth","mars","jupiter","saturn","uranus","neptune"]);
+const assetQueue = new AssetQueue(4);
+const assetState = {criticalReady:false,backgroundTotal:0,backgroundLoaded:0};
+const deferredTextures = new Map();
 function thumb(body) {
-  return `<span class="planet-thumb ${body.id}" style="--body-color:${body.color};--texture:url('/solar-system/textures/${body.baseTexture || `2k_${body.texture}.jpg`}')" aria-hidden="true"></span>`;
+  return `<span class="planet-thumb ${body.id}" style="--body-color:${body.color}" aria-hidden="true"><img data-src="/solar-system/textures/thumbs/${previewName(body.baseTexture || `2k_${body.texture}.jpg`)}" alt="" loading="lazy"></span>`;
 }
 
 function makeNavigation() {
@@ -397,38 +403,57 @@ function configureTexture(texture, color = true, longitude = true) {
   return texture;
 }
 
+async function requestTexture(name,priority=0,preview=false) {
+  const key=(preview?'preview/':'')+(preview?previewName(name):name);
+  return assetQueue.request(key,async()=>{
+    const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),8000);
+    try {
+      const response=await fetch(`/solar-system/textures/${key}`,{signal:controller.signal});
+      if(!response.ok)throw new Error(`Texture ${response.status}`);
+      const bitmap=await createImageBitmap(await response.blob(),{imageOrientation:'flipY'});
+      if(disposed){bitmap.close();throw new Error('Scene disposed');}
+      const texture=new THREE.Texture(bitmap);texture.flipY=false;
+      return configureTexture(texture,true,name!=='2k_saturn_ring_alpha.png');
+    }finally{clearTimeout(timer);}
+  },priority);
+}
 async function loadBaseTextures() {
-  const names = [
-    ...new Set([
-      ...bodies.map((body) => body.baseTexture || `2k_${body.texture}.jpg`),
-      "2k_earth_clouds.jpg",
-      "2k_venus_surface.jpg",
-      "2k_saturn_ring_alpha.png",
-      "earth_night_2016.jpg",
-      "2k_titan-haze.png",
-    ]),
-  ];
-  let loaded = 0;
-  const loader = new THREE.TextureLoader();
-  const textureMap = new Map();
-  await Promise.all(
-    names.map(async (name) => {
-      try {
-        const texture = await loader.loadAsync(`/solar-system/textures/${name}`);
-        textureMap.set(
-          name,
-          configureTexture(texture, true, name !== "2k_saturn_ring_alpha.png"),
-        );
-      } catch {
-        failedTextures.add(name);
-      } finally {
-        loaded++;
-        $("loading-progress").style.width = `${(loaded / names.length) * 100}%`;
-        $("loading-text").textContent = `${loaded} / ${names.length}`;
-      }
-    }),
-  );
-  return textureMap;
+  const names=[...bodies.filter(b=>coreIds.has(b.id)).map(b=>b.baseTexture||`2k_${b.texture}.jpg`),'2k_earth_clouds.jpg','2k_saturn_ring_alpha.png'];
+  let loaded=0;const textures=new Map();
+  await Promise.all(names.map(async name=>{
+    try{textures.set(name,await requestTexture(name,100,true));}catch{failedTextures.add(name);}
+    finally{$('loading-progress').style.width=`${++loaded/names.length*100}%`;$('loading-text').textContent=`主要行星 ${loaded} / ${names.length}`;}
+  }));return textures;
+}
+function applyDeferredTexture(body,map){
+  body.lowMap=map;
+  if(!highTextures.has(body.id)&&!(body.id==='venus'&&!body.layerVisible)){
+    body.mesh.material.map=map;body.mesh.material.color.set('#ffffff');body.mesh.material.needsUpdate=true;
+    if(['mercury','mars'].includes(body.id))body.mesh.material.bumpMap=map;
+  }
+}
+async function ensureBodyAssets(body,priority=10){
+  if(!body)return;
+  const name=body.baseTexture||`2k_${body.texture}.jpg`;
+  try{const map=await requestTexture(name,priority);if(disposed)return;deferredTextures.set(body.id,map);failedTextures.delete(name);if(body.root.visible||body.id===state.selected){applyDeferredTexture(body,map);deferredTextures.delete(body.id);}}
+  catch{failedTextures.add(name);}
+  if(body.id===state.selected)updateResolution(body);
+}
+function startBackgroundAssets(){
+  assetQueue.limit=2;
+  const ordered=[...objects.values()].sort((a,b)=>Number(coreIds.has(b.id))-Number(coreIds.has(a.id)));
+  assetState.backgroundTotal=ordered.length;
+  for(const body of ordered)void ensureBodyAssets(body,0).finally(()=>{assetState.backgroundLoaded++;});
+  for(const [id,name,slot] of [['earth','earth_night_2016.jpg','nightMap'],['venus','2k_venus_surface.jpg','surfaceMap'],['titan','2k_titan-haze.png','hazeMap']]){
+    void requestTexture(name,0).then(map=>{if(disposed)return;const body=objects.get(id);body[slot]=map;if(slot==='hazeMap'){body.clouds.material.map=map;body.clouds.material.needsUpdate=true;}updateObservationTools();}).catch(()=>failedTextures.add(name));
+  }
+  starfield.loadDetails();
+  void ensureEphemeris(new Date(state.date)).catch(()=>{});
+}
+function observeThumbnails(){
+  const observer=new IntersectionObserver(entries=>{for(const {isIntersecting,target} of entries)if(isIntersecting){target.src=target.dataset.src;observer.unobserve(target);}},{rootMargin:'80px'});
+  document.querySelectorAll('.planet-thumb img[data-src]').forEach(img=>observer.observe(img));
+  window.addEventListener('pagehide',()=>observer.disconnect(),{once:true});
 }
 
 function addAtmosphere(group, radius, color, strength = 0.5) {
@@ -666,9 +691,9 @@ function updatePositions() {
   updateSatelliteOrbits(
     objects,
     date,
-    state.lockSpin ? state.selected : null,
+    null,
   );
-  updateBodyRotations(objects,date,state.lockSpin ? state.selected : null);
+  updateBodyRotations(objects,date,null);
 }
 
 function updateSimulationDate() {
@@ -691,7 +716,7 @@ function syncObservedEarth() {
     observedSun = subsolarPoint(new Date(state.date));
     observationSecond = second;
   }
-  alignObservedEarth(objects.get("earth"), observedSun);
+  // Earth orientation is already provided by the shared IAU state.
 }
 
 function updateCloudUi() {
@@ -1205,6 +1230,7 @@ function selectBody(id) {
   flyTo(body.root.position, arrivalOffset(body));
   setLayer(body.layerVisible);
   updateResolution(body);
+  void ensureBodyAssets(body,100);
   loadHighTexture(body);
 }
 
@@ -1262,6 +1288,7 @@ function toggleClose() {
     950,
     "zoom",
   );
+  void ensureBodyAssets(body,100);
   loadHighTexture(body);
 }
 
@@ -1308,8 +1335,9 @@ function updateActivityUi() {
   if ($("event-label").textContent !== profile.trigger) $("event-label").textContent = profile.trigger;
   $("event-trigger").disabled =
     !state.playing || !state.dynamics || state.system || Boolean(status?.event);
-  $("rotation-toggle").classList.toggle("active", state.lockSpin);
-  $("rotation-toggle").setAttribute("aria-pressed", String(state.lockSpin));
+  $("rotation-toggle").querySelector("span").textContent=`跟随自转 · ${state.followSpin?"开":"关"}`;
+  $("rotation-toggle").classList.toggle("active", state.followSpin);
+  $("rotation-toggle").setAttribute("aria-pressed", String(state.followSpin));
 }
 
 function triggerActivity() {
@@ -1346,8 +1374,9 @@ function updateObservationTools() {
   const visible =
     id &&
     !state.atlas &&
-    (family || landmarks[id]?.length || ["earth", "saturn"].includes(id));
+    true;
   $("observation-tools").hidden = !visible;
+  $("rotation-toggle").hidden = Boolean(state.system);
   document.querySelector(".landmark-picker").hidden =
     state.system || !landmarks[id]?.length;
   $("night-view").hidden = state.system || id !== "earth";
@@ -1369,7 +1398,7 @@ function updateObservationTools() {
 function clearLandmark() {
   if (!landmarkView?.active) return;
   landmarkView.select("");
-  if (landmarkSpin !== null) state.lockSpin = landmarkSpin;
+  if (landmarkSpin !== null) state.followSpin = landmarkSpin;
   landmarkSpin = null;
   $("app").classList.remove("has-landmark");
   const body = objects.get(state.selected);
@@ -1392,8 +1421,8 @@ function selectLandmark(id) {
   }
   const feature = landmarkView.select(id);
   if (!feature) return;
-  if (landmarkSpin === null) landmarkSpin = state.lockSpin;
-  state.lockSpin = true;
+  if (landmarkSpin === null) landmarkSpin = state.followSpin;
+  state.followSpin = true;
   state.close = true;
   state.nightView = false;
   $("app").classList.add("has-landmark");
@@ -1415,6 +1444,7 @@ function selectLandmark(id) {
   updateActivityUi();
   updateObservationTools();
   flyTo(body.root.position, currentFocusOffset(body), 1100);
+  void ensureBodyAssets(body,100);
   loadHighTexture(body);
 }
 
@@ -1445,6 +1475,7 @@ async function landOnSurface() {
   $("landing-button").disabled = true;
   try {
     const { createSurfaceView } = await import("./surface/SurfaceView.js");
+    if(localEphemerisBodies.has(id))await ensureEphemeris(new Date(state.date));
     if (disposed) return;
     $("app").classList.add("surface-journey-background");
     surfaceView = createSurfaceView(id, {
@@ -1526,8 +1557,8 @@ function bindEvents() {
     updateActivityUi();
   });
   $("rotation-toggle").addEventListener("click", () => {
-    state.lockSpin = !state.lockSpin;
-    if (landmarkView.active) landmarkSpin = state.lockSpin;
+    state.followSpin = !state.followSpin;
+    if (landmarkView.active) landmarkSpin = state.followSpin;
     updateActivityUi();
   });
   $("activity-rate").addEventListener("change", (event) => {
@@ -1934,7 +1965,11 @@ function animate(now) {
   if (document.hidden || surfaceView || landingBusy) return;
   const focused = objects.get(state.selected);
   const previous = focused?.root.position.clone();
-  if (state.playing && !state.atlas && !$("credits-dialog").open) {
+  const spinBefore=focused?.mesh.getWorldQuaternion(new THREE.Quaternion());
+  const needsEphemeris=localEphemerisBodies.has(state.selected)||['saturn','uranus','pluto'].includes(state.system);
+  const ephemerisReady=!needsEphemeris||hasEphemeris(new Date(state.date));
+  if(!ephemerisReady)void ensureEphemeris(new Date(state.date)).catch(()=>{});
+  if (ephemerisReady && state.playing && !state.atlas && !$("credits-dialog").open) {
     if (isEarthObservation()) state.date = Date.now();
     else if (elapsed <= 1000) state.date += simulationElapsed(elapsed, state.speed);
     // The asteroid belt is also keyed to the shared simulation date.
@@ -1947,6 +1982,10 @@ function animate(now) {
     const delta = focused.root.position.clone().sub(previous);
     camera.position.add(delta);
     controls.target.add(delta);
+    if(state.followSpin&&!state.system&&!landmarkView.active){
+      const rotation=focused.mesh.getWorldQuaternion(new THREE.Quaternion()).multiply(spinBefore.invert());
+      camera.position.sub(controls.target).applyQuaternion(rotation).add(controls.target);
+    }
   }
   if (flight) {
     if (!state.atlas && !$("credits-dialog").open) flight.elapsed += dt * 1000;
@@ -1973,6 +2012,9 @@ function animate(now) {
     }
   }
   if (!flight) controls.update(dt);
+  for (const body of objects.values()) {
+    if(deferredTextures.has(body.id)&&body.root.visible){applyDeferredTexture(body,deferredTextures.get(body.id));deferredTextures.delete(body.id);break;}
+  }
   for (const body of objects.values()) {
     const away = camera.position.clone().sub(body.root.position);
     const clearance = (body.renderRadius || body.radius) * 1.08;
@@ -2071,6 +2113,18 @@ async function init() {
     const textures = await loadBaseTextures();
     createBodies(textures);
     dynamics = createDynamics(objects);
+    // The scene light's display position cannot encode physical satellite illumination.
+    for(const body of objects.values())for(const material of [body.mesh.material,body.clouds?.material,body.ring?.material].filter(Boolean)){
+      if(!material.isMeshStandardMaterial)continue;
+      const before=material.onBeforeCompile,cacheKey=material.customProgramCacheKey.bind(material);
+      const direction={value:new THREE.Vector3(1,0,0)};
+      material.onBeforeCompile=shader=>{
+        before.call(material,shader);shader.uniforms.uPhysicalSun=direction;
+        shader.fragmentShader='uniform vec3 uPhysicalSun;\n'+shader.fragmentShader.replace('#include <lights_pars_begin>',THREE.ShaderChunk.lights_pars_begin.replace('vec3 lVector = pointLight.position - geometryPosition;','vec3 lVector = (viewMatrix * vec4(uPhysicalSun, 0.0)).xyz;'));
+      };
+      material.customProgramCacheKey=()=>cacheKey()+'-physical-sun-v1';
+      for(const mesh of [body.mesh,body.clouds,body.ring].filter(mesh=>mesh?.material===material))mesh.onBeforeRender=()=>direction.value.copy(body.physicalSun||body.root.position.clone().negate().normalize());
+    }
     landmarkView = createLandmarks(objects, camera, selectLandmark);
     observedClouds = createObservedClouds({ dynamics, reducedMotion,
       initialEnabled: state.observedEarth, autoStart: !window.__promoOffline,
@@ -2082,10 +2136,13 @@ async function init() {
     bindEvents();
     bindCanvas();
     state.ready = true;
+    assetState.criticalReady = true;
     state.date = epochDate.getTime();
     restoreObservation();
     updateTimeRateUi();
+    renderer.render(scene,camera);
     document.documentElement.dataset.sceneReady = "true";
+    observeThumbnails();
     rememberScene("solar-system", saveObservation);
     window.addEventListener("pagehide", disposeScene);
     window.addEventListener("pageshow", event => { if (event.persisted && disposed) location.reload(); });
@@ -2094,20 +2151,23 @@ async function init() {
       () => {
         $("loading-screen").hidden = true;
       },
-      reducedMotion ? 0 : 650,
+      reducedMotion ? 0 : 150,
     );
     if (failedTextures.size)
       toast(`${failedTextures.size} 张纹理未能加载，部分天体暂用基础色显示。`);
     requestAnimationFrame(animate);
+    setTimeout(startBackgroundAssets,180);
     // Read-only diagnostics for verifying camera framing and rendered asset state.
     window.solarAtlas = {
       snapshot: () => ({
         ready: state.ready,
+        assets: {...assetState,pending:assetQueue.pending.length},
         selected: state.selected,
         close: state.close,
         system: state.system,
         catalog: state.catalog,
         scale: "display",
+        ephemerisReady:hasEphemeris(new Date(state.date)),
         playing: state.playing,
         speed: state.speed,
         date: state.date,
@@ -2118,7 +2178,7 @@ async function init() {
         labels: state.labels,
         starfield: starfield.snapshot(),
         atlas: state.atlas,
-        lockSpin: state.lockSpin,
+        followSpin: state.followSpin,
         nightLights: state.nightLights,
         nightView: state.nightView,
         shadows: state.shadows,
@@ -2158,6 +2218,7 @@ async function init() {
             meshId: body.mesh.uuid,
             radius: body.radius,
             radiusKm: physicalData[body.id]?.radiusKm ?? null,
+            physical:body.physical?{positionAU:body.physical.position.toArray(),prime:body.physical.basis.prime.toArray(),north:body.physical.basis.north.toArray(),source:body.physical.source,approximate:body.physical.approximate}:null,
             renderRadius: body.renderRadius || body.radius,
             parent: body.parent || null,
             position: body.root.position.toArray(),

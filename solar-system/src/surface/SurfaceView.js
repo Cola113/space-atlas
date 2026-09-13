@@ -6,6 +6,8 @@ import { simulationRates, formatSimulationRate, simulationRateEquivalent } from 
 import { SurfaceJourney } from './SurfaceJourney.js';
 import { createSurfaceSky, surfaceCameraRange } from './SurfaceSky.js';
 import './surface.css';
+import {ensureEphemeris,hasEphemeris} from '../ephemeris/local.js';
+import {localEphemerisBodies} from '../physical-state.js';
 
 const rad = THREE.MathUtils.degToRad;
 const deg = THREE.MathUtils.radToDeg;
@@ -64,9 +66,10 @@ export function createSurfaceView(id, {renderOrbit,onClosed,initialDate,initialR
         <button type="button" class="surface-daylight" aria-label="前往下一次日照" title="前往下一次日照"><i data-lucide="sunrise"></i></button>
         <button type="button" class="surface-reset" aria-label="恢复着陆视角" title="恢复着陆视角"><i data-lucide="rotate-ccw"></i></button>
         <button type="button" class="surface-photo" aria-label="留张照片" title="留张照片"><i data-lucide="camera"></i></button></div>
+      <div class="surface-zoom" aria-label="望远镜倍率"><span>望远镜</span>${[1,2,4,8].map(value=>`<button type="button" data-zoom="${value}" aria-pressed="${value===1}">${value}×</button>`).join('')}<output class="surface-angle-scale"></output></div>
       <div class="surface-time-row"><button type="button" class="surface-time-toggle" aria-expanded="false" aria-controls="surface-clock-panel">地表流速 · ${formatSimulationRate(clock.rate)}</button><time class="surface-time-readout"></time></div>
       </footer>
-    <div class="surface-message" role="status" hidden></div>
+    <div class="surface-message" role="status" hidden></div><button class="surface-data-retry" hidden>重试加载星历</button>
     <div class="surface-transition-cover" aria-hidden="true"></div>
     <div class="surface-journey-caption" role="status"><span class="surface-eyebrow">DESTINATION / ${site.english}</span><strong>准备前往${site.name}</strong><p>准备地表全景与天空</p><div class="surface-journey-track"><b></b></div></div>
     <button type="button" class="surface-skip">跳过动画</button>`;
@@ -78,7 +81,7 @@ export function createSurfaceView(id, {renderOrbit,onClosed,initialDate,initialR
   const textures = new Set();
   let renderer, sky, disposed = false, loaded = false, raf = 0, noticeTimer = 0, groundMask;
   let lastFrame = null, lastDraw = -Infinity, lastSkyUpdate = -Infinity, skyTime = null, lastOrbit = null, dirty = true, lastReadout = '';
-  let resetExposure = true, exposureElapsed = 0;
+  let resetExposure = true, exposureElapsed = 0, magnification=1, dataWaiting=false, dataFailed=false;
   const initialPitch = () => site.initialPitch + (id === 'europa' && innerWidth < 600 ? 8 : 0);
   let resetPitch = initialPitch();
   let heading = site.initialHeading, pitch = resetPitch, motion = null, drag = null;
@@ -92,6 +95,7 @@ export function createSurfaceView(id, {renderOrbit,onClosed,initialDate,initialR
     $('.surface-clock-panel').hidden=!open;
     $('.surface-time-toggle').setAttribute('aria-expanded',String(open));
     if(open)info(false,false);
+    (open?$(".surface-clock-close"):$(".surface-time-toggle")).focus();
   }
   function notice(text) {
     $('.surface-message').textContent = text;
@@ -169,7 +173,9 @@ export function createSurfaceView(id, {renderOrbit,onClosed,initialDate,initialR
   function updateCamera(settle = 1) {
     heading = THREE.MathUtils.euclideanModulo(heading,360);
     pitch = THREE.MathUtils.clamp(pitch,-85,89);
-    const lens=62+(1-settle)*8;
+    const lens=deg(2*Math.atan(Math.tan(rad((62+(1-settle)*8)/2))/magnification));
+    root.dataset.magnification=String(magnification);root.dataset.fov=String(lens);
+    $(".surface-angle-scale").textContent=`纵向视场 ${lens.toFixed(1)}°`;
     if(camera.fov!==lens){camera.fov=lens;camera.updateProjectionMatrix();}
     camera.lookAt(lookDirection(heading,pitch-(1-settle)*10));
     if(settle<1)camera.rotateZ(rad((1-settle)*.8));
@@ -206,7 +212,10 @@ export function createSurfaceView(id, {renderOrbit,onClosed,initialDate,initialR
     if(journey.phase==='closed'){const finalTime=clock.time;dispose();onClosed(finalTime);return;}
     const sample=journey.sample(), interactive=journey.phase==='landed';
     if(interactive&&clock.playing)exposureElapsed+=dt/1000;
-    clock.tick(now,interactive);
+    const previousTime=clock.time;
+    clock.tick(now,interactive&&!dataWaiting&&!dataFailed);
+    if(localEphemerisBodies.has(id)&&!hasEphemeris(new Date(clock.time))){const wanted=clock.time;clock.time=previousTime;clock.suspend();void prepareTime(wanted);}
+
     if(root.dataset.phase!==journey.phase){
       root.dataset.phase=journey.phase;dirty=true;
       root.dataset.ready=String(interactive);
@@ -239,6 +248,16 @@ export function createSurfaceView(id, {renderOrbit,onClosed,initialDate,initialR
     }
     if(motion||['approach','settling','departing','retreating'].includes(journey.phase)||(interactive&&clock.playing))schedule();
   }
+  async function prepareTime(time){
+    if(dataWaiting||dataFailed)return;dataWaiting=true;notice('正在准备当前年份星历');
+    try{await ensureEphemeris(new Date(time));clock.time=time;lastSkyUpdate=-Infinity;}
+    catch{dataFailed=true;clock.playing=false;$('.surface-data-retry').hidden=false;notice('星历未能加载，时间已暂停。');}
+    finally{dataWaiting=false;clock.suspend();invalidate();}
+  }
+  listen($('.surface-data-retry'),'click',()=>{dataFailed=false;$('.surface-data-retry').hidden=true;void prepareTime(clock.time);});
+  for(const button of root.querySelectorAll('[data-zoom]'))listen(button,'click',()=>{
+    magnification=Number(button.dataset.zoom);for(const item of root.querySelectorAll('[data-zoom]'))item.setAttribute('aria-pressed',String(item===button));invalidate();
+  });
   function schedule(){if(!raf&&!disposed&&!document.hidden)raf=requestAnimationFrame(render);}
   function invalidate(){dirty=true;schedule();}
   function aim(targetHeading,targetPitch) {
@@ -254,12 +273,13 @@ export function createSurfaceView(id, {renderOrbit,onClosed,initialDate,initialR
     if(angles.altitude<0){notice(`${site.parentName}目前位于地平线下。`);return;}
     aim(angles.azimuth,angles.altitude);
   });
-  listen($('.surface-daylight'),'click',()=>{
+  listen($('.surface-daylight'),'click',async()=>{
+    if(localEphemerisBodies.has(id)){try{await ensureEphemeris(new Date(clock.time+(site.solarDay||29.53)*2*86400000));}catch{notice('下一次日照所需星历未加载，请重试。');return;}}
     const time=nextDaylight(site,clock.time);
     if(time===null){notice('未来两个当地太阳日内，太阳仍未升到适合观景的高度。');return;}
     clock.time=time;clock.suspend();onTimeChange?.(time);lastSkyUpdate=-Infinity;resetExposure=true;exposureElapsed=0;invalidate();
   });
-  listen($('.surface-reset'),'click',()=>aim(site.initialHeading,initialPitch()));
+  listen($('.surface-reset'),'click',()=>{magnification=1;for(const b of root.querySelectorAll('[data-zoom]'))b.setAttribute('aria-pressed',String(b.dataset.zoom==='1'));aim(site.initialHeading,initialPitch());});
   listen(root,'keydown',event=>{
     if (journey.phase!=='landed'||!$('.surface-details').hidden||/INPUT|TEXTAREA|SELECT/.test(event.target.tagName)) return;
     const moves={ArrowLeft:[-3,0],ArrowRight:[3,0],ArrowUp:[0,3],ArrowDown:[0,-3]};
@@ -309,7 +329,7 @@ export function createSurfaceView(id, {renderOrbit,onClosed,initialDate,initialR
           }`,
         side:THREE.BackSide,transparent:true,depthWrite:false,depthTest:false,
       }));dome.renderOrder=20;scene.add(dome);
-      sky=createSurfaceSky({scene,renderer,site,parentMap,cloudMap,ringMap,groundMaterial:dome.material,signal:events.signal,
+      sky=createSurfaceSky({scene,renderer,site,initialTime:startTime,parentMap,cloudMap,ringMap,groundMaterial:dome.material,signal:events.signal,
         onCatalogueReady:()=>{lastSkyUpdate=-Infinity;invalidate();},
         onCatalogueError:()=>{notice('完整星表暂未加载，已显示主要亮星。');invalidate();}});
       listen(canvas,'pointerdown',event=>{
@@ -341,7 +361,7 @@ export function createSurfaceView(id, {renderOrbit,onClosed,initialDate,initialR
         const context=photo.getContext('2d');context.drawImage(canvas,0,0);
         const scale=photo.width/innerWidth;
         context.scale(scale,scale);context.fillStyle='rgba(0,0,0,.65)';context.fillRect(0,innerHeight-98,innerWidth,98);
-        context.fillStyle='#eee';context.font='15px sans-serif';context.fillText(`星际图鉴 · ${site.name} / ${site.title}`,20,innerHeight-68,innerWidth-40);
+        context.fillStyle='#eee';context.font='15px sans-serif';context.fillText(`星际图鉴 · ${site.name} / ${site.title} · 望远镜 ${magnification}×`,20,innerHeight-68,innerWidth-40);
         context.font='11px sans-serif';context.fillStyle='#b9bac0';context.fillText(`${site.provenance} · ${new Date(clock.time).toISOString().replace('T',' ').slice(0,19)} UTC`,20,innerHeight-43,innerWidth-40);
         context.fillText(site.credit,20,innerHeight-22,innerWidth-40);
         photo.toBlob(blob=>{

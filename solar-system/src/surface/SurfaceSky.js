@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { surfaceFrame, bodyBasis, angularDiameter, horizonAngles } from './geometry.js';
 import { brightStars } from '../sky-data/bright-stars.js';
 import { equatorialDirection, starAppearance } from '../sky-coordinates.js';
+import {physicalData} from '../physical-scale.js';
 import { SurfaceExposure } from './SurfaceExposure.js';
 
 const { smoothstep, clamp, degToRad } = THREE.MathUtils;
@@ -22,20 +23,8 @@ export function surfaceWindCycle(hours) {
 
 // Approximate disk overlap in the sky plane. This affects the observer's ground
 // lighting during an eclipse, not the light illuminating the distant planets.
-export function solarVisibility(frame, parentRadiusKm, parentName) {
-  const sun = frame.targets.Sun, parent = frame.targets[parentName];
-  if(parentName==='Sun'||!parent) return 1;
-  if (parent.distanceKm >= sun.distanceKm) return 1;
-  const r = angularDiameter(695700,sun.distanceKm)/2;
-  const R = angularDiameter(parentRadiusKm,parent.distanceKm)/2;
-  const d = sun.direction.angleTo(parent.direction);
-  if (d >= r + R) return 1;
-  if (d <= Math.abs(R-r)) return R >= r ? 0 : 1-R*R/(r*r);
-  const overlap = r*r*Math.acos(clamp((d*d+r*r-R*R)/(2*d*r),-1,1))
-    + R*R*Math.acos(clamp((d*d+R*R-r*r)/(2*d*R),-1,1))
-    - .5*Math.sqrt(Math.max(0,(-d+r+R)*(d+r-R)*(d-r+R)*(d+r+R)));
-  return clamp(1-overlap/(Math.PI*r*r),0,1);
-}
+export {occultationVisibility as solarVisibility} from './occultation.js';
+import {occultationVisibility as solarVisibility} from './occultation.js';
 
 export function surfaceLight(frame, site, referenceAltitude) {
   const altitude = horizonAngles(frame.targets.Sun.direction).altitude;
@@ -46,9 +35,9 @@ export function surfaceLight(frame, site, referenceAltitude) {
     stars:THREE.MathUtils.lerp(1.25,.35,smoothstep(direct*eclipse,0,.15)) };
 }
 
-export function createSurfaceSky({scene,renderer,site,parentMap,cloudMap,ringMap,groundMaterial,onCatalogueError,onCatalogueReady,signal}) {
+export function createSurfaceSky({scene,renderer,site,initialTime=Date.parse(site.date),parentMap,cloudMap,ringMap,groundMaterial,onCatalogueError,onCatalogueReady,signal}) {
   const epoch=Date.parse(site.date), objects=new Map();
-  let frame=surfaceFrame(site), stars, clouds;
+  let frame=surfaceFrame(site,new Date(initialTime)), stars, clouds;
   const referenceAltitude=site.referenceSolarAltitude??horizonAngles(frame.targets.Sun.direction).altitude;
   const exposure=new SurfaceExposure();
   let illumination;
@@ -116,11 +105,11 @@ export function createSurfaceSky({scene,renderer,site,parentMap,cloudMap,ringMap
     windMaterial(material,.0009);
     clouds=new THREE.Mesh(globe.geometry,material);clouds.scale.setScalar(1.003);globe.add(clouds);
   }
-  for(const [name,radius] of [['Mercury',2439.7],['Venus',6051.8],['Earth',6371.0084],['Mars',3389.5],['Jupiter',69911],['Saturn',58232],['Uranus',25362],['Neptune',24622]])
+  for(const [name,radius] of ['Mercury','Venus','Earth','Mars','Jupiter','Saturn','Uranus','Neptune'].map(name=>[name,physicalData[name.toLowerCase()].radiusKm]))
     if(name!==site.parent&&frame.targets[name])addGlobe(name,radius,null);
   if(site.id==='europa'||site.id==='io')for(const [name,radius] of [['Io',1821.49],['Europa',1560.8],['Ganymede',2631.2],['Callisto',2410.3]])
     if(frame.targets[name])addGlobe(name,radius,null);
-  if(site.parent!=='Sun')addGlobe('Sun',695700,null,true);
+  if(site.parent!=='Sun')addGlobe('Sun',physicalData.sun.radiusKm,null,true);
 
   const atmosphere=site.atmosphere?new THREE.Mesh(new THREE.SphereGeometry(1800,48,32),new THREE.ShaderMaterial({
     uniforms:{sun:{value:frame.targets.Sun.direction.clone()},day:{value:1},kind:{value:{mars:1,titan:2,pluto:3}[site.atmosphere]}},
@@ -190,7 +179,7 @@ export function createSurfaceSky({scene,renderer,site,parentMap,cloudMap,ringMap
     stars.material.uniforms.rotation.value.copy(frame.rotation);
     const sun=frame.targets.Sun;
     halo.position.copy(sun.direction).multiplyScalar(1199);
-    halo.scale.setScalar(1199*Math.max(.012,angularDiameter(695700,sun.distanceKm)*7));
+    halo.scale.setScalar(1199*Math.max(.012,angularDiameter(physicalData.sun.radiusKm,sun.distanceKm)*7));
     halo.quaternion.copy(camera.quaternion);halo.material.uniforms.visibility.value=illumination.eclipse;
     return frame;
   }

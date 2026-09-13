@@ -1,0 +1,291 @@
+{
+  "version": 1,
+  "method": "Resized copies of existing source textures; no new image detail",
+  "files": {
+    "2k_sun.jpg": {
+      "preview": "preview/2k_sun.jpg.webp",
+      "thumbnail": "thumbs/2k_sun.jpg.webp",
+      "bytes": 61716
+    },
+    "2k_mercury.jpg": {
+      "preview": "preview/2k_mercury.jpg.webp",
+      "thumbnail": "thumbs/2k_mercury.jpg.webp",
+      "bytes": 68032
+    },
+    "2k_venus_atmosphere.jpg": {
+      "preview": "preview/2k_venus_atmosphere.jpg.webp",
+      "thumbnail": "thumbs/2k_venus_atmosphere.jpg.webp",
+      "bytes": 8850
+    },
+    "2k_earth_daymap.jpg": {
+      "preview": "preview/2k_earth_daymap.jpg.webp",
+      "thumbnail": "thumbs/2k_earth_daymap.jpg.webp",
+      "bytes": 33036
+    },
+    "2k_mars.jpg": {
+      "preview": "preview/2k_mars.jpg.webp",
+      "thumbnail": "thumbs/2k_mars.jpg.webp",
+      "bytes": 40818
+    },
+    "2k_jupiter.jpg": {
+      "preview": "preview/2k_jupiter.jpg.webp",
+      "thumbnail": "thumbs/2k_jupiter.jpg.webp",
+      "bytes": 27000
+    },
+    "2k_saturn.jpg": {
+      "preview": "preview/2k_saturn.jpg.webp",
+      "thumbnail": "thumbs/2k_saturn.jpg.webp",
+      "bytes": 6408
+    },
+    "2k_uranus.jpg": {
+      "preview": "preview/2k_uranus.jpg.webp",
+      "thumbnail": "thumbs/2k_uranus.jpg.webp",
+      "bytes": 1830
+    },
+    "2k_neptune.jpg": {
+      "preview": "preview/2k_neptune.jpg.webp",
+      "thumbnail": "thumbs/2k_neptune.jpg.webp",
+      "bytes": 4092
+    },
+    "completed/pluto-1920.webp": {
+      "preview": "preview/completed_pluto-1920.webp.webp",
+      "thumbnail": "thumbs/completed_pluto-1920.webp.webp",
+      "bytes": 93978
+    },
+    "2k_ceres.jpg": {
+      "preview": "preview/2k_ceres.jpg.webp",
+      "thumbnail": "thumbs/2k_ceres.jpg.webp",
+      "bytes": 58550
+    },
+    "artistic/makemake-1920.webp": {
+      "preview": "preview/artistic_makemake-1920.webp.webp",
+      "thumbnail": "thumbs/artistic_makemake-1920.webp.webp",
+      "bytes": 74598
+    },
+    "artistic/haumea-1920.webp": {
+      "preview": "preview/artistic_haumea-1920.webp.webp",
+      "thumbnail": "thumbs/artistic_haumea-1920.webp.webp",
+      "bytes": 117126
+    },
+    "artistic/eris-1920.webp": {
+      "preview": "preview/artistic_eris-1920.webp.webp",
+      "thumbnail": "thumbs/artistic_eris-1920.webp.webp",
+      "bytes": 61432
+    },
+    "2k_vesta.jpg": {
+      "preview": "preview/2k_vesta.jpg.webp",
+      "thumbnail": "thumbs/2k_vesta.jpg.webp",
+      "bytes": 101086
+    },
+    "2k_moon.jpg": {
+      "preview": "preview/2k_moon.jpg.webp",
+      "thumbnail": "thumbs/2k_moon.jpg.webp",
+      "bytes": 101376
+    },
+    "completed/phobos-1920.webp": {
+      "preview": "preview/completed_phobos-1920.webp.webp",
+      "thumbnail": "thumbs/completed_phobos-1920.webp.webp",
+      "bytes": 98920
+    },
+    "completed/io-1920.webp": {
+      "preview": "preview/completed_io-1920.webp.webp",
+      "thumbnail": "thumbs/completed_io-1920.webp.webp",
+      "bytes": 69716
+    },
+    "completed/europa-1920.webp": {
+      "preview": "preview/completed_europa-1920.webp.webp",
+      "thumbnail": "thumbs/completed_europa-1920.webp.webp",
+      "bytes": 92216
+    },
+    "completed/ganymede-1920.webp": {
+      "preview": "preview/completed_ganymede-1920.webp.webp",
+      "thumbnail": "thumbs/completed_ganymede-1920.webp.webp",
+      "bytes": 115206
+    },
+    "completed/callisto-1920.webp": {
+      "preview": "preview/completed_callisto-1920.webp.webp",
+      "thumbnail": "thumbs/completed_callisto-1920.webp.webp",
+      "bytes": 115150
+    },
+    "2k_enceladus.jpg": {
+      "preview": "preview/2k_enceladus.jpg.webp",
+      "thumbnail": "thumbs/2k_enceladus.jpg.webp",
+      "bytes": 129226
+    },
+    "completed/titan-1920.webp": {
+      "preview": "preview/completed_titan-1920.webp.webp",
+      "thumbnail": "thumbs/completed_titan-1920.webp.webp",
+      "bytes": 3690
+    },
+    "completed/triton-1920.webp": {
+      "preview": "preview/completed_triton-1920.webp.webp",
+      "thumbnail": "thumbs/completed_triton-1920.webp.webp",
+      "bytes": 68558
+    },
+    "completed/charon-1920.webp": {
+      "preview": "preview/completed_charon-1920.webp.webp",
+      "thumbnail": "thumbs/completed_charon-1920.webp.webp",
+      "bytes": 48016
+    },
+    "artistic/miranda-1920.webp": {
+      "preview": "preview/artistic_miranda-1920.webp.webp",
+      "thumbnail": "thumbs/artistic_miranda-1920.webp.webp",
+      "bytes": 119822
+    },
+    "artistic/deimos-1920.webp": {
+      "preview": "preview/artistic_deimos-1920.webp.webp",
+      "thumbnail": "thumbs/artistic_deimos-1920.webp.webp",
+      "bytes": 54278
+    },
+    "artistic/amalthea-1920.webp": {
+      "preview": "preview/artistic_amalthea-1920.webp.webp",
+      "thumbnail": "thumbs/artistic_amalthea-1920.webp.webp",
+      "bytes": 85902
+    },
+    "artistic/thebe-1920.webp": {
+      "preview": "preview/artistic_thebe-1920.webp.webp",
+      "thumbnail": "thumbs/artistic_thebe-1920.webp.webp",
+      "bytes": 80814
+    },
+    "artistic/adrastea-1920.webp": {
+      "preview": "preview/artistic_adrastea-1920.webp.webp",
+      "thumbnail": "thumbs/artistic_adrastea-1920.webp.webp",
+      "bytes": 100000
+    },
+    "artistic/metis-1920.webp": {
+      "preview": "preview/artistic_metis-1920.webp.webp",
+      "thumbnail": "thumbs/artistic_metis-1920.webp.webp",
+      "bytes": 97670
+    },
+    "artistic/himalia-1920.webp": {
+      "preview": "preview/artistic_himalia-1920.webp.webp",
+      "thumbnail": "thumbs/artistic_himalia-1920.webp.webp",
+      "bytes": 87958
+    },
+    "2k_mimas.jpg": {
+      "preview": "preview/2k_mimas.jpg.webp",
+      "thumbnail": "thumbs/2k_mimas.jpg.webp",
+      "bytes": 106698
+    },
+    "2k_tethys.jpg": {
+      "preview": "preview/2k_tethys.jpg.webp",
+      "thumbnail": "thumbs/2k_tethys.jpg.webp",
+      "bytes": 141026
+    },
+    "2k_dione.jpg": {
+      "preview": "preview/2k_dione.jpg.webp",
+      "thumbnail": "thumbs/2k_dione.jpg.webp",
+      "bytes": 110356
+    },
+    "2k_rhea.jpg": {
+      "preview": "preview/2k_rhea.jpg.webp",
+      "thumbnail": "thumbs/2k_rhea.jpg.webp",
+      "bytes": 142436
+    },
+    "2k_iapetus.jpg": {
+      "preview": "preview/2k_iapetus.jpg.webp",
+      "thumbnail": "thumbs/2k_iapetus.jpg.webp",
+      "bytes": 68432
+    },
+    "artistic/phoebe-1920.webp": {
+      "preview": "preview/artistic_phoebe-1920.webp.webp",
+      "thumbnail": "thumbs/artistic_phoebe-1920.webp.webp",
+      "bytes": 129306
+    },
+    "artistic/hyperion-1920.webp": {
+      "preview": "preview/artistic_hyperion-1920.webp.webp",
+      "thumbnail": "thumbs/artistic_hyperion-1920.webp.webp",
+      "bytes": 151218
+    },
+    "artistic/janus-1920.webp": {
+      "preview": "preview/artistic_janus-1920.webp.webp",
+      "thumbnail": "thumbs/artistic_janus-1920.webp.webp",
+      "bytes": 80144
+    },
+    "artistic/epimetheus-1920.webp": {
+      "preview": "preview/artistic_epimetheus-1920.webp.webp",
+      "thumbnail": "thumbs/artistic_epimetheus-1920.webp.webp",
+      "bytes": 105674
+    },
+    "artistic/prometheus-1920.webp": {
+      "preview": "preview/artistic_prometheus-1920.webp.webp",
+      "thumbnail": "thumbs/artistic_prometheus-1920.webp.webp",
+      "bytes": 107254
+    },
+    "artistic/pandora-1920.webp": {
+      "preview": "preview/artistic_pandora-1920.webp.webp",
+      "thumbnail": "thumbs/artistic_pandora-1920.webp.webp",
+      "bytes": 91228
+    },
+    "artistic/atlas-1920.webp": {
+      "preview": "preview/artistic_atlas-1920.webp.webp",
+      "thumbnail": "thumbs/artistic_atlas-1920.webp.webp",
+      "bytes": 105642
+    },
+    "artistic/pan-1920.webp": {
+      "preview": "preview/artistic_pan-1920.webp.webp",
+      "thumbnail": "thumbs/artistic_pan-1920.webp.webp",
+      "bytes": 72680
+    },
+    "artistic/ariel-1920.webp": {
+      "preview": "preview/artistic_ariel-1920.webp.webp",
+      "thumbnail": "thumbs/artistic_ariel-1920.webp.webp",
+      "bytes": 114110
+    },
+    "artistic/umbriel-1920.webp": {
+      "preview": "preview/artistic_umbriel-1920.webp.webp",
+      "thumbnail": "thumbs/artistic_umbriel-1920.webp.webp",
+      "bytes": 118932
+    },
+    "artistic/titania-1920.webp": {
+      "preview": "preview/artistic_titania-1920.webp.webp",
+      "thumbnail": "thumbs/artistic_titania-1920.webp.webp",
+      "bytes": 84040
+    },
+    "artistic/oberon-1920.webp": {
+      "preview": "preview/artistic_oberon-1920.webp.webp",
+      "thumbnail": "thumbs/artistic_oberon-1920.webp.webp",
+      "bytes": 93820
+    },
+    "artistic/nereid-1920.webp": {
+      "preview": "preview/artistic_nereid-1920.webp.webp",
+      "thumbnail": "thumbs/artistic_nereid-1920.webp.webp",
+      "bytes": 134722
+    },
+    "artistic/proteus-1920.webp": {
+      "preview": "preview/artistic_proteus-1920.webp.webp",
+      "thumbnail": "thumbs/artistic_proteus-1920.webp.webp",
+      "bytes": 84160
+    },
+    "artistic/styx-1920.webp": {
+      "preview": "preview/artistic_styx-1920.webp.webp",
+      "thumbnail": "thumbs/artistic_styx-1920.webp.webp",
+      "bytes": 106950
+    },
+    "artistic/nix-1920.webp": {
+      "preview": "preview/artistic_nix-1920.webp.webp",
+      "thumbnail": "thumbs/artistic_nix-1920.webp.webp",
+      "bytes": 87640
+    },
+    "artistic/kerberos-1920.webp": {
+      "preview": "preview/artistic_kerberos-1920.webp.webp",
+      "thumbnail": "thumbs/artistic_kerberos-1920.webp.webp",
+      "bytes": 83926
+    },
+    "artistic/hydra-1920.webp": {
+      "preview": "preview/artistic_hydra-1920.webp.webp",
+      "thumbnail": "thumbs/artistic_hydra-1920.webp.webp",
+      "bytes": 126814
+    },
+    "2k_earth_clouds.jpg": {
+      "preview": "preview/2k_earth_clouds.jpg.webp",
+      "thumbnail": "thumbs/2k_earth_clouds.jpg.webp",
+      "bytes": 105196
+    },
+    "2k_saturn_ring_alpha.png": {
+      "preview": "preview/2k_saturn_ring_alpha.png.webp",
+      "thumbnail": "thumbs/2k_saturn_ring_alpha.png.webp",
+      "bytes": 2140
+    }
+  }
+}

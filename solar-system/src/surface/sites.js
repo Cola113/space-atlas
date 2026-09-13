@@ -12,7 +12,7 @@ export const additionalLandingSites = Object.freeze({
   mars: {
     ...common, id:'mars', body:'Mars', name:'火星', title:'盖迪兹谷 · 夏普山麓', english:'GEDIZ VALLIS',
     radiusKm:physicalData.mars.radiusKm, latitude:-4.85, longitude:137.41,
-    parent:'Sun', parentName:'太阳', parentRadiusKm:695700, parentTexture:null,
+    parent:'Sun', parentName:'太阳', parentRadiusKm:physicalData.sun.radiusKm, parentTexture:null,
     texture:'/surface/mars.webp', mobileTexture:'/surface/mars-4k.webp', textureWidth:8192,
     provenance:'好奇号 · 实拍拼接 / AI 补绘', credit:'NASA / JPL-Caltech / MSSS · PIA26410 · 缺测地面 gpt-image-2.5-sunburst',
     source:'https://www.jpl.nasa.gov/images/pia26410-curiositys-view-within-gediz-vallis-channel/',
@@ -37,7 +37,7 @@ export const additionalLandingSites = Object.freeze({
     parentTexture:'/solar-system/textures/2k_saturn.jpg', texture:'/surface/titan.webp',
     source:'https://www.esa.int/ESA_Multimedia/Images/2005/01/First_colour_view_of_Titan_s_surface',
     description:'浓厚的橙色雾霾笼罩平原，圆润的水冰卵石散布在暗色沉积物上。',
-    notes:'依据惠更斯号照片的地貌特征进行文生图重建，没有逐像素沿用原片。着陆区并非甲烷湖面。大气为可见光散射示意，遮蔽星空与土星圆面；太阳只表现为模糊辉光。轨道采用平均距离与 IAU 自转相位近似，非精密星历。',
+    notes:'依据惠更斯号照片的地貌特征进行文生图重建，没有逐像素沿用原片。着陆区并非甲烷湖面。大气为可见光散射示意，遮蔽星空与土星圆面；太阳只表现为模糊辉光。轨道使用本地 JPL 星历，IAU 自转独立计算；未额外拟合物理天平动。',
     atmosphere:'titan', solarDay:15.98, obscuredParent:true, referenceSolarAltitude:20,
   },
   enceladus: {
@@ -47,7 +47,7 @@ export const additionalLandingSites = Object.freeze({
     parentTexture:'/solar-system/textures/2k_saturn.jpg', texture:'/surface/enceladus.webp',
     source:'https://science.nasa.gov/mission/cassini/science/enceladus/',
     description:'水冰山脊被长裂缝切开，远处的冰粒喷流从南极地形上方伸向太空。',
-    notes:'虎纹裂缝与喷流有卡西尼号观测依据，近地视野和喷口位置为艺术重建。喷流运动是展示近似。轨道采用平均距离与 IAU 自转相位，忽略偏心率与摄动；土星环按赤道平面绘制，在这里接近侧视，不是横跨天空的宽环。',
+    notes:'虎纹裂缝与喷流有卡西尼号观测依据，近地视野和喷口位置为艺术重建。喷流运动是展示近似。轨道使用本地 JPL 星历和独立 IAU 自转姿态；土星环按赤道平面绘制，在这里接近侧视，不是横跨天空的宽环。',
     solarDay:1.371, activity:'ice', initialHeading:180, referenceSolarAltitude:10,
   },
   pluto: {
@@ -57,7 +57,7 @@ export const additionalLandingSites = Object.freeze({
     parentTexture:'/solar-system/textures/2k_charon.jpg', texture:'/surface/pluto.webp',
     source:'https://www.nasa.gov/missions/nasa-video-soars-over-plutos-majestic-mountains-and-icy-plains/',
     description:'氮冰平原与水冰山脉相接，远日世界的地平线向两侧展开。',
-    notes:'依据新视野号地貌资料重建，没有真实着陆照片或逐像素高程还原。这里在背向冥卫一的一侧，冥卫一位于地平线下。太阳按实际视大小显示，曝光为展示调整；稀薄大气的微弱近地霾层为示意。冥卫一采用平均间距与理想互相潮汐锁定。',
+    notes:'依据新视野号地貌资料重建，没有真实着陆照片或逐像素高程还原。这里在背向冥卫一的一侧，冥卫一位于地平线下。太阳按实际视大小显示，曝光为展示调整；稀薄大气的微弱近地霾层为示意。冥卫一位置采用本地 JPL 星历，自转姿态使用 IAU 模型。',
     atmosphere:'pluto', solarDay:6.388, referenceSolarAltitude:20,
   },
   miranda: {
@@ -73,7 +73,7 @@ export const additionalLandingSites = Object.freeze({
   mercury: {
     ...common, id:'mercury', body:'Mercury', name:'水星', title:'卡洛里盆地 · 内侧平原', english:'CALORIS BASIN PLAINS',
     radiusKm:physicalData.mercury.radiusKm, latitude:30, longitude:160,
-    parent:'Sun', parentName:'太阳', parentRadiusKm:695700, parentTexture:null,
+    parent:'Sun', parentName:'太阳', parentRadiusKm:physicalData.sun.radiusKm, parentTexture:null,
     texture:'/surface/mercury.webp',
     source:'https://science.nasa.gov/mercury/facts/',
     description:'古老火山平原上的撞击坑、褶皱山脊与灰褐色碎岩，远处是盆地边缘的低山。',

@@ -1,0 +1,10 @@
+/* Shared input sizes; scene-specific placement remains with its scene. */
+#app button,#app select,#scene-switcher,.surface-view button,.surface-view select{min-width:44px;min-height:44px;box-sizing:border-box;touch-action:manipulation}
+#app input[type=range],.surface-view input[type=range]{min-height:44px}
+#app .top-actions,#app .header-actions,#app .dock,#app .time-controls,#app .activity-controls,.surface-view .surface-actions{gap:8px}
+#app button:focus-visible,#app select:focus-visible,.surface-view button:focus-visible{outline:2px solid #bce7d9;outline-offset:3px}
+#app .topbar{padding-top:env(safe-area-inset-top)}
+#scene-menu{max-height:calc(100dvh - 88px);overscroll-behavior:contain}
+#scene-menu a+a{margin-top:8px}
+#app .side-panel,#app .panel,.surface-view .surface-details,.surface-view .surface-clock-panel{overscroll-behavior:contain;scrollbar-gutter:stable}
+@media(hover:none){[data-tip]:after{display:none!important}}

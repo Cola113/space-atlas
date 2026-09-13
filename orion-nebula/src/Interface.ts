@@ -1,6 +1,6 @@
 import { createIcons, createElement, Camera, Expand, Info, Pause, Play, SlidersHorizontal, X } from 'lucide';
 import { cruiseCaptions } from './Camera';
-import type { Quality } from './Renderer';
+import { profiles, type Quality, type Tier } from './Quality';
 
 export class NebulaUI{
  private events=new AbortController();
@@ -13,6 +13,7 @@ export class NebulaUI{
   const click=(id:string,fn:()=>void)=>document.getElementById(id)!.addEventListener('click',fn,{signal});
   click('cruise-button',()=>this.actions.cruise());
   click('capture-button',()=>this.actions.capture());
+  click('quality-indicator',()=>this.togglePanel('settings'));
   click('settings-button',()=>this.togglePanel('settings'));
   click('science-button',()=>this.togglePanel('science'));
   click('fullscreen-button',()=>{void(document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen()).catch(()=>this.notice('当前浏览器不支持全屏'));});
@@ -44,7 +45,7 @@ export class NebulaUI{
   const name=this.active;this.active=null;document.getElementById(name+'-panel')!.hidden=true;
   const button=document.getElementById(name+'-button')!;button.setAttribute('aria-expanded','false');if(focus)button.focus();
  }
- sync(playing:boolean,shot:number,quality:string,fps:number){
+ sync(playing:boolean,shot:number,quality:Tier,fps:number,mode:Quality){
   if(this.playing!==playing){
    this.playing=playing;
    const button=document.getElementById('cruise-button')!,label=playing?'暂停巡游':'继续巡游';
@@ -55,8 +56,9 @@ export class NebulaUI{
   document.getElementById('live-status')!.textContent=playing?'自动巡游中':'巡游已暂停';
   document.getElementById('view-index')!.textContent=caption[0];
   document.getElementById('view-description')!.textContent=caption[1];
-  document.getElementById('quality-value')!.textContent=quality==='high'?'精细':'节能';
-  document.getElementById('fps-value')!.textContent=fps.toFixed(0);
+  document.getElementById('quality-value')!.textContent=(mode==='auto'?'自动 · ':'')+profiles[quality].label;
+  document.getElementById('quality-indicator')!.textContent=(mode==='auto'?'自动 · ':'')+profiles[quality].label;
+  document.getElementById('fps-value')!.textContent=playing?fps.toFixed(0):'—';
  }
  notice(message:string){
   const host=document.getElementById('notice')!;host.textContent=message;host.hidden=false;

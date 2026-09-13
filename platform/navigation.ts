@@ -1,6 +1,7 @@
 import { createElement, Orbit, Aperture, Sparkles, ChevronDown, Check } from 'lucide';
 import { scenes, sceneById } from './scenes.js';
 import './style.css';
+import './controls.css';
 
 export function mountNavigation(id: string) {
   const host = document.getElementById('scene-navigation');

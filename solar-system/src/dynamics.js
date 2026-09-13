@@ -972,14 +972,15 @@ export function createDynamics(objects) {
         const body = record.body;
         body.root.updateWorldMatrix(true, true);
         const solarBody = objects.get("sun");
-        const sun = solarBody.root.position.clone().sub(body.root.position).normalize();
+        const sun = body.physicalSun?.clone() || solarBody.root.position.clone().sub(body.root.position).normalize();
         record.uniforms.uSunAngularRadius.value = Math.asin(
-          Math.min(0.95, solarBody.radius / body.root.position.distanceTo(solarBody.root.position)),
+          Math.min(0.95, body.physical ? 695700 / (body.physical.position.length()*149597870.7) : solarBody.radius / body.root.position.distanceTo(solarBody.root.position)),
         );
         body.mesh.getWorldQuaternion(surfaceRotation);
         record.uniforms.uSurfaceSun.value
           .copy(sun)
           .applyQuaternion(surfaceRotation.clone().invert());
+        record.uniforms.uNightTexture.value=body.nightMap;
         record.uniforms.uNightEnabled.value =
           nightLights && body.nightMap ? 1 : 0;
         record.uniforms.uShadowEnabled.value = shadows ? 1 : 0;

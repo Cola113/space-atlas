@@ -31,7 +31,7 @@ void main(){
    float grain=texture(uNoise,p*.09).b;
    rgb+=trans*observed*detailProfile*stepSize*.32*(.35+facing*.65)*nearDetail*(.3+projection*.7)*(.65+grain*.7);
    vec3 lightDirection=normalize(vec3(-1.7,1.6,-4.)-p);
-   float shadow=exp(-baseField(p+lightDirection*1.2).r*2.);
+   float shadow=uDetailLevel==0?1.:exp(-baseField(p+lightDirection*1.2).r*2.);
    float illumination=.1+1.5/(1.+dot(p-vec3(-1.7,1.6,-4.),p-vec3(-1.7,1.6,-4.))*.03);
    vec3 color=cloudColor(cell,p)*cell.r*mix(1.15,.14*illumination,cell.b)/max(ext,.0001)*(.18+.82*shadow);
    rgb+=trans*alpha*color;trans*=1.-alpha;

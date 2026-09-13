@@ -13,12 +13,12 @@ test('satellite orbit positions use the same simulation date as planetary positi
   updateSatelliteOrbits(objects,new Date(SIMULATION_EPOCH));
   const first=europa.root.position.clone();
   updateSatelliteOrbits(objects,new Date(SIMULATION_EPOCH+europa.period*86400000));
-  assert.ok(first.distanceTo(europa.root.position)<1e-9,'one real orbital period returns to the same phase');
+  assert.ok(first.distanceTo(europa.root.position)<europa.orbit*.05,'near-period recurrence includes perturbations and changing apsides');
   updateSatelliteOrbits(objects,new Date(SIMULATION_EPOCH+europa.period*86400000/4));
   assert.ok(first.distanceTo(europa.root.position)>1,'date changes move the satellite');
 });
 
-test('planet rotation is date-driven and respects the fixed-rotation control',()=>{
+test('planet rotation is date-driven even when a legacy lock parameter is supplied',()=>{
   const earth=body('earth'),jupiter=body('jupiter');
   const objects=new Map([['earth',earth],['jupiter',jupiter]]);
   updateBodyRotations(objects,new Date(SIMULATION_EPOCH));
@@ -28,5 +28,5 @@ test('planet rotation is date-driven and respects the fixed-rotation control',()
   assert.notEqual(jupiter.mesh.rotation.y,jupiterInitial);
   const held=earth.mesh.rotation.y;
   updateBodyRotations(objects,new Date(SIMULATION_EPOCH+2*86400000),'earth');
-  assert.equal(earth.mesh.rotation.y,held,'fixed rotation leaves the selected body unchanged');
+  assert.notEqual(earth.mesh.rotation.y,held,'camera tracking must not freeze physical rotation');
 });

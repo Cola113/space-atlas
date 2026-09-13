@@ -2,7 +2,8 @@ import { WebGLRenderer, ShaderMaterial, Scene, Mesh, PlaneGeometry, Orthographic
 import fragment from './volume.glsl?raw';
 import fieldShader from './field.glsl?raw';
 import { EXTENT, FIELD_SIZE } from './Field';
-export type Quality = 'auto' | 'low' | 'high';
+import { AdaptiveQuality, profiles, type Quality } from './Quality';
+export type { Quality } from './Quality';
 export class NebulaRenderer {
  readonly renderer:WebGLRenderer;
  private scene=new Scene();
@@ -19,7 +20,7 @@ export class NebulaRenderer {
  private abort=new AbortController();
  private starMaterial=new ShaderMaterial({
   transparent:true,depthWrite:false,depthTest:false,blending:AdditiveBlending,
-  uniforms:{uField:{value:null},uNoise:{value:null},uDetail:{value:null},uEye:{value:new Vector3()},uScale:{value:1},uBrightness:{value:.7}},
+  uniforms:{uField:{value:null},uNoise:{value:null},uDetail:{value:null},uEye:{value:new Vector3()},uScale:{value:1},uBrightness:{value:.7},uStarSteps:{value:48},uDetailLevel:{value:2}},
   vertexShader:fieldShader+String.raw
 `
 attribute vec3 tint; attribute float power; varying vec3 vTint; varying float vPower; varying float vTransmission; varying float vSize;
@@ -44,16 +45,17 @@ void main(){
  private material=new ShaderMaterial({
   vertexShader:'varying vec2 vUv;void main(){vUv=uv;gl_Position=vec4(position.xy,0.,1.);}',
   fragmentShader:fragment.replace('// FIELD_FUNCTIONS',fieldShader),depthTest:false,depthWrite:false,
-  uniforms:{uField:{value:null},uNoise:{value:null},uDetail:{value:null},uCameraMatrix:{value:new Matrix4()},uEye:{value:new Vector3()},uAspect:{value:1},uFov:{value:1},uExposure:{value:1.25},uSteps:{value:128}},
+  uniforms:{uField:{value:null},uNoise:{value:null},uDetail:{value:null},uCameraMatrix:{value:new Matrix4()},uEye:{value:new Vector3()},uAspect:{value:1},uFov:{value:1},uExposure:{value:1.25},uSteps:{value:96},uStarSteps:{value:48},uDetailLevel:{value:2}},
  });
  readonly errors:string[]=[];
- quality:Quality='auto';
- current='high';
+ readonly adaptive=new AdaptiveQuality(()=>this.resize(innerWidth,innerHeight));
+ get quality(){return this.adaptive.mode;}
+ get current(){return this.adaptive.current;}
+ private essentialStars=0;
  exposure=1.25;
  starBrightness=.7;
  frames=0;
- private slow=0;
- private lastChange=0;
+
  private disposed=false;
  constructor(canvas:HTMLCanvasElement){
   this.renderer=new WebGLRenderer({canvas,alpha:false,antialias:false,powerPreference:'high-performance'});
@@ -94,6 +96,8 @@ void main(){
    const z=random()*17-8,scale=32*(1-z/44);
    add((star.x-.5)*scale,(.5-star.y)*scale,z,Math.min(1.4,star.power)*1.3,star.color.map(v=>Math.max(.48,v)));
   }
+  for(const [x,y,z,power] of [[-1.9,1.8,-3.8,2.1],[-1.25,2.05,-4.3,1.65],[-1.5,1.25,-3.6,1.45],[-2.15,1.25,-4,1.4],[-5.5,8.7,1,1.8]])add(x,y,z,power,[.72,.86,1]);
+  this.essentialStars=powers.length;
   // Additional stars provide all-direction depth; these positions are illustrative.
   for(let i=0;i<6200;i++){
    const theta=random()*Math.PI*2,cy=random()*2-1,radius=70+random()*150,s=Math.sqrt(1-cy*cy);
@@ -102,27 +106,27 @@ void main(){
   }
   for(let i=0;i<1800;i++)add((random()-.5)*100,(random()-.5)*75,random()*55-35,.08+Math.pow(random(),2)*.72,[.8,.88,1]);
   for(let i=0;i<220;i++)add(-1.7+(random()-.5)*12,1.6+(random()-.5)*10,-4+(random()-.5)*14,.1+random()*.8,[.82,.88,1]);
-  for(const [x,y,z,power] of [[-1.9,1.8,-3.8,2.1],[-1.25,2.05,-4.3,1.65],[-1.5,1.25,-3.6,1.45],[-2.15,1.25,-4,1.4],[-5.5,8.7,1,1.8]])add(x,y,z,power,[.72,.86,1]);
+
   this.starGeometry.setAttribute('position',new Float32BufferAttribute(positions,3));
   this.starGeometry.setAttribute('tint',new Float32BufferAttribute(colors,3));
   this.starGeometry.setAttribute('power',new Float32BufferAttribute(powers,1));
   this.stars.add(new Points(this.starGeometry,this.starMaterial));
+  this.resize(innerWidth,innerHeight);
   await this.renderer.compileAsync(this.scene,this.screenCamera);
   if(this.errors.length)throw new Error('星云着色器初始化失败');
  }
  resize(width:number,height:number){
-  const low=this.quality==='low'||(this.quality==='auto'&&(width<700||this.current==='low'));
-  this.current=low?'low':'high';
-  const ratio=Math.min(devicePixelRatio,low?.85:1.1,Math.sqrt((low?480000:1250000)/(width*height)));
+  const profile=profiles[this.current];
+  const ratio=Math.min(devicePixelRatio,profile.ratio,Math.sqrt(profile.pixels/(width*height)));
   this.renderer.setPixelRatio(ratio);this.renderer.setSize(width,height,false);
-  this.material.uniforms.uSteps.value=low?96:176;this.starMaterial.uniforms.uScale.value=ratio;
+  this.material.uniforms.uSteps.value=profile.steps;this.starMaterial.uniforms.uScale.value=ratio;
+  for(const material of [this.material,this.starMaterial]){material.uniforms.uStarSteps.value=profile.starSteps;material.uniforms.uDetailLevel.value=profile.detail;}
+  this.starGeometry.setDrawRange(0,this.essentialStars+profile.background);
  }
- setQuality(value:Quality){this.quality=value;this.current='high';this.slow=0;this.resize(innerWidth,innerHeight);}
- sample(ms:number,now:number){
-  if(this.quality!=='auto'||this.current==='low'||now-this.lastChange<10000)return;
-  this.slow=ms>35?this.slow+1:Math.max(0,this.slow-2);
-  if(this.slow>90){this.current='low';this.lastChange=now;this.resize(innerWidth,innerHeight);}
- }
+ setQuality(value:Quality){this.adaptive.set(value,performance.now());}
+ sample(ms:number,now:number){this.adaptive.sample(ms,now);}
+ resetSampling(){this.adaptive.reset(performance.now());}
+ get profile(){return profiles[this.current];}
  render(camera:PerspectiveCamera){
   if(this.disposed||!this.map)return;
   camera.updateMatrixWorld();

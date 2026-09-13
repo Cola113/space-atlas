@@ -1,6 +1,8 @@
 import * as THREE from "three";
 import { Ecliptic, HelioVector } from "astronomy-engine";
-import { DISPLAY_LONGITUDE_OFFSET } from "./sky-coordinates.js";
+import { physicalState, basisQuaternion, AU_KM } from "./physical-state.js";
+import {physicalData} from "./physical-scale.js";
+import { skyRotation, DISPLAY_LONGITUDE_OFFSET } from "./sky-coordinates.js";
 import { bodyModels } from './body-models.js';
 
 const TAU = Math.PI * 2;
@@ -50,17 +52,15 @@ export function satelliteOrbit(body, date) {
 }
 
 export function updatePrimaryOrbits(objects, date) {
+  const snapshot=physicalState(date),rotation=skyRotation(date);
   for (const body of objects.values()) {
     if (!body.orbit || body.parent) continue;
-    if (body.body) {
-      const vector = Ecliptic(HelioVector(body.body, date));
-      const longitude = THREE.MathUtils.degToRad(vector.elon) - DISPLAY_LONGITUDE_OFFSET;
-      const latitude = THREE.MathUtils.degToRad(vector.elat) * 0.3;
-      body.root.position.set(
-        Math.cos(longitude) * Math.cos(latitude) * body.orbit,
-        Math.sin(latitude) * body.orbit,
-        -Math.sin(longitude) * Math.cos(latitude) * body.orbit,
-      );
+    const physical=snapshot.states.get(body.id);
+    if (physical && physicalData[body.id]?.orbitAU) {
+      body.root.position.copy(physical.position).applyMatrix3(rotation).multiplyScalar(body.orbit/physicalData[body.id].orbitAU);
+      body.physical=physical;
+      const north=physical.basis.north,node=new THREE.Vector3(-north.y,north.x,0).normalize();
+      body.tilted.quaternion.copy(basisQuaternion({prime:node,north,east:north.clone().cross(node)},rotation));
     } else {
       const phase = ((date.getTime() - SIMULATION_EPOCH) / DAY / body.orbitDays) % 1;
       orbitPoint(body, body.orbitPhase + phase * TAU, body.root.position);
@@ -69,10 +69,19 @@ export function updatePrimaryOrbits(objects, date) {
   }
 }
 
-export function updateSatelliteOrbits(objects, date, lockedId) {
+export function updateSatelliteOrbits(objects, date) {
+  const snapshot=physicalState(date),rotation=skyRotation(date);
   for (const body of objects.values()) {
     if (!body.parent) continue;
     const parent = objects.get(body.parent);
+    const physical=snapshot.states.get(body.id),parentPhysical=snapshot.states.get(body.parent);
+    if(physical&&parentPhysical){
+      offset.copy(physical.position).sub(parentPhysical.position).applyMatrix3(rotation).multiplyScalar(AU_KM*body.orbit/physicalData[body.id].orbitKm);
+      body.root.position.copy(parent.root.position).add(offset);body.physical=physical;
+      if(body.id==="charon")parent.orbitCenter.copy(parent.root.position).addScaledVector(offset,.1085);
+      if(body.orbitLine){body.orbitLine.position.copy(parent.root.position);body.orbitLine.quaternion.identity();}
+      continue;
+    }
     const {angle, radius} = satelliteOrbit(body, date);
     orbitPoint(body, angle, offset).multiplyScalar(radius / body.orbit).applyQuaternion(parent.tilted.quaternion);
     if (body.id === "charon") {
@@ -89,17 +98,26 @@ export function updateSatelliteOrbits(objects, date, lockedId) {
     body.tilted.quaternion.copy(parent.tilted.quaternion).multiply(plane);
     // Independent spin is updated separately. A synchronous moon points its
     // local +X toward its parent; all axes honor the fixed-rotation control.
-    if (body.id !== lockedId && !ROTATION_PERIOD_DAYS[body.id]) body.mesh.rotation.set(0, Math.PI - angle, 0);
+    if (!ROTATION_PERIOD_DAYS[body.id]) body.mesh.rotation.set(0, Math.PI - angle, 0);
     body.orbitLine.position.copy(center);
     body.orbitLine.quaternion.copy(parent.tilted.quaternion);
     body.orbitLine.scale.setScalar(radius / body.orbit);
   }
 }
 
-export function updateBodyRotations(objects, date, lockedId = null) {
+export function updateBodyRotations(objects, date) {
+  const snapshot=physicalState(date),rotation=skyRotation(date);
   const days = (date.getTime() - SIMULATION_EPOCH) / DAY;
   for (const body of objects.values()) {
-    if (body.id === lockedId) continue;
+    const physical=snapshot.states.get(body.id);
+    if(physical){
+      const north=physical.basis.north,node=new THREE.Vector3(-north.y,north.x,0).normalize();
+      const pole=basisQuaternion({prime:node,north,east:north.clone().cross(node)},rotation);
+      body.tilted.quaternion.copy(pole);
+      body.mesh.quaternion.copy(pole.clone().invert().multiply(basisQuaternion(physical.basis,rotation)));
+      if(body.clouds)body.clouds.quaternion.copy(body.mesh.quaternion);
+      body.physical=physical;body.physicalSun=physical.position.clone().negate().applyMatrix3(rotation).normalize();continue;
+    }
     if (body.tidalPartner && objects.has(body.tidalPartner)) {
       const direction = objects.get(body.tidalPartner).root.position.clone().sub(body.root.position)
         .applyQuaternion(body.tilted.quaternion.clone().invert());

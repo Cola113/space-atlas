@@ -105,15 +105,6 @@
               <button id="event-trigger" class="event-button">
                 <i data-lucide="zap"></i><span id="event-label">模拟活动</span>
               </button>
-              <button
-                id="rotation-toggle"
-                class="icon-button"
-                aria-label="固定自转"
-                aria-pressed="false"
-                data-tip="固定自转"
-              >
-                <i data-lucide="crosshair"></i>
-              </button>
               <select id="activity-rate" aria-label="活动速度" title="活动速度">
                 <option value="0.5">0.5×</option>
                 <option value="1" selected>1×</option>
@@ -141,6 +132,7 @@
       </aside>
 
       <div id="observation-tools" class="observation-tools" hidden>
+        <button id="rotation-toggle" class="follow-spin" aria-label="跟随自转" aria-pressed="false"><i data-lucide="crosshair"></i><span>跟随自转 · 关</span></button>
         <label id="family-picker" class="family-picker" hidden>
           <i data-lucide="orbit"></i>
           <select id="family-select" aria-label="所属系统与卫星"></select>
@@ -193,14 +185,14 @@
       </div>
 
       <div class="scene-toolbar" role="toolbar" aria-label="场景控制">
-        <button
+        <div class="scene-options-panel" role="group" aria-label="显示设置">        <button
           class="icon-button active"
           id="activity-toggle"
           aria-label="动态活动"
           aria-pressed="true"
           data-tip="动态活动"
         >
-          <i data-lucide="waves"></i>
+          <i data-lucide="waves"></i><span>动态活动</span>
         </button>
         <button
           class="icon-button active"
@@ -209,7 +201,7 @@
           aria-pressed="true"
           data-tip="显示轨道"
         >
-          <i data-lucide="orbit"></i>
+          <i data-lucide="orbit"></i><span>轨道</span>
         </button>
         <button
           class="icon-button"
@@ -218,8 +210,9 @@
           aria-pressed="false"
           data-tip="显示名称"
         >
-          <i data-lucide="tags"></i>
+          <i data-lucide="tags"></i><span>名称</span>
         </button>
+</div></details>
         <span class="toolbar-divider"></span>
         <button
           class="icon-button"

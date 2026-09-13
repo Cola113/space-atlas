@@ -7,7 +7,7 @@
 // https://science.nasa.gov/solar-system/asteroids/4-vesta/
 // Small-body orbital sizes are rounded means, not positional ephemerides.
 export const physicalData = {
-  sun: { radiusKm: 696340, orbitAU: 0 },
+  sun: { radiusKm: 695700, radiusType: "IAU nominal solar radius", source: "https://www.iau.org/static/resolutions/IAU2015_English.pdf", orbitAU: 0 },
   mercury: { radiusKm: 2439.4, orbitAU: 0.38709927, orbitYears: 0.2408467 },
   venus: { radiusKm: 6051.8, orbitAU: 0.72333566, orbitYears: 0.61519726 },
   earth: { radiusKm: 6371.0084, orbitAU: 1.00000261, orbitYears: 1.0000174 },
@@ -67,3 +67,9 @@ export const physicalData = {
   namaka: { radiusKm: 80, orbitKm: 25657, estimated: true },
   dysnomia: { radiusKm: 350, orbitKm: 37273, estimated: true },
 };
+
+for(const [id,data] of Object.entries(physicalData))Object.assign(data,{
+ radiusType:data.radiusType||(data.estimated?'estimated mean/equivalent':'mean/equivalent'),
+ source:data.source||(data.orbitKm?'https://ssd.jpl.nasa.gov/sats/phys_par/':'https://ssd.jpl.nasa.gov/planets/phys_par.html'),
+ orbitModel:'Mean orbital size; not a position ephemeris',units:'km, AU, Julian years',
+});

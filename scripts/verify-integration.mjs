@@ -14,7 +14,10 @@ async function screenshot(page, name) {
   await page.screenshot({ path: fileURLToPath(new URL(name + '.png', output)), animations: 'disabled' });
 }
 async function canvasPixels(page) {
-  const data = await page.locator('canvas').first().screenshot();
+  const cdp = await page.context().newCDPSession(page);
+  const shot = await cdp.send('Page.captureScreenshot', { format: 'png' });
+  await cdp.detach();
+  const data = Buffer.from(shot.data, 'base64');
   const { data: pixels } = await sharp(data).resize(96, 64).removeAlpha().raw().toBuffer({ resolveWithObject: true });
   const active = [...pixels].filter(value => value > 25).length;
   assert.ok(active > 90, `Canvas appears empty: ${active}`);

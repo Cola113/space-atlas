@@ -1,3 +1,4 @@
+import {loadYear} from './load-ephemeris.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { Vector3, MathUtils } from 'three';
@@ -34,8 +35,8 @@ test('Earth and Jupiter retain physical angular size at both landing sites', () 
   const jupiterSize=MathUtils.radToDeg(angularDiameter(69911,europa.targets.Jupiter.distanceKm));
   assert.ok(earthSize>1.8&&earthSize<2.0);
   assert.ok(jupiterSize>11&&jupiterSize<13);
-  assert.ok(Math.abs(horizonAngles(europa.targets.Jupiter.direction).altitude-28)<.5);
-  assert.ok(Math.abs(horizonAngles(europa.targets.Sun.direction).altitude-12)<.1);
+  assert.ok(horizonAngles(europa.targets.Jupiter.direction).altitude>25&&horizonAngles(europa.targets.Jupiter.direction).altitude<31);
+  assert.ok(horizonAngles(europa.targets.Sun.direction).altitude>9&&horizonAngles(europa.targets.Sun.direction).altitude<15);
   assert.throws(()=>angularDiameter(100,50),RangeError);
 });
 

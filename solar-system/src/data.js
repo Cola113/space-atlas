@@ -1,3 +1,4 @@
+import {physicalData} from './physical-scale.js';
 import { additionalBodies } from "./additional-bodies.js";
 
 export const ORBIT_SPACING = 2;
@@ -275,3 +276,10 @@ for (const body of bodies.filter((body) => !body.parent).sort((a, b) => a.orbit 
   outerEdge = body.orbit + extent;
 }
 export const SYSTEM_RADIUS = outerEdge;
+
+// Cards use the same physical radii as the sky; display geometry stays separate.
+for(const body of bodies){const data=physicalData[body.id];if(!data)continue;
+ const fact=body.facts.find(([label])=>/半径|直径/.test(label));
+ if(fact){const diameter=fact[0].includes('直径');fact[1]=(data.radiusKm*(diameter?2:1)).toLocaleString('en-US',{maximumFractionDigits:2});
+ if(body.id==='sun')fact[0]='标称半径';}
+}

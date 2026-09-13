@@ -106,6 +106,8 @@ export function createStarfield(renderer) {
   dome.renderOrder = -1000;
   group.add(dome);
 
+  let detailPromise;
+  function loadDetails(){if(detailPromise)return detailPromise;
   const catalogueReady = fetch('/solar-system/sky/hyg-v41-mag65.json', { signal: abort.signal })
     .then(response => { if (!response.ok) throw new Error('Star catalogue unavailable'); return response.json(); })
     .then(data => {
@@ -128,9 +130,12 @@ export function createStarfield(renderer) {
       dome.material.uniforms.uMap.value = texture;
       galaxyReady = true;
     }).catch(() => { if (!disposed) galaxyFailed = true; });
+    detailPromise=Promise.all([catalogueReady,galaxyPromise]);return detailPromise;
+  }
   return {
     group,
-    ready: Promise.all([catalogueReady, galaxyPromise]),
+    loadDetails,
+    get ready(){return detailPromise||Promise.resolve();},
     update({ camera, date, dt, brightOccupancy = 0 }) {
       group.position.copy(camera.position);
       const nextDay = Math.floor(date / 86400000);

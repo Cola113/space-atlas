@@ -1,3 +1,4 @@
+import {loadYear} from './load-ephemeris.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
@@ -30,18 +31,19 @@ test('Mercury has a slowly moving solar direction and the physically larger Sun'
 
 test('Sputnik Planitia stays on the hemisphere facing away from Charon',()=>{
   for(const date of ['1971-08-01','2000-01-01','2026-09-12','2040-05-20']){
-    const f=surfaceFrame(landingSites.pluto,new Date(date));
+    loadYear(new Date(date).getUTCFullYear());const f=surfaceFrame(landingSites.pluto,new Date(date));
     assert.ok(horizonAngles(f.targets.Charon.direction).altitude < -65);
     assert.ok(Math.abs(f.targets.Charon.distanceKm-20700)<400);
   }
 });
 
-test('outer moon parent sizes and mean tidal orientation remain consistent',()=>{
+test('outer moon parent sizes remain physical while independent pose allows libration',()=>{
+  loadYear(2026);
   for(const [id,min,max] of [['titan',5,6],['enceladus',27,30],['miranda',21,24]]){
     const site=landingSites[id],a=surfaceFrame(site),b=surfaceFrame(site,new Date(Date.parse(site.date)+86400000));
     const size=MathUtils.radToDeg(angularDiameter(site.parentRadiusKm,a.targets[site.parent].distanceKm));
     assert.ok(size>min&&size<max,`${id}: ${size}`);
-    assert.ok(a.targets[site.parent].direction.angleTo(b.targets[site.parent].direction)<1e-6,id);
+    assert.ok(a.targets[site.parent].direction.angleTo(b.targets[site.parent].direction)>1e-5&&a.targets[site.parent].direction.angleTo(b.targets[site.parent].direction)<.2,id);
     assert.ok(a.targets.Sun.direction.angleTo(b.targets.Sun.direction)>.01,id);
     const basis=bodyBasis(site.body,new Date(site.date));
     assert.ok(Math.abs(basis.prime.dot(basis.north))<1e-12);
