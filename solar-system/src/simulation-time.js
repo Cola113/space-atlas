@@ -16,9 +16,10 @@ export function restoreSimulationRate(saved) {
 }
 
 export function restoreSimulationDate(saved) {
-  // Start existing pre-epoch sessions at the new historical origin once.
-  return saved?.timelineEpoch === defaultSimulationDate && Number.isFinite(saved.date)
-    && saved.date > 0 && saved.date < 8e13 ? saved.date : defaultSimulationDate;
+  // A negative Unix timestamp is a valid historical date. Preserve old session
+  // dates even when they predate the timelineEpoch marker; 1971 is for new runs.
+  return Number.isFinite(saved?.date) && Math.abs(saved.date) < 8e13
+    ? saved.date : defaultSimulationDate;
 }
 
 export function formatSimulationRate(rate) {

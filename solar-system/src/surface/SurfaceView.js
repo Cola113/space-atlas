@@ -17,7 +17,7 @@ const compass = angle => ['北','东北','东','东南','南','西南','西','�
 
 // Camera position is fixed. A brief lens/attitude change settles the arrival;
 // after landing, only the look direction changes. Time and rate carry across views.
-export function createSurfaceView(id, {renderOrbit,onClosed,initialDate,initialRate,onRateChange,onTimeChange,provider=physicalState}) {
+export function createSurfaceView(id, {renderOrbit,onClosed,initialDate,initialRate,initialPlaying=true,onPlayingChange,onRateChange,onTimeChange,provider=physicalState}) {
   const site = landingSites[id];
   if (!site) throw new Error('这个天体还没有开放着陆点。');
   const parsedDate = initialDate instanceof Date ? initialDate.getTime()
@@ -25,6 +25,7 @@ export function createSurfaceView(id, {renderOrbit,onClosed,initialDate,initialR
   const startTime = Number.isFinite(parsedDate) ? parsedDate : Date.parse(site.date);
   let frame = null;
   const clock = new SurfaceClock(startTime,initialRate,onTimeChange);
+  clock.playing=initialPlaying;
   const journey = new SurfaceJourney(matchMedia('(prefers-reduced-motion: reduce)').matches);
   const root = document.createElement('dialog');
   root.className = 'surface-view';
@@ -181,6 +182,7 @@ export function createSurfaceView(id, {renderOrbit,onClosed,initialDate,initialR
   listen($('.surface-pause'),'click',()=>{
     clock.tick(performance.now(),journey.phase==='landed'&&!document.hidden);
     clock.playing=!clock.playing;clock.suspend();lastFrame=null;exposureElapsed=0;invalidate();
+    onPlayingChange?.(clock.playing);
   });
   listen($('.surface-rewind'),'click',()=>{clock.reset();lastSkyUpdate=-Infinity;resetExposure=true;exposureElapsed=0;invalidate();});
   listen(document,'visibilitychange',()=>{

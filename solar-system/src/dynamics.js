@@ -960,7 +960,8 @@ export function createDynamics(objects, { defer = false } = {}) {
       if (id === "titan" && record.body.clouds) {
         // A second, slower haze layer gives Titan's generated atmospheric map
         // visible motion without changing the dated body rotation.
-        record.body.clouds.rotation.y = record.time * 0.00055;
+        record.body.clouds.quaternion.copy(record.body.mesh.quaternion);
+        record.body.clouds.rotateY(record.time * 0.00055);
         record.body.clouds.material.opacity = 0.24 + 0.08 * (0.5 + 0.5 * Math.sin(record.time * 0.17));
       }
       for (const extra of record.extras) extra.visible = active;
@@ -992,11 +993,8 @@ export function createDynamics(objects, { defer = false } = {}) {
         const record = records.get(id);
         const body = record.body;
         body.root.updateWorldMatrix(true, true);
-        const solarBody = objects.get("sun");
-        const sun = solarBody.root.position.clone().sub(body.root.position).normalize();
-        record.uniforms.uSunAngularRadius.value = Math.asin(
-          Math.min(0.95, solarBody.radius / body.root.position.distanceTo(solarBody.root.position)),
-        );
+        const sun = body.sunDirection;
+        record.uniforms.uSunAngularRadius.value = body.sunAngularRadius;
         body.mesh.getWorldQuaternion(surfaceRotation);
         record.uniforms.uSurfaceSun.value
           .copy(sun)
@@ -1026,7 +1024,7 @@ export function createDynamics(objects, { defer = false } = {}) {
     eventViewDirection(id) {
       if (activityProfiles[id].illumination) {
         const body = records.get(id).body;
-        const sunlight = objects.get("sun").root.position.clone().sub(body.root.position).normalize();
+        const sunlight = body.sunDirection;
         const north = new THREE.Vector3(0, 1, 0);
         // Observe the terminator by moving the camera, never by moving the light.
         return new THREE.Vector3().crossVectors(sunlight, north).normalize()

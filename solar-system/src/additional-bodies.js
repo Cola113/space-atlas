@@ -1,3 +1,4 @@
+import meanElements from './physics/mean-elements.json';
 import { physicalData } from './physical-scale.js';
 import { bodyModels } from './body-models.js';
 
@@ -581,7 +582,7 @@ export const additionalBodies = [
   ...[
     ['hiiaka', '妊卫一', "HIʻIAKA", 'haumea', .105, 3.55, 49.462, 0, 'haumea', '妊神星较大的外侧卫星，遥感光谱显示丰富的水冰，旋转明显快于绕行。'],
     ['namaka', '妊卫二', 'NAMAKA', 'haumea', .07, 2.4, 18.2783, 13, 'haumea', '妊神星较小的内侧卫星。画面以倾斜轨道展示它与妊卫一不同的运行平面。'],
-    ['dysnomia', '阋卫一', 'DYSNOMIA', 'eris', .15, 2.4, 15.7859, 0, 'umbriel', '阋神星的卫星，约每 15.8 天完成一次绕行；主星的同一面始终朝向它。'],
+    ['dysnomia', '阋卫一', 'DYSNOMIA', 'eris', .15, 2.4, 15.7859, 0, 'umbriel', '阋神星的卫星，约每 15.8 天完成一次绕行；主星采用相同自转周期；初始经线和极轴为示意。'],
   ].map(([id, name, english, parent, radius, orbit, period, inclination, texture, description]) => catalogSatellite({
     id, name, english, parent, radius, orbit, period, inclination, orbitPhase: id === 'namaka' ? 3.1 : 1.2,
     category: `${parent === 'haumea' ? '妊神星' : '阋神星'} / 天然卫星`, color: '#c9c7c3', texture,
@@ -605,4 +606,4 @@ export const additionalBodies = [
       ? "该卫星缺少完整全球测绘，图中地貌为艺术构建，呈现冰质平原、裂隙与撞击结构。"
       : body.featureText,
   } : {}),
-})).map(body => ({...body, featureText: `${body.featureText}${body.spinNote ? ` ${body.spinNote}。` : body.tumbling ? ' 自转采用观测周期附近的非规则翻滚示意，不用于姿态预测。' : ''}`}));
+})).map(body => ({...body, featureText: `${body.featureText}${body.spinNote ? ` ${body.spinNote}。` : meanElements.bodies[body.id]?.tumbling ? ' 自转采用观测周期附近的非规则翻滚示意，不用于姿态预测。' : ''}`}));

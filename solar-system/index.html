@@ -105,15 +105,6 @@
               <button id="event-trigger" class="event-button">
                 <i data-lucide="zap"></i><span id="event-label">模拟活动</span>
               </button>
-              <button
-                id="rotation-toggle"
-                class="icon-button"
-                aria-label="固定自转"
-                aria-pressed="false"
-                data-tip="固定自转"
-              >
-                <i data-lucide="crosshair"></i>
-              </button>
               <select id="activity-rate" aria-label="活动速度" title="活动速度">
                 <option value="0.5">0.5×</option>
                 <option value="1" selected>1×</option>
@@ -140,7 +131,11 @@
         </div>
       </aside>
 
-      <div id="observation-tools" class="observation-tools" hidden>
+      <div id="observation-tools" class="observation-tools" role="toolbar" aria-label="天体观测" hidden>
+        <button id="rotation-toggle" class="follow-button" aria-pressed="false"><i data-lucide="crosshair"></i><span>跟随自转 · 已关闭</span></button>
+        <details id="observation-settings" class="observation-settings">
+          <summary aria-controls="observation-settings-panel">观测设置</summary>
+          <div id="observation-settings-panel" class="observation-settings-panel" role="group" aria-label="观测设置">
         <label id="family-picker" class="family-picker" hidden>
           <i data-lucide="orbit"></i>
           <select id="family-select" aria-label="所属系统与卫星"></select>
@@ -167,22 +162,24 @@
           data-tip="观测夜侧"
           hidden
         >
-          <i data-lucide="sun-moon"></i>
+          <i data-lucide="sun-moon"></i><span>观测夜侧</span>
         </button>
         <label id="night-control" class="detail-toggle" title="城市夜光" hidden
           ><input
             id="night-toggle"
             type="checkbox"
             checked
-            aria-label="城市夜光" /><span><i data-lucide="moon-star"></i></span
+            aria-label="城市夜光" /><span><i data-lucide="moon-star"></i>城市夜光</span
         ></label>
         <label id="shadow-control" class="detail-toggle" title="云层投影" hidden
           ><input
             id="shadow-toggle"
             type="checkbox"
             checked
-            aria-label="云层投影" /><span><i data-lucide="layers"></i></span
+            aria-label="云层投影" /><span><i data-lucide="layers"></i>投影</span
         ></label>
+          </div>
+        </details>
       </div>
 
       <div id="focus-caption" class="focus-caption" hidden>
@@ -340,6 +337,7 @@
         </button>
         <span class="eyebrow">ABOUT THE ATLAS</span>
         <h2>关于星际图鉴</h2>
+        <h3>当前观测的计算说明</h3><p id="physics-accuracy" class="physics-accuracy"></p>
         <p>
           行星资料参考
           <a
@@ -354,7 +352,7 @@
             rel="noreferrer"
             >Astronomy Engine</a
           >
-          计算八大行星与冥王星的日心方位。场景采用展示比例，压缩轨道距离并放大天体；资料中的公里和 AU 为实际物理数据。轨道线为示意圆轨道，并非精密轨道预报。
+          计算主要行星、月球和伽利略卫星；土卫二、泰坦、米兰达及冥王星—卡戎使用随站发布的 JPL 年份星历。总览和地表共享同一日期的位置与独立姿态。场景压缩轨道距离并放大天体，轨道线采用当时位置与速度的瞬时二体椭圆导引，不是未来轨道预报。其它小天体为初始相位未校准的平均模型。
         </p>
         <p>
           半径与平均轨道尺寸参考
@@ -464,6 +462,7 @@
       <div class="toast" id="toast" role="status" hidden></div>
       <div class="resource-status" id="resource-status" hidden>
         <span id="resource-message" role="status"></span>
+        <button id="ephemeris-retry" type="button" hidden>重试星历</button>
         <button id="resource-retry" type="button" hidden>重试纹理</button>
       </div>
       <div class="sr-only" id="selection-announcement" aria-live="polite"></div>

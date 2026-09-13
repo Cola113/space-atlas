@@ -29,3 +29,10 @@
 执行两个构建脚本，再运行 `npx tsx --test solar-system/tests/ephemeris.test.js solar-system/tests/orientation.test.js`。基础星历文件随站发布，运行时不调用JPL网络服务。
 
 二进制格式：8字节 `ATLEPH01`，两个小端uint32分别为JSON头长度和数据长度；头部UTF-8并补齐8字节，数据为按记录/XYZ/升幂排列的Chebyshev系数。头部保留每段起点、间隔、阶数、数量、32/64位精度与字节偏移。损坏、错误年份和缺失数据必须作为加载失败处理。
+
+
+## 总览与地表共用
+
+总览和九个落点读取同一个日期及缓存版本的物理帧。总览的放大半径和各轨道距离缩放只存在于显示变换；不会影响地表角直径或入射阳光方向。必要年份尚未加载时对应天体隐藏，相关观景暂停推进时间并提供重试，不能先用圆轨道填充再冒充完整星历。
+
+地球姿态采用 Greenwich apparent sidereal time（Astronomy Engine `SiderealTime`）及 `Rotation_EQD_EQJ`，与主要行星的通用 IAU 经线计算分开。地球 `RotationAxis` 的特殊旋转角原点不能直接当作其报告极轴的 IAU 结点经线角；UT1=UTC 和未采用极移的限制仍适用。日照是几何光线，不加入光行时、像差、折射或精密辐射传输。

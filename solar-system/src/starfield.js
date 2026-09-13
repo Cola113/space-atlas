@@ -153,10 +153,10 @@ export function createStarfield(renderer, { resources, frameWork, autoStart = tr
     group,
     loadBackground,
     get ready() { return background || Promise.resolve(); },
-    update({ camera, date, dt, brightOccupancy = 0 }) {
+    update({ camera, date, physicalTime, dt, brightOccupancy = 0 }) {
       group.position.copy(camera.position);
       const nextDay = Math.floor(date / 86400000);
-      if (nextDay !== day) { rotation.copy(skyRotation(new Date(date))); day = nextDay; }
+      if (nextDay !== day) { rotation.copy(skyRotation(physicalTime?.astronomy || new Date(date))); day = nextDay; }
       occupancy = brightOccupancy;
       const target = skyExposure(occupancy);
       exposure = THREE.MathUtils.damp(exposure, target, target < exposure ? 1.4 : 0.5, dt);

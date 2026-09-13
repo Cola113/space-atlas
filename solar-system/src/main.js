@@ -36,18 +36,17 @@ import {
   occludedByBody,
   smoothProgress,
 } from "./camera-navigation.js";
-import {
-  orbitPoint,
-  updatePrimaryOrbits,
-  updateSatelliteOrbits,
-  updateBodyRotations,
-} from "./orbits.js";
+import { updateDisplayState } from './orbits.js';
+import { physicalState } from './physics/state.js';
+import { ObservationGate } from './physics/observation-gate.js';
+import { bindPhysicalSun } from './physical-lighting.js';
+import { RotationFollow, restoreFollowRotation } from './camera-follow.js';
 import { physicalData } from "./physical-scale.js";
 import { landableBodyIds } from './surface/sites.js';
 import { catalogSections, dockCatalogs, dockCatalogFor, matchesCatalog, satelliteSystems, systemMembers, systemName } from './catalog.js';
 import { createBodyGeometry, createNarrowRing } from './body-geometry.js';
 import { createObservedClouds } from "./observed-clouds.js";
-import { alignObservedEarth, subsolarPoint } from "./earth-observation.js";
+import { physicalSubsolarPoint } from './earth-observation.js';
 import { createStarfield } from "./starfield.js";
 import { FrameWorkQueue } from './resource-queue.js';
 import { createTextureResources, firstScreenTextures, firstScreenIds, textureRoot } from './texture-resources.js';
@@ -93,7 +92,7 @@ const state = {
   date: defaultSimulationDate,
   ready: false,
   dynamics: true,
-  lockSpin: false,
+  followRotation: false,
   activityRate: 1,
   nightLights: true,
   shadows: true,
@@ -130,7 +129,8 @@ let scene,
   ambientLight,
   dynamics,
   landmarkView;
-let landmarkSpin = null;
+const rotationFollow = new RotationFollow();
+let observationGate = null, observationKey = null, sharedFrame = null, pendingArrival = null;
 let observedClouds;
 let observationSecond = -1;
 let observedSun = null;
@@ -160,12 +160,11 @@ function saveObservation() {
   return {
     selected: state.selected, system: state.system, close: state.close, catalog: state.catalog,
     playing: state.playing, speed: state.speed, speedUnit: "realtime", orbits: state.orbits, labels: state.labels,
-    dynamics: state.dynamics, lockSpin: state.lockSpin, activityRate: state.activityRate,
+    dynamics: state.dynamics, followRotation: state.followRotation, activityRate: state.activityRate,
     nightLights: state.nightLights, shadows: state.shadows, nightView: state.nightView,
     observedEarth: state.observedEarth, date: state.date, timelineEpoch: defaultSimulationDate,
     offset: (flight?.endOffset || surfaceOrbitPose?.offsetFromBody || camera.position.clone().sub(center)).toArray(),
     portrait: width < height,
-    rotations: [...objects.values()].map(item => [item.id, item.mesh.rotation.y]),
     layerVisible: body?.layerVisible,
   };
 }
@@ -173,8 +172,9 @@ function saveObservation() {
 function restoreObservation() {
   const saved = readSession("solar-system");
   if (!saved) return;
-  for (const key of ["playing", "orbits", "labels", "dynamics", "lockSpin", "nightLights", "shadows"])
+  for (const key of ["playing", "orbits", "labels", "dynamics", "nightLights", "shadows"])
     if (typeof saved[key] === "boolean") state[key] = saved[key];
+  state.followRotation = restoreFollowRotation(saved);
   state.speed = restoreSimulationRate(saved);
   if ([0.5, 1, 2, 4].includes(saved.activityRate)) state.activityRate = saved.activityRate;
   state.date = restoreSimulationDate(saved);
@@ -193,17 +193,13 @@ function restoreObservation() {
     }
   }
   if (dockCatalogs.some(catalog => catalog.id === saved.catalog)) setCatalog(saved.catalog);
-  if (saved.timelineEpoch === defaultSimulationDate && Array.isArray(saved.rotations)) for (const entry of saved.rotations) {
-    if (Array.isArray(entry) && objects.has(entry[0]) && Number.isFinite(entry[1]))
-      objects.get(entry[0]).mesh.rotation.y = entry[1];
-  }
   if (isEarthObservation()) syncObservedEarth();
   if (Array.isArray(saved.offset) && saved.offset.length === 3 && saved.offset.every(n => Number.isFinite(n) && Math.abs(n) < 1e5)) {
     const offset = new THREE.Vector3().fromArray(saved.offset);
     if (offset.length() > 0.1) {
       const body = objects.get(state.selected);
       if (saved.portrait !== (width < height)) offset.setLength(body ? currentFocusOffset(body).length() : overviewPosition().length());
-      flight = null;
+      flight = null; pendingArrival = null;
       controls.target.copy(body?.root.position || new THREE.Vector3());
       camera.position.copy(controls.target).add(offset);
       viewOffset.copy(desiredOffset());
@@ -227,6 +223,7 @@ function disposeScene() {
   if (disposed) return;
   disposed = true;
   contextLost = true;
+  observationGate?.dispose(); physicalState.dispose();
   thumbnailObserver?.disconnect();
   frameWork.dispose();
   textureResources.dispose();
@@ -404,7 +401,8 @@ function selectSystem(id) {
   updateObservationTools();
   updateActivityUi();
   setSceneVisibility();
-  flyTo(objects.get(id).root.position, currentFocusOffset(objects.get(id)));
+  rotationFollow.reset();
+  if(objects.get(id).physicalAvailable) flyTo(objects.get(id).root.position, currentFocusOffset(objects.get(id)));
 }
 
 function toast(message) {
@@ -476,9 +474,11 @@ function updateResourceStatus() {
     const pending = !body.detailReady || baseJobs.has(body.id) || highInFlight.has(body.id);
     $('planet-english').textContent = body.english + (pending ? ' · 细节加载中' : '');
   }
-  const wasFocused = document.activeElement === $('resource-retry');
-  $('resource-status').hidden = !state.ready || !textureFailures.size;
-  $('resource-message').textContent = `${textureFailures.size} 项纹理未加载，可继续观测。`;
+  const wasFocused = [ $('resource-retry'), $('ephemeris-retry') ].includes(document.activeElement);
+  $('resource-status').hidden = !state.ready || (!textureFailures.size && !observationGate?.blocked);
+  $('resource-message').textContent = observationGate?.blocked ? (observationGate.error ? '星历加载失败，时间已暂缓。' : '正在加载当前年份星历，时间暂缓。') : `${textureFailures.size} 项纹理未加载，可继续观测。`;
+  $('ephemeris-retry').hidden = !observationGate?.error;
+  if(body && landableBodyIds.includes(body.id))$('landing-button').disabled=!body.physicalAvailable || Boolean(observationGate?.blocked);
   $('resource-retry').hidden = !textureFailures.size;
   $('app').classList.toggle('has-resource-notice', !$('resource-status').hidden);
   if (wasFocused && $('resource-status').hidden)
@@ -578,14 +578,9 @@ function prepareBody(body, priority = 0) {
     body.mesh.geometry = createBodyGeometry(body, detailSphere);
     if (oldGeometry !== body.placeholderGeometry) oldGeometry.dispose();
     attachBodyDetails(body, textureMap);
-    if (body.parent && body.orbitLine) {
-      const parent = objects.get(body.parent);
-      const center = body.orbitFrame === 'barycenter' ? parent.orbitCenter : parent.root.position;
-      body.orbitLine.position.copy(center);
-      body.orbitLine.quaternion.copy(parent.tilted.quaternion);
-      body.orbitLine.scale.setScalar(body.root.position.distanceTo(center) / body.orbit);
-    }
     dynamics.activate(body.id);
+    body.tilted.traverse(child => { if(child.material) bindPhysicalSun(child.material,body.sunDirection); });
+    if(sharedFrame) updateDisplayState(objects,sharedFrame);
     body.detailReady = true;
     updateResourceStatus();
   }, { priority });
@@ -627,6 +622,7 @@ function prioritizeObservation(body) {
 function startBackgroundResources() {
   if (backgroundStarted || disposed) return;
   backgroundStarted = true;
+  refreshObservationGate();
   const selected = objects.get(state.selected);
   if (selected) { prioritizeObservation(selected); loadHighTexture(selected); }
   startThumbnails();
@@ -639,12 +635,12 @@ function startBackgroundResources() {
   observedClouds.startBackground();
 }
 
-function addAtmosphere(group, radius, color, strength = 0.5) {
+function addAtmosphere(group, radius, color, strength = 0.5, sunDirection) {
   const material = new THREE.ShaderMaterial({
     uniforms: {
       tint: { value: new THREE.Color(color) },
       strength: { value: strength },
-      sunPosition: { value: sunLight.position },
+      sunDirection: { value: sunDirection },
     },
     vertexShader: `varying vec3 vNormal; varying vec3 vView;
       varying vec3 vWorldNormal; varying vec3 vWorldPosition;
@@ -655,11 +651,11 @@ function addAtmosphere(group, radius, color, strength = 0.5) {
         vWorldPosition = (modelMatrix * vec4(position, 1.0)).xyz;
         gl_Position = projectionMatrix * mv;
       }`,
-    fragmentShader: `uniform vec3 tint; uniform float strength; uniform vec3 sunPosition;
+    fragmentShader: `uniform vec3 tint; uniform float strength; uniform vec3 sunDirection;
       varying vec3 vNormal; varying vec3 vView; varying vec3 vWorldNormal; varying vec3 vWorldPosition;
       void main(){
         float facing = abs(dot(normalize(vNormal), normalize(vView)));
-        float daylight = smoothstep(-.12, .2, dot(normalize(vWorldNormal), normalize(sunPosition - vWorldPosition)));
+        float daylight = smoothstep(-.12, .2, dot(normalize(vWorldNormal), normalize(sunDirection)));
         float glow = pow(1.0 - facing, 4.5) * strength * mix(.04, 1.0, daylight);
         gl_FragColor = vec4(tint, glow);
       }`,
@@ -720,7 +716,6 @@ function createBodies(textures) {
   for (const body of bodies) {
     const root = new THREE.Group();
     const tilted = new THREE.Group();
-    tilted.rotation.z = THREE.MathUtils.degToRad(body.tilt);
     root.add(tilted);
     const map = textures.get(body.baseTexture || `2k_${body.texture}.jpg`);
     const material =
@@ -743,13 +738,12 @@ function createBodies(textures) {
     const geometry = createBodyGeometry(body, sphere);
     const mesh = new THREE.Mesh(geometry, material);
     mesh.scale.setScalar(body.radius);
-    mesh.rotation.y =
-      body.id === "earth" ? 3.3 : body.id === "jupiter" ? -1.0 : 0;
     mesh.userData.bodyId = body.id;
     tilted.add(mesh);
     scene.add(root);
     objects.set(body.id, {
       ...body, root, tilted, mesh, clouds: null, ring: null, orbitLine: null,
+      sunDirection: new THREE.Vector3(1,0,0), physicalAvailable: false,
       orbitCenter: new THREE.Vector3(), lowMap: map, nightMap: null, surfaceMap: null,
       layerVisible: true, detailReady: false, placeholderGeometry: sphere,
       label: document.querySelector(`[data-label="${body.id}"]`),
@@ -777,7 +771,7 @@ function attachBodyDetails(body, textures) {
     clouds.scale.setScalar(body.radius * 1.012);
     clouds.rotation.y = mesh.rotation.y;
     tilted.add(clouds);
-    addAtmosphere(tilted, body.radius, "#489dd8", 0.74);
+    addAtmosphere(tilted, body.radius, "#489dd8", 0.74, body.sunDirection);
   }
   if (body.id === "titan") {
     clouds = new THREE.Mesh(
@@ -808,7 +802,7 @@ function attachBodyDetails(body, textures) {
     tilted.add(corona);
   }
   if (["venus", "uranus", "neptune", "titan"].includes(body.id))
-    addAtmosphere(tilted, body.radius, body.color, 0.23);
+    addAtmosphere(tilted, body.radius, body.color, 0.23, body.sunDirection);
   if (body.id === "saturn") {
     const geometry = new THREE.RingGeometry(
       body.radius * 1.28,
@@ -849,7 +843,7 @@ function attachBodyDetails(body, textures) {
     const points = [];
     for (let index = 0; index < 256; index++) {
       const angle = (index / 256) * Math.PI * 2;
-      points.push(orbitPoint(body, angle));
+      points.push(new THREE.Vector3());
     }
     orbitLine = new THREE.LineLoop(
       new THREE.BufferGeometry().setFromPoints(points),
@@ -865,14 +859,28 @@ function attachBodyDetails(body, textures) {
 }
 
 function updatePositions() {
-  const date = new Date(state.date);
-  updatePrimaryOrbits(objects, date);
-  updateSatelliteOrbits(
-    objects,
-    date,
-    state.lockSpin ? state.selected : null,
-  );
-  updateBodyRotations(objects,date,state.lockSpin ? state.selected : null);
+  sharedFrame = updateDisplayState(objects, physicalState.frame(new Date(state.date)));
+  if(state.selected) $('physics-accuracy').textContent = (sharedFrame.bodies.get(state.selected)?.accuracy || '等待当前年份星历。') + ' ' + sharedFrame.accuracy;
+}
+
+function refreshObservationGate() {
+  const body=objects.get(state.selected), family=familyOf(body);
+  const ids=body ? (family ? systemMembers(family.id).map(member=>member.id) : [body.id]) : (backgroundStarted ? ['pluto'] : []);
+  const key=ids.join(',');
+  if(key!==observationKey){
+    observationGate?.dispose(); observationKey=key;
+    observationGate=new ObservationGate(physicalState,ids,()=>{
+      if(disposed)return;
+      const focused=objects.get(state.selected), previous=focused?.root.position.clone();
+      updatePositions();
+      if(focused && focused.physicalAvailable && !observationGate.blocked){
+        if(pendingArrival===focused.id){pendingArrival=null;flyTo(focused.root.position,currentFocusOffset(focused));}
+        else if(!flight && !surfaceView){const delta=focused.root.position.clone().sub(previous);camera.position.add(delta);controls.target.add(delta);}
+      }
+      updateResourceStatus();
+    });
+  }
+  updatePositions(); observationGate.check(new Date(state.date)); updateResourceStatus();
 }
 
 function updateSimulationDate() {
@@ -892,10 +900,9 @@ function isEarthObservation() {
 function syncObservedEarth() {
   const second = Math.floor(state.date / 1000);
   if (second !== observationSecond) {
-    observedSun = subsolarPoint(new Date(state.date));
+    observedSun = physicalSubsolarPoint(sharedFrame);
     observationSecond = second;
   }
-  alignObservedEarth(objects.get("earth"), observedSun);
 }
 
 function updateCloudUi() {
@@ -949,7 +956,7 @@ function compactSceneBounds() {
   return {
     left: 260,
     right: width - 76,
-    top: state.selected && !tools.hidden ? 120 : 76,
+    top: state.selected && !tools.hidden ? tools.getBoundingClientRect().bottom + 12 : 76,
     bottom: document.querySelector(".explorer-bottom").getBoundingClientRect().top - 44,
   };
 }
@@ -963,7 +970,7 @@ function desiredOffset() {
     );
   }
   if (state.selected) {
-    const top = mobile ? 128 : 156;
+    const top = Math.max(mobile ? 128 : 156, $("observation-tools").hidden ? 0 : $("observation-tools").getBoundingClientRect().bottom + 12);
     const bottom = mobile
       ? $("planet-info").getBoundingClientRect().top - 14
       : height - 232;
@@ -999,11 +1006,11 @@ function overviewPosition() {
 function focusedOffset(body, close = false) {
   const compact = compactSceneBounds();
   const safeHeight = compact ? compact.bottom - compact.top : mobile
-    ? Math.max(88, $("planet-info").getBoundingClientRect().top - 142)
+    ? Math.max(40, $("planet-info").getBoundingClientRect().top - 26 - $("observation-tools").getBoundingClientRect().bottom)
     : height - 388;
   const safeWidth = compact ? compact.right - compact.left : mobile ? width - 80 : width - 460;
   const targetRadius = Math.max(
-    40,
+    20,
     Math.min(
       safeHeight * (mobile ? 0.39 : 0.45),
       safeWidth * (mobile ? 0.36 : 0.37),
@@ -1032,7 +1039,7 @@ function focusedOffset(body, close = false) {
       )
       .transformDirection(body.mesh.matrixWorld);
   }
-  const sunlight = objects.get("sun").root.position.clone().sub(body.root.position).normalize();
+  const sunlight = body.sunDirection;
   if (body.id !== "sun" && (!body.viewUv || direction.dot(sunlight) < .2 || body.id === "saturn")) {
     direction = sunlight.clone()
       .applyAxisAngle(
@@ -1122,10 +1129,10 @@ function setSceneVisibility() {
       )
     : 1;
   for (const body of objects.values()) {
-    body.root.visible = true;
+    body.root.visible = body.physicalAvailable;
     if (body.orbitLine)
       body.orbitLine.visible =
-        state.orbits &&
+        body.physicalAvailable && state.orbits &&
         (state.selected
           ? (state.system && body.parent === state.selected) ||
             (!body.parent && context > 0.001)
@@ -1143,7 +1150,7 @@ function arrivalOffset(body) {
   const bearing = camera.position.clone().sub(body.root.position).normalize();
   const preferred = focusedOffset(body).normalize();
   const candidates = [bearing, preferred];
-  const outward = body.root.position.clone().sub(objects.get("sun").root.position).normalize();
+  const outward = body.sunDirection.clone().negate();
   if (outward.lengthSq() === 0) outward.copy(bearing);
   const sunward = outward.clone().negate();
   candidates.push(sunward);
@@ -1365,6 +1372,8 @@ function selectBody(id) {
   clearLandmark();
   setAtlas(false);
   state.selected = id;
+  $("observation-settings").open=false;
+  rotationFollow.reset(); pendingArrival = null;
   state.close = false;
   state.system = false;
   $("app").classList.remove("system-view");
@@ -1418,7 +1427,9 @@ function selectBody(id) {
   updateObservationTools();
   updateActivityUi();
   setSceneVisibility();
-  flyTo(body.root.position, arrivalOffset(body));
+  refreshObservationGate();
+  if(body.physicalAvailable) flyTo(body.root.position, arrivalOffset(body));
+  else { flight=null; pendingArrival=body.id; }
   setLayer(body.layerVisible);
   updateResolution(body);
   if (firstFrameAt !== null) { prioritizeObservation(body); loadHighTexture(body); }
@@ -1429,6 +1440,8 @@ function goOverview() {
   setAtlas(false);
   clearLandmark();
   state.selected = null;
+  $("observation-settings").open=false;
+  rotationFollow.reset(); pendingArrival = null; refreshObservationGate();
   setCatalog('planets');
   state.close = false;
   state.system = false;
@@ -1525,8 +1538,11 @@ function updateActivityUi() {
   if ($("event-label").textContent !== profile.trigger) $("event-label").textContent = profile.trigger;
   $("event-trigger").disabled =
     !state.playing || !state.dynamics || state.system || Boolean(status?.event);
-  $("rotation-toggle").classList.toggle("active", state.lockSpin);
-  $("rotation-toggle").setAttribute("aria-pressed", String(state.lockSpin));
+  $('rotation-toggle').classList.toggle('active',state.followRotation);
+  $('rotation-toggle').setAttribute('aria-pressed',String(state.followRotation));
+  const followLabel='跟随自转 · '+(state.followRotation ? (state.system ? '暂缓' : '已开启') : '已关闭');
+  $('rotation-toggle').querySelector('span').textContent=followLabel;
+  $('rotation-toggle').setAttribute('aria-label',followLabel);
 }
 
 function triggerActivity() {
@@ -1560,10 +1576,11 @@ function updateObservationTools() {
   const id = state.selected;
   $("landing-button").hidden = state.system || !landableBodyIds.includes(id);
   const family = familyOf(objects.get(id));
+  $("observation-settings").hidden = !(family || landmarks[id]?.length || ["earth","saturn"].includes(id));
   const visible =
     id &&
     !state.atlas &&
-    (family || landmarks[id]?.length || ["earth", "saturn"].includes(id));
+    true;
   $("observation-tools").hidden = !visible;
   document.querySelector(".landmark-picker").hidden =
     state.system || !landmarks[id]?.length;
@@ -1578,6 +1595,7 @@ function updateObservationTools() {
   $("shadow-toggle").setAttribute("aria-label", $("shadow-control").title);
   const label = state.nightView ? "观测昼侧" : "观测夜侧";
   $("night-view").setAttribute("aria-label", label);
+  $("night-view").querySelector("span").textContent=label;
   $("night-view").dataset.tip = label;
   $("night-view").classList.toggle("active", state.nightView);
   $("landmark-clear").hidden = !landmarkView?.active;
@@ -1586,8 +1604,6 @@ function updateObservationTools() {
 function clearLandmark() {
   if (!landmarkView?.active) return;
   landmarkView.select("");
-  if (landmarkSpin !== null) state.lockSpin = landmarkSpin;
-  landmarkSpin = null;
   $("app").classList.remove("has-landmark");
   const body = objects.get(state.selected);
   if (body) {
@@ -1609,8 +1625,6 @@ function selectLandmark(id) {
   }
   const feature = landmarkView.select(id);
   if (!feature) return;
-  if (landmarkSpin === null) landmarkSpin = state.lockSpin;
-  state.lockSpin = true;
   state.close = true;
   state.nightView = false;
   $("app").classList.add("has-landmark");
@@ -1657,6 +1671,8 @@ async function landOnSurface() {
     $("app").classList.remove("surface-journey-background");$("app").inert=false;
     controls.enabled=previousControls;
   };
+  rotationFollow.reset();
+  $("observation-settings").open=false;
   landingBusy = true;
   controls.enabled = false;
   $("app").inert = true;
@@ -1668,6 +1684,8 @@ async function landOnSurface() {
     surfaceView = createSurfaceView(id, {
       initialDate: state.date,
       initialRate: state.speed,
+      initialPlaying: state.playing,
+      onPlayingChange: playing => { state.playing=playing; updatePlayButton(); },
       onRateChange: rate => {
         state.speed = rate;
         updateTimeRateUi();
@@ -1685,12 +1703,13 @@ async function landOnSurface() {
       },
       onClosed: finalTime => {
         if (Number.isFinite(finalTime)) state.date = finalTime;
-        surfaceView = null;recover();
+        surfaceView = null;recover(); rotationFollow.reset();
         const previous = body.root.position.clone();
         updatePositions();
         const delta = body.root.position.clone().sub(previous);
         camera.position.add(delta);controls.target.add(delta);
         updateSimulationDate();
+        refreshObservationGate();
         $("landing-button").focus();
       },
     });
@@ -1704,6 +1723,7 @@ async function landOnSurface() {
 }
 
 function bindEvents() {
+  document.addEventListener('pointerdown',event=>{const menu=$('observation-settings');if(menu.open&&!menu.contains(event.target))menu.open=false;});
   $("planet-dock").addEventListener('scroll', updateDockScroll, {passive: true});
   for (const [id, direction] of [['dock-prev', -1], ['dock-next', 1]]) $(id).addEventListener('click', () => {
     const dock = $("planet-dock");
@@ -1744,8 +1764,8 @@ function bindEvents() {
     updateActivityUi();
   });
   $("rotation-toggle").addEventListener("click", () => {
-    state.lockSpin = !state.lockSpin;
-    if (landmarkView.active) landmarkSpin = state.lockSpin;
+    state.followRotation = !state.followRotation;
+    rotationFollow.reset();
     updateActivityUi();
   });
   $("activity-rate").addEventListener("change", (event) => {
@@ -1824,9 +1844,8 @@ function bindEvents() {
     $("fullscreen").dataset.tip = active ? "退出全屏" : "全屏";
     refreshIcons();
   });
-  $("info-button").addEventListener("click", () =>
-    $("credits-dialog").showModal(),
-  );
+  $('info-button').setAttribute('aria-label','关于图鉴与计算说明');
+  $('info-button').addEventListener('click',()=>{updatePositions();$('credits-dialog').showModal();});
   $("close-credits").addEventListener("click", () =>
     $("credits-dialog").close(),
   );
@@ -1844,6 +1863,7 @@ function bindEvents() {
   });
   document.addEventListener("keydown", (event) => {
     if (surfaceView || landingBusy) return;
+    if(event.key==='Escape' && $('observation-settings').open){event.preventDefault();$('observation-settings').open=false;$('observation-settings').querySelector('summary').focus();return;}
     if (
       $("credits-dialog").open ||
       /INPUT|TEXTAREA|SELECT/.test(event.target.tagName)
@@ -1908,13 +1928,13 @@ function projectBody(body, view = camera) {
     y,
     radius,
     onScreen:
-      depth > body.radius &&
+      body.physicalAvailable && depth > body.radius &&
       x + radius > 0 &&
       x - radius < width &&
       y + radius > 0 &&
       y - radius < height,
     inView:
-      depth > 0 &&
+      body.physicalAvailable && depth > 0 &&
       projected.z >= -1 &&
       projected.z <= 1 &&
       Math.abs(projected.x) < 1 &&
@@ -2125,7 +2145,6 @@ function updateLabels() {
 
 function brightSkyOccupancy() {
   let occupancy = 0;
-  const sun = objects.get("sun").root.position;
   for (const body of objects.values()) {
     if (!body.root.visible || body.parent) continue;
     const view = body.root.position.clone().applyMatrix4(camera.matrixWorldInverse);
@@ -2136,7 +2155,7 @@ function brightSkyOccupancy() {
     const x = (center.x + 1) * width / 2, y = (1 - center.y) * height / 2;
     const visibleWidth = Math.max(0, Math.min(width, x + radius) - Math.max(0, x - radius));
     const visibleHeight = Math.max(0, Math.min(height, y + radius) - Math.max(0, y - radius));
-    const phase = body.id === "sun" ? 1 : 0.5 + 0.5 * sun.clone().sub(body.root.position).normalize()
+    const phase = body.id === "sun" ? 1 : 0.5 + 0.5 * body.sunDirection
       .dot(camera.position.clone().sub(body.root.position).normalize());
     occupancy += visibleWidth * visibleHeight * Math.PI / 4 / (width * height) * phase;
   }
@@ -2153,8 +2172,8 @@ function animate(now) {
   const focused = objects.get(state.selected);
   const previous = focused?.root.position.clone();
   if (state.playing && !state.atlas && !$("credits-dialog").open) {
-    if (isEarthObservation()) state.date = Date.now();
-    else if (elapsed <= 1000) state.date += simulationElapsed(elapsed, state.speed);
+    const candidate=isEarthObservation()?Date.now():state.date+(elapsed<=1000?simulationElapsed(elapsed,state.speed):0);
+    if(!observationGate || observationGate.check(new Date(candidate))) state.date=candidate;
     // The asteroid belt is also keyed to the shared simulation date.
     belt.rotation.y = ((state.date - Date.UTC(2000, 0, 1, 12)) / 86400000) * 0.001333;
     updatePositions();
@@ -2190,8 +2209,10 @@ function animate(now) {
       applyDistanceLimits();
     }
   }
+  rotationFollow.update(focused,camera,controls.target,state.followRotation && !state.system && !state.atlas && !flight && !$('credits-dialog').open);
   if (!flight) controls.update(dt);
   for (const body of objects.values()) {
+    if(!body.physicalAvailable)continue;
     const away = camera.position.clone().sub(body.root.position);
     const clearance = (body.renderRadius || body.radius) * 1.08;
     if (away.lengthSq() < clearance * clearance) {
@@ -2203,7 +2224,7 @@ function animate(now) {
   setSceneVisibility();
   dynamics.update({
     dt,
-    moving: state.playing && !state.atlas && !$("credits-dialog").open,
+    moving: state.playing && !observationGate?.blocked && !state.atlas && !$("credits-dialog").open,
     selected: state.system ? null : state.selected,
     isMobile: mobile,
     pixelScale: height * renderer.getPixelRatio(),
@@ -2211,7 +2232,7 @@ function animate(now) {
   objects.get("sun").root.getWorldPosition(sunLight.position);
   dynamics.updateLighting(state);
   camera.updateMatrixWorld();
-  starfield.update({ camera, date: state.date, dt, brightOccupancy: brightSkyOccupancy() });
+  starfield.update({ camera, date: state.date, physicalTime: sharedFrame.time, dt, brightOccupancy: brightSkyOccupancy() });
   frameWork.drainOne();
   renderer.render(scene, camera);
   renderedFrames++;
@@ -2252,6 +2273,7 @@ function animate(now) {
 async function init() {
   mountNavigation("solar-system");
   makeNavigation();
+  $('ephemeris-retry').addEventListener('click',()=>void observationGate?.retry().catch(()=>{}));
   $("reload-button").addEventListener("click", () => location.reload());
   try {
     scene = new THREE.Scene();
@@ -2285,7 +2307,7 @@ async function init() {
     controls.update();
     ambientLight = new THREE.AmbientLight("#d2e1df", 0.085);
     // Distances are illustrative; preserve exposure while deriving every body's
-    // incident light direction from the Sun's actual scene position.
+    // incident light direction from its physical position via material uniforms.
     sunLight = new THREE.PointLight("#fff6e8", 2.6, 0, 0);
     sunLight.name = "Sunlight";
     scene.add(ambientLight, sunLight);
@@ -2371,14 +2393,17 @@ async function init() {
         labels: state.labels,
         starfield: starfield.snapshot(),
         atlas: state.atlas,
-        lockSpin: state.lockSpin,
+        followRotation: state.followRotation,
+        followActive: rotationFollow.active,
+        ephemeris: {blocked:Boolean(observationGate?.blocked), pending:Boolean(observationGate?.pending), error:observationGate?.error?.message || null},
+        accuracy: sharedFrame?.accuracy,
         nightLights: state.nightLights,
         nightView: state.nightView,
         shadows: state.shadows,
         landmarks: landmarkView.snapshot(),
         nightTextureWidth: objects.get("earth").nightMap?.image?.width || 0,
         lightDirection: state.selected
-          ? sunLight.position.clone().sub(objects.get(state.selected).root.position).normalize().toArray()
+          ? objects.get(state.selected).sunDirection.toArray()
           : [0, 0, 0],
         lighting: {
           type: sunLight.type,
@@ -2424,7 +2449,12 @@ async function init() {
             occluded: projected.occluded,
             labelVisible: !body.label.hidden,
             rotation: body.mesh.rotation.y,
-            orientation: body.mesh.quaternion.toArray(),
+            orientation: body.displayOrientation?.toArray() || null,
+            physicalPositionKm: body.physical?.positionKm.toArray() || null,
+            physicalOrientation: body.physical?.orientation.quaternion.toArray() || null,
+            physicalAvailable: body.physicalAvailable,
+            physicalModel: body.physical?.model || null,
+            sunDirection: body.sunDirection.toArray(),
             ringVisible: Boolean(body.ring?.visible && body.root.visible),
             ringOuterRadius: body.rings ? body.radius * body.rings.outer : null,
             detailReady: body.detailReady,

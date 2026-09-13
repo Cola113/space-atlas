@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { bindPhysicalSun } from '../physical-lighting.js';
 import { surfaceFrame, angularDiameter, horizonAngles } from './geometry.js';
 import { physicalData } from '../physical-scale.js';
 import { physicalState } from '../physics/state.js';
@@ -101,7 +102,9 @@ export function createSurfaceSky({scene,renderer,site,parentMap,cloudMap,ringMap
     const material=emissive?new THREE.MeshBasicMaterial({color:'#fff8e8'}):new THREE.MeshLambertMaterial({map,color:map?'#ffffff':'#bbbcb6'});
     const globe=new THREE.Mesh(new THREE.SphereGeometry(1,map?72:24,map?48:16),material);
     if(name==='Jupiter'&&map)windMaterial(material,.0001);
-    objects.set(name,{globe,radiusKm});scene.add(globe);return globe;
+    const sunlight=new THREE.Vector3();
+    bindPhysicalSun(material,sunlight);
+    objects.set(name,{globe,radiusKm,sunlight});scene.add(globe);return globe;
   }
   if(parentMap)parentMap.wrapS=THREE.RepeatWrapping;
   const globe=addGlobe(site.parent,site.parentRadiusKm,parentMap,site.parent==='Sun');
@@ -111,11 +114,13 @@ export function createSurfaceSky({scene,renderer,site,parentMap,cloudMap,ringMap
     for(let i=0;i<positions.count;i++)uv.setXY(i,(Math.hypot(positions.getX(i),positions.getY(i))*site.parentRadiusKm-74500)/(136780-74500),.5);
     const rings=new THREE.Mesh(geometry,new THREE.MeshLambertMaterial({map:ringMap,side:THREE.DoubleSide,transparent:true,depthWrite:false,opacity:.8}));
     rings.rotation.x=-Math.PI/2;globe.add(rings);
+    bindPhysicalSun(rings.material,objects.get(site.parent).sunlight);
   }
   if(cloudMap){
     cloudMap.wrapS=THREE.RepeatWrapping;
     const material=new THREE.MeshLambertMaterial({map:cloudMap,transparent:true,blending:THREE.AdditiveBlending,depthWrite:false,opacity:.8});
     windMaterial(material,.0009);
+    bindPhysicalSun(material,objects.get(site.parent).sunlight);
     clouds=new THREE.Mesh(globe.geometry,material);clouds.scale.setScalar(1.003);globe.add(clouds);
   }
   for(const name of ['Mercury','Venus','Earth','Mars','Jupiter','Saturn','Uranus','Neptune'])
@@ -174,13 +179,15 @@ export function createSurfaceSky({scene,renderer,site,parentMap,cloudMap,ringMap
 
   function update(time,camera,{resetExposure=false}={}) {
     frame=surfaceFrame(site,new Date(time),provider);
-    for(const [name,{globe,radiusKm}] of objects){
+    for(const [name,{globe,radiusKm,sunlight}] of objects){
       const target=frame.targets[name];
       if(!target){globe.visible=false;continue;}
+      globe.visible=true;
+      sunlight.copy(frame.local(target.positionKm.clone().negate().normalize()));
       const distance=name==='Sun'?1200:300+400*target.distanceKm/(target.distanceKm+149597870.7);
       globe.position.copy(target.direction).multiplyScalar(distance);
       globe.scale.setScalar(distance*radiusKm/target.distanceKm);
-      if(['Earth','Jupiter','Saturn','Uranus','Charon'].includes(name)){
+      if(target.orientation){
         const basis=target.orientation;
         globe.setRotationFromMatrix(new THREE.Matrix4().makeBasis(frame.local(basis.prime),frame.local(basis.north),frame.local(basis.east).negate()));
       }

@@ -53,11 +53,12 @@ test('saved obsolete multipliers reset to 1k while supported presets survive rel
 
 test('the historical timeline starts in 1971 and restores progress after migration',()=>{
   assert.equal(new Date(defaultSimulationDate).toISOString(),'1971-08-01T17:00:00.000Z');
-  for(const saved of [undefined,{}, {date:Date.now()}, {timelineEpoch:defaultSimulationDate,date:NaN}]){
+  for(const saved of [undefined,{}, {date:Infinity}, {timelineEpoch:defaultSimulationDate,date:NaN}]){
     assert.equal(restoreSimulationDate(saved),defaultSimulationDate);
   }
   const saved={timelineEpoch:defaultSimulationDate,date:defaultSimulationDate+5*86400000};
   assert.equal(restoreSimulationDate(saved),saved.date);
+  for(const date of [Date.UTC(1900,0,1),0,Date.UTC(2100,11,31)])assert.equal(restoreSimulationDate({date}),date);
 });
 
 test('surface time advances and rewinds the orbit timeline immediately, including while paused',()=>{

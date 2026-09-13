@@ -1,122 +1,82 @@
-import * as THREE from "three";
-import { Ecliptic, HelioVector } from "astronomy-engine";
-import { DISPLAY_LONGITUDE_OFFSET } from "./sky-coordinates.js";
-import { bodyModels } from './body-models.js';
+import { Vector3, Matrix4, Quaternion } from 'three';
+import { MassProduct } from 'astronomy-engine';
+import { skyRotation } from './sky-coordinates.js';
+import { physicalData } from './physical-scale.js';
+import { AU_KM, physicalNames } from './physics/state.js';
+import { orbitalElements } from './physics/kepler.js';
+import anchors from './physics/kepler-anchors.json';
+import { meanElements } from './physics/mean-motion.js';
 
-const TAU = Math.PI * 2;
-const axis = new THREE.Vector3(0, 0, 1);
-const offset = new THREE.Vector3();
-const plane = new THREE.Quaternion();
-export const SIMULATION_EPOCH = Date.UTC(2000, 0, 1, 12);
-const DAY = 86400000;
-
-// The old scene advanced satellite angles with a separate wall-clock timer.
-// Keep one date as the source of truth so a given speed has the same meaning
-// in the orbit view and on a surface.
-export const ROTATION_PERIOD_DAYS = Object.freeze({
-  sun: 25.38, mercury: 58.646, venus: -243.025, earth: .99726968,
-  mars: 1.02595675, jupiter: .41354, saturn: .44401, uranus: -.71833,
-  neptune: .67125, pluto: 6.387, ceres: .37809, vesta: .22258,
-  ...Object.fromEntries(Object.entries(bodyModels).filter(([, model]) => model.spinDays).map(([id, model]) => [id, model.spinDays])),
-});
-const ROTATION_PHASE = Object.freeze({ earth: 3.3, jupiter: -1 });
-
-// A retrograde flag defines the travel direction; represent the plane with an
-// acute inclination so a >90 degree plane cannot reverse that direction again.
-export function orbitInclination(body) {
-  const inclination = body.inclination || 0;
-  return body.retrograde && inclination > 90 ? 180 - inclination : inclination;
+// Display scales never feed back into the evaluated physical frame.
+const gmSun = MassProduct('Sun') * AU_KM ** 3 / 86400 ** 2;
+function scaleFor(body) {
+  const definition = physicalData[body.id];
+  return body.orbit / (definition.orbitKm || definition.orbitAU * AU_KM);
 }
-
-export function orbitPoint(body, angle, target = new THREE.Vector3()) {
-  return target
-    .set(Math.cos(angle) * body.orbit, 0, Math.sin(angle) * body.orbit)
-    .applyAxisAngle(axis, THREE.MathUtils.degToRad(orbitInclination(body)));
-}
-
-export const COORBITAL_SWAP_DAYS = 4 * 365.25;
-export function satelliteOrbit(body, date) {
-  const days = (date.getTime() - SIMULATION_EPOCH) / DAY;
-  if (body.coorbital) {
-    // A smooth horseshoe *display* model, not an N-body ephemeris. Opposite
-    // radial offsets exchange every four years; the angular gap never closes.
-    const phase = days / COORBITAL_SWAP_DAYS * Math.PI;
-    const separation = Math.PI + (Math.PI - .12) * Math.cos(phase);
-    const weight = body.id === 'janus' ? .2 : -.8;
-    const common = (days / .69435 % 1) * TAU;
-    return {angle: common + weight * separation, radius: body.orbit * (1 + weight * .035 * Math.sin(phase))};
-  }
-  return {angle: body.orbitPhase + (days / body.period % 1) * TAU * (body.retrograde ? -1 : 1), radius: body.orbit};
-}
-
-export function updatePrimaryOrbits(objects, date) {
+export function updateDisplayState(objects, frame, {guides = true} = {}) {
+  const rotation = skyRotation(frame.time.astronomy);
+  const barycenter = frame.barycenters.get('pluto');
+  const pluto = objects.get('pluto'), charon = objects.get('charon');
+  const binaryScale = charon ? scaleFor(charon) : 1;
+  const displayedBarycenter = barycenter && pluto ? barycenter.clone().applyMatrix3(rotation).multiplyScalar(scaleFor(pluto)) : null;
   for (const body of objects.values()) {
-    if (!body.orbit || body.parent) continue;
-    if (body.body) {
-      const vector = Ecliptic(HelioVector(body.body, date));
-      const longitude = THREE.MathUtils.degToRad(vector.elon) - DISPLAY_LONGITUDE_OFFSET;
-      const latitude = THREE.MathUtils.degToRad(vector.elat) * 0.3;
-      body.root.position.set(
-        Math.cos(longitude) * Math.cos(latitude) * body.orbit,
-        Math.sin(latitude) * body.orbit,
-        -Math.sin(longitude) * Math.cos(latitude) * body.orbit,
-      );
-    } else {
-      const phase = ((date.getTime() - SIMULATION_EPOCH) / DAY / body.orbitDays) % 1;
-      orbitPoint(body, body.orbitPhase + phase * TAU, body.root.position);
-    }
-    body.orbitCenter.copy(body.root.position);
+    const physical = frame.bodies.get(body.id);
+    body.physicalAvailable = Boolean(physical);
+    if (!physical) { body.root.visible = false; if(body.orbitLine)body.orbitLine.visible=false; continue; }
+    body.physical = physical;
+    const parent = objects.get(physical.parent);
+    if (body.id === 'sun') body.root.position.set(0,0,0);
+    else if (body.id === 'pluto' && displayedBarycenter) {
+      body.root.position.copy(physical.positionKm).sub(barycenter).applyMatrix3(rotation).multiplyScalar(binaryScale).add(displayedBarycenter);
+    } else if (body.parent && parent) {
+      const center = physical.orbitFrame === 'barycenter' ? parent.orbitCenter : parent.root.position;
+      body.root.position.copy(physical.relativeKm).applyMatrix3(rotation).multiplyScalar(scaleFor(body)).add(center);
+    } else body.root.position.copy(physical.positionKm).applyMatrix3(rotation).multiplyScalar(scaleFor(body));
+    body.orbitCenter.copy(body.id === 'pluto' && displayedBarycenter ? displayedBarycenter : body.root.position);
+    const north=physical.orientation.north.clone().applyMatrix3(rotation);
+    const prime=physical.orientation.prime.clone().applyMatrix3(rotation);
+    const minusEast=physical.orientation.east.clone().applyMatrix3(rotation).negate();
+    // Three sphere axes: +X zero longitude, +Y north, -Z east. The pole parent
+    // stays unspun so rings do not inherit the prime-meridian rotation.
+    const node=new Vector3(0,1,0).cross(north).normalize();
+    if(node.lengthSq()<.5)node.set(1,0,0);
+    body.tilted.quaternion.setFromRotationMatrix(new Matrix4().makeBasis(node,north,node.clone().cross(north)));
+    const attitude=new Quaternion().setFromRotationMatrix(new Matrix4().makeBasis(prime,north,minusEast));
+    body.mesh.quaternion.copy(body.tilted.quaternion).invert().multiply(attitude);
+    body.displayOrientation ??= new Quaternion(); body.displayOrientation.copy(attitude);
+    if(body.clouds)body.clouds.quaternion.copy(body.mesh.quaternion);
+    body.sunDirection ??= new Vector3();
+    body.sunDirection.copy(physical.positionKm).negate().normalize().applyMatrix3(rotation);
+    body.sunAngularRadius = body.id === 'sun' ? 0 : Math.asin(physicalData.sun.radiusKm / physical.positionKm.length());
+    if(guides && body.orbit && body.orbitLine) updateGuide(body, parent, physical, frame, rotation);
   }
+  return frame;
 }
-
-export function updateSatelliteOrbits(objects, date, lockedId) {
-  for (const body of objects.values()) {
-    if (!body.parent) continue;
-    const parent = objects.get(body.parent);
-    const {angle, radius} = satelliteOrbit(body, date);
-    orbitPoint(body, angle, offset).multiplyScalar(radius / body.orbit).applyQuaternion(parent.tilted.quaternion);
-    if (body.id === "charon") {
-      parent.root.position
-        .copy(parent.orbitCenter)
-        .addScaledVector(offset, -0.1085);
-    }
-    const center = body.orbitFrame === 'barycenter' ? parent.orbitCenter : parent.root.position;
-    body.root.position.copy(center).add(offset);
-    plane.setFromAxisAngle(
-      axis,
-      THREE.MathUtils.degToRad(orbitInclination(body)),
-    );
-    body.tilted.quaternion.copy(parent.tilted.quaternion).multiply(plane);
-    // Independent spin is updated separately. A synchronous moon points its
-    // local +X toward its parent; all axes honor the fixed-rotation control.
-    if (body.id !== lockedId && !ROTATION_PERIOD_DAYS[body.id]) body.mesh.rotation.set(0, Math.PI - angle, 0);
-    if (body.orbitLine) {
-      body.orbitLine.position.copy(center);
-      body.orbitLine.quaternion.copy(parent.tilted.quaternion);
-      body.orbitLine.scale.setScalar(radius / body.orbit);
-    }
+function updateGuide(body, parent, physical, frame, rotation) {
+  const line=body.orbitLine;
+  const center=body.parent ? (physical.orbitFrame==='barycenter'?parent.orbitCenter:parent.root.position) : new Vector3();
+  line.position.copy(center);line.quaternion.identity();line.scale.setScalar(1);
+  // Instantaneous osculating ellipse: a guide, not a future ephemeris.
+  const r=body.id==='pluto'?frame.barycenters.get('pluto'):physical.relativeKm;
+  const v=body.id==='pluto'?frame.barycenterVelocities.get('pluto'):physical.relativeVelocityKmS;
+  const period = Math.PI*2*r.length()/Math.max(1e-10,v.length());
+  const age = Math.abs(frame.time.tdbSeconds-(body.guideEpoch ?? -Infinity));
+  if(age < Math.min(86400,period/128) && body.guideScale===body.orbit)return;
+  let elements;
+  if(meanElements.bodies[body.id]) {
+    const p=r.clone().normalize(),q=r.clone().cross(v).normalize().cross(p);
+    elements={aKm:r.length(),e:0,p:p.toArray(),q:q.toArray()};
+  } else {
+    const gm=anchors.anchors.first.elements[body.id]?.gmKm3S2 ?? (body.parent
+      ? MassProduct(physicalNames[body.parent]) * AU_KM**3/86400**2 + (body.id==='moon'?MassProduct('Moon')*AU_KM**3/86400**2:0)
+      : gmSun);
+    elements=orbitalElements(r.toArray(),v.toArray(),gm,frame.time.tdbSeconds);
   }
-}
-
-export function updateBodyRotations(objects, date, lockedId = null) {
-  const days = (date.getTime() - SIMULATION_EPOCH) / DAY;
-  for (const body of objects.values()) {
-    if (body.id === lockedId) continue;
-    if (body.tidalPartner && objects.has(body.tidalPartner)) {
-      const direction = objects.get(body.tidalPartner).root.position.clone().sub(body.root.position)
-        .applyQuaternion(body.tilted.quaternion.clone().invert());
-      body.mesh.rotation.set(0, Math.atan2(-direction.z, direction.x), 0);
-      continue;
-    }
-    const period = ROTATION_PERIOD_DAYS[body.id];
-    if (!period) continue;
-    const phase = days * TAU / period;
-    if (body.tumbling) {
-      // Deterministic irregular attitude illustration, deliberately not claimed
-      // to predict chaotic motion. Absolute dates support pause, rewind/reload.
-      body.mesh.rotation.set(.9 * Math.sin(phase * .371) + .35 * Math.sin(phase * .113),
-        (phase + .7 * Math.sin(phase * .173)) % TAU, .7 * Math.sin(phase * .613));
-    } else body.mesh.rotation.set(0, ((ROTATION_PHASE[body.id] || 0) + phase) % TAU, 0);
-    if (body.clouds) body.clouds.rotation.copy(body.mesh.rotation);
-  }
+  const p=new Vector3().fromArray(elements.p),q=new Vector3().fromArray(elements.q);
+  const points=Array.from({length:256},(_,i)=>{
+    const e=i/256*Math.PI*2;
+    return p.clone().multiplyScalar(elements.aKm*(Math.cos(e)-elements.e))
+      .addScaledVector(q,elements.aKm*Math.sqrt(1-elements.e**2)*Math.sin(e)).applyMatrix3(rotation).multiplyScalar(scaleFor(body));
+  });
+  line.geometry.setFromPoints(points);line.geometry.computeBoundingSphere();body.guideEpoch=frame.time.tdbSeconds;body.guideScale=body.orbit;
 }

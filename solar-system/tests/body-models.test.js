@@ -5,9 +5,14 @@ import * as THREE from 'three';
 import { bodies } from '../src/data.js';
 import { physicalData } from '../src/physical-scale.js';
 import { createBodyGeometry, createNarrowRing } from '../src/body-geometry.js';
-import { SIMULATION_EPOCH, ROTATION_PERIOD_DAYS, COORBITAL_SWAP_DAYS, satelliteOrbit,
-  updatePrimaryOrbits, updateSatelliteOrbits, updateBodyRotations } from '../src/orbits.js';
-
+import { updateDisplayState } from '../src/orbits.js';
+import { meanElements, meanMotion, COORBITAL_SWAP_DAYS } from '../src/physics/mean-motion.js';
+import { physicalTime } from '../src/physics/time.js';
+import { localPhysics } from './physical-fixture.js';
+const provider=localPhysics();
+await provider.ensure(new Date('2000-01-01T12:00:00Z'),['enceladus','miranda','pluto'],{prefetch:false});
+const SIMULATION_EPOCH=Date.UTC(2000,0,1,12);
+const ROTATION_PERIOD_DAYS=Object.fromEntries(Object.entries(meanElements.bodies).map(([id,e])=>[id,e.spinDays]));
 const day = 86400000;
 const date = days => new Date(SIMULATION_EPOCH + days * day);
 function scene() {
@@ -18,10 +23,8 @@ function scene() {
     return [data.id, {...data, root, tilted, mesh, orbitCenter: new THREE.Vector3(), orbitLine: new THREE.Line()}];
   }));
 }
-function update(objects, days, lockedId) {
-  updatePrimaryOrbits(objects, date(days));
-  updateSatelliteOrbits(objects, date(days), lockedId);
-  updateBodyRotations(objects, date(days), lockedId);
+function update(objects, days) {
+  updateDisplayState(objects,provider.frame(date(days)));
   for (const body of objects.values()) body.root.updateMatrixWorld(true);
 }
 function facing(observer, target) {
@@ -45,21 +48,24 @@ test('every catalogue body has valid motion, physical radius and readable surfac
     assert.ok(b.mesh.quaternion.angleTo(original.get(b.id).orientation) > 1e-7, `${b.id}: not rotating`);
     if (b.orbit) assert.ok(b.root.position.distanceTo(original.get(b.id).position) > 1e-7, `${b.id}: not orbiting`);
     if (b.parent) assert.ok(objects.has(b.parent));
-    else assert.ok(ROTATION_PERIOD_DAYS[b.id], `${b.id}: missing independent spin period`);
+    assert.ok(b.physical.orientation.model, `${b.id}: missing attitude model`);
     for (const file of [b.baseTexture || `2k_${b.texture}.jpg`, b.high].filter(Boolean)) {
       await access(new URL(`../../public/solar-system/textures/${file}`, import.meta.url));
     }
   }
 });
 
-test('Pluto and Charon remain mutually locked through the full update pipeline', () => {
-  const objects = scene();
-  for (const t of [0, .125, .25, .5, .75, 1, 9.25]) {
-    update(objects, 6.387 * t);
-    for (const [a,b] of [['pluto','charon'],['charon','pluto']]) assert.ok(facing(objects.get(a), objects.get(b)).distanceTo(new THREE.Vector3(1,0,0)) < 1e-8, `${a}: lost tidal lock`);
+test('independent Pluto/Charon attitudes preserve near-locking without manufacturing an exact fixed face', () => {
+  const objects=scene(), directions={pluto:[],charon:[]};
+  for(let i=0;i<=64;i++){
+    update(objects,i*6.387/32);
+    for(const [a,b] of [['pluto','charon'],['charon','pluto']])directions[a].push(facing(objects.get(a),objects.get(b)));
   }
-  update(objects, 4.2);
-  assert.ok(facing(objects.get('eris'), objects.get('dysnomia')).x > .999999);
+  for(const [id,values] of Object.entries(directions)){
+    const excursions=values.map(v=>v.distanceTo(values[0]));
+    assert.ok(Math.max(...excursions)>.000001,`${id}: artificially fixed face`);
+    assert.ok(Math.max(...excursions)<.025,`${id}: lost synchronous relation`);
+  }
 });
 
 test('both retrograde satellites orbit opposite to regular satellites in their parent frame', () => {
@@ -87,17 +93,13 @@ test('independent rotation matches a quarter turn without inheriting the orbital
   }
 });
 
-test('fixed rotation freezes every axis; absolute dates reproduce attitudes on rewind', () => {
-  const objects = scene();
-  for (const id of ['pluto','eris','europa','hyperion','nix','hiiaka','namaka']) {
-    update(objects, 10); const start = objects.get(id).mesh.quaternion.clone();
-    update(objects, 11, id);
-    assert.ok(start.angleTo(objects.get(id).mesh.quaternion) < 1e-7, `${id}: lock failed`);
-    update(objects, 11); update(objects, 10);
-    assert.ok(start.angleTo(objects.get(id).mesh.quaternion) < 1e-7, `${id}: rewind failed`);
+test('absolute dates reproduce independently rotating and tumbling attitudes on rewind', () => {
+  const objects=scene();
+  for(const id of ['pluto','eris','europa','hyperion','nix','hiiaka','namaka']){
+    update(objects,10);const start=objects.get(id).displayOrientation.clone();
+    update(objects,11);assert.ok(start.angleTo(objects.get(id).displayOrientation)>1e-6,id);
+    update(objects,10);assert.ok(start.angleTo(objects.get(id).displayOrientation)<1e-7,id);
   }
-  update(objects, 10);
-  assert.ok(Math.abs(objects.get('hyperion').mesh.rotation.x) > .01);
 });
 
 test('Pluto small moons orbit the barycenter while Charon retains the binary displacement', () => {
@@ -111,16 +113,26 @@ test('Pluto small moons orbit the barycenter while Charon retains the binary dis
   }
 });
 
+function meanOrbit(body,t){
+  const physical=provider.frame(date(t)).bodies.get(body.id);
+  // Express its physical plane in units of its display radius for the existing
+  // qualitative collision check; never feed this scale into physical state.
+  const model=meanElements.bodies[body.id],phase=t/COORBITAL_SWAP_DAYS*Math.PI;
+  const r=physical.relativeKm.length()/physicalData[body.id].orbitKm*body.orbit;
+  const north=provider.frame(date(t)).bodies.get(model.parent).orientation.north;
+  const node=new THREE.Vector3(0,0,1).cross(north).normalize(),east=north.clone().cross(node);
+  return {radius:r,angle:Math.atan2(physical.relativeKm.dot(east),physical.relativeKm.dot(node))};
+}
 test('co-orbital moons exchange inner/outer orbits smoothly without collisions', () => {
   const j = bodies.find(b => b.id === 'janus'), e = bodies.find(b => b.id === 'epimetheus');
-  const delta = t => satelliteOrbit(j,date(t)).radius - satelliteOrbit(e,date(t)).radius;
+  const delta = t => meanOrbit(j,t).radius - meanOrbit(e,t).radius;
   assert.ok(delta(COORBITAL_SWAP_DAYS/2) * delta(COORBITAL_SWAP_DAYS*1.5) < 0);
   for (let i = 0; i <= 160; i++) {
     const t = i * COORBITAL_SWAP_DAYS / 80;
-    const a = satelliteOrbit(j,date(t)), b = satelliteOrbit(e,date(t));
+    const a = meanOrbit(j,t), b = meanOrbit(e,t);
     const distance = Math.hypot(a.radius*Math.cos(a.angle)-b.radius*Math.cos(b.angle), a.radius*Math.sin(a.angle)-b.radius*Math.sin(b.angle));
     assert.ok(distance > j.radius + e.radius, 'co-orbital bodies intersect');
-    const next = satelliteOrbit(j,date(t+.000001));
+    const next = meanOrbit(j,t+.000001);
     assert.ok(Math.abs(next.radius-a.radius) < 1e-6);
   }
 });

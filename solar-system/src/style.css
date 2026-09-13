@@ -2369,3 +2369,47 @@ dialog .dialog-close {
 @media (max-height: 500px) and (min-width: 600px) {
   .has-resource-notice .observation-tools { top: calc(env(safe-area-inset-top, 0px) + 132px); }
 }
+
+/* Named observation actions retain touch targets at every viewport. */
+.physics-accuracy { font-size: 11px; line-height: 1.7; color: #adbcb3; }
+.observation-tools { width: min(560px, calc(100% - 420px)); left: auto; right: 100px; height: auto; gap: 8px; flex-wrap: wrap; }
+.observation-tools .follow-button { display:flex; align-items:center; justify-content:center; gap:8px; min-height:44px; padding:0 12px; border:1px solid #536b5f; background:#0c1211f5; color:#e3f1e9; border-radius:5px; font:inherit; font-size:12px; cursor:pointer; }
+.follow-button svg {width:18px;height:18px;}
+.follow-button.active {background:#294738;}
+.follow-button:focus-visible {outline:2px solid #c6f6df;outline-offset:3px;}
+.observation-tools .icon-button, .observation-tools .detail-toggle, .observation-tools .detail-toggle > span {width:44px;height:44px;}
+.observation-tools .family-picker, .observation-tools .landmark-picker {min-height:44px;}
+.observation-tools select {min-height:44px;}
+@media(max-width:760px) {
+  .observation-tools {left:16px;right:68px;width:auto;top:108px;justify-content:flex-start;}
+  .observation-tools .family-picker, .observation-tools .landmark-picker {min-width:100px;flex:1;}
+}
+@media(max-height:500px) and (min-width:600px) {
+  .observation-tools {left:260px;right:68px;width:auto;top:76px;justify-content:flex-start;max-height:calc(100% - var(--explorer-height) - 90px);overflow-y:auto;padding:4px;}
+}
+.activity-controls {gap:8px;}
+.resource-status {flex-wrap:wrap;}
+#info-button {width:44px;height:44px;min-width:44px;}
+
+.observation-settings {position:relative;flex:none;}
+.observation-settings summary {display:flex;align-items:center;justify-content:center;gap:8px;min-width:108px;min-height:44px;cursor:pointer;border:1px solid #536b5f;border-radius:5px;background:#0c1211f5;color:#dce9e2;font-size:12px;list-style:none;}
+.observation-settings summary::after {content:'⌄';}
+.observation-settings[open] summary::after {content:'⌃';}
+.observation-settings summary:focus-visible {outline:2px solid #c6f6df;outline-offset:3px;}
+.observation-settings-panel {position:absolute;right:0;top:calc(100% + 8px);width:min(300px,calc(100vw - 32px));padding:12px;background:#101b17fa;border:1px solid #536b5f;border-radius:8px;box-shadow:0 8px 26px #0009;display:grid;grid-template-columns:1fr 1fr;gap:8px;max-height:min(360px,calc(100dvh - 210px));overflow:auto;}
+.observation-settings-panel .family-picker,.observation-settings-panel .landmark-picker {grid-column:1/-1;width:100%;min-width:0;flex:none;}
+.observation-settings-panel .icon-button {width:auto;min-width:44px;display:flex;align-items:center;justify-content:center;gap:8px;font-size:12px;}
+.observation-settings-panel .detail-toggle,.observation-settings-panel .detail-toggle > span {width:100%;}
+.observation-settings-panel .detail-toggle > span {display:flex;justify-content:center;align-items:center;gap:5px;font-size:11px;}
+.observation-settings-panel .detail-toggle > span::after {content:'关';}
+.observation-settings-panel .detail-toggle input:checked + span::after {content:'开';}
+.observation-settings-panel [hidden] {display:none !important;}
+.observation-tools:has(.observation-settings[open]) {z-index:46;overflow:visible;}
+@media(max-width:760px) {
+  .observation-settings-panel {right:auto;left:0;transform:translateX(-50%);}
+}
+@media(max-height:500px) and (min-width:600px) {
+  .observation-tools {overflow:visible;max-height:none;flex-wrap:nowrap;}
+  .observation-settings-panel {right:0;left:auto;transform:none;max-height:calc(100dvh - 180px);}
+}
+#close-credits {min-width:44px;min-height:44px;}

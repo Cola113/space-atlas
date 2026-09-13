@@ -55,6 +55,7 @@ export function cameraPath(start, target, offset, bodies) {
     for (let step = 1; step <= 80; step++) {
       position(step / 80, segment.end);
       for (const body of bodies) {
+        if(body.physicalAvailable === false)continue;
         segment.closestPointToPoint(body.root.position, true, nearest);
         clearance = Math.min(
           clearance,
@@ -78,7 +79,7 @@ export function occludedByBody(point, observer, bodies, excludedId) {
   const distance = direction.length();
   direction.divideScalar(distance || 1);
   for (const body of bodies) {
-    if (body.id === excludedId) continue;
+    if (body.id === excludedId || body.physicalAvailable === false) continue;
     const relative = body.root.position.clone().sub(observer);
     const along = relative.dot(direction);
     if (along <= 0 || along >= distance) continue;

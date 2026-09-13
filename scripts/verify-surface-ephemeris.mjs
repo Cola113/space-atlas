@@ -8,12 +8,12 @@ const output=new URL('../test-results/surface-ephemeris/',import.meta.url);
 await mkdir(output,{recursive:true});
 const browser=await chromium.launch({channel:'msedge',headless:true});
 const results=[];
-async function open(context){
+async function open(context,land=true){
   const page=await context.newPage();
   const errors=[];page.on('pageerror',e=>errors.push(e.message));
   await page.goto(base+'/solar-system/');
   await page.waitForFunction(()=>window.solarAtlas?.snapshot().ready&&!window.solarAtlas.snapshot().flight,null,{timeout:60000});
-  await page.locator('#landing-button').click();
+  if(land){await page.waitForFunction(()=>!window.solarAtlas.snapshot().ephemeris.blocked&&!window.solarAtlas.snapshot().flight);await page.locator('#landing-button').click();}
   return {page,errors};
 }
 async function seed(context,date){
@@ -27,18 +27,22 @@ try{
   const date=Date.parse('1971-08-01T17:00:00Z');await seed(context,date);
   let fail=true,calls=0;
   await context.route('**/ephemeris/saturn/1971.bin',route=>{calls++;return fail?route.fulfill({status:503,body:'Unavailable'}):route.continue();});
-  const {page,errors}=await open(context);
-  await page.waitForFunction(()=>document.querySelector('.surface-view')?.dataset.ephemeris==='error');
+  const {page,errors}=await open(context,false);
+  await page.waitForFunction(()=>window.solarAtlas.snapshot().ephemeris.error);
+  assert.equal(await page.locator('#landing-button').isDisabled(),true);
+  assert.equal(await page.evaluate(()=>window.solarAtlas.snapshot().bodies.find(b=>b.id==='titan').visible),false);
   const errorTime=await page.evaluate(()=>window.solarAtlas.snapshot().date);
   assert.equal(errorTime,date);
-  const retry=page.locator('.surface-ephemeris-retry');
+  const retry=page.locator('#ephemeris-retry');
   await retry.click({trial:true});
   const bounds=await retry.boundingBox();assert.ok(bounds.width>=44&&bounds.height>=44);
   await page.screenshot({path:fileURLToPath(new URL('phone-missing-year.png',output))});
   await page.waitForTimeout(1200);assert.equal(calls,1,'no automatic request loop after failure');
   fail=false;await retry.focus();await page.keyboard.press('Enter');
+  await page.waitForFunction(()=>!window.solarAtlas.snapshot().ephemeris.blocked&&!window.solarAtlas.snapshot().flight);
+  await page.locator('#landing-button').click();
   await page.waitForFunction(()=>document.querySelector('.surface-view')?.dataset.ready==='true',null,{timeout:60000});
-  await page.locator('.surface-pause').click();
+  assert.equal(await page.evaluate(()=>window.solarAtlas.snapshot().surface.playing),false);
   assert.ok((await page.evaluate(()=>window.solarAtlas.snapshot().surface)).accuracy.includes('JPL SAT441'));
   assert.equal(await page.locator('.surface-ephemeris').isVisible(),false);
   await page.locator('.surface-exit').click();
@@ -53,6 +57,7 @@ try{
   await boundary.route('**/ephemeris/saturn/1972.bin',route=>{nextCalls++;return failNext?route.fulfill({status:503,body:'Unavailable'}):route.continue();});
   const second=await open(boundary),p=second.page;
   await p.waitForFunction(()=>document.querySelector('.surface-view')?.dataset.ready==='true',null,{timeout:60000});
+  await p.locator('.surface-pause').click();
   await p.waitForFunction(()=>document.querySelector('.surface-view')?.dataset.ephemeris==='error',null,{timeout:30000});
   const held=await p.evaluate(()=>window.solarAtlas.snapshot().surface.date);
   assert.ok(held>=start&&held<Date.parse('1972-01-01T00:00:00Z'));

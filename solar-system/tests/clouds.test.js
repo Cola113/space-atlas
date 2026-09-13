@@ -9,8 +9,9 @@ import * as THREE from "three";
 import { createCloudService, makeCloudTexture, observationTime, imageRequest } from "../server/cloud-service.js";
 import { cloudAge, cloudImageUrl, CLOUD_CHECK_MS } from "../src/cloud-policy.js";
 import { createCloudHandler } from "../../server/vercel-clouds.js";
-import { alignObservedEarth, subsolarPoint } from "../src/earth-observation.js";
-import { updatePrimaryOrbits } from "../src/orbits.js";
+import { subsolarPoint } from "../src/earth-observation.js";
+import { updateDisplayState } from '../src/orbits.js';
+import { PhysicalState } from '../src/physics/state.js';
 
 const width = 2048, height = 1024;
 const raw = Buffer.alloc(width * height * 4);
@@ -163,8 +164,7 @@ test("Earth longitude and illumination align with the observed UTC date across s
     const body = {id:"earth",body:"Earth",orbit:35.54,root:new THREE.Group(),tilted:new THREE.Group(),
       mesh:new THREE.Object3D(),clouds:new THREE.Object3D(),orbitCenter:new THREE.Vector3()};
     body.root.add(body.tilted); body.tilted.add(body.mesh,body.clouds);
-    updatePrimaryOrbits(new Map([["earth",body]]),date);
-    alignObservedEarth(body,point);
+    updateDisplayState(new Map([["earth",body]]),new PhysicalState().frame(date));
     body.root.updateMatrixWorld(true);
     const lat=point.latitude*Math.PI/180,lon=point.longitude*Math.PI/180;
     const direction=new THREE.Vector3(Math.cos(lat)*Math.cos(lon),Math.sin(lat),-Math.cos(lat)*Math.sin(lon));

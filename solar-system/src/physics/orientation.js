@@ -1,5 +1,5 @@
-import { Vector3, Matrix4, Quaternion } from 'three';
-import { RotationAxis } from 'astronomy-engine';
+import { Vector3, Matrix3, Matrix4, Quaternion } from 'three';
+import { RotationAxis, Rotation_EQD_EQJ, SiderealTime } from 'astronomy-engine';
 import data from './iau-coefficients.json';
 import { physicalTime } from './time.js';
 
@@ -33,6 +33,19 @@ export function iauOrientation(id, tdbSeconds) {
 export function bodyOrientation(id, dateOrTime) {
   const time = dateOrTime instanceof Date ? physicalTime(dateOrTime) : dateOrTime;
   if (data.bodies[id]) return iauOrientation(id, time.tdbSeconds);
+  if(id==='earth') {
+    // EarthRotationAxis.spin uses an ERA-like origin, while its reported pole
+    // includes precession/nutation. It is not W measured from that pole's IAU
+    // node. Instead rotate Greenwich by GAST in equator-of-date, then to EQJ.
+    const rotation=new Matrix3().fromArray(Rotation_EQD_EQJ(time.astronomy).rot.flat());
+    const gast=SiderealTime(time.astronomy)*15,w=radians(gast);
+    const prime=new Vector3(Math.cos(w),Math.sin(w),0).applyMatrix3(rotation);
+    const north=new Vector3(0,0,1).applyMatrix3(rotation),east=north.clone().cross(prime);
+    return {prime,east,north,primeMeridian:gast,
+      quaternion:new Quaternion().setFromRotationMatrix(new Matrix4().makeBasis(prime,east,north)),
+      source:'Astronomy Engine 2.1.19 SiderealTime / Rotation_EQD_EQJ',model:'地球 GAST、岁差与章动',
+      limitations:'UT1 以 UTC 近似，未加极移；不适用于精密地球定向预报。'};
+  }
   const names = { sun:'Sun', mercury:'Mercury', venus:'Venus', earth:'Earth', moon:'Moon', mars:'Mars', jupiter:'Jupiter', saturn:'Saturn', uranus:'Uranus', neptune:'Neptune', pluto:'Pluto' };
   if (!names[id]) throw new RangeError(`No physical orientation for ${id}`);
   const axis = RotationAxis(names[id], time.astronomy);
