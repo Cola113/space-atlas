@@ -1,0 +1,2798 @@
+{
+  "schemaVersion": 1,
+  "reviewed": "2026-09-14",
+  "constants": {
+    "auKm": 149597870.7,
+    "julianYearDays": 365.25,
+    "j2000EclipticObliquityArcsec": 84381.448
+  },
+  "sources": {
+    "satellite-radii": {
+      "url": "https://ssd.jpl.nasa.gov/sats/phys_par/",
+      "sha256": "0c6323f469e48ac654f7d4dd263ed6c62ad14689218c5451a98da29d625aaf10",
+      "bytes": 95641,
+      "retrieved": "2026-09-14"
+    },
+    "satellite-elements": {
+      "url": "https://ssd.jpl.nasa.gov/sats/elem/",
+      "sha256": "1e5e52225cf636b78d0ac602eb5352c5648aa025ba45d61593d824e70779dfdd",
+      "bytes": 580012,
+      "retrieved": "2026-09-14"
+    },
+    "planet-parameters": {
+      "url": "https://ssd.jpl.nasa.gov/planets/phys_par.html",
+      "sha256": "e49a487947295c389ba6e5833dd8fb04b63e826d39f70c123881882096e5e68b",
+      "bytes": 58244,
+      "retrieved": "2026-09-14"
+    },
+    "planet-elements": {
+      "url": "https://ssd.jpl.nasa.gov/planets/approx_pos.html",
+      "sha256": "9f7b30ca81cc548a879565bb3f70e6899a38ff5877cb1ff16bb04892f9c4d742",
+      "bytes": 29585,
+      "retrieved": "2026-09-14"
+    },
+    "pck": {
+      "url": "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/pck00011.tpc",
+      "sha256": "3dff7b1dbeceaa01f25467767d3fa25816051c85d162d1edf04acb310ee28bb1",
+      "version": "PCK00011; IAU WGCCRE 2015 and published corrections"
+    },
+    "astronomy-engine": {
+      "url": "https://github.com/cosinekitty/astronomy",
+      "version": "2.1.19"
+    },
+    "local-ephemeris": {
+      "url": "/ephemeris/README.md",
+      "version": "SAT441 / URA184 / PLU060 / DE440; see manifest"
+    },
+    "haumea-shape": {
+      "url": "https://arxiv.org/abs/2006.03113",
+      "reference": "Ortiz et al. (2017), Nature 550, 219–223, doi:10.1038/nature24051"
+    },
+    "haumea-moons": {
+      "url": "https://arxiv.org/html/0903.4213v1",
+      "reference": "Ragozzine & Brown (2009), AJ 137, 4766–4776, Tables 2–3"
+    },
+    "hiiaka-occultation": {
+      "url": "https://www.nature.com/articles/s41467-025-65749-1",
+      "reference": "Fernández-Valenzuela et al. (2025), Nature Communications 16, 10926",
+      "fullText": "https://orbi.uliege.be/bitstream/2268/339261/1/41467.pdf"
+    },
+    "makemake-spin": {
+      "url": "https://arxiv.org/abs/1904.03679",
+      "reference": "Hromakina et al. (2019), double-peaked 22.8266 h solution"
+    },
+    "eris-radius": {
+      "url": "https://www.nature.com/articles/nature10550",
+      "reference": "Sicardy et al. (2011), Nature 478, 493–496"
+    },
+    "eris-spin": {
+      "url": "https://arxiv.org/abs/2303.13445",
+      "reference": "Bernstein et al. (2023), synchronous rotation; Dysnomia size cites Brown & Butler (2018)"
+    },
+    "dysnomia-orbit": {
+      "url": "https://arxiv.org/html/2009.13733v1",
+      "reference": "Holler et al. (2021), Icarus 355, 114130; Table 2 combined solution"
+    },
+    "himalia-spin": {
+      "url": "https://elib.dlr.de/77110/",
+      "reference": "Ground-based photometry, adopted synodic rotation 7.7819 h"
+    },
+    "nereid-spin": {
+      "url": "https://arxiv.org/abs/1601.02395",
+      "reference": "Kiss et al. (2016), 11.594 h rotation"
+    },
+    "pluto-small-spin": {
+      "url": "https://ntrs.nasa.gov/citations/20170002512",
+      "reference": "Weaver et al. (2016), New Horizons small-satellite observations"
+    },
+    "hyperion-spin": {
+      "url": "https://science.nasa.gov/saturn/moons/hyperion/",
+      "reference": "NASA Hyperion overview; chaotic rotation, approximate 13-day characteristic timescale"
+    },
+    "illustration": {
+      "url": "/solar-system/BODY_MODELS.md",
+      "reference": "Explicit illustration assumptions; not a measurement or a dynamical forecast"
+    },
+    "ceres-sbdb": {
+      "url": "https://ssd-api.jpl.nasa.gov/sbdb.api?des=1&phys-par=1&full-prec=1",
+      "sha256": "8afd327e56707f54010f6fc4b0d5593446b65174de734cfcbfabec0e12fc2d1b",
+      "retrieved": "2026-09-14",
+      "orbitId": "48"
+    },
+    "makemake-sbdb": {
+      "url": "https://ssd-api.jpl.nasa.gov/sbdb.api?des=136472&phys-par=1&full-prec=1",
+      "sha256": "2e9c51d8e0782c9ed90e3d5394bd810102ba770d98331c21e0bd1e789be34a41",
+      "retrieved": "2026-09-14",
+      "orbitId": "130"
+    },
+    "haumea-sbdb": {
+      "url": "https://ssd-api.jpl.nasa.gov/sbdb.api?des=136108&phys-par=1&full-prec=1",
+      "sha256": "23677be5e831569d0f91e351d41ca0d17c0dcef6cb2b4ed1c60addee85ef1759",
+      "retrieved": "2026-09-14",
+      "orbitId": "132"
+    },
+    "eris-sbdb": {
+      "url": "https://ssd-api.jpl.nasa.gov/sbdb.api?des=136199&phys-par=1&full-prec=1",
+      "sha256": "fd3fff8b5ec0413d9f3ce2e243ed096148139d34d06d67638ceb38c0290db9b9",
+      "retrieved": "2026-09-14",
+      "orbitId": "103"
+    },
+    "vesta-sbdb": {
+      "url": "https://ssd-api.jpl.nasa.gov/sbdb.api?des=4&phys-par=1&full-prec=1",
+      "sha256": "d7df950e170bc8cc697d5e4b90134f5bd36f5a0b9336832230f84865650fc52a",
+      "retrieved": "2026-09-14",
+      "orbitId": "36"
+    },
+    "reference-frames": {
+      "url": "https://naif.jpl.nasa.gov/pub/naif/toolkit_docs/C/req/frames.html",
+      "reference": "NAIF built-in inertial ECLIPJ2000; IAU 1976 obliquity, verified with CSPICE pxform"
+    }
+  },
+  "bodies": {
+    "sun": {
+      "name": "太阳",
+      "parent": null,
+      "radius": {
+        "value": 695700,
+        "unit": "km",
+        "type": "adopted-spherical",
+        "label": "采用球面半径",
+        "epoch": null,
+        "validity": "固定形状摘要；以球面近似计算角直径与观察位置，不代表局部地形高度。",
+        "source": "pck",
+        "note": "NAIF BODY10_RADII 采用常数，不是同期光球测量。"
+      },
+      "orbit": {
+        "provider": "origin",
+        "center": "parent",
+        "validity": "日心原点约定。",
+        "stateSource": "astronomy-engine",
+        "a": {
+          "value": 0,
+          "unit": "au"
+        },
+        "source": "astronomy-engine",
+        "epochTdbJd": 2451545,
+        "referencePlane": "J2000-equatorial"
+      },
+      "rotation": {
+        "provider": "astronomy-engine",
+        "source": "astronomy-engine",
+        "epochTdbJd": 2451545,
+        "validity": "TT 姿态近似 TDB；地球使用 GAST/岁差章动，UT1≈UTC，无极移。"
+      }
+    },
+    "mercury": {
+      "name": "水星",
+      "parent": "sun",
+      "radius": {
+        "value": 2439.4,
+        "unit": "km",
+        "type": "volume-equivalent",
+        "label": "体积等效半径",
+        "epoch": null,
+        "validity": "固定形状摘要；以球面近似计算角直径与观察位置，不代表局部地形高度。",
+        "source": "planet-parameters",
+        "reference": "2439.4 [D] ±0.1",
+        "uncertainty": 0.1
+      },
+      "orbit": {
+        "provider": "astronomy-engine",
+        "center": "parent",
+        "validity": "轨道尺寸/周期仅用于目录与显示尺度；真实日期状态由指定星历提供。重点校准 1900—2100，范围外明确近似。",
+        "stateSource": "astronomy-engine",
+        "a": {
+          "value": 0.38709927,
+          "unit": "au"
+        },
+        "periodDays": 87.969257175,
+        "periodType": "sidereal reference period",
+        "periodSource": "planet-parameters",
+        "epochTdbJd": 2451545,
+        "referencePlane": "ecliptic",
+        "source": "planet-elements",
+        "reference": "JPL approximate elements Table 1; a(J2000) only"
+      },
+      "rotation": {
+        "provider": "astronomy-engine",
+        "source": "astronomy-engine",
+        "epochTdbJd": 2451545,
+        "validity": "TT 姿态近似 TDB；地球使用 GAST/岁差章动，UT1≈UTC，无极移。",
+        "periodDays": 58.6462,
+        "periodSource": "planet-parameters"
+      }
+    },
+    "venus": {
+      "name": "金星",
+      "parent": "sun",
+      "radius": {
+        "value": 6051.8,
+        "unit": "km",
+        "type": "volume-equivalent",
+        "label": "体积等效半径",
+        "epoch": null,
+        "validity": "固定形状摘要；以球面近似计算角直径与观察位置，不代表局部地形高度。",
+        "source": "planet-parameters",
+        "reference": "6051.8 [D] ±1.0",
+        "uncertainty": 1.0
+      },
+      "orbit": {
+        "provider": "astronomy-engine",
+        "center": "parent",
+        "validity": "轨道尺寸/周期仅用于目录与显示尺度；真实日期状态由指定星历提供。重点校准 1900—2100，范围外明确近似。",
+        "stateSource": "astronomy-engine",
+        "a": {
+          "value": 0.72333566,
+          "unit": "au"
+        },
+        "periodDays": 224.700799215,
+        "periodType": "sidereal reference period",
+        "periodSource": "planet-parameters",
+        "epochTdbJd": 2451545,
+        "referencePlane": "ecliptic",
+        "source": "planet-elements",
+        "reference": "JPL approximate elements Table 1; a(J2000) only"
+      },
+      "rotation": {
+        "provider": "astronomy-engine",
+        "source": "astronomy-engine",
+        "epochTdbJd": 2451545,
+        "validity": "TT 姿态近似 TDB；地球使用 GAST/岁差章动，UT1≈UTC，无极移。",
+        "periodDays": 243.018,
+        "periodSource": "planet-parameters"
+      }
+    },
+    "earth": {
+      "name": "地球",
+      "parent": "sun",
+      "radius": {
+        "value": 6371.0084,
+        "unit": "km",
+        "type": "arithmetic-mean",
+        "label": "算术平均半径",
+        "epoch": null,
+        "validity": "固定形状摘要；以球面近似计算角直径与观察位置，不代表局部地形高度。",
+        "source": "planet-parameters",
+        "reference": "6371.0084 [D] ±0.0001",
+        "uncertainty": 0.0001,
+        "note": "JPL Mean Radius 列采用值；与 PCK 的 (2a+c)/3 一致。该数值不是严格的体积等效半径。"
+      },
+      "orbit": {
+        "provider": "astronomy-engine",
+        "center": "parent",
+        "validity": "轨道尺寸/周期仅用于目录与显示尺度；真实日期状态由指定星历提供。重点校准 1900—2100，范围外明确近似。",
+        "stateSource": "astronomy-engine",
+        "a": {
+          "value": 1.00000261,
+          "unit": "au"
+        },
+        "periodDays": 365.25635535,
+        "periodType": "sidereal reference period",
+        "periodSource": "planet-parameters",
+        "epochTdbJd": 2451545,
+        "referencePlane": "ecliptic",
+        "source": "planet-elements",
+        "reference": "JPL approximate elements Table 1; a(J2000) only"
+      },
+      "rotation": {
+        "provider": "astronomy-engine",
+        "source": "astronomy-engine",
+        "epochTdbJd": 2451545,
+        "validity": "TT 姿态近似 TDB；地球使用 GAST/岁差章动，UT1≈UTC，无极移。",
+        "periodDays": 0.99726968,
+        "periodSource": "planet-parameters"
+      }
+    },
+    "mars": {
+      "name": "火星",
+      "parent": "sun",
+      "radius": {
+        "value": 3389.5,
+        "unit": "km",
+        "type": "volume-equivalent",
+        "label": "体积等效半径",
+        "epoch": null,
+        "validity": "固定形状摘要；以球面近似计算角直径与观察位置，不代表局部地形高度。",
+        "source": "planet-parameters",
+        "reference": "3389.50 [D] ±0.2",
+        "uncertainty": 0.2
+      },
+      "orbit": {
+        "provider": "astronomy-engine",
+        "center": "parent",
+        "validity": "轨道尺寸/周期仅用于目录与显示尺度；真实日期状态由指定星历提供。重点校准 1900—2100，范围外明确近似。",
+        "stateSource": "astronomy-engine",
+        "a": {
+          "value": 1.52371034,
+          "unit": "au"
+        },
+        "periodDays": 686.9795859000001,
+        "periodType": "sidereal reference period",
+        "periodSource": "planet-parameters",
+        "epochTdbJd": 2451545,
+        "referencePlane": "ecliptic",
+        "source": "planet-elements",
+        "reference": "JPL approximate elements Table 1; a(J2000) only"
+      },
+      "rotation": {
+        "provider": "astronomy-engine",
+        "source": "astronomy-engine",
+        "epochTdbJd": 2451545,
+        "validity": "TT 姿态近似 TDB；地球使用 GAST/岁差章动，UT1≈UTC，无极移。",
+        "periodDays": 1.02595676,
+        "periodSource": "planet-parameters"
+      }
+    },
+    "jupiter": {
+      "name": "木星",
+      "parent": "sun",
+      "radius": {
+        "value": 69911.0,
+        "unit": "km",
+        "type": "volume-equivalent",
+        "label": "体积等效半径",
+        "epoch": null,
+        "validity": "固定形状摘要；以球面近似计算角直径与观察位置，不代表局部地形高度。",
+        "source": "planet-parameters",
+        "reference": "69911 [D] ±6",
+        "uncertainty": 6.0
+      },
+      "orbit": {
+        "provider": "astronomy-engine",
+        "center": "parent",
+        "validity": "轨道尺寸/周期仅用于目录与显示尺度；真实日期状态由指定星历提供。重点校准 1900—2100，范围外明确近似。",
+        "stateSource": "astronomy-engine",
+        "a": {
+          "value": 5.202887,
+          "unit": "au"
+        },
+        "periodDays": 4332.82012875,
+        "periodType": "sidereal reference period",
+        "periodSource": "planet-parameters",
+        "epochTdbJd": 2451545,
+        "referencePlane": "ecliptic",
+        "source": "planet-elements",
+        "reference": "JPL approximate elements Table 1; a(J2000) only"
+      },
+      "rotation": {
+        "provider": "astronomy-engine",
+        "source": "astronomy-engine",
+        "epochTdbJd": 2451545,
+        "validity": "TT 姿态近似 TDB；地球使用 GAST/岁差章动，UT1≈UTC，无极移。",
+        "periodDays": 0.41354,
+        "periodSource": "planet-parameters"
+      }
+    },
+    "saturn": {
+      "name": "土星",
+      "parent": "sun",
+      "radius": {
+        "value": 58232.0,
+        "unit": "km",
+        "type": "volume-equivalent",
+        "label": "体积等效半径",
+        "epoch": null,
+        "validity": "固定形状摘要；以球面近似计算角直径与观察位置，不代表局部地形高度。",
+        "source": "planet-parameters",
+        "reference": "58232 [D] ±6",
+        "uncertainty": 6.0
+      },
+      "orbit": {
+        "provider": "astronomy-engine",
+        "center": "parent",
+        "validity": "轨道尺寸/周期仅用于目录与显示尺度；真实日期状态由指定星历提供。重点校准 1900—2100，范围外明确近似。",
+        "stateSource": "astronomy-engine",
+        "a": {
+          "value": 9.53667594,
+          "unit": "au"
+        },
+        "periodDays": 10755.6986445,
+        "periodType": "sidereal reference period",
+        "periodSource": "planet-parameters",
+        "epochTdbJd": 2451545,
+        "referencePlane": "ecliptic",
+        "source": "planet-elements",
+        "reference": "JPL approximate elements Table 1; a(J2000) only"
+      },
+      "rotation": {
+        "provider": "astronomy-engine",
+        "source": "astronomy-engine",
+        "epochTdbJd": 2451545,
+        "validity": "TT 姿态近似 TDB；地球使用 GAST/岁差章动，UT1≈UTC，无极移。",
+        "periodDays": 0.44401,
+        "periodSource": "planet-parameters"
+      }
+    },
+    "uranus": {
+      "name": "天王星",
+      "parent": "sun",
+      "radius": {
+        "value": 25362.0,
+        "unit": "km",
+        "type": "volume-equivalent",
+        "label": "体积等效半径",
+        "epoch": null,
+        "validity": "固定形状摘要；以球面近似计算角直径与观察位置，不代表局部地形高度。",
+        "source": "planet-parameters",
+        "reference": "25362 [D] ±7",
+        "uncertainty": 7.0
+      },
+      "orbit": {
+        "provider": "astronomy-engine",
+        "center": "parent",
+        "validity": "轨道尺寸/周期仅用于目录与显示尺度；真实日期状态由指定星历提供。重点校准 1900—2100，范围外明确近似。",
+        "stateSource": "astronomy-engine",
+        "a": {
+          "value": 19.18916464,
+          "unit": "au"
+        },
+        "periodDays": 30687.1530015,
+        "periodType": "sidereal reference period",
+        "periodSource": "planet-parameters",
+        "epochTdbJd": 2451545,
+        "referencePlane": "ecliptic",
+        "source": "planet-elements",
+        "reference": "JPL approximate elements Table 1; a(J2000) only"
+      },
+      "rotation": {
+        "provider": "astronomy-engine",
+        "source": "astronomy-engine",
+        "epochTdbJd": 2451545,
+        "validity": "TT 姿态近似 TDB；地球使用 GAST/岁差章动，UT1≈UTC，无极移。",
+        "periodDays": 0.71833,
+        "periodSource": "planet-parameters"
+      }
+    },
+    "neptune": {
+      "name": "海王星",
+      "parent": "sun",
+      "radius": {
+        "value": 24622.0,
+        "unit": "km",
+        "type": "volume-equivalent",
+        "label": "体积等效半径",
+        "epoch": null,
+        "validity": "固定形状摘要；以球面近似计算角直径与观察位置，不代表局部地形高度。",
+        "source": "planet-parameters",
+        "reference": "24622 [D] ±19",
+        "uncertainty": 19.0
+      },
+      "orbit": {
+        "provider": "astronomy-engine",
+        "center": "parent",
+        "validity": "轨道尺寸/周期仅用于目录与显示尺度；真实日期状态由指定星历提供。重点校准 1900—2100，范围外明确近似。",
+        "stateSource": "astronomy-engine",
+        "a": {
+          "value": 30.06992276,
+          "unit": "au"
+        },
+        "periodDays": 60190.029630000005,
+        "periodType": "sidereal reference period",
+        "periodSource": "planet-parameters",
+        "epochTdbJd": 2451545,
+        "referencePlane": "ecliptic",
+        "source": "planet-elements",
+        "reference": "JPL approximate elements Table 1; a(J2000) only"
+      },
+      "rotation": {
+        "provider": "astronomy-engine",
+        "source": "astronomy-engine",
+        "epochTdbJd": 2451545,
+        "validity": "TT 姿态近似 TDB；地球使用 GAST/岁差章动，UT1≈UTC，无极移。",
+        "periodDays": 0.67125,
+        "periodSource": "planet-parameters"
+      }
+    },
+    "pluto": {
+      "name": "冥王星",
+      "parent": "sun",
+      "radius": {
+        "value": 1188.3,
+        "unit": "km",
+        "type": "volume-equivalent",
+        "label": "体积等效半径",
+        "epoch": null,
+        "validity": "固定形状摘要；以球面近似计算角直径与观察位置，不代表局部地形高度。",
+        "source": "planet-parameters",
+        "reference": "1188.3 [D] ±1.6",
+        "uncertainty": 1.6
+      },
+      "orbit": {
+        "provider": "jpl-year",
+        "center": "parent",
+        "validity": "轨道尺寸/周期仅用于目录与显示尺度；真实日期状态由指定星历提供。重点校准 1900—2100，范围外明确近似。",
+        "stateSource": "local-ephemeris",
+        "a": {
+          "value": 39.48211675,
+          "unit": "au"
+        },
+        "periodDays": 90553.0174125,
+        "periodType": "sidereal reference period",
+        "periodSource": "planet-parameters",
+        "epochTdbJd": 2451545,
+        "referencePlane": "ecliptic",
+        "source": "planet-elements",
+        "reference": "J2000 mean size of system heliocentric orbit"
+      },
+      "rotation": {
+        "provider": "astronomy-engine",
+        "source": "astronomy-engine",
+        "epochTdbJd": 2451545,
+        "validity": "TT 姿态近似 TDB；地球使用 GAST/岁差章动，UT1≈UTC，无极移。",
+        "periodDays": 6.3872,
+        "periodSource": "planet-parameters"
+      }
+    },
+    "ceres": {
+      "name": "谷神星",
+      "parent": "sun",
+      "radius": {
+        "value": 469.7,
+        "unit": "km",
+        "type": "volume-equivalent",
+        "label": "体积等效半径",
+        "epoch": null,
+        "validity": "固定形状摘要；以球面近似计算角直径与观察位置，不代表局部地形高度。",
+        "source": "planet-parameters",
+        "reference": "469.7 [O]"
+      },
+      "orbit": {
+        "provider": "mean-kepler",
+        "center": "parent",
+        "validity": "固定平均椭圆；不含摄动、节点/拱线进动或历元后轨道演化，不用于方位、交会、掩食预报。",
+        "a": {
+          "value": 2.765552595034094,
+          "unit": "au"
+        },
+        "e": 0.07969229514816586,
+        "argumentPeriapsisDegrees": 73.29421453021587,
+        "meanAnomalyDegrees": 274.4193463761342,
+        "inclinationDegrees": 10.58802780183462,
+        "ascendingNodeDegrees": 80.24862682043221,
+        "periodDays": 1679.853119758983,
+        "periodType": "SBDB osculating Kepler period",
+        "epochTdbJd": 2461200.5,
+        "referencePlane": "ecliptic",
+        "source": "ceres-sbdb",
+        "reference": "SBDB orbit 48"
+      },
+      "rotation": {
+        "provider": "iau-pck",
+        "source": "pck",
+        "coefficients": "ceres",
+        "epochTdbJd": 2451545,
+        "validity": "IAU 多项式与所列周期项；不添加额外物理天平动。系数不是整段日期均经观测校准的保证。"
+      }
+    },
+    "makemake": {
+      "name": "鸟神星",
+      "parent": "sun",
+      "radius": {
+        "value": 714.0,
+        "unit": "km",
+        "type": "inferred-volume-equivalent",
+        "label": "等效半径 · 推定",
+        "epoch": null,
+        "validity": "固定形状摘要；以球面近似计算角直径与观察位置，不代表局部地形高度。",
+        "source": "planet-parameters",
+        "reference": "714 [T] ±7",
+        "uncertainty": 7.0,
+        "estimated": true,
+        "note": "采用 JPL 引用 Brown (2013) 的掩星/形状模型结果；三维形状依赖先验，并非直接地表测绘。"
+      },
+      "orbit": {
+        "provider": "mean-kepler",
+        "center": "parent",
+        "validity": "固定平均椭圆；不含摄动、节点/拱线进动或历元后轨道演化，不用于方位、交会、掩食预报。",
+        "a": {
+          "value": 45.57093317300052,
+          "unit": "au"
+        },
+        "e": 0.1588889953992523,
+        "argumentPeriapsisDegrees": 297.0922733397207,
+        "meanAnomalyDegrees": 169.9379962048232,
+        "inclinationDegrees": 29.02785603743067,
+        "ascendingNodeDegrees": 79.2948338209406,
+        "periodDays": 112364.8068762869,
+        "periodType": "SBDB osculating Kepler period",
+        "epochTdbJd": 2461200.5,
+        "referencePlane": "ecliptic",
+        "source": "makemake-sbdb",
+        "reference": "SBDB orbit 130"
+      },
+      "rotation": {
+        "provider": "mean-spin",
+        "periodDays": 0.9511083333333333,
+        "source": "makemake-spin",
+        "epochTdbJd": 2451545,
+        "primeMeridianDegrees": 0,
+        "pole": {
+          "raDegrees": 0,
+          "decDegrees": 90,
+          "assumed": true
+        },
+        "validity": "初始经线和未测极轴为示意；按独立周期求姿态，不能预测真实朝向。"
+      }
+    },
+    "haumea": {
+      "name": "妊神星",
+      "parent": "sun",
+      "radius": {
+        "value": 797.6206575106592,
+        "unit": "km",
+        "type": "inferred-volume-equivalent",
+        "label": "体积等效半径 · 推定",
+        "epoch": "2017-01-21 occultation",
+        "validity": "固定形状摘要；以球面近似计算角直径与观察位置，不代表局部地形高度。",
+        "source": "haumea-shape",
+        "estimated": true,
+        "semiAxesKm": [
+          1161,
+          852,
+          513
+        ],
+        "semiAxesUncertaintyKm": [
+          30,
+          4,
+          16
+        ],
+        "note": "由论文三轴半径的几何平均得到；形状依赖光变和极轴假设。"
+      },
+      "orbit": {
+        "provider": "mean-kepler",
+        "center": "parent",
+        "validity": "固定平均椭圆；不含摄动、节点/拱线进动或历元后轨道演化，不用于方位、交会、掩食预报。",
+        "a": {
+          "value": 43.06029023650952,
+          "unit": "au"
+        },
+        "e": 0.1944430148898797,
+        "argumentPeriapsisDegrees": 240.6905472508661,
+        "meanAnomalyDegrees": 223.2104118812299,
+        "inclinationDegrees": 28.20847393040364,
+        "ascendingNodeDegrees": 121.7860561329425,
+        "periodDays": 103208.1173403618,
+        "periodType": "SBDB osculating Kepler period",
+        "epochTdbJd": 2461200.5,
+        "referencePlane": "ecliptic",
+        "source": "haumea-sbdb",
+        "reference": "SBDB orbit 132"
+      },
+      "rotation": {
+        "provider": "mean-spin",
+        "periodDays": 0.16313920833333334,
+        "source": "haumea-shape",
+        "epochTdbJd": 2451545,
+        "primeMeridianDegrees": 0,
+        "pole": {
+          "raDegrees": 285.1,
+          "decDegrees": -10.6,
+          "source": "haumea-shape",
+          "note": "采用掩星环极轴解 1 作为自转极轴；经线零点未校准。"
+        },
+        "validity": "初始经线和未测极轴为示意；按独立周期求姿态，不能预测真实朝向。"
+      }
+    },
+    "eris": {
+      "name": "阋神星",
+      "parent": "sun",
+      "radius": {
+        "value": 1163,
+        "unit": "km",
+        "type": "occultation-spherical-fit",
+        "label": "掩星拟合半径",
+        "epoch": "2010-11-06 occultation",
+        "validity": "固定形状摘要；以球面近似计算角直径与观察位置，不代表局部地形高度。",
+        "source": "eris-radius",
+        "uncertainty": 6,
+        "note": "球形边缘拟合值；不是所有经纬度的独立半径测量。"
+      },
+      "orbit": {
+        "provider": "mean-kepler",
+        "center": "parent",
+        "validity": "固定平均椭圆；不含摄动、节点/拱线进动或历元后轨道演化，不用于方位、交会、掩食预报。",
+        "a": {
+          "value": 67.93394687853566,
+          "unit": "au"
+        },
+        "e": 0.4382385347971672,
+        "argumentPeriapsisDegrees": 150.7949235840312,
+        "meanAnomalyDegrees": 211.774434275007,
+        "inclinationDegrees": 43.9258279471791,
+        "ascendingNodeDegrees": 36.00477044417249,
+        "periodDays": 204516.6629430732,
+        "periodType": "SBDB osculating Kepler period",
+        "epochTdbJd": 2461200.5,
+        "referencePlane": "ecliptic",
+        "source": "eris-sbdb",
+        "reference": "SBDB orbit 103"
+      },
+      "rotation": {
+        "provider": "mean-spin",
+        "periodDays": 15.7859,
+        "source": "eris-spin",
+        "epochTdbJd": 2451545,
+        "primeMeridianDegrees": 0,
+        "pole": {
+          "orbitNormalOf": "dysnomia",
+          "assumed": true,
+          "note": "采用参考历元轨道极轴作为姿态假设，不是已测自转极轴。"
+        },
+        "validity": "初始经线和未测极轴为示意；按独立周期求姿态，不能预测真实朝向。"
+      }
+    },
+    "vesta": {
+      "name": "灶神星",
+      "parent": "sun",
+      "radius": {
+        "value": 261.385,
+        "unit": "km",
+        "type": "effective",
+        "label": "等效半径",
+        "epoch": null,
+        "validity": "固定形状摘要；以球面近似计算角直径与观察位置，不代表局部地形高度。",
+        "uncertainty": 0.05,
+        "source": "vesta-sbdb",
+        "reference": "Park, R.S. et al. 2025, Nat Astron, DOI: 10.1038/s41550-025-02533-7",
+        "note": "SBDB effective body diameter 的一半；不是最长半轴。",
+        "semiAxesKm": [
+          284.62,
+          277.24,
+          226.33
+        ]
+      },
+      "orbit": {
+        "provider": "mean-kepler",
+        "center": "parent",
+        "validity": "固定平均椭圆；不含摄动、节点/拱线进动或历元后轨道演化，不用于方位、交会、掩食预报。",
+        "a": {
+          "value": 2.361365965127599,
+          "unit": "au"
+        },
+        "e": 0.09020374382834395,
+        "argumentPeriapsisDegrees": 151.4686478221564,
+        "meanAnomalyDegrees": 81.19015607686903,
+        "inclinationDegrees": 7.143925545058711,
+        "ascendingNodeDegrees": 103.701293265032,
+        "periodDays": 1325.389042911101,
+        "periodType": "SBDB osculating Kepler period",
+        "epochTdbJd": 2461200.5,
+        "referencePlane": "ecliptic",
+        "source": "vesta-sbdb",
+        "reference": "SBDB orbit 36"
+      },
+      "rotation": {
+        "provider": "iau-pck",
+        "source": "pck",
+        "coefficients": "vesta",
+        "epochTdbJd": 2451545,
+        "validity": "IAU 多项式与所列周期项；不添加额外物理天平动。系数不是整段日期均经观测校准的保证。"
+      }
+    },
+    "moon": {
+      "name": "月球",
+      "parent": "earth",
+      "radius": {
+        "value": 1737.4,
+        "unit": "km",
+        "type": "volume-equivalent",
+        "label": "体积等效半径",
+        "epoch": null,
+        "validity": "固定形状摘要；以球面近似计算角直径与观察位置，不代表局部地形高度。",
+        "uncertainty": 0.1,
+        "source": "satellite-radii",
+        "reference": "Archinal et al. (2018), WGCCRE 2015"
+      },
+      "orbit": {
+        "provider": "astronomy-engine",
+        "center": "parent",
+        "validity": "轨道尺寸/周期仅用于目录与显示尺度；真实日期状态由指定星历提供。重点校准 1900—2100，范围外明确近似。",
+        "stateSource": "astronomy-engine",
+        "a": {
+          "value": 384400.0,
+          "unit": "km"
+        },
+        "e": 0.0554,
+        "argumentPeriapsisDegrees": 318.15,
+        "meanAnomalyDegrees": 135.27,
+        "inclinationDegrees": 5.16,
+        "ascendingNodeDegrees": 125.08,
+        "periodDays": 27.322,
+        "periodType": "JPL table P (sidereal; mean-element approximation)",
+        "epochTdbJd": 2451545.0,
+        "referencePlane": "ecliptic",
+        "source": "satellite-elements",
+        "reference": "DE405/LE405; table ref. n/a"
+      },
+      "rotation": {
+        "provider": "astronomy-engine",
+        "source": "astronomy-engine",
+        "epochTdbJd": 2451545,
+        "validity": "TT 姿态近似 TDB；地球使用 GAST/岁差章动，UT1≈UTC，无极移。"
+      }
+    },
+    "phobos": {
+      "name": "火卫一",
+      "parent": "mars",
+      "radius": {
+        "value": 11.08,
+        "unit": "km",
+        "type": "volume-equivalent",
+        "label": "体积等效半径",
+        "epoch": null,
+        "validity": "固定形状摘要；以球面近似计算角直径与观察位置，不代表局部地形高度。",
+        "uncertainty": 0.04,
+        "source": "satellite-radii",
+        "reference": "Archinal et al. (2018), WGCCRE 2015"
+      },
+      "orbit": {
+        "provider": "mean-kepler",
+        "center": "parent",
+        "validity": "固定平均椭圆；不含摄动、节点/拱线进动或历元后轨道演化，不用于方位、交会、掩食预报。",
+        "a": {
+          "value": 9375.0,
+          "unit": "km"
+        },
+        "e": 0.015,
+        "argumentPeriapsisDegrees": 216.3,
+        "meanAnomalyDegrees": 189.7,
+        "inclinationDegrees": 1.1,
+        "ascendingNodeDegrees": 169.2,
+        "periodDays": 0.3187,
+        "periodType": "JPL table P (sidereal; mean-element approximation)",
+        "epochTdbJd": 2451545.0,
+        "referencePlane": "Laplace",
+        "source": "satellite-elements",
+        "reference": "MAR099; table ref. 7",
+        "referencePole": {
+          "raDegrees": 317.7,
+          "decDegrees": 52.9,
+          "frame": "ICRF equatorial"
+        }
+      },
+      "rotation": {
+        "provider": "iau-pck",
+        "source": "pck",
+        "coefficients": "phobos",
+        "epochTdbJd": 2451545,
+        "validity": "IAU 多项式与所列周期项；不添加额外物理天平动。系数不是整段日期均经观测校准的保证。"
+      }
+    },
+    "io": {
+      "name": "木卫一",
+      "parent": "jupiter",
+      "radius": {
+        "value": 1821.49,
+        "unit": "km",
+        "type": "volume-equivalent",
+        "label": "体积等效半径",
+        "epoch": null,
+        "validity": "固定形状摘要；以球面近似计算角直径与观察位置，不代表局部地形高度。",
+        "uncertainty": 0.5,
+        "source": "satellite-radii",
+        "reference": "Archinal et al. (2018), WGCCRE 2015"
+      },
+      "orbit": {
+        "provider": "astronomy-engine",
+        "center": "parent",
+        "validity": "轨道尺寸/周期仅用于目录与显示尺度；真实日期状态由指定星历提供。重点校准 1900—2100，范围外明确近似。",
+        "stateSource": "astronomy-engine",
+        "a": {
+          "value": 421800.0,
+          "unit": "km"
+        },
+        "e": 0.004,
+        "argumentPeriapsisDegrees": 49.1,
+        "meanAnomalyDegrees": 330.9,
+        "inclinationDegrees": 0.0,
+        "ascendingNodeDegrees": 0.0,
+        "periodDays": 1.762732,
+        "periodType": "JPL table P (sidereal; mean-element approximation)",
+        "epochTdbJd": 2451545.0,
+        "referencePlane": "Laplace",
+        "source": "satellite-elements",
+        "reference": "JUP365; table ref. 29",
+        "referencePole": {
+          "raDegrees": 268.1,
+          "decDegrees": 64.5,
+          "frame": "ICRF equatorial"
+        }
+      },
+      "rotation": {
+        "provider": "iau-pck",
+        "source": "pck",
+        "coefficients": "io",
+        "epochTdbJd": 2451545,
+        "validity": "IAU 多项式与所列周期项；不添加额外物理天平动。系数不是整段日期均经观测校准的保证。"
+      }
+    },
+    "europa": {
+      "name": "木卫二",
+      "parent": "jupiter",
+      "radius": {
+        "value": 1560.8,
+        "unit": "km",
+        "type": "volume-equivalent",
+        "label": "体积等效半径",
+        "epoch": null,
+        "validity": "固定形状摘要；以球面近似计算角直径与观察位置，不代表局部地形高度。",
+        "uncertainty": 0.3,
+        "source": "satellite-radii",
+        "reference": "Archinal et al. (2018), WGCCRE 2015"
+      },
+      "orbit": {
+        "provider": "astronomy-engine",
+        "center": "parent",
+        "validity": "轨道尺寸/周期仅用于目录与显示尺度；真实日期状态由指定星历提供。重点校准 1900—2100，范围外明确近似。",
+        "stateSource": "astronomy-engine",
+        "a": {
+          "value": 671100.0,
+          "unit": "km"
+        },
+        "e": 0.009,
+        "argumentPeriapsisDegrees": 45.0,
+        "meanAnomalyDegrees": 345.4,
+        "inclinationDegrees": 0.5,
+        "ascendingNodeDegrees": 184.0,
+        "periodDays": 3.525463,
+        "periodType": "JPL table P (sidereal; mean-element approximation)",
+        "epochTdbJd": 2451545.0,
+        "referencePlane": "Laplace",
+        "source": "satellite-elements",
+        "reference": "JUP365; table ref. 29",
+        "referencePole": {
+          "raDegrees": 268.1,
+          "decDegrees": 64.5,
+          "frame": "ICRF equatorial"
+        }
+      },
+      "rotation": {
+        "provider": "iau-pck",
+        "source": "pck",
+        "coefficients": "europa",
+        "epochTdbJd": 2451545,
+        "validity": "IAU 多项式与所列周期项；不添加额外物理天平动。系数不是整段日期均经观测校准的保证。"
+      }
+    },
+    "ganymede": {
+      "name": "木卫三",
+      "parent": "jupiter",
+      "radius": {
+        "value": 2631.2,
+        "unit": "km",
+        "type": "volume-equivalent",
+        "label": "体积等效半径",
+        "epoch": null,
+        "validity": "固定形状摘要；以球面近似计算角直径与观察位置，不代表局部地形高度。",
+        "uncertainty": 1.7,
+        "source": "satellite-radii",
+        "reference": "Archinal et al. (2018), WGCCRE 2015"
+      },
+      "orbit": {
+        "provider": "astronomy-engine",
+        "center": "parent",
+        "validity": "轨道尺寸/周期仅用于目录与显示尺度；真实日期状态由指定星历提供。重点校准 1900—2100，范围外明确近似。",
+        "stateSource": "astronomy-engine",
+        "a": {
+          "value": 1070400.0,
+          "unit": "km"
+        },
+        "e": 0.001,
+        "argumentPeriapsisDegrees": 198.3,
+        "meanAnomalyDegrees": 324.8,
+        "inclinationDegrees": 0.2,
+        "ascendingNodeDegrees": 58.5,
+        "periodDays": 7.155588,
+        "periodType": "JPL table P (sidereal; mean-element approximation)",
+        "epochTdbJd": 2451545.0,
+        "referencePlane": "Laplace",
+        "source": "satellite-elements",
+        "reference": "JUP365; table ref. 29",
+        "referencePole": {
+          "raDegrees": 268.2,
+          "decDegrees": 64.6,
+          "frame": "ICRF equatorial"
+        }
+      },
+      "rotation": {
+        "provider": "iau-pck",
+        "source": "pck",
+        "coefficients": "ganymede",
+        "epochTdbJd": 2451545,
+        "validity": "IAU 多项式与所列周期项；不添加额外物理天平动。系数不是整段日期均经观测校准的保证。"
+      }
+    },
+    "callisto": {
+      "name": "木卫四",
+      "parent": "jupiter",
+      "radius": {
+        "value": 2410.3,
+        "unit": "km",
+        "type": "volume-equivalent",
+        "label": "体积等效半径",
+        "epoch": null,
+        "validity": "固定形状摘要；以球面近似计算角直径与观察位置，不代表局部地形高度。",
+        "uncertainty": 1.5,
+        "source": "satellite-radii",
+        "reference": "Archinal et al. (2018), WGCCRE 2015"
+      },
+      "orbit": {
+        "provider": "astronomy-engine",
+        "center": "parent",
+        "validity": "轨道尺寸/周期仅用于目录与显示尺度；真实日期状态由指定星历提供。重点校准 1900—2100，范围外明确近似。",
+        "stateSource": "astronomy-engine",
+        "a": {
+          "value": 1882700.0,
+          "unit": "km"
+        },
+        "e": 0.007,
+        "argumentPeriapsisDegrees": 43.8,
+        "meanAnomalyDegrees": 87.4,
+        "inclinationDegrees": 0.3,
+        "ascendingNodeDegrees": 309.1,
+        "periodDays": 16.69044,
+        "periodType": "JPL table P (sidereal; mean-element approximation)",
+        "epochTdbJd": 2451545.0,
+        "referencePlane": "Laplace",
+        "source": "satellite-elements",
+        "reference": "JUP365; table ref. 29",
+        "referencePole": {
+          "raDegrees": 268.7,
+          "decDegrees": 64.8,
+          "frame": "ICRF equatorial"
+        }
+      },
+      "rotation": {
+        "provider": "iau-pck",
+        "source": "pck",
+        "coefficients": "callisto",
+        "epochTdbJd": 2451545,
+        "validity": "IAU 多项式与所列周期项；不添加额外物理天平动。系数不是整段日期均经观测校准的保证。"
+      }
+    },
+    "enceladus": {
+      "name": "土卫二",
+      "parent": "saturn",
+      "radius": {
+        "value": 252.1,
+        "unit": "km",
+        "type": "volume-equivalent",
+        "label": "体积等效半径",
+        "epoch": null,
+        "validity": "固定形状摘要；以球面近似计算角直径与观察位置，不代表局部地形高度。",
+        "uncertainty": 0.2,
+        "source": "satellite-radii",
+        "reference": "Archinal et al. (2018), WGCCRE 2015"
+      },
+      "orbit": {
+        "provider": "jpl-year",
+        "center": "parent",
+        "validity": "轨道尺寸/周期仅用于目录与显示尺度；真实日期状态由指定星历提供。重点校准 1900—2100，范围外明确近似。",
+        "stateSource": "local-ephemeris",
+        "a": {
+          "value": 238400.0,
+          "unit": "km"
+        },
+        "e": 0.005,
+        "argumentPeriapsisDegrees": 119.5,
+        "meanAnomalyDegrees": 57.0,
+        "inclinationDegrees": 0.0,
+        "ascendingNodeDegrees": 0.0,
+        "periodDays": 1.370218,
+        "periodType": "JPL table P (sidereal; mean-element approximation)",
+        "epochTdbJd": 2451545.0,
+        "referencePlane": "Laplace",
+        "source": "satellite-elements",
+        "reference": "SAT441; table ref. 36",
+        "referencePole": {
+          "raDegrees": 40.6,
+          "decDegrees": 83.5,
+          "frame": "ICRF equatorial"
+        }
+      },
+      "rotation": {
+        "provider": "iau-pck",
+        "source": "pck",
+        "coefficients": "enceladus",
+        "epochTdbJd": 2451545,
+        "validity": "IAU 多项式与所列周期项；不添加额外物理天平动。系数不是整段日期均经观测校准的保证。"
+      }
+    },
+    "titan": {
+      "name": "土卫六",
+      "parent": "saturn",
+      "radius": {
+        "value": 2574.76,
+        "unit": "km",
+        "type": "volume-equivalent",
+        "label": "体积等效半径",
+        "epoch": null,
+        "validity": "固定形状摘要；以球面近似计算角直径与观察位置，不代表局部地形高度。",
+        "uncertainty": 0.02,
+        "source": "satellite-radii",
+        "reference": "Archinal et al. (2018), WGCCRE 2015"
+      },
+      "orbit": {
+        "provider": "jpl-year",
+        "center": "parent",
+        "validity": "轨道尺寸/周期仅用于目录与显示尺度；真实日期状态由指定星历提供。重点校准 1900—2100，范围外明确近似。",
+        "stateSource": "local-ephemeris",
+        "a": {
+          "value": 1221900.0,
+          "unit": "km"
+        },
+        "e": 0.029,
+        "argumentPeriapsisDegrees": 78.3,
+        "meanAnomalyDegrees": 11.7,
+        "inclinationDegrees": 0.3,
+        "ascendingNodeDegrees": 78.6,
+        "periodDays": 15.945448,
+        "periodType": "JPL table P (sidereal; mean-element approximation)",
+        "epochTdbJd": 2451545.0,
+        "referencePlane": "Laplace",
+        "source": "satellite-elements",
+        "reference": "SAT441; table ref. 36",
+        "referencePole": {
+          "raDegrees": 36.4,
+          "decDegrees": 84.0,
+          "frame": "ICRF equatorial"
+        }
+      },
+      "rotation": {
+        "provider": "iau-pck",
+        "source": "pck",
+        "coefficients": "titan",
+        "epochTdbJd": 2451545,
+        "validity": "IAU 多项式与所列周期项；不添加额外物理天平动。系数不是整段日期均经观测校准的保证。"
+      }
+    },
+    "triton": {
+      "name": "海卫一",
+      "parent": "neptune",
+      "radius": {
+        "value": 1352.6,
+        "unit": "km",
+        "type": "volume-equivalent",
+        "label": "体积等效半径",
+        "epoch": null,
+        "validity": "固定形状摘要；以球面近似计算角直径与观察位置，不代表局部地形高度。",
+        "uncertainty": 2.4,
+        "source": "satellite-radii",
+        "reference": "Archinal et al. (2018), WGCCRE 2015"
+      },
+      "orbit": {
+        "provider": "mean-kepler",
+        "center": "parent",
+        "validity": "固定平均椭圆；不含摄动、节点/拱线进动或历元后轨道演化，不用于方位、交会、掩食预报。",
+        "a": {
+          "value": 354800.0,
+          "unit": "km"
+        },
+        "e": 0.0,
+        "argumentPeriapsisDegrees": 0.0,
+        "meanAnomalyDegrees": 63.0,
+        "inclinationDegrees": 157.3,
+        "ascendingNodeDegrees": 178.1,
+        "periodDays": 5.876994,
+        "periodType": "JPL table P (sidereal; mean-element approximation)",
+        "epochTdbJd": 2451545.0,
+        "referencePlane": "Laplace",
+        "source": "satellite-elements",
+        "reference": "NEP097; table ref. 24",
+        "referencePole": {
+          "raDegrees": 299.8,
+          "decDegrees": 43.1,
+          "frame": "ICRF equatorial"
+        }
+      },
+      "rotation": {
+        "provider": "iau-pck",
+        "source": "pck",
+        "coefficients": "triton",
+        "epochTdbJd": 2451545,
+        "validity": "IAU 多项式与所列周期项；不添加额外物理天平动。系数不是整段日期均经观测校准的保证。"
+      }
+    },
+    "charon": {
+      "name": "冥卫一",
+      "parent": "pluto",
+      "radius": {
+        "value": 606.0,
+        "unit": "km",
+        "type": "volume-equivalent",
+        "label": "体积等效半径",
+        "epoch": null,
+        "validity": "固定形状摘要；以球面近似计算角直径与观察位置，不代表局部地形高度。",
+        "uncertainty": 0.5,
+        "source": "satellite-radii",
+        "reference": "Nimmo et al. (2017), Icarus 287, 12–29"
+      },
+      "orbit": {
+        "provider": "jpl-year",
+        "center": "parent",
+        "validity": "轨道尺寸/周期仅用于目录与显示尺度；真实日期状态由指定星历提供。重点校准 1900—2100，范围外明确近似。",
+        "stateSource": "local-ephemeris",
+        "a": {
+          "value": 19600.0,
+          "unit": "km"
+        },
+        "e": 0.0,
+        "argumentPeriapsisDegrees": 0.0,
+        "meanAnomalyDegrees": 304.1,
+        "inclinationDegrees": 0.0,
+        "ascendingNodeDegrees": 0.0,
+        "periodDays": 6.387222,
+        "periodType": "JPL table P (sidereal; mean-element approximation)",
+        "epochTdbJd": 2451545.0,
+        "referencePlane": "equatorial",
+        "source": "satellite-elements",
+        "reference": "PLU060; table ref. 6"
+      },
+      "rotation": {
+        "provider": "iau-pck",
+        "source": "pck",
+        "coefficients": "charon",
+        "epochTdbJd": 2451545,
+        "validity": "IAU 多项式与所列周期项；不添加额外物理天平动。系数不是整段日期均经观测校准的保证。"
+      }
+    },
+    "miranda": {
+      "name": "天卫五",
+      "parent": "uranus",
+      "radius": {
+        "value": 235.8,
+        "unit": "km",
+        "type": "volume-equivalent",
+        "label": "体积等效半径",
+        "epoch": null,
+        "validity": "固定形状摘要；以球面近似计算角直径与观察位置，不代表局部地形高度。",
+        "uncertainty": 0.7,
+        "source": "satellite-radii",
+        "reference": "Archinal et al. (2018), WGCCRE 2015"
+      },
+      "orbit": {
+        "provider": "jpl-year",
+        "center": "parent",
+        "validity": "轨道尺寸/周期仅用于目录与显示尺度；真实日期状态由指定星历提供。重点校准 1900—2100，范围外明确近似。",
+        "stateSource": "local-ephemeris",
+        "a": {
+          "value": 129846.0,
+          "unit": "km"
+        },
+        "e": 0.001,
+        "argumentPeriapsisDegrees": 154.8,
+        "meanAnomalyDegrees": 73.0,
+        "inclinationDegrees": 4.4,
+        "ascendingNodeDegrees": 100.9,
+        "periodDays": 1.413479,
+        "periodType": "JPL table P (sidereal; mean-element approximation)",
+        "epochTdbJd": 2451545.0,
+        "referencePlane": "equatorial",
+        "source": "satellite-elements",
+        "reference": "URA182; table ref. 45"
+      },
+      "rotation": {
+        "provider": "iau-pck",
+        "source": "pck",
+        "coefficients": "miranda",
+        "epochTdbJd": 2451545,
+        "validity": "IAU 多项式与所列周期项；不添加额外物理天平动。系数不是整段日期均经观测校准的保证。"
+      }
+    },
+    "deimos": {
+      "name": "火卫二",
+      "parent": "mars",
+      "radius": {
+        "value": 6.2,
+        "unit": "km",
+        "type": "volume-equivalent",
+        "label": "体积等效半径",
+        "epoch": null,
+        "validity": "固定形状摘要；以球面近似计算角直径与观察位置，不代表局部地形高度。",
+        "uncertainty": 0.24,
+        "source": "satellite-radii",
+        "reference": "Archinal et al. (2018), WGCCRE 2015"
+      },
+      "orbit": {
+        "provider": "mean-kepler",
+        "center": "parent",
+        "validity": "固定平均椭圆；不含摄动、节点/拱线进动或历元后轨道演化，不用于方位、交会、掩食预报。",
+        "a": {
+          "value": 23457.0,
+          "unit": "km"
+        },
+        "e": 0.0,
+        "argumentPeriapsisDegrees": 0.0,
+        "meanAnomalyDegrees": 205.0,
+        "inclinationDegrees": 1.8,
+        "ascendingNodeDegrees": 54.3,
+        "periodDays": 1.2625,
+        "periodType": "JPL table P (sidereal; mean-element approximation)",
+        "epochTdbJd": 2451545.0,
+        "referencePlane": "Laplace",
+        "source": "satellite-elements",
+        "reference": "MAR099; table ref. 7",
+        "referencePole": {
+          "raDegrees": 316.6,
+          "decDegrees": 53.5,
+          "frame": "ICRF equatorial"
+        }
+      },
+      "rotation": {
+        "provider": "iau-pck",
+        "source": "pck",
+        "coefficients": "deimos",
+        "epochTdbJd": 2451545,
+        "validity": "IAU 多项式与所列周期项；不添加额外物理天平动。系数不是整段日期均经观测校准的保证。"
+      }
+    },
+    "amalthea": {
+      "name": "木卫五",
+      "parent": "jupiter",
+      "radius": {
+        "value": 83.5,
+        "unit": "km",
+        "type": "volume-equivalent",
+        "label": "体积等效半径",
+        "epoch": null,
+        "validity": "固定形状摘要；以球面近似计算角直径与观察位置，不代表局部地形高度。",
+        "uncertainty": 3.0,
+        "source": "satellite-radii",
+        "reference": "Archinal et al. (2018), WGCCRE 2015"
+      },
+      "orbit": {
+        "provider": "mean-kepler",
+        "center": "parent",
+        "validity": "固定平均椭圆；不含摄动、节点/拱线进动或历元后轨道演化，不用于方位、交会、掩食预报。",
+        "a": {
+          "value": 181400.0,
+          "unit": "km"
+        },
+        "e": 0.003,
+        "argumentPeriapsisDegrees": 180.1,
+        "meanAnomalyDegrees": 310.6,
+        "inclinationDegrees": 0.4,
+        "ascendingNodeDegrees": 282.9,
+        "periodDays": 0.499918,
+        "periodType": "JPL table P (sidereal; mean-element approximation)",
+        "epochTdbJd": 2451545.0,
+        "referencePlane": "Laplace",
+        "source": "satellite-elements",
+        "reference": "JUP365; table ref. 29",
+        "referencePole": {
+          "raDegrees": 268.1,
+          "decDegrees": 64.5,
+          "frame": "ICRF equatorial"
+        }
+      },
+      "rotation": {
+        "provider": "iau-pck",
+        "source": "pck",
+        "coefficients": "amalthea",
+        "epochTdbJd": 2451545,
+        "validity": "IAU 多项式与所列周期项；不添加额外物理天平动。系数不是整段日期均经观测校准的保证。"
+      }
+    },
+    "thebe": {
+      "name": "木卫十四",
+      "parent": "jupiter",
+      "radius": {
+        "value": 49.3,
+        "unit": "km",
+        "type": "volume-equivalent",
+        "label": "体积等效半径",
+        "epoch": null,
+        "validity": "固定形状摘要；以球面近似计算角直径与观察位置，不代表局部地形高度。",
+        "uncertainty": 4.0,
+        "source": "satellite-radii",
+        "reference": "Archinal et al. (2018), WGCCRE 2015"
+      },
+      "orbit": {
+        "provider": "mean-kepler",
+        "center": "parent",
+        "validity": "固定平均椭圆；不含摄动、节点/拱线进动或历元后轨道演化，不用于方位、交会、掩食预报。",
+        "a": {
+          "value": 221900.0,
+          "unit": "km"
+        },
+        "e": 0.018,
+        "argumentPeriapsisDegrees": 26.6,
+        "meanAnomalyDegrees": 182.1,
+        "inclinationDegrees": 1.1,
+        "ascendingNodeDegrees": 340.4,
+        "periodDays": 0.676105,
+        "periodType": "JPL table P (sidereal; mean-element approximation)",
+        "epochTdbJd": 2451545.0,
+        "referencePlane": "Laplace",
+        "source": "satellite-elements",
+        "reference": "JUP365; table ref. 29",
+        "referencePole": {
+          "raDegrees": 268.1,
+          "decDegrees": 64.5,
+          "frame": "ICRF equatorial"
+        }
+      },
+      "rotation": {
+        "provider": "iau-pck",
+        "source": "pck",
+        "coefficients": "thebe",
+        "epochTdbJd": 2451545,
+        "validity": "IAU 多项式与所列周期项；不添加额外物理天平动。系数不是整段日期均经观测校准的保证。"
+      }
+    },
+    "adrastea": {
+      "name": "木卫十五",
+      "parent": "jupiter",
+      "radius": {
+        "value": 8.2,
+        "unit": "km",
+        "type": "volume-equivalent",
+        "label": "体积等效半径",
+        "epoch": null,
+        "validity": "固定形状摘要；以球面近似计算角直径与观察位置，不代表局部地形高度。",
+        "uncertainty": 4.0,
+        "source": "satellite-radii",
+        "reference": "Archinal et al. (2018), WGCCRE 2015"
+      },
+      "orbit": {
+        "provider": "mean-kepler",
+        "center": "parent",
+        "validity": "固定平均椭圆；不含摄动、节点/拱线进动或历元后轨道演化，不用于方位、交会、掩食预报。",
+        "a": {
+          "value": 129000.0,
+          "unit": "km"
+        },
+        "e": 0.0,
+        "argumentPeriapsisDegrees": 0.0,
+        "meanAnomalyDegrees": 214.5,
+        "inclinationDegrees": 0.0,
+        "ascendingNodeDegrees": 0.0,
+        "periodDays": 0.29826,
+        "periodType": "JPL table P (sidereal; mean-element approximation)",
+        "epochTdbJd": 2451545.0,
+        "referencePlane": "Laplace",
+        "source": "satellite-elements",
+        "reference": "JUP365; table ref. 29",
+        "referencePole": {
+          "raDegrees": 268.1,
+          "decDegrees": 64.5,
+          "frame": "ICRF equatorial"
+        }
+      },
+      "rotation": {
+        "provider": "iau-pck",
+        "source": "pck",
+        "coefficients": "adrastea",
+        "epochTdbJd": 2451545,
+        "validity": "IAU 多项式与所列周期项；不添加额外物理天平动。系数不是整段日期均经观测校准的保证。"
+      }
+    },
+    "metis": {
+      "name": "木卫十六",
+      "parent": "jupiter",
+      "radius": {
+        "value": 21.5,
+        "unit": "km",
+        "type": "volume-equivalent",
+        "label": "体积等效半径",
+        "epoch": null,
+        "validity": "固定形状摘要；以球面近似计算角直径与观察位置，不代表局部地形高度。",
+        "uncertainty": 4.0,
+        "source": "satellite-radii",
+        "reference": "Archinal et al. (2018), WGCCRE 2015"
+      },
+      "orbit": {
+        "provider": "mean-kepler",
+        "center": "parent",
+        "validity": "固定平均椭圆；不含摄动、节点/拱线进动或历元后轨道演化，不用于方位、交会、掩食预报。",
+        "a": {
+          "value": 128000.0,
+          "unit": "km"
+        },
+        "e": 0.0,
+        "argumentPeriapsisDegrees": 0.0,
+        "meanAnomalyDegrees": 166.0,
+        "inclinationDegrees": 0.0,
+        "ascendingNodeDegrees": 0.0,
+        "periodDays": 0.294779,
+        "periodType": "JPL table P (sidereal; mean-element approximation)",
+        "epochTdbJd": 2451545.0,
+        "referencePlane": "Laplace",
+        "source": "satellite-elements",
+        "reference": "JUP365; table ref. 29",
+        "referencePole": {
+          "raDegrees": 268.1,
+          "decDegrees": 64.5,
+          "frame": "ICRF equatorial"
+        }
+      },
+      "rotation": {
+        "provider": "iau-pck",
+        "source": "pck",
+        "coefficients": "metis",
+        "epochTdbJd": 2451545,
+        "validity": "IAU 多项式与所列周期项；不添加额外物理天平动。系数不是整段日期均经观测校准的保证。"
+      }
+    },
+    "himalia": {
+      "name": "木卫六",
+      "parent": "jupiter",
+      "radius": {
+        "value": 85.0,
+        "unit": "km",
+        "type": "volume-equivalent",
+        "label": "体积等效半径",
+        "epoch": null,
+        "validity": "固定形状摘要；以球面近似计算角直径与观察位置，不代表局部地形高度。",
+        "uncertainty": 10.0,
+        "source": "satellite-radii",
+        "reference": "Archinal et al. (2018), WGCCRE 2015"
+      },
+      "orbit": {
+        "provider": "mean-kepler",
+        "center": "parent",
+        "validity": "固定平均椭圆；不含摄动、节点/拱线进动或历元后轨道演化，不用于方位、交会、掩食预报。",
+        "a": {
+          "value": 11439000.0,
+          "unit": "km"
+        },
+        "e": 0.16,
+        "argumentPeriapsisDegrees": 321.1,
+        "meanAnomalyDegrees": 78.3,
+        "inclinationDegrees": 28.4,
+        "ascendingNodeDegrees": 64.2,
+        "periodDays": 249.909,
+        "periodType": "JPL table P (sidereal; mean-element approximation)",
+        "epochTdbJd": 2451545.0,
+        "referencePlane": "ecliptic",
+        "source": "satellite-elements",
+        "reference": "JUP347; table ref. 47"
+      },
+      "rotation": {
+        "provider": "mean-spin",
+        "periodDays": 0.32424583333333334,
+        "source": "himalia-spin",
+        "epochTdbJd": 2451545,
+        "primeMeridianDegrees": 0,
+        "pole": {
+          "raDegrees": 0,
+          "decDegrees": 90,
+          "assumed": true
+        },
+        "validity": "初始经线和未测极轴为示意；按独立周期求姿态，不能预测真实朝向。"
+      }
+    },
+    "mimas": {
+      "name": "土卫一",
+      "parent": "saturn",
+      "radius": {
+        "value": 198.2,
+        "unit": "km",
+        "type": "volume-equivalent",
+        "label": "体积等效半径",
+        "epoch": null,
+        "validity": "固定形状摘要；以球面近似计算角直径与观察位置，不代表局部地形高度。",
+        "uncertainty": 0.4,
+        "source": "satellite-radii",
+        "reference": "Archinal et al. (2018), WGCCRE 2015"
+      },
+      "orbit": {
+        "provider": "mean-kepler",
+        "center": "parent",
+        "validity": "固定平均椭圆；不含摄动、节点/拱线进动或历元后轨道演化，不用于方位、交会、掩食预报。",
+        "a": {
+          "value": 186000.0,
+          "unit": "km"
+        },
+        "e": 0.02,
+        "argumentPeriapsisDegrees": 160.4,
+        "meanAnomalyDegrees": 275.3,
+        "inclinationDegrees": 1.6,
+        "ascendingNodeDegrees": 66.2,
+        "periodDays": 0.942422,
+        "periodType": "JPL table P (sidereal; mean-element approximation)",
+        "epochTdbJd": 2451545.0,
+        "referencePlane": "Laplace",
+        "source": "satellite-elements",
+        "reference": "SAT441; table ref. 36",
+        "referencePole": {
+          "raDegrees": 40.6,
+          "decDegrees": 83.5,
+          "frame": "ICRF equatorial"
+        }
+      },
+      "rotation": {
+        "provider": "iau-pck",
+        "source": "pck",
+        "coefficients": "mimas",
+        "epochTdbJd": 2451545,
+        "validity": "IAU 多项式与所列周期项；不添加额外物理天平动。系数不是整段日期均经观测校准的保证。"
+      }
+    },
+    "tethys": {
+      "name": "土卫三",
+      "parent": "saturn",
+      "radius": {
+        "value": 531.1,
+        "unit": "km",
+        "type": "volume-equivalent",
+        "label": "体积等效半径",
+        "epoch": null,
+        "validity": "固定形状摘要；以球面近似计算角直径与观察位置，不代表局部地形高度。",
+        "uncertainty": 0.6,
+        "source": "satellite-radii",
+        "reference": "Archinal et al. (2018), WGCCRE 2015"
+      },
+      "orbit": {
+        "provider": "mean-kepler",
+        "center": "parent",
+        "validity": "固定平均椭圆；不含摄动、节点/拱线进动或历元后轨道演化，不用于方位、交会、掩食预报。",
+        "a": {
+          "value": 295000.0,
+          "unit": "km"
+        },
+        "e": 0.001,
+        "argumentPeriapsisDegrees": 335.3,
+        "meanAnomalyDegrees": 0.0,
+        "inclinationDegrees": 1.1,
+        "ascendingNodeDegrees": 273.0,
+        "periodDays": 1.887802,
+        "periodType": "JPL table P (sidereal; mean-element approximation)",
+        "epochTdbJd": 2451545.0,
+        "referencePlane": "Laplace",
+        "source": "satellite-elements",
+        "reference": "SAT441; table ref. 36",
+        "referencePole": {
+          "raDegrees": 40.6,
+          "decDegrees": 83.5,
+          "frame": "ICRF equatorial"
+        }
+      },
+      "rotation": {
+        "provider": "iau-pck",
+        "source": "pck",
+        "coefficients": "tethys",
+        "epochTdbJd": 2451545,
+        "validity": "IAU 多项式与所列周期项；不添加额外物理天平动。系数不是整段日期均经观测校准的保证。"
+      }
+    },
+    "dione": {
+      "name": "土卫四",
+      "parent": "saturn",
+      "radius": {
+        "value": 561.4,
+        "unit": "km",
+        "type": "volume-equivalent",
+        "label": "体积等效半径",
+        "epoch": null,
+        "validity": "固定形状摘要；以球面近似计算角直径与观察位置，不代表局部地形高度。",
+        "uncertainty": 0.4,
+        "source": "satellite-radii",
+        "reference": "Archinal et al. (2018), WGCCRE 2015"
+      },
+      "orbit": {
+        "provider": "mean-kepler",
+        "center": "parent",
+        "validity": "固定平均椭圆；不含摄动、节点/拱线进动或历元后轨道演化，不用于方位、交会、掩食预报。",
+        "a": {
+          "value": 377700.0,
+          "unit": "km"
+        },
+        "e": 0.002,
+        "argumentPeriapsisDegrees": 116.0,
+        "meanAnomalyDegrees": 212.0,
+        "inclinationDegrees": 0.0,
+        "ascendingNodeDegrees": 0.0,
+        "periodDays": 2.736916,
+        "periodType": "JPL table P (sidereal; mean-element approximation)",
+        "epochTdbJd": 2451545.0,
+        "referencePlane": "Laplace",
+        "source": "satellite-elements",
+        "reference": "SAT441; table ref. 36",
+        "referencePole": {
+          "raDegrees": 40.6,
+          "decDegrees": 83.5,
+          "frame": "ICRF equatorial"
+        }
+      },
+      "rotation": {
+        "provider": "iau-pck",
+        "source": "pck",
+        "coefficients": "dione",
+        "epochTdbJd": 2451545,
+        "validity": "IAU 多项式与所列周期项；不添加额外物理天平动。系数不是整段日期均经观测校准的保证。"
+      }
+    },
+    "rhea": {
+      "name": "土卫五",
+      "parent": "saturn",
+      "radius": {
+        "value": 763.5,
+        "unit": "km",
+        "type": "volume-equivalent",
+        "label": "体积等效半径",
+        "epoch": null,
+        "validity": "固定形状摘要；以球面近似计算角直径与观察位置，不代表局部地形高度。",
+        "uncertainty": 0.6,
+        "source": "satellite-radii",
+        "reference": "Archinal et al. (2018), WGCCRE 2015"
+      },
+      "orbit": {
+        "provider": "mean-kepler",
+        "center": "parent",
+        "validity": "固定平均椭圆；不含摄动、节点/拱线进动或历元后轨道演化，不用于方位、交会、掩食预报。",
+        "a": {
+          "value": 527200.0,
+          "unit": "km"
+        },
+        "e": 0.001,
+        "argumentPeriapsisDegrees": 44.3,
+        "meanAnomalyDegrees": 31.5,
+        "inclinationDegrees": 0.3,
+        "ascendingNodeDegrees": 133.7,
+        "periodDays": 4.517503,
+        "periodType": "JPL table P (sidereal; mean-element approximation)",
+        "epochTdbJd": 2451545.0,
+        "referencePlane": "Laplace",
+        "source": "satellite-elements",
+        "reference": "SAT441; table ref. 36",
+        "referencePole": {
+          "raDegrees": 40.6,
+          "decDegrees": 83.5,
+          "frame": "ICRF equatorial"
+        }
+      },
+      "rotation": {
+        "provider": "iau-pck",
+        "source": "pck",
+        "coefficients": "rhea",
+        "epochTdbJd": 2451545,
+        "validity": "IAU 多项式与所列周期项；不添加额外物理天平动。系数不是整段日期均经观测校准的保证。"
+      }
+    },
+    "iapetus": {
+      "name": "土卫八",
+      "parent": "saturn",
+      "radius": {
+        "value": 734.3,
+        "unit": "km",
+        "type": "volume-equivalent",
+        "label": "体积等效半径",
+        "epoch": null,
+        "validity": "固定形状摘要；以球面近似计算角直径与观察位置，不代表局部地形高度。",
+        "uncertainty": 2.8,
+        "source": "satellite-radii",
+        "reference": "Archinal et al. (2018), WGCCRE 2015"
+      },
+      "orbit": {
+        "provider": "mean-kepler",
+        "center": "parent",
+        "validity": "固定平均椭圆；不含摄动、节点/拱线进动或历元后轨道演化，不用于方位、交会、掩食预报。",
+        "a": {
+          "value": 3561700.0,
+          "unit": "km"
+        },
+        "e": 0.028,
+        "argumentPeriapsisDegrees": 254.5,
+        "meanAnomalyDegrees": 74.8,
+        "inclinationDegrees": 7.6,
+        "ascendingNodeDegrees": 86.5,
+        "periodDays": 79.331002,
+        "periodType": "JPL table P (sidereal; mean-element approximation)",
+        "epochTdbJd": 2451545.0,
+        "referencePlane": "Laplace",
+        "source": "satellite-elements",
+        "reference": "SAT441; table ref. 36",
+        "referencePole": {
+          "raDegrees": 288.7,
+          "decDegrees": 78.9,
+          "frame": "ICRF equatorial"
+        }
+      },
+      "rotation": {
+        "provider": "iau-pck",
+        "source": "pck",
+        "coefficients": "iapetus",
+        "epochTdbJd": 2451545,
+        "validity": "IAU 多项式与所列周期项；不添加额外物理天平动。系数不是整段日期均经观测校准的保证。"
+      }
+    },
+    "phoebe": {
+      "name": "土卫九",
+      "parent": "saturn",
+      "radius": {
+        "value": 106.5,
+        "unit": "km",
+        "type": "volume-equivalent",
+        "label": "体积等效半径",
+        "epoch": null,
+        "validity": "固定形状摘要；以球面近似计算角直径与观察位置，不代表局部地形高度。",
+        "uncertainty": 0.7,
+        "source": "satellite-radii",
+        "reference": "Archinal et al. (2018), WGCCRE 2015"
+      },
+      "orbit": {
+        "provider": "mean-kepler",
+        "center": "parent",
+        "validity": "固定平均椭圆；不含摄动、节点/拱线进动或历元后轨道演化，不用于方位、交会、掩食预报。",
+        "a": {
+          "value": 12929400.0,
+          "unit": "km"
+        },
+        "e": 0.164,
+        "argumentPeriapsisDegrees": 240.3,
+        "meanAnomalyDegrees": 308.0,
+        "inclinationDegrees": 175.2,
+        "ascendingNodeDegrees": 192.7,
+        "periodDays": 550.30391,
+        "periodType": "JPL table P (sidereal; mean-element approximation)",
+        "epochTdbJd": 2451545.0,
+        "referencePlane": "Laplace",
+        "source": "satellite-elements",
+        "reference": "SAT441; table ref. 36",
+        "referencePole": {
+          "raDegrees": 276.0,
+          "decDegrees": 67.5,
+          "frame": "ICRF equatorial"
+        }
+      },
+      "rotation": {
+        "provider": "iau-pck",
+        "source": "pck",
+        "coefficients": "phoebe",
+        "epochTdbJd": 2451545,
+        "validity": "IAU 多项式与所列周期项；不添加额外物理天平动。系数不是整段日期均经观测校准的保证。"
+      }
+    },
+    "hyperion": {
+      "name": "土卫七",
+      "parent": "saturn",
+      "radius": {
+        "value": 135.0,
+        "unit": "km",
+        "type": "volume-equivalent",
+        "label": "体积等效半径",
+        "epoch": null,
+        "validity": "固定形状摘要；以球面近似计算角直径与观察位置，不代表局部地形高度。",
+        "uncertainty": 4.0,
+        "source": "satellite-radii",
+        "reference": "Archinal et al. (2018), WGCCRE 2015"
+      },
+      "orbit": {
+        "provider": "mean-kepler",
+        "center": "parent",
+        "validity": "固定平均椭圆；不含摄动、节点/拱线进动或历元后轨道演化，不用于方位、交会、掩食预报。",
+        "a": {
+          "value": 1481500.0,
+          "unit": "km"
+        },
+        "e": 0.105,
+        "argumentPeriapsisDegrees": 214.0,
+        "meanAnomalyDegrees": 122.9,
+        "inclinationDegrees": 0.6,
+        "ascendingNodeDegrees": 87.1,
+        "periodDays": 21.276658,
+        "periodType": "JPL table P (sidereal; mean-element approximation)",
+        "epochTdbJd": 2451545.0,
+        "referencePlane": "Laplace",
+        "source": "satellite-elements",
+        "reference": "SAT441; table ref. 36",
+        "referencePole": {
+          "raDegrees": 40.2,
+          "decDegrees": 83.6,
+          "frame": "ICRF equatorial"
+        }
+      },
+      "rotation": {
+        "provider": "illustrative-tumbling",
+        "periodDays": 13,
+        "source": "hyperion-spin",
+        "epochTdbJd": 2451545,
+        "primeMeridianDegrees": 0,
+        "pole": {
+          "raDegrees": 0,
+          "decDegrees": 90,
+          "assumed": true
+        },
+        "validity": "确定性非规则翻滚示意，仅采用观测附近的特征周期；不预测混沌姿态。"
+      }
+    },
+    "janus": {
+      "name": "土卫十",
+      "parent": "saturn",
+      "radius": {
+        "value": 89.2,
+        "unit": "km",
+        "type": "volume-equivalent",
+        "label": "体积等效半径",
+        "epoch": null,
+        "validity": "固定形状摘要；以球面近似计算角直径与观察位置，不代表局部地形高度。",
+        "uncertainty": 0.8,
+        "source": "satellite-radii",
+        "reference": "Archinal et al. (2018), WGCCRE 2015"
+      },
+      "orbit": {
+        "provider": "mean-kepler",
+        "center": "parent",
+        "validity": "固定平均椭圆；不含摄动、节点/拱线进动或历元后轨道演化，不用于方位、交会、掩食预报。 未模拟真实的约四年共轨道交换，不能解读为两颗放大模型的避碰轨迹。",
+        "a": {
+          "value": 151500.0,
+          "unit": "km"
+        },
+        "e": 0.007,
+        "argumentPeriapsisDegrees": 11.1,
+        "meanAnomalyDegrees": 111.7,
+        "inclinationDegrees": 0.2,
+        "ascendingNodeDegrees": 159.9,
+        "periodDays": 0.697353,
+        "periodType": "JPL table P (sidereal; mean-element approximation)",
+        "epochTdbJd": 2451545.0,
+        "referencePlane": "Laplace",
+        "source": "satellite-elements",
+        "reference": "SAT415; table ref. 17",
+        "referencePole": {
+          "raDegrees": 40.6,
+          "decDegrees": 83.5,
+          "frame": "ICRF equatorial"
+        }
+      },
+      "rotation": {
+        "provider": "iau-pck",
+        "source": "pck",
+        "coefficients": "janus",
+        "epochTdbJd": 2451545,
+        "validity": "IAU 多项式与所列周期项；不添加额外物理天平动。系数不是整段日期均经观测校准的保证。"
+      }
+    },
+    "epimetheus": {
+      "name": "土卫十一",
+      "parent": "saturn",
+      "radius": {
+        "value": 58.2,
+        "unit": "km",
+        "type": "volume-equivalent",
+        "label": "体积等效半径",
+        "epoch": null,
+        "validity": "固定形状摘要；以球面近似计算角直径与观察位置，不代表局部地形高度。",
+        "uncertainty": 1.2,
+        "source": "satellite-radii",
+        "reference": "Archinal et al. (2018), WGCCRE 2015"
+      },
+      "orbit": {
+        "provider": "mean-kepler",
+        "center": "parent",
+        "validity": "固定平均椭圆；不含摄动、节点/拱线进动或历元后轨道演化，不用于方位、交会、掩食预报。 未模拟真实的约四年共轨道交换，不能解读为两颗放大模型的避碰轨迹。",
+        "a": {
+          "value": 151400.0,
+          "unit": "km"
+        },
+        "e": 0.02,
+        "argumentPeriapsisDegrees": 96.3,
+        "meanAnomalyDegrees": 197.2,
+        "inclinationDegrees": 0.3,
+        "ascendingNodeDegrees": 189.8,
+        "periodDays": 0.697012,
+        "periodType": "JPL table P (sidereal; mean-element approximation)",
+        "epochTdbJd": 2451545.0,
+        "referencePlane": "Laplace",
+        "source": "satellite-elements",
+        "reference": "SAT415; table ref. 17",
+        "referencePole": {
+          "raDegrees": 40.6,
+          "decDegrees": 83.5,
+          "frame": "ICRF equatorial"
+        }
+      },
+      "rotation": {
+        "provider": "iau-pck",
+        "source": "pck",
+        "coefficients": "epimetheus",
+        "epochTdbJd": 2451545,
+        "validity": "IAU 多项式与所列周期项；不添加额外物理天平动。系数不是整段日期均经观测校准的保证。"
+      }
+    },
+    "prometheus": {
+      "name": "土卫十六",
+      "parent": "saturn",
+      "radius": {
+        "value": 43.1,
+        "unit": "km",
+        "type": "volume-equivalent",
+        "label": "体积等效半径",
+        "epoch": null,
+        "validity": "固定形状摘要；以球面近似计算角直径与观察位置，不代表局部地形高度。",
+        "uncertainty": 1.2,
+        "source": "satellite-radii",
+        "reference": "Archinal et al. (2018), WGCCRE 2015"
+      },
+      "orbit": {
+        "provider": "mean-kepler",
+        "center": "parent",
+        "validity": "固定平均椭圆；不含摄动、节点/拱线进动或历元后轨道演化，不用于方位、交会、掩食预报。",
+        "a": {
+          "value": 139400.0,
+          "unit": "km"
+        },
+        "e": 0.002,
+        "argumentPeriapsisDegrees": 341.9,
+        "meanAnomalyDegrees": 135.4,
+        "inclinationDegrees": 0.0,
+        "ascendingNodeDegrees": 0.0,
+        "periodDays": 0.615878,
+        "periodType": "JPL table P (sidereal; mean-element approximation)",
+        "epochTdbJd": 2451545.0,
+        "referencePlane": "Laplace",
+        "source": "satellite-elements",
+        "reference": "SAT415; table ref. 17",
+        "referencePole": {
+          "raDegrees": 40.6,
+          "decDegrees": 83.5,
+          "frame": "ICRF equatorial"
+        }
+      },
+      "rotation": {
+        "provider": "iau-pck",
+        "source": "pck",
+        "coefficients": "prometheus",
+        "epochTdbJd": 2451545,
+        "validity": "IAU 多项式与所列周期项；不添加额外物理天平动。系数不是整段日期均经观测校准的保证。"
+      }
+    },
+    "pandora": {
+      "name": "土卫十七",
+      "parent": "saturn",
+      "radius": {
+        "value": 40.6,
+        "unit": "km",
+        "type": "volume-equivalent",
+        "label": "体积等效半径",
+        "epoch": null,
+        "validity": "固定形状摘要；以球面近似计算角直径与观察位置，不代表局部地形高度。",
+        "uncertainty": 1.5,
+        "source": "satellite-radii",
+        "reference": "Archinal et al. (2018), WGCCRE 2015"
+      },
+      "orbit": {
+        "provider": "mean-kepler",
+        "center": "parent",
+        "validity": "固定平均椭圆；不含摄动、节点/拱线进动或历元后轨道演化，不用于方位、交会、掩食预报。",
+        "a": {
+          "value": 141700.0,
+          "unit": "km"
+        },
+        "e": 0.004,
+        "argumentPeriapsisDegrees": 217.9,
+        "meanAnomalyDegrees": 123.9,
+        "inclinationDegrees": 0.0,
+        "ascendingNodeDegrees": 0.0,
+        "periodDays": 0.631369,
+        "periodType": "JPL table P (sidereal; mean-element approximation)",
+        "epochTdbJd": 2451545.0,
+        "referencePlane": "Laplace",
+        "source": "satellite-elements",
+        "reference": "SAT415; table ref. 17",
+        "referencePole": {
+          "raDegrees": 40.6,
+          "decDegrees": 83.5,
+          "frame": "ICRF equatorial"
+        }
+      },
+      "rotation": {
+        "provider": "iau-pck",
+        "source": "pck",
+        "coefficients": "pandora",
+        "epochTdbJd": 2451545,
+        "validity": "IAU 多项式与所列周期项；不添加额外物理天平动。系数不是整段日期均经观测校准的保证。"
+      }
+    },
+    "atlas": {
+      "name": "土卫十五",
+      "parent": "saturn",
+      "radius": {
+        "value": 15.1,
+        "unit": "km",
+        "type": "volume-equivalent",
+        "label": "体积等效半径",
+        "epoch": null,
+        "validity": "固定形状摘要；以球面近似计算角直径与观察位置，不代表局部地形高度。",
+        "uncertainty": 0.8,
+        "source": "satellite-radii",
+        "reference": "Archinal et al. (2018), WGCCRE 2015"
+      },
+      "orbit": {
+        "provider": "mean-kepler",
+        "center": "parent",
+        "validity": "固定平均椭圆；不含摄动、节点/拱线进动或历元后轨道演化，不用于方位、交会、掩食预报。",
+        "a": {
+          "value": 137700.0,
+          "unit": "km"
+        },
+        "e": 0.001,
+        "argumentPeriapsisDegrees": 82.3,
+        "meanAnomalyDegrees": 289.1,
+        "inclinationDegrees": 0.0,
+        "ascendingNodeDegrees": 0.0,
+        "periodDays": 0.604602,
+        "periodType": "JPL table P (sidereal; mean-element approximation)",
+        "epochTdbJd": 2451545.0,
+        "referencePlane": "Laplace",
+        "source": "satellite-elements",
+        "reference": "SAT415; table ref. 17",
+        "referencePole": {
+          "raDegrees": 40.6,
+          "decDegrees": 83.5,
+          "frame": "ICRF equatorial"
+        }
+      },
+      "rotation": {
+        "provider": "iau-pck",
+        "source": "pck",
+        "coefficients": "atlas",
+        "epochTdbJd": 2451545,
+        "validity": "IAU 多项式与所列周期项；不添加额外物理天平动。系数不是整段日期均经观测校准的保证。"
+      }
+    },
+    "pan": {
+      "name": "土卫十八",
+      "parent": "saturn",
+      "radius": {
+        "value": 14.0,
+        "unit": "km",
+        "type": "volume-equivalent",
+        "label": "体积等效半径",
+        "epoch": null,
+        "validity": "固定形状摘要；以球面近似计算角直径与观察位置，不代表局部地形高度。",
+        "uncertainty": 1.2,
+        "source": "satellite-radii",
+        "reference": "Archinal et al. (2018), WGCCRE 2015"
+      },
+      "orbit": {
+        "provider": "mean-kepler",
+        "center": "parent",
+        "validity": "固定平均椭圆；不含摄动、节点/拱线进动或历元后轨道演化，不用于方位、交会、掩食预报。",
+        "a": {
+          "value": 133600.0,
+          "unit": "km"
+        },
+        "e": 0.0,
+        "argumentPeriapsisDegrees": 0.0,
+        "meanAnomalyDegrees": 146.6,
+        "inclinationDegrees": 0.0,
+        "ascendingNodeDegrees": 0.0,
+        "periodDays": 0.575051,
+        "periodType": "JPL table P (sidereal; mean-element approximation)",
+        "epochTdbJd": 2451545.0,
+        "referencePlane": "Laplace",
+        "source": "satellite-elements",
+        "reference": "SAT415; table ref. 17",
+        "referencePole": {
+          "raDegrees": 40.6,
+          "decDegrees": 83.5,
+          "frame": "ICRF equatorial"
+        }
+      },
+      "rotation": {
+        "provider": "iau-pck",
+        "source": "pck",
+        "coefficients": "pan",
+        "epochTdbJd": 2451545,
+        "validity": "IAU 多项式与所列周期项；不添加额外物理天平动。系数不是整段日期均经观测校准的保证。"
+      }
+    },
+    "ariel": {
+      "name": "天卫一",
+      "parent": "uranus",
+      "radius": {
+        "value": 578.9,
+        "unit": "km",
+        "type": "volume-equivalent",
+        "label": "体积等效半径",
+        "epoch": null,
+        "validity": "固定形状摘要；以球面近似计算角直径与观察位置，不代表局部地形高度。",
+        "uncertainty": 0.6,
+        "source": "satellite-radii",
+        "reference": "Archinal et al. (2018), WGCCRE 2015"
+      },
+      "orbit": {
+        "provider": "mean-kepler",
+        "center": "parent",
+        "validity": "固定平均椭圆；不含摄动、节点/拱线进动或历元后轨道演化，不用于方位、交会、掩食预报。",
+        "a": {
+          "value": 190929.0,
+          "unit": "km"
+        },
+        "e": 0.001,
+        "argumentPeriapsisDegrees": 9.6,
+        "meanAnomalyDegrees": 193.5,
+        "inclinationDegrees": 0.0,
+        "ascendingNodeDegrees": 0.0,
+        "periodDays": 2.520379,
+        "periodType": "JPL table P (sidereal; mean-element approximation)",
+        "epochTdbJd": 2451545.0,
+        "referencePlane": "equatorial",
+        "source": "satellite-elements",
+        "reference": "URA182; table ref. 45"
+      },
+      "rotation": {
+        "provider": "iau-pck",
+        "source": "pck",
+        "coefficients": "ariel",
+        "epochTdbJd": 2451545,
+        "validity": "IAU 多项式与所列周期项；不添加额外物理天平动。系数不是整段日期均经观测校准的保证。"
+      }
+    },
+    "umbriel": {
+      "name": "天卫二",
+      "parent": "uranus",
+      "radius": {
+        "value": 584.7,
+        "unit": "km",
+        "type": "volume-equivalent",
+        "label": "体积等效半径",
+        "epoch": null,
+        "validity": "固定形状摘要；以球面近似计算角直径与观察位置，不代表局部地形高度。",
+        "uncertainty": 2.8,
+        "source": "satellite-radii",
+        "reference": "Archinal et al. (2018), WGCCRE 2015"
+      },
+      "orbit": {
+        "provider": "mean-kepler",
+        "center": "parent",
+        "validity": "固定平均椭圆；不含摄动、节点/拱线进动或历元后轨道演化，不用于方位、交会、掩食预报。",
+        "a": {
+          "value": 265986.0,
+          "unit": "km"
+        },
+        "e": 0.004,
+        "argumentPeriapsisDegrees": 183.4,
+        "meanAnomalyDegrees": 253.0,
+        "inclinationDegrees": 0.1,
+        "ascendingNodeDegrees": 174.8,
+        "periodDays": 4.144177,
+        "periodType": "JPL table P (sidereal; mean-element approximation)",
+        "epochTdbJd": 2451545.0,
+        "referencePlane": "equatorial",
+        "source": "satellite-elements",
+        "reference": "URA182; table ref. 45"
+      },
+      "rotation": {
+        "provider": "iau-pck",
+        "source": "pck",
+        "coefficients": "umbriel",
+        "epochTdbJd": 2451545,
+        "validity": "IAU 多项式与所列周期项；不添加额外物理天平动。系数不是整段日期均经观测校准的保证。"
+      }
+    },
+    "titania": {
+      "name": "天卫三",
+      "parent": "uranus",
+      "radius": {
+        "value": 788.9,
+        "unit": "km",
+        "type": "volume-equivalent",
+        "label": "体积等效半径",
+        "epoch": null,
+        "validity": "固定形状摘要；以球面近似计算角直径与观察位置，不代表局部地形高度。",
+        "uncertainty": 1.8,
+        "source": "satellite-radii",
+        "reference": "Archinal et al. (2018), WGCCRE 2015"
+      },
+      "orbit": {
+        "provider": "mean-kepler",
+        "center": "parent",
+        "validity": "固定平均椭圆；不含摄动、节点/拱线进动或历元后轨道演化，不用于方位、交会、掩食预报。",
+        "a": {
+          "value": 436298.0,
+          "unit": "km"
+        },
+        "e": 0.002,
+        "argumentPeriapsisDegrees": 184.0,
+        "meanAnomalyDegrees": 68.1,
+        "inclinationDegrees": 0.1,
+        "ascendingNodeDegrees": 29.5,
+        "periodDays": 8.705869,
+        "periodType": "JPL table P (sidereal; mean-element approximation)",
+        "epochTdbJd": 2451545.0,
+        "referencePlane": "equatorial",
+        "source": "satellite-elements",
+        "reference": "URA182; table ref. 45"
+      },
+      "rotation": {
+        "provider": "iau-pck",
+        "source": "pck",
+        "coefficients": "titania",
+        "epochTdbJd": 2451545,
+        "validity": "IAU 多项式与所列周期项；不添加额外物理天平动。系数不是整段日期均经观测校准的保证。"
+      }
+    },
+    "oberon": {
+      "name": "天卫四",
+      "parent": "uranus",
+      "radius": {
+        "value": 761.4,
+        "unit": "km",
+        "type": "volume-equivalent",
+        "label": "体积等效半径",
+        "epoch": null,
+        "validity": "固定形状摘要；以球面近似计算角直径与观察位置，不代表局部地形高度。",
+        "uncertainty": 2.6,
+        "source": "satellite-radii",
+        "reference": "Archinal et al. (2018), WGCCRE 2015"
+      },
+      "orbit": {
+        "provider": "mean-kepler",
+        "center": "parent",
+        "validity": "固定平均椭圆；不含摄动、节点/拱线进动或历元后轨道演化，不用于方位、交会、掩食预报。",
+        "a": {
+          "value": 583511.0,
+          "unit": "km"
+        },
+        "e": 0.002,
+        "argumentPeriapsisDegrees": 132.2,
+        "meanAnomalyDegrees": 143.6,
+        "inclinationDegrees": 0.1,
+        "ascendingNodeDegrees": 76.8,
+        "periodDays": 13.463237,
+        "periodType": "JPL table P (sidereal; mean-element approximation)",
+        "epochTdbJd": 2451545.0,
+        "referencePlane": "equatorial",
+        "source": "satellite-elements",
+        "reference": "URA182; table ref. 45"
+      },
+      "rotation": {
+        "provider": "iau-pck",
+        "source": "pck",
+        "coefficients": "oberon",
+        "epochTdbJd": 2451545,
+        "validity": "IAU 多项式与所列周期项；不添加额外物理天平动。系数不是整段日期均经观测校准的保证。"
+      }
+    },
+    "nereid": {
+      "name": "海卫二",
+      "parent": "neptune",
+      "radius": {
+        "value": 170.0,
+        "unit": "km",
+        "type": "volume-equivalent",
+        "label": "体积等效半径",
+        "epoch": null,
+        "validity": "固定形状摘要；以球面近似计算角直径与观察位置，不代表局部地形高度。",
+        "uncertainty": 25.0,
+        "source": "satellite-radii",
+        "reference": "Archinal et al. (2018), WGCCRE 2015"
+      },
+      "orbit": {
+        "provider": "mean-kepler",
+        "center": "parent",
+        "validity": "固定平均椭圆；不含摄动、节点/拱线进动或历元后轨道演化，不用于方位、交会、掩食预报。",
+        "a": {
+          "value": 5513900.0,
+          "unit": "km"
+        },
+        "e": 0.751,
+        "argumentPeriapsisDegrees": 296.8,
+        "meanAnomalyDegrees": 318.5,
+        "inclinationDegrees": 5.1,
+        "ascendingNodeDegrees": 319.5,
+        "periodDays": 360.133039,
+        "periodType": "JPL table P (sidereal; mean-element approximation)",
+        "epochTdbJd": 2458849.5,
+        "referencePlane": "ecliptic",
+        "source": "satellite-elements",
+        "reference": "NEP105; table ref. 44"
+      },
+      "rotation": {
+        "provider": "mean-spin",
+        "periodDays": 0.4830833333333333,
+        "source": "nereid-spin",
+        "epochTdbJd": 2451545,
+        "primeMeridianDegrees": 0,
+        "pole": {
+          "raDegrees": 0,
+          "decDegrees": 90,
+          "assumed": true
+        },
+        "validity": "初始经线和未测极轴为示意；按独立周期求姿态，不能预测真实朝向。"
+      }
+    },
+    "proteus": {
+      "name": "海卫八",
+      "parent": "neptune",
+      "radius": {
+        "value": 208.0,
+        "unit": "km",
+        "type": "volume-equivalent",
+        "label": "体积等效半径",
+        "epoch": null,
+        "validity": "固定形状摘要；以球面近似计算角直径与观察位置，不代表局部地形高度。",
+        "uncertainty": 8.0,
+        "source": "satellite-radii",
+        "reference": "Archinal et al. (2018), WGCCRE 2015"
+      },
+      "orbit": {
+        "provider": "mean-kepler",
+        "center": "parent",
+        "validity": "固定平均椭圆；不含摄动、节点/拱线进动或历元后轨道演化，不用于方位、交会、掩食预报。",
+        "a": {
+          "value": 117600.0,
+          "unit": "km"
+        },
+        "e": 0.0,
+        "argumentPeriapsisDegrees": 0.0,
+        "meanAnomalyDegrees": 276.8,
+        "inclinationDegrees": 0.0,
+        "ascendingNodeDegrees": 0.0,
+        "periodDays": 1.122315,
+        "periodType": "JPL table P (sidereal; mean-element approximation)",
+        "epochTdbJd": 2451545.0,
+        "referencePlane": "Laplace",
+        "source": "satellite-elements",
+        "reference": "NEP097; table ref. 24",
+        "referencePole": {
+          "raDegrees": 299.8,
+          "decDegrees": 42.6,
+          "frame": "ICRF equatorial"
+        }
+      },
+      "rotation": {
+        "provider": "iau-pck",
+        "source": "pck",
+        "coefficients": "proteus",
+        "epochTdbJd": 2451545,
+        "validity": "IAU 多项式与所列周期项；不添加额外物理天平动。系数不是整段日期均经观测校准的保证。"
+      }
+    },
+    "styx": {
+      "name": "冥卫五",
+      "parent": "pluto",
+      "radius": {
+        "value": 5.2,
+        "unit": "km",
+        "type": "volume-equivalent",
+        "label": "体积等效半径",
+        "epoch": null,
+        "validity": "固定形状摘要；以球面近似计算角直径与观察位置，不代表局部地形高度。",
+        "uncertainty": 1.0,
+        "source": "satellite-radii",
+        "reference": "Stern et al. (2018), ARA&A 56, 357–392"
+      },
+      "orbit": {
+        "provider": "mean-kepler",
+        "center": "barycenter",
+        "validity": "固定平均椭圆；不含摄动、节点/拱线进动或历元后轨道演化，不用于方位、交会、掩食预报。",
+        "a": {
+          "value": 43200.0,
+          "unit": "km"
+        },
+        "e": 0.025,
+        "argumentPeriapsisDegrees": 322.5,
+        "meanAnomalyDegrees": 358.1,
+        "inclinationDegrees": 0.0,
+        "ascendingNodeDegrees": 0.0,
+        "periodDays": 20.16,
+        "periodType": "JPL table P (sidereal; mean-element approximation)",
+        "epochTdbJd": 2451545.0,
+        "referencePlane": "equatorial",
+        "source": "satellite-elements",
+        "reference": "PLU060; table ref. 6"
+      },
+      "rotation": {
+        "provider": "illustrative-tumbling",
+        "periodDays": 3.24,
+        "source": "pluto-small-spin",
+        "epochTdbJd": 2451545,
+        "primeMeridianDegrees": 0,
+        "pole": {
+          "raDegrees": 0,
+          "decDegrees": 90,
+          "assumed": true
+        },
+        "validity": "确定性非规则翻滚示意，仅采用观测附近的特征周期；不预测混沌姿态。"
+      }
+    },
+    "nix": {
+      "name": "冥卫二",
+      "parent": "pluto",
+      "radius": {
+        "value": 18.0,
+        "unit": "km",
+        "type": "volume-equivalent",
+        "label": "体积等效半径",
+        "epoch": null,
+        "validity": "固定形状摘要；以球面近似计算角直径与观察位置，不代表局部地形高度。",
+        "uncertainty": 1.0,
+        "source": "satellite-radii",
+        "reference": "Stern et al. (2018), ARA&A 56, 357–392"
+      },
+      "orbit": {
+        "provider": "mean-kepler",
+        "center": "barycenter",
+        "validity": "固定平均椭圆；不含摄动、节点/拱线进动或历元后轨道演化，不用于方位、交会、掩食预报。",
+        "a": {
+          "value": 49300.0,
+          "unit": "km"
+        },
+        "e": 0.015,
+        "argumentPeriapsisDegrees": 31.4,
+        "meanAnomalyDegrees": 338.2,
+        "inclinationDegrees": 0.0,
+        "ascendingNodeDegrees": 0.0,
+        "periodDays": 24.85,
+        "periodType": "JPL table P (sidereal; mean-element approximation)",
+        "epochTdbJd": 2451545.0,
+        "referencePlane": "equatorial",
+        "source": "satellite-elements",
+        "reference": "PLU060; table ref. 6"
+      },
+      "rotation": {
+        "provider": "illustrative-tumbling",
+        "periodDays": 1.83,
+        "source": "pluto-small-spin",
+        "epochTdbJd": 2451545,
+        "primeMeridianDegrees": 0,
+        "pole": {
+          "raDegrees": 0,
+          "decDegrees": 90,
+          "assumed": true
+        },
+        "validity": "确定性非规则翻滚示意，仅采用观测附近的特征周期；不预测混沌姿态。"
+      }
+    },
+    "kerberos": {
+      "name": "冥卫四",
+      "parent": "pluto",
+      "radius": {
+        "value": 6.0,
+        "unit": "km",
+        "type": "volume-equivalent",
+        "label": "体积等效半径",
+        "epoch": null,
+        "validity": "固定形状摘要；以球面近似计算角直径与观察位置，不代表局部地形高度。",
+        "uncertainty": 1.0,
+        "source": "satellite-radii",
+        "reference": "Stern et al. (2018), ARA&A 56, 357–392"
+      },
+      "orbit": {
+        "provider": "mean-kepler",
+        "center": "barycenter",
+        "validity": "固定平均椭圆；不含摄动、节点/拱线进动或历元后轨道演化，不用于方位、交会、掩食预报。",
+        "a": {
+          "value": 58300.0,
+          "unit": "km"
+        },
+        "e": 0.01,
+        "argumentPeriapsisDegrees": 32.1,
+        "meanAnomalyDegrees": 276.1,
+        "inclinationDegrees": 0.4,
+        "ascendingNodeDegrees": 314.3,
+        "periodDays": 32.17,
+        "periodType": "JPL table P (sidereal; mean-element approximation)",
+        "epochTdbJd": 2451545.0,
+        "referencePlane": "equatorial",
+        "source": "satellite-elements",
+        "reference": "PLU060; table ref. 6"
+      },
+      "rotation": {
+        "provider": "illustrative-tumbling",
+        "periodDays": 5.31,
+        "source": "pluto-small-spin",
+        "epochTdbJd": 2451545,
+        "primeMeridianDegrees": 0,
+        "pole": {
+          "raDegrees": 0,
+          "decDegrees": 90,
+          "assumed": true
+        },
+        "validity": "确定性非规则翻滚示意，仅采用观测附近的特征周期；不预测混沌姿态。"
+      }
+    },
+    "hydra": {
+      "name": "冥卫三",
+      "parent": "pluto",
+      "radius": {
+        "value": 18.5,
+        "unit": "km",
+        "type": "volume-equivalent",
+        "label": "体积等效半径",
+        "epoch": null,
+        "validity": "固定形状摘要；以球面近似计算角直径与观察位置，不代表局部地形高度。",
+        "uncertainty": 1.0,
+        "source": "satellite-radii",
+        "reference": "Stern et al. (2018), ARA&A 56, 357–392"
+      },
+      "orbit": {
+        "provider": "mean-kepler",
+        "center": "barycenter",
+        "validity": "固定平均椭圆；不含摄动、节点/拱线进动或历元后轨道演化，不用于方位、交会、掩食预报。",
+        "a": {
+          "value": 65200.0,
+          "unit": "km"
+        },
+        "e": 0.009,
+        "argumentPeriapsisDegrees": 139.3,
+        "meanAnomalyDegrees": 335.0,
+        "inclinationDegrees": 0.3,
+        "ascendingNodeDegrees": 114.3,
+        "periodDays": 38.2,
+        "periodType": "JPL table P (sidereal; mean-element approximation)",
+        "epochTdbJd": 2451545.0,
+        "referencePlane": "equatorial",
+        "source": "satellite-elements",
+        "reference": "PLU060; table ref. 6"
+      },
+      "rotation": {
+        "provider": "illustrative-tumbling",
+        "periodDays": 0.43,
+        "source": "pluto-small-spin",
+        "epochTdbJd": 2451545,
+        "primeMeridianDegrees": 0,
+        "pole": {
+          "raDegrees": 0,
+          "decDegrees": 90,
+          "assumed": true
+        },
+        "validity": "确定性非规则翻滚示意，仅采用观测附近的特征周期；不预测混沌姿态。"
+      }
+    },
+    "hiiaka": {
+      "name": "妊卫一",
+      "parent": "haumea",
+      "radius": {
+        "value": 185,
+        "unit": "km",
+        "type": "inferred-volume-equivalent",
+        "label": "体积等效半径 · 推定",
+        "epoch": "2021-04-06 and 2021-04-16 occultations",
+        "validity": "固定形状摘要；以球面近似计算角直径与观察位置，不代表局部地形高度。",
+        "uncertainty": 10,
+        "source": "hiiaka-occultation",
+        "estimated": true,
+        "semiAxesKm": [
+          240,
+          180,
+          143
+        ],
+        "semiAxesUncertaintyKm": [
+          40,
+          30,
+          7
+        ],
+        "note": "370±20 km 体积等效直径的一半；三轴数值为模型统计摘要，不能用其乘积替代论文给出的等效直径。"
+      },
+      "orbit": {
+        "provider": "mean-kepler",
+        "center": "parent",
+        "validity": "固定平均椭圆；不含摄动、节点/拱线进动或历元后轨道演化，不用于方位、交会、掩食预报。 妊卫二的真实非开普勒变化在数周内已重要，此处不复现论文三体积分。",
+        "a": {
+          "value": 49880,
+          "unit": "km"
+        },
+        "e": 0.0513,
+        "inclinationDegrees": 126.356,
+        "ascendingNodeDegrees": 206.766,
+        "argumentPeriapsisDegrees": 154.1,
+        "meanAnomalyDegrees": 152.8,
+        "periodDays": 49.462,
+        "periodType": "adopted rounded mean period",
+        "epochTdbJd": 2454615,
+        "referencePlane": "ecliptic",
+        "source": "haumea-moons",
+        "reference": "Table 2, HJD 2454615.0",
+        "timeApproximation": "论文 HJD 数值近似作为 TDB 历元；未恢复原始日心观测时标修正，不用于绝对相位预报。"
+      },
+      "rotation": {
+        "provider": "mean-spin",
+        "periodDays": 0.4033333333333333,
+        "source": "hiiaka-occultation",
+        "epochTdbJd": 2451545,
+        "primeMeridianDegrees": 0,
+        "pole": {
+          "referenceBody": "haumea",
+          "assumed": true,
+          "note": "2025 掩星支持与妊神星近乎平行；未拟合独立长期进动。"
+        },
+        "validity": "初始经线和未测极轴为示意；按独立周期求姿态，不能预测真实朝向。",
+        "periodUncertaintyDays": 0.0008333333333333334
+      }
+    },
+    "namaka": {
+      "name": "妊卫二",
+      "parent": "haumea",
+      "radius": {
+        "value": 80,
+        "unit": "km",
+        "type": "density-assumed-equivalent",
+        "label": "等效半径 · 估计",
+        "epoch": null,
+        "validity": "固定形状摘要；以球面近似计算角直径与观察位置，不代表局部地形高度。",
+        "source": "haumea-moons",
+        "estimated": true,
+        "note": "由质量和水冰密度假设作数量级估计；质量/密度不确定性很大，尚无可靠形状测量。"
+      },
+      "orbit": {
+        "provider": "mean-kepler",
+        "center": "parent",
+        "validity": "固定平均椭圆；不含摄动、节点/拱线进动或历元后轨道演化，不用于方位、交会、掩食预报。 妊卫二的真实非开普勒变化在数周内已重要，此处不复现论文三体积分。",
+        "a": {
+          "value": 25657,
+          "unit": "km"
+        },
+        "e": 0.249,
+        "inclinationDegrees": 113.013,
+        "ascendingNodeDegrees": 205.016,
+        "argumentPeriapsisDegrees": 178.9,
+        "meanAnomalyDegrees": 178.5,
+        "periodDays": 18.2783,
+        "periodType": "adopted rounded mean period",
+        "epochTdbJd": 2454615,
+        "referencePlane": "ecliptic",
+        "source": "haumea-moons",
+        "reference": "Table 2, HJD 2454615.0",
+        "timeApproximation": "论文 HJD 数值近似作为 TDB 历元；未恢复原始日心观测时标修正，不用于绝对相位预报。"
+      },
+      "rotation": {
+        "provider": "mean-spin",
+        "periodDays": 18.2783,
+        "source": "illustration",
+        "epochTdbJd": 2451545,
+        "primeMeridianDegrees": 0,
+        "pole": {
+          "orbitNormalOf": "namaka",
+          "assumed": true,
+          "note": "采用参考历元轨道极轴作为姿态假设，不是已测自转极轴。"
+        },
+        "validity": "未测定独立自转周期，采用同步周期与固定极轴的示意，初始经线不作相向校准。"
+      }
+    },
+    "dysnomia": {
+      "name": "阋卫一",
+      "parent": "eris",
+      "radius": {
+        "value": 350,
+        "unit": "km",
+        "type": "radiometric-effective",
+        "label": "热辐射等效半径",
+        "epoch": null,
+        "validity": "固定形状摘要；以球面近似计算角直径与观察位置，不代表局部地形高度。",
+        "uncertainty": 57.5,
+        "source": "eris-spin",
+        "estimated": true,
+        "note": "采用 Brown & Butler (2018) 的 700±115 km 热辐射模型直径；依赖热模型，不是已分辨地形。"
+      },
+      "orbit": {
+        "provider": "mean-kepler",
+        "center": "parent",
+        "validity": "固定平均椭圆；不含摄动、节点/拱线进动或历元后轨道演化，不用于方位、交会、掩食预报。",
+        "a": {
+          "value": 37273,
+          "unit": "km"
+        },
+        "e": 0.0062,
+        "inclinationDegrees": 45.49,
+        "ascendingNodeDegrees": 126.17,
+        "argumentPeriapsisDegrees": 180.82999999999998,
+        "meanAnomalyDegrees": 178.78,
+        "periodDays": 15.785899,
+        "periodType": "Kepler fit to 2005–2018 astrometry",
+        "epochTdbJd": 2453979,
+        "referencePlane": "J2000-equatorial",
+        "source": "dysnomia-orbit",
+        "reference": "Table 2 combined fit",
+        "timeApproximation": "论文 JD 历元近似作为 TDB；原始观测时标与光行时未重新拟合。"
+      },
+      "rotation": {
+        "provider": "mean-spin",
+        "periodDays": 15.785899,
+        "source": "illustration",
+        "epochTdbJd": 2451545,
+        "primeMeridianDegrees": 0,
+        "pole": {
+          "orbitNormalOf": "dysnomia",
+          "assumed": true,
+          "note": "采用参考历元轨道极轴作为姿态假设，不是已测自转极轴。"
+        },
+        "validity": "未测定独立自转周期，采用同步周期与固定极轴的示意，初始经线不作相向校准。"
+      }
+    }
+  }
+}

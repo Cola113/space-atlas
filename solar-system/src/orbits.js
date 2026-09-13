@@ -5,7 +5,6 @@ import { physicalData } from './physical-scale.js';
 import { AU_KM, physicalNames } from './physics/state.js';
 import { orbitalElements } from './physics/kepler.js';
 import anchors from './physics/kepler-anchors.json';
-import { meanElements } from './physics/mean-motion.js';
 
 // Display scales never feed back into the evaluated physical frame.
 const gmSun = MassProduct('Sun') * AU_KM ** 3 / 86400 ** 2;
@@ -63,9 +62,8 @@ function updateGuide(body, parent, physical, frame, rotation) {
   const age = Math.abs(frame.time.tdbSeconds-(body.guideEpoch ?? -Infinity));
   if(age < Math.min(86400,period/128) && body.guideScale===body.orbit)return;
   let elements;
-  if(meanElements.bodies[body.id]) {
-    const p=r.clone().normalize(),q=r.clone().cross(v).normalize().cross(p);
-    elements={aKm:r.length(),e:0,p:p.toArray(),q:q.toArray()};
+  if(physical.orbitGuide) {
+    elements=physical.orbitGuide;
   } else {
     const gm=anchors.anchors.first.elements[body.id]?.gmKm3S2 ?? (body.parent
       ? MassProduct(physicalNames[body.parent]) * AU_KM**3/86400**2 + (body.id==='moon'?MassProduct('Moon')*AU_KM**3/86400**2:0)

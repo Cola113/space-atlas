@@ -1,11 +1,9 @@
-import meanElements from './physics/mean-elements.json';
-import { physicalData } from './physical-scale.js';
+import { resolvePhysicalFacts } from './catalog-facts.js';
+import { meanElements } from './physics/definitions.js';
 import { bodyModels } from './body-models.js';
 
 const rock = {
   high: null,
-  tilt: 0,
-  spin: 0.022,
   closeName: "观测地表",
 };
 
@@ -37,13 +35,12 @@ export const additionalBodies = [
     high: "completed/pluto-3840.webp",
     radius: 0.7,
     orbit: 72,
-    tilt: 119.6,
     viewUv: [0.51, 0.6],
     description:
       "海王星之外的冰质世界。明亮的氮冰平原与深色高地相邻，冥卫一与它共同绕着两者之间的质心运行。",
     facts: [
-      ["平均半径", "1,188", "km"],
-      ["公转周期 · 约", "248", "年"],
+      ["physical:radius"],
+      ["physical:orbit", "年"],
       ["区域", "柯伊伯带", ""],
       ["分类", "矮行星", ""],
     ],
@@ -66,15 +63,11 @@ export const additionalBodies = [
     high: "4k_ceres.jpg",
     radius: 0.46,
     orbit: 27.2,
-    tilt: 4,
-    orbitDays: 1682,
-    orbitPhase: 2.7,
-    inclination: 10.6,
     description:
       "小行星带中最大的天体，也是其中唯一的矮行星。灰暗的撞击地貌间，散布着醒目的明亮盐类沉积。",
     facts: [
-      ["平均半径 · 约", "470", "km"],
-      ["公转周期 · 约", "4.6", "年"],
+      ["physical:radius"],
+      ["physical:orbit", "年"],
       ["区域", "小行星带", ""],
       ["探测任务", "黎明号", ""],
     ],
@@ -95,11 +88,8 @@ export const additionalBodies = [
     texture: "makemake",
     radius: 0.43,
     orbit: 78,
-    tilt: 29,
-    orbitDays: 112897,
-    orbitPhase: 1.7,
     description: "柯伊伯带中的红色冰质矮行星。稀薄的甲烷冰和漫长的椭圆轨道，让它成为外太阳系的冷暗世界。",
-    facts: [["平均半径 · 约", "715", "km"], ["公转周期 · 约", "309", "年"], ["区域", "柯伊伯带", ""], ["分类", "矮行星", ""]],
+    facts: [["physical:radius"], ["physical:orbit", "年"], ["区域", "柯伊伯带", ""], ["分类", "矮行星", ""]],
     feature: "甲烷冰与红色表面", featureText: "鸟神星的可见光颜色偏红，表面可能覆盖甲烷、乙烷和氮的挥发性冰。", caption: "鸟神星", detail: "遥感颜色 / 程序化补全", source: "dwarf-planets/makemake/facts/"
   },
   {
@@ -112,12 +102,9 @@ export const additionalBodies = [
     texture: "haumea",
     radius: 0.52,
     orbit: 84,
-    tilt: 28,
     shape: [1, 0.72, 0.58],
-    orbitDays: 103774,
-    orbitPhase: 2.4,
     description: "高速自转的椭球形矮行星，拥有环和两颗已知卫星，外形来自一次剧烈碰撞后的自转演化。",
-    facts: [["平均半径 · 约", "816", "km"], ["公转周期 · 约", "284", "年"], ["区域", "柯伊伯带", ""], ["特殊结构", "环系", ""]],
+    facts: [["physical:radius"], ["physical:orbit", "年"], ["区域", "柯伊伯带", ""], ["特殊结构", "环系", ""]],
     feature: "高速自转与环系", featureText: "妊神星不到四小时就完成一次自转，快速自转把它拉成长椭球，并伴随一圈窄环。", caption: "妊神星", detail: "遥感资料 / 程序化补全", source: "dwarf-planets/haumea/facts/"
   },
   {
@@ -130,11 +117,8 @@ export const additionalBodies = [
     texture: "eris",
     radius: 0.63,
     orbit: 91,
-    tilt: 44,
-    orbitDays: 203830,
-    orbitPhase: 4.3,
     description: "遥远而明亮的离散盘矮行星。它的表面资料有限，遥感显示冻结甲烷霜覆盖了大部分区域。",
-    facts: [["平均半径 · 约", "1,163", "km"], ["公转周期 · 约", "558", "年"], ["区域", "离散盘", ""], ["卫星", "阋卫一", ""]],
+    facts: [["physical:radius"], ["physical:orbit", "年"], ["区域", "离散盘", ""], ["卫星", "阋卫一", ""]],
     feature: "冻结甲烷霜与遥远轨道", featureText: "阋神星距离太阳极远，表面挥发物会随轨道季节凝结和升华，细节仍有待探测。", caption: "阋神星", detail: "遥感资料有限 / 程序化补全", source: "dwarf-planets/eris/facts/"
   },
   {
@@ -148,16 +132,12 @@ export const additionalBodies = [
     texture: "vesta",
     radius: 0.36,
     orbit: 25.6,
-    tilt: 27.5,
     shape: [1, 0.8, 0.92],
-    orbitDays: 1325,
-    orbitPhase: 5.1,
-    inclination: 7.1,
     description:
       "一颗保存着早期太阳系历史的岩石天体。它曾发生内部熔融，南半球的巨大撞击留下了深刻痕迹。",
     facts: [
-      ["平均直径 · 约", "525", "km"],
-      ["公转周期 · 约", "3.6", "年"],
+      ["physical:radius"],
+      ["physical:orbit", "年"],
       ["区域", "小行星带", ""],
       ["探测任务", "黎明号", ""],
     ],
@@ -181,14 +161,11 @@ export const additionalBodies = [
     high: "4k_moon.jpg",
     radius: 0.32,
     orbit: 3.6,
-    period: 27.322,
-    orbitPhase: 0.8,
-    inclination: 5.1,
     description:
       "地球唯一的天然卫星。暗色月海与明亮高地铺展在古老地表，它的自转与公转相互同步。",
     facts: [
-      ["平均半径", "1,737", "km"],
-      ["绕地周期 · 约", "27.3", "天"],
+      ["physical:radius"],
+      ["physical:orbit", "天"],
       ["所属天体", "地球", ""],
       ["自转状态", "潮汐锁定", ""],
     ],
@@ -213,14 +190,11 @@ export const additionalBodies = [
     radius: 0.19,
     orbit: 2.25,
     shape: [1, 0.81, 0.67],
-    period: 0.319,
-    orbitPhase: 2.2,
-    inclination: 1.1,
     description:
       "紧贴火星运行的小型卫星。它的形状不规则，巨大的斯蒂克尼撞击坑占据了表面相当大的一部分。",
     facts: [
-      ["平均半径 · 约", "11", "km"],
-      ["绕火周期 · 约", "7.7", "小时"],
+      ["physical:radius"],
+      ["physical:orbit", "小时"],
       ["所属天体", "火星", ""],
       ["自转状态", "潮汐锁定", ""],
     ],
@@ -243,14 +217,11 @@ export const additionalBodies = [
     high: "completed/io-3840.webp",
     radius: 0.43,
     orbit: 4.6,
-    period: 1.769,
-    orbitPhase: 0.5,
-    inclination: 0.04,
     description:
       "太阳系火山活动最旺盛的世界。木星与其它卫星的引力拉扯使内部受热，硫质沉积染出鲜明色彩。",
     facts: [
-      ["平均半径", "1,821", "km"],
-      ["绕木周期 · 约", "1.77", "天"],
+      ["physical:radius"],
+      ["physical:orbit", "天"],
       ["所属天体", "木星", ""],
       ["主要活动", "火山喷发", ""],
     ],
@@ -273,14 +244,11 @@ export const additionalBodies = [
     high: "completed/europa-3840.webp",
     radius: 0.39,
     orbit: 6.2,
-    period: 3.551,
-    orbitPhase: 2.2,
-    inclination: 0.47,
     description:
       "纵横交错的暗色裂纹划过明亮冰壳。多种观测证据表明，冰层之下可能存在覆盖全球的液态海洋。",
     facts: [
-      ["平均半径", "1,561", "km"],
-      ["绕木周期 · 约", "3.55", "天"],
+      ["physical:radius"],
+      ["physical:orbit", "天"],
       ["所属天体", "木星", ""],
       ["表面成分", "水冰", ""],
     ],
@@ -304,14 +272,11 @@ export const additionalBodies = [
     high: "completed/ganymede-3840.webp",
     radius: 0.57,
     orbit: 8,
-    period: 7.155,
-    orbitPhase: 3.9,
-    inclination: 0.2,
     description:
       "太阳系最大的卫星，比水星还大。古老暗区与年轻的沟槽亮区相互交织，它还拥有自身的磁场。",
     facts: [
-      ["平均半径", "2,631", "km"],
-      ["绕木周期 · 约", "7.15", "天"],
+      ["physical:radius"],
+      ["physical:orbit", "天"],
       ["所属天体", "木星", ""],
       ["卫星大小", "最大", ""],
     ],
@@ -335,14 +300,11 @@ export const additionalBodies = [
     high: "completed/callisto-3840.webp",
     radius: 0.53,
     orbit: 10,
-    period: 16.689,
-    orbitPhase: 5.1,
-    inclination: 0.28,
     description:
       "一颗布满撞击坑的古老卫星。明亮冰质坑壁点缀深色表面，巨大的多环盆地仍清晰可辨。",
     facts: [
-      ["平均半径", "2,410", "km"],
-      ["绕木周期 · 约", "16.7", "天"],
+      ["physical:radius"],
+      ["physical:orbit", "天"],
       ["所属天体", "木星", ""],
       ["表面特征", "密集撞击坑", ""],
     ],
@@ -365,14 +327,11 @@ export const additionalBodies = [
     high: "4k_enceladus.jpg",
     radius: 0.28,
     orbit: 6.3,
-    period: 1.37,
-    orbitPhase: 0.35,
-    inclination: 0.01,
     description:
       "小巧而明亮的冰世界。南极裂缝喷出水蒸气和冰粒，冰壳下面存在全球性的液态海洋。",
     facts: [
-      ["平均半径", "252", "km"],
-      ["绕土周期 · 约", "1.37", "天"],
+      ["physical:radius"],
+      ["physical:orbit", "天"],
       ["所属天体", "土星", ""],
       ["主要活动", "南极喷流", ""],
     ],
@@ -396,14 +355,11 @@ export const additionalBodies = [
     high: "completed/titan-3840.webp",
     radius: 0.57,
     orbit: 9.2,
-    period: 15.945,
-    orbitPhase: 3.3,
-    inclination: 0.35,
     description:
       "浓厚的氮气大气与橙色雾霾包裹着土星最大的卫星。寒冷地表有由液态甲烷和乙烷形成的湖海。",
     facts: [
-      ["平均半径", "2,575", "km"],
-      ["绕土周期 · 约", "15.9", "天"],
+      ["physical:radius"],
+      ["physical:orbit", "天"],
       ["所属天体", "土星", ""],
       ["大气主要成分", "氮气", ""],
     ],
@@ -429,15 +385,11 @@ export const additionalBodies = [
     radius: 0.38,
     orbit: 4.4,
     viewUv: [0.49, 0.72],
-    period: 5.877,
-    orbitPhase: 1.8,
-    inclination: 23.2,
-    retrograde: true,
     description:
       "海王星最大的卫星，沿与海王星自转相反的方向运行。冰冻表面保留着极冠、奇特地形与暗色条带。",
     facts: [
-      ["平均半径", "1,353", "km"],
-      ["绕海周期 · 约", "5.88", "天"],
+      ["physical:radius"],
+      ["physical:orbit", "天"],
       ["所属天体", "海王星", ""],
       ["轨道方向", "逆行", ""],
     ],
@@ -462,14 +414,11 @@ export const additionalBodies = [
     radius: 0.36,
     orbit: 2.7,
     viewUv: [0.48, 0.67],
-    period: 6.387,
-    orbitPhase: 2.8,
-    inclination: 0,
     description:
       "冥王星最大的伴星，与冥王星互相潮汐锁定。红褐色北极区、深长峡谷和明亮平原共同构成了它的面貌。",
     facts: [
-      ["平均半径", "606", "km"],
-      ["绕行周期 · 约", "6.39", "天"],
+      ["physical:radius"],
+      ["physical:orbit", "天"],
       ["所属天体", "冥王星", ""],
       ["自转状态", "潮汐锁定", ""],
     ],
@@ -482,120 +431,119 @@ export const additionalBodies = [
   },
   catalogSatellite({
     id: "miranda", name: "天卫五", english: "MIRANDA", category: "天王星 / 冰质卫星", parent: "uranus", color: "#aba7a2", texture: "miranda", baseTexture: "2k_miranda.jpg",
-    radius: 0.13, orbit: 4.2, period: 1.4135, orbitPhase: 0.8, inclination: 4.34, description: "天王星最大的内侧卫星之一，断裂、峡谷与年轻冰质地形拼接成奇异的拼布世界。",
-    facts: [["平均半径", "236", "km"], ["绕天周期 · 约", "33.9", "小时"], ["所属天体", "天王星", ""], ["表面特征", "拼布地形", ""]], feature: "维罗纳断崖与拼布地形", featureText: "维罗纳断崖、科罗娜地形和深长峡谷显示出天卫五曾经历剧烈的冰壳重塑。", caption: "天卫五地表", detail: "旅行者 2 号影像 / 真实贴图", source: "uranus/moons/miranda/"
+    radius: 0.13, orbit: 4.2, description: "天王星最大的内侧卫星之一，断裂、峡谷与年轻冰质地形拼接成奇异的拼布世界。",
+    facts: [["physical:radius"], ["physical:orbit", "小时"], ["所属天体", "天王星", ""], ["表面特征", "拼布地形", ""]], feature: "维罗纳断崖与拼布地形", featureText: "维罗纳断崖、科罗娜地形和深长峡谷显示出天卫五曾经历剧烈的冰壳重塑。", caption: "天卫五地表", detail: "旅行者 2 号影像 / 真实贴图", source: "uranus/moons/miranda/"
   }),
   catalogSatellite({
-    id: "deimos", name: "火卫二", english: "DEIMOS", category: "火星 / 小型卫星", parent: "mars", color: "#a39588", texture: "deimos", radius: 0.09, orbit: 3.1, shape: [1, 0.72, 0.58], period: 1.263, orbitPhase: 1.1, inclination: 0.93, description: "火星外侧的小型不规则卫星，表面覆盖细碎尘土，撞击坑边缘被风化层柔化。", facts: [["平均半径 · 约", "6.2", "km"], ["绕火周期 · 约", "30.3", "小时"], ["所属天体", "火星", ""], ["形状", "不规则", ""]], feature: "尘土覆盖的撞击坑", featureText: "火卫二比火卫一更平滑，松散尘土可能填平了部分古老撞击坑。", caption: "火卫二", detail: "探测影像 / 程序化补全", source: "mars/moons/deimos/"
+    id: "deimos", name: "火卫二", english: "DEIMOS", category: "火星 / 小型卫星", parent: "mars", color: "#a39588", texture: "deimos", radius: 0.09, orbit: 3.1, shape: [1, 0.72, 0.58], description: "火星外侧的小型不规则卫星，表面覆盖细碎尘土，撞击坑边缘被风化层柔化。", facts: [["physical:radius"], ["physical:orbit", "小时"], ["所属天体", "火星", ""], ["形状", "不规则", ""]], feature: "尘土覆盖的撞击坑", featureText: "火卫二比火卫一更平滑，松散尘土可能填平了部分古老撞击坑。", caption: "火卫二", detail: "探测影像 / 程序化补全", source: "mars/moons/deimos/"
   }),
   catalogSatellite({
     id: "amalthea", name: "木卫五", english: "AMALTHEA", category: "木星 / 不规则卫星", parent: "jupiter",
-    color: "#b97e67", texture: "amalthea", radius: 0.14, orbit: 2.8, shape: [1, 0.72, 0.58], period: 0.498,
-    orbitPhase: 1.2, inclination: 0.37, description: "木星最靠内的大型卫星，细长的红色身躯被撞击坑和明暗斑块覆盖。",
-    facts: [["平均半径 · 约", "84", "km"], ["绕木周期 · 约", "11.95", "小时"], ["所属天体", "木星", ""], ["形状", "不规则", ""]],
+    color: "#b97e67", texture: "amalthea", radius: 0.14, orbit: 2.8, shape: [1, 0.72, 0.58],
+      description: "木星最靠内的大型卫星，细长的红色身躯被撞击坑和明暗斑块覆盖。",
+    facts: [["physical:radius"], ["physical:orbit", "小时"], ["所属天体", "木星", ""], ["形状", "不规则", ""]],
     feature: "红色表面与撞击坑", featureText: "木卫五的深红色调可能来自木星磁层中的物质沉积，表面还保留两座显著的撞击结构。",
     caption: "木卫五不规则地表", detail: "低分辨率探测影像 / 程序化补全", source: "jupiter/moons/amalthea/"
   }),
   catalogSatellite({
     id: "thebe", name: "木卫十四", english: "THEBE", category: "木星 / 不规则卫星", parent: "jupiter",
-    color: "#a98b7c", texture: "thebe", radius: 0.105, orbit: 3.35, shape: [1, 0.68, 0.57], period: 0.6745,
-    orbitPhase: 2.1, inclination: 1.1, description: "木星内侧的一颗不规则小卫星，表面由深色撞击坑和松散碎屑组成。",
-    facts: [["平均半径 · 约", "49", "km"], ["绕木周期 · 约", "16.2", "小时"], ["所属天体", "木星", ""], ["形状", "不规则", ""]],
+    color: "#a98b7c", texture: "thebe", radius: 0.105, orbit: 3.35, shape: [1, 0.68, 0.57],
+      description: "木星内侧的一颗不规则小卫星，表面由深色撞击坑和松散碎屑组成。",
+    facts: [["physical:radius"], ["physical:orbit", "小时"], ["所属天体", "木星", ""], ["形状", "不规则", ""]],
     feature: "大撞击坑与碎屑地表", featureText: "木卫十四体积虽小，却在内侧卫星群中留下了清晰的撞击痕迹。",
     caption: "木卫十四地表", detail: "伽利略号影像 / 程序化补全", source: "jupiter/moons/thebe/"
   }),
   catalogSatellite({
     id: "adrastea", name: "木卫十五", english: "ADRASTEA", category: "木星 / 环牧卫星", parent: "jupiter",
-    color: "#9f9082", texture: "adrastea", radius: 0.055, orbit: 3.75, shape: [1, 0.7, 0.6], period: 0.2983,
-    orbitPhase: 4.2, inclination: 0.03, description: "贴近木星主环运行的小型牧环卫星，它不断清扫环边缘的碎屑。",
-    facts: [["平均半径 · 约", "8.2", "km"], ["绕木周期 · 约", "7.16", "小时"], ["所属天体", "木星", ""], ["作用", "牧环卫星", ""]],
+    color: "#9f9082", texture: "adrastea", radius: 0.055, orbit: 3.75, shape: [1, 0.7, 0.6],
+      description: "贴近木星主环运行的小型牧环卫星，它不断清扫环边缘的碎屑。",
+    facts: [["physical:radius"], ["physical:orbit", "小时"], ["所属天体", "木星", ""], ["作用", "牧环卫星", ""]],
     feature: "主环边缘与撞击坑", featureText: "木卫十五的轨道位于木星主环外缘附近，尺寸小到难以分辨精细地貌。",
     caption: "木卫十五", detail: "旅行者 2 号影像 / 程序化补全", source: "jupiter/moons/adrastea/"
   }),
   catalogSatellite({
     id: "metis", name: "木卫十六", english: "METIS", category: "木星 / 环牧卫星", parent: "jupiter",
-    color: "#9a8a7b", texture: "metis", radius: 0.06, orbit: 4.05, shape: [1, 0.68, 0.58], period: 0.2948,
-    orbitPhase: 5.2, inclination: 0.06, description: "木星最靠内的已知卫星之一，在强烈潮汐和主环尘埃环境中运行。",
-    facts: [["平均半径 · 约", "21.5", "km"], ["绕木周期 · 约", "7.08", "小时"], ["所属天体", "木星", ""], ["作用", "主环物质源", ""]],
+    color: "#9a8a7b", texture: "metis", radius: 0.06, orbit: 4.05, shape: [1, 0.68, 0.58],
+      description: "木星最靠内的已知卫星之一，在强烈潮汐和主环尘埃环境中运行。",
+    facts: [["physical:radius"], ["physical:orbit", "小时"], ["所属天体", "木星", ""], ["作用", "主环物质源", ""]],
     feature: "主环内侧轨道", featureText: "木卫十六的撞击碎屑可能持续为木星主环补充尘埃。",
     caption: "木卫十六", detail: "伽利略号影像 / 程序化补全", source: "jupiter/moons/metis/"
   }),
   catalogSatellite({
     id: "himalia", name: "木卫六", english: "HIMALIA", category: "木星 / 外侧卫星", parent: "jupiter",
-    color: "#aaa39a", texture: "himalia", radius: 0.12, orbit: 13.2, shape: [1, 0.83, 0.7], period: 250.56,
-    orbitPhase: 0.9, inclination: 27.5, description: "木星外侧不规则卫星群中最大的成员，轨道倾角很大，表面呈中性灰色。",
-    facts: [["平均半径 · 约", "67", "km"], ["绕木周期 · 约", "250.6", "天"], ["所属天体", "木星", ""], ["轨道倾角", "27.5", "°"]],
+    color: "#aaa39a", texture: "himalia", radius: 0.12, orbit: 13.2, shape: [1, 0.83, 0.7],
+      description: "木星外侧不规则卫星群中最大的成员，轨道倾角很大，表面呈中性灰色。",
+    facts: [["physical:radius"], ["physical:orbit", "天"], ["所属天体", "木星", ""], ["physical:inclination"]],
     feature: "高倾角外侧轨道", featureText: "木卫六远离木星主卫星群，沿高倾角、偏心轨道缓慢运行。",
     caption: "木卫六外侧轨道", detail: "地基观测 / 程序化补全", source: "jupiter/moons/himalia/"
   }),
   catalogSatellite({
     id: "mimas", name: "土卫一", english: "MIMAS", category: "土星 / 冰质卫星", parent: "saturn", color: "#bfc5c8", texture: "mimas", baseTexture: "2k_mimas.jpg", high: "4k_mimas.jpg",
-    radius: 0.115, orbit: 3.45, period: 0.9424, orbitPhase: 0.22, inclination: 1.53, description: "一颗布满撞击坑的冰质小卫星，赫歇尔撞击坑几乎占据了半球。",
-    facts: [["平均半径", "198", "km"], ["绕土周期 · 约", "22.6", "小时"], ["所属天体", "土星", ""], ["表面成分", "水冰", ""]], feature: "赫歇尔撞击坑", featureText: "巨大的赫歇尔撞击坑让土卫一拥有类似科幻飞船的外观，坑壁高度可达数公里。", caption: "土卫一地表", detail: "卡西尼号地图 / 真实贴图", source: "saturn/moons/mimas/"
+    radius: 0.115, orbit: 3.45, description: "一颗布满撞击坑的冰质小卫星，赫歇尔撞击坑几乎占据了半球。",
+    facts: [["physical:radius"], ["physical:orbit", "小时"], ["所属天体", "土星", ""], ["表面成分", "水冰", ""]], feature: "赫歇尔撞击坑", featureText: "巨大的赫歇尔撞击坑让土卫一拥有类似科幻飞船的外观，坑壁高度可达数公里。", caption: "土卫一地表", detail: "卡西尼号地图 / 真实贴图", source: "saturn/moons/mimas/"
   }),
   catalogSatellite({
     id: "tethys", name: "土卫三", english: "TETHYS", category: "土星 / 冰质卫星", parent: "saturn", color: "#d1d3d1", texture: "tethys", baseTexture: "2k_tethys.jpg", high: "4k_tethys.jpg",
-    radius: 0.20, orbit: 4.9, period: 1.8878, orbitPhase: 1.05, inclination: 1.12, description: "明亮的冰质卫星，巨大的奥德修斯撞击坑和伊萨卡峡谷横跨其表面。",
-    facts: [["平均半径", "531", "km"], ["绕土周期 · 约", "45.3", "小时"], ["所属天体", "土星", ""], ["表面成分", "水冰", ""]], feature: "奥德修斯撞击坑与峡谷", featureText: "巨大的奥德修斯撞击坑和几乎环绕卫星的伊萨卡峡谷，是土卫三最醒目的地貌。", caption: "土卫三地表", detail: "卡西尼号地图 / 真实贴图", source: "saturn/moons/tethys/"
+    radius: 0.20, orbit: 4.9, description: "明亮的冰质卫星，巨大的奥德修斯撞击坑和伊萨卡峡谷横跨其表面。",
+    facts: [["physical:radius"], ["physical:orbit", "小时"], ["所属天体", "土星", ""], ["表面成分", "水冰", ""]], feature: "奥德修斯撞击坑与峡谷", featureText: "巨大的奥德修斯撞击坑和几乎环绕卫星的伊萨卡峡谷，是土卫三最醒目的地貌。", caption: "土卫三地表", detail: "卡西尼号地图 / 真实贴图", source: "saturn/moons/tethys/"
   }),
   catalogSatellite({
     id: "dione", name: "土卫四", english: "DIONE", category: "土星 / 冰质卫星", parent: "saturn", color: "#c7c8c4", texture: "dione", baseTexture: "2k_dione.jpg", high: "4k_dione.jpg",
-    radius: 0.21, orbit: 5.8, period: 2.7369, orbitPhase: 2.04, inclination: 0.02, description: "冰岩混合的卫星，明亮的构造条纹和古老撞击坑交织在一起。",
-    facts: [["平均半径", "561", "km"], ["绕土周期 · 约", "65.7", "小时"], ["所属天体", "土星", ""], ["卫星类型", "冰岩混合", ""]], feature: "亮纹与撞击坑", featureText: "土卫四背向土星的一面有大量明亮条纹，可能来自构造断裂和冰质喷出物。", caption: "土卫四地表", detail: "卡西尼号地图 / 真实贴图", source: "saturn/moons/dione/"
+    radius: 0.21, orbit: 5.8, description: "冰岩混合的卫星，明亮的构造条纹和古老撞击坑交织在一起。",
+    facts: [["physical:radius"], ["physical:orbit", "小时"], ["所属天体", "土星", ""], ["卫星类型", "冰岩混合", ""]], feature: "亮纹与撞击坑", featureText: "土卫四背向土星的一面有大量明亮条纹，可能来自构造断裂和冰质喷出物。", caption: "土卫四地表", detail: "卡西尼号地图 / 真实贴图", source: "saturn/moons/dione/"
   }),
   catalogSatellite({
     id: "rhea", name: "土卫五", english: "RHEA", category: "土星 / 冰质卫星", parent: "saturn", color: "#c6c6bf", texture: "rhea", baseTexture: "2k_rhea.jpg", high: "4k_rhea.jpg",
-    radius: 0.27, orbit: 7.3, period: 4.5175, orbitPhase: 3.1, inclination: 0.35, description: "土星第二大卫星，冰质表面布满撞击坑和稀疏的亮色条纹。",
-    facts: [["平均半径", "764", "km"], ["绕土周期 · 约", "108.4", "小时"], ["所属天体", "土星", ""], ["表面成分", "水冰与岩石", ""]], feature: "撞击坑与亮色条纹", featureText: "土卫五的古老表面保存着密集撞击坑，背土半球可见细弱的亮色构造。", caption: "土卫五地表", detail: "卡西尼号地图 / 真实贴图", source: "saturn/moons/rhea/"
+    radius: 0.27, orbit: 7.3, description: "土星第二大卫星，冰质表面布满撞击坑和稀疏的亮色条纹。",
+    facts: [["physical:radius"], ["physical:orbit", "小时"], ["所属天体", "土星", ""], ["表面成分", "水冰与岩石", ""]], feature: "撞击坑与亮色条纹", featureText: "土卫五的古老表面保存着密集撞击坑，背土半球可见细弱的亮色构造。", caption: "土卫五地表", detail: "卡西尼号地图 / 真实贴图", source: "saturn/moons/rhea/"
   }),
   catalogSatellite({
     id: "iapetus", name: "土卫八", english: "IAPETUS", category: "土星 / 双色卫星", parent: "saturn", color: "#8d8175", texture: "iapetus", baseTexture: "2k_iapetus.jpg", high: "4k_iapetus.jpg",
-    radius: 0.26, orbit: 18.3, period: 79.3215, orbitPhase: 4.18, inclination: 15.47, description: "远离土星运行的双面卫星，前进半球深暗，背土半球明亮，赤道还有显著山脊。",
-    facts: [["平均半径", "734", "km"], ["绕土周期 · 约", "79.3", "天"], ["所属天体", "土星", ""], ["轨道倾角", "15.5", "°"]], feature: "卡西尼区域与赤道山脊", featureText: "深暗的卡西尼区域与明亮冰质半球形成强烈双色对比，赤道山脊延伸数百公里。", caption: "土卫八双色地表", detail: "卡西尼号全球地图 / 真实贴图", source: "saturn/moons/iapetus/"
+    radius: 0.26, orbit: 18.3, description: "远离土星运行的双面卫星，前进半球深暗，背土半球明亮，赤道还有显著山脊。",
+    facts: [["physical:radius"], ["physical:orbit", "天"], ["所属天体", "土星", ""], ["physical:inclination"]], feature: "卡西尼区域与赤道山脊", featureText: "深暗的卡西尼区域与明亮冰质半球形成强烈双色对比，赤道山脊延伸数百公里。", caption: "土卫八双色地表", detail: "卡西尼号全球地图 / 真实贴图", source: "saturn/moons/iapetus/"
   }),
   catalogSatellite({
-    id: "phoebe", name: "土卫九", english: "PHOEBE", category: "土星 / 逆行卫星", parent: "saturn", color: "#8d8981", texture: "phoebe", baseTexture: "2k_phoebe.jpg", radius: 0.075, orbit: 22.6, period: 550.48, orbitPhase: 5.12, inclination: 175.3, retrograde: true,
-    description: "一颗来自外太阳系的暗色逆行卫星，表面富含挥发物和密集撞击坑。", facts: [["平均半径", "107", "km"], ["绕土周期 · 约", "550", "天"], ["所属天体", "土星", ""], ["轨道方向", "逆行", ""]], feature: "暗色撞击地表", featureText: "土卫九沿逆行轨道运行，和土星规则卫星的形成环境明显不同。", caption: "土卫九地表", detail: "卡西尼号地图 / 真实贴图", source: "saturn/moons/phoebe/"
+    id: "phoebe", name: "土卫九", english: "PHOEBE", category: "土星 / 逆行卫星", parent: "saturn", color: "#8d8981", texture: "phoebe", baseTexture: "2k_phoebe.jpg", radius: 0.075, orbit: 22.6,
+    description: "一颗来自外太阳系的暗色逆行卫星，表面富含挥发物和密集撞击坑。", facts: [["physical:radius"], ["physical:orbit", "天"], ["所属天体", "土星", ""], ["轨道方向", "逆行", ""]], feature: "暗色撞击地表", featureText: "土卫九沿逆行轨道运行，和土星规则卫星的形成环境明显不同。", caption: "土卫九地表", detail: "卡西尼号地图 / 真实贴图", source: "saturn/moons/phoebe/"
   }),
   ...[
-    ["hyperion", "土卫七", "HYPERION", 0.135, 10.8, 21.2766, 0.2, "海绵状不规则地表", "形状高度不规则，深坑和疏松物质让土卫七像一块巨大的多孔海绵。"],
-    ["janus", "土卫十", "JANUS", 0.07, 2.1, 0.6945, 0.18, "共轨道运行", "土卫十与土卫十一共享几乎相同的轨道，每隔数年交换一次领先位置。"],
-    ["epimetheus", "土卫十一", "EPIMETHEUS", 0.065, 2.13, 0.6942, 0.25, "马蹄形共轨道", "土卫十一与土卫十的共轨道运动是太阳系中最典型的马蹄形交换。"],
-    ["prometheus", "土卫十六", "PROMETHEUS", 0.055, 2.65, 0.613, 0.4, "F 环牧卫星", "土卫十六沿 F 环内侧运行，细长形状和撞击坑构成其主要外观。"],
-    ["pandora", "土卫十七", "PANDORA", 0.05, 2.7, 0.6285, 0.35, "F 环牧卫星", "土卫十七在 F 环外侧约束环粒，是土星环系统的外侧牧羊卫星。"],
-    ["atlas", "土卫十五", "ATLAS", 0.038, 2.55, 0.6019, 0.3, "A 环边缘牧卫星", "土卫十五贴近 A 环边缘运行，赤道隆起让它呈现飞碟般的轮廓。"],
-    ["pan", "土卫十八", "PAN", 0.035, 2.52, 0.575, 0.1, "恩克缝牧卫星", "土卫十八在恩克缝中运行，赤道堆积的环粒形成明显的馒头状外形。"],
-  ].map(([id,name,english,radius,orbit,period,phase,feature,featureText]) => catalogSatellite({
-    id, name, english, category: "土星 / 环卫星", parent: "saturn", color: "#aaa197", texture: id, radius, orbit, period, orbitPhase: phase, inclination: 0.2,
-    shape: [1, 0.78, 0.65], description: `${name}是土星环系统中的小型卫星，轨道与环粒相互作用。`, facts: [["平均半径 · 约", String(physicalData[id].radiusKm), "km"], ["绕土周期 · 约", `${period.toFixed(3)}`, "天"], ["所属天体", "土星", ""], ["分类", "环卫星", ""]], feature, featureText, caption: `${name}轨道`, detail: "卡西尼号影像 / 程序化补全", source: `saturn/moons/${id}/`
+    ["hyperion", "土卫七", "HYPERION", 0.135, 10.8, "海绵状不规则地表", "形状高度不规则，深坑和疏松物质让土卫七像一块巨大的多孔海绵。"],
+    ["janus", "土卫十", "JANUS", 0.07, 2.1, "共轨道运行", "土卫十与土卫十一共享几乎相同的轨道，每隔数年交换一次领先位置。"],
+    ["epimetheus", "土卫十一", "EPIMETHEUS", 0.065, 2.13, "马蹄形共轨道", "土卫十一与土卫十的共轨道运动是太阳系中最典型的马蹄形交换。"],
+    ["prometheus", "土卫十六", "PROMETHEUS", 0.055, 2.65, "F 环牧卫星", "土卫十六沿 F 环内侧运行，细长形状和撞击坑构成其主要外观。"],
+    ["pandora", "土卫十七", "PANDORA", 0.05, 2.7, "F 环牧卫星", "土卫十七在 F 环外侧约束环粒，是土星环系统的外侧牧羊卫星。"],
+    ["atlas", "土卫十五", "ATLAS", 0.038, 2.55, "A 环边缘牧卫星", "土卫十五贴近 A 环边缘运行，赤道隆起让它呈现飞碟般的轮廓。"],
+    ["pan", "土卫十八", "PAN", 0.035, 2.52, "恩克缝牧卫星", "土卫十八在恩克缝中运行，赤道堆积的环粒形成明显的馒头状外形。"],
+  ].map(([id,name,english,radius,orbit,feature,featureText]) => catalogSatellite({
+    id, name, english, category: "土星 / 环卫星", parent: "saturn", color: "#aaa197", texture: id, radius, orbit,
+    shape: [1, 0.78, 0.65], description: `${name}是土星环系统中的小型卫星，轨道与环粒相互作用。`, facts: [["physical:radius"], ["physical:orbit", "天"], ["所属天体", "土星", ""], ["分类", "环卫星", ""]], feature, featureText, caption: `${name}轨道`, detail: "卡西尼号影像 / 程序化补全", source: `saturn/moons/${id}/`
   })),
   ...[
-    ["ariel", "天卫一", "ARIEL", "uranus", 0.16, 4.2, 2.5204], ["umbriel", "天卫二", "UMBRIEL", "uranus", 0.18, 5.1, 4.1442],
-    ["titania", "天卫三", "TITANIA", "uranus", 0.23, 6.2, 8.7059], ["oberon", "天卫四", "OBERON", "uranus", 0.23, 7.3, 13.4632],
-    ["nereid", "海卫二", "NEREID", "neptune", 0.11, 9.4, 360.13], ["proteus", "海卫八", "PROTEUS", "neptune", 0.15, 3.2, 1.1223],
-    ["styx", "冥卫五", "STYX", "pluto", 0.045, 4.2, 20.1616], ["nix", "冥卫二", "NIX", "pluto", 0.06, 5.1, 24.8546],
-    ["kerberos", "冥卫四", "KERBEROS", "pluto", 0.035, 6.1, 32.1676], ["hydra", "冥卫三", "HYDRA", "pluto", 0.065, 7.0, 38.2018],
-  ].map(([id,name,english,parent,radius,orbit,period]) => catalogSatellite({
-    id, name, english, category: `${parent === "uranus" ? "天王星" : parent === "neptune" ? "海王星" : "冥王星"} / 天然卫星`, parent, color: "#aaa39a", texture: id, radius, orbit, period, orbitPhase: 0.8 + radius * 9, inclination: 0.5,
-    shape: [1, 0.78, 0.68], description: `${name}是${parent === "uranus" ? "天王星" : parent === "neptune" ? "海王星" : "冥王星"}系统中的小型卫星，表面资料有限。`, facts: [["平均半径 · 约", String(physicalData[id].radiusKm), "km"], ["公转周期 · 约", `${period.toFixed(2)}`, "天"], ["所属天体", parent === "uranus" ? "天王星" : parent === "neptune" ? "海王星" : "冥王星", ""], ["资料状态", "有限", ""]], feature: "撞击地貌与冰质表面", featureText: "该卫星缺少完整全球测绘，当前以低对比度程序化表面表达其已知外观。", caption: `${name}轨道`, detail: "观测资料有限 / 程序化补全", source: `${parent}/moons/${id}/`
+    ["ariel", "天卫一", "ARIEL", "uranus", 0.16, 4.2], ["umbriel", "天卫二", "UMBRIEL", "uranus", 0.18, 5.1],
+    ["titania", "天卫三", "TITANIA", "uranus", 0.23, 6.2], ["oberon", "天卫四", "OBERON", "uranus", 0.23, 7.3],
+    ["nereid", "海卫二", "NEREID", "neptune", 0.11, 9.4], ["proteus", "海卫八", "PROTEUS", "neptune", 0.15, 3.2],
+    ["styx", "冥卫五", "STYX", "pluto", 0.045, 4.2], ["nix", "冥卫二", "NIX", "pluto", 0.06, 5.1],
+    ["kerberos", "冥卫四", "KERBEROS", "pluto", 0.035, 6.1], ["hydra", "冥卫三", "HYDRA", "pluto", 0.065, 7.0],
+  ].map(([id,name,english,parent,radius,orbit]) => catalogSatellite({
+    id, name, english, category: `${parent === "uranus" ? "天王星" : parent === "neptune" ? "海王星" : "冥王星"} / 天然卫星`, parent, color: "#aaa39a", texture: id, radius, orbit,
+    shape: [1, 0.78, 0.68], description: `${name}是${parent === "uranus" ? "天王星" : parent === "neptune" ? "海王星" : "冥王星"}系统中的小型卫星，表面资料有限。`, facts: [["physical:radius"], ["physical:orbit", "天"], ["所属天体", parent === "uranus" ? "天王星" : parent === "neptune" ? "海王星" : "冥王星", ""], ["资料状态", "有限", ""]], feature: "撞击地貌与冰质表面", featureText: "该卫星缺少完整全球测绘，当前以低对比度程序化表面表达其已知外观。", caption: `${name}轨道`, detail: "观测资料有限 / 程序化补全", source: `${parent}/moons/${id}/`
   })),
   ...[
-    ['hiiaka', '妊卫一', "HIʻIAKA", 'haumea', .105, 3.55, 49.462, 0, 'haumea', '妊神星较大的外侧卫星，遥感光谱显示丰富的水冰，旋转明显快于绕行。'],
-    ['namaka', '妊卫二', 'NAMAKA', 'haumea', .07, 2.4, 18.2783, 13, 'haumea', '妊神星较小的内侧卫星。画面以倾斜轨道展示它与妊卫一不同的运行平面。'],
-    ['dysnomia', '阋卫一', 'DYSNOMIA', 'eris', .15, 2.4, 15.7859, 0, 'umbriel', '阋神星的卫星，约每 15.8 天完成一次绕行；主星采用相同自转周期；初始经线和极轴为示意。'],
-  ].map(([id, name, english, parent, radius, orbit, period, inclination, texture, description]) => catalogSatellite({
-    id, name, english, parent, radius, orbit, period, inclination, orbitPhase: id === 'namaka' ? 3.1 : 1.2,
+    ['hiiaka', '妊卫一', "HIʻIAKA", 'haumea', .105, 3.55, 'haumea', '妊神星较大的外侧卫星，遥感光谱显示丰富的水冰，旋转明显快于绕行。'],
+    ['namaka', '妊卫二', 'NAMAKA', 'haumea', .07, 2.4, 'haumea', '妊神星较小的内侧卫星。画面以倾斜轨道展示它与妊卫一不同的运行平面。'],
+    ['dysnomia', '阋卫一', 'DYSNOMIA', 'eris', .15, 2.4, 'umbriel', '阋神星的卫星，约每 15.8 天完成一次绕行；主星采用相同自转周期；初始经线和极轴为示意。'],
+  ].map(([id, name, english, parent, radius, orbit, texture, description]) => catalogSatellite({
+    id, name, english, parent, radius, orbit,
     category: `${parent === 'haumea' ? '妊神星' : '阋神星'} / 天然卫星`, color: '#c9c7c3', texture,
     baseTexture: `artistic/${texture}-1920.webp`, high: `artistic/${texture}-3840.webp`,
-    description, facts: [['半径估计', '—', 'km'], ['公转周期 · 约', String(period), '天'], ['所属天体', parent === 'haumea' ? '妊神星' : '阋神星', ''], ['地表资料', '未测绘', '']],
+    description, facts: [["physical:radius"], ["physical:orbit", "天"], ['所属天体', parent === 'haumea' ? '妊神星' : '阋神星', ''], ['地表资料', '未测绘', '']],
     feature: '卫星绕行与冰质地表示意', featureText: '尚无完整地表测绘，画面沿用冰质艺术地表来展示体积与光照。轨道与外形为示意。',
     caption: `${name}地表示意`, detail: '共享艺术地表 / 非实测地图', source: `dwarf-planets/${parent}/`,
   })),
 ].map((body) => ({
   ...body,
   ...bodyModels[body.id],
-  facts: body.facts.map(([label, value, unit]) => [label,
-    label.includes('半径') ? physicalData[body.id].radiusKm.toLocaleString('en-US', {maximumFractionDigits: 1}) : value, unit]),
+  facts: resolvePhysicalFacts(body),
   group: body.parent ? "moons" : "others",
   ...(artisticTextures.has(body.id) ? {
     baseTexture: `artistic/${body.id}-1920.webp`,

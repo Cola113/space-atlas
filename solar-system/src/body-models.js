@@ -1,8 +1,15 @@
-// Display shapes and prose only. Motion definitions live in physics/mean-elements.json
+import { physicalDefinitions } from './physics/definitions.js';
+
+// Display shapes and prose only. Motion definitions live in physics/body-definitions.json
 // and the astronomical providers; shape ratios never change physical radii.
+function measuredAxes(id) {
+  const [a,b,c] = physicalDefinitions.bodies[id].radius.semiAxesKm;
+  return [1,c/a,b/a]; // Three's +Y axis is the spin axis.
+}
 export const bodyModels = {
   makemake: { spinNote: '自转约 22.8 小时（采用双峰解）' },
-  haumea: { shape: [1, 0.442, 0.734], rings: {inner: 1.94, outer: 2.08}, spinNote: '自转约 3.92 小时' },
+  haumea: { shape: measuredAxes('haumea'), rings: {inner: 1.94, outer: 2.08}, spinNote: '自转约 3.92 小时；极轴采用掩星环平面的优选解，经线零点未校准' },
+  vesta: { shape: measuredAxes('vesta') },
   eris: { spinNote: '自转约 15.8 天，与阋卫一同步' },
   phoebe: { spinNote: '独立自转约 9.3 小时' },
   himalia: { spinNote: '独立自转约 7.78 小时' },
@@ -15,13 +22,13 @@ export const bodyModels = {
   proteus: { shape: [1, .91, .96] },
   atlas: { shape: [1, .65, .92], ridge: {height: .30, width: .11} },
   pan: { shape: [1, .72, .93], ridge: {height: .32, width: .12} },
-  janus: { orbit: 3.15, shape: [1, .765, .98], spinNote: '内外轨道约每 4 年交换，画面放大轨道差异以便观察' },
-  epimetheus: { orbit: 3.15, shape: [1, .69, .84], spinNote: '内外轨道约每 4 年交换，画面放大轨道差异以便观察' },
+  janus: { orbit: 3.15, shape: [1, .765, .98], spinNote: '当前为平均椭圆，未模拟真实的约四年共轨道交换；放大的模型可能在示意图中重叠' },
+  epimetheus: { orbit: 3.15, shape: [1, .69, .84], spinNote: '当前为平均椭圆，未模拟真实的约四年共轨道交换；放大的模型可能在示意图中重叠' },
   styx: { shape: [1, .5, .56] },
   nix: { shape: [1, .65, .70] },
   kerberos: { shape: [1, .47, .53] },
   hydra: { shape: [1, .47, .59] },
-  hiiaka: { shape: [1, .8, .9], spinNote: '独立自转约 9.8 小时' },
+  hiiaka: { shape: measuredAxes('hiiaka'), spinNote: '独立自转约 9.68 小时；尺寸与轮廓采用 2025 年发表的掩星模型，地貌仍为艺术示意' },
   namaka: { shape: [1, .82, .9], spinNote: '自转周期未测定，采用同步自转示意' },
   dysnomia: { spinNote: '采用与公转同步的自转示意' },
 };

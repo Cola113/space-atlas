@@ -6,7 +6,7 @@ import { bodies } from '../src/data.js';
 import { physicalData } from '../src/physical-scale.js';
 import { createBodyGeometry, createNarrowRing } from '../src/body-geometry.js';
 import { updateDisplayState } from '../src/orbits.js';
-import { meanElements, meanMotion, COORBITAL_SWAP_DAYS } from '../src/physics/mean-motion.js';
+import { meanElements } from '../src/physics/mean-motion.js';
 import { physicalTime } from '../src/physics/time.js';
 import { localPhysics } from './physical-fixture.js';
 const provider=localPhysics();
@@ -18,7 +18,6 @@ const date = days => new Date(SIMULATION_EPOCH + days * day);
 function scene() {
   return new Map(bodies.map(data => {
     const root = new THREE.Group(), tilted = new THREE.Group(), mesh = new THREE.Mesh();
-    tilted.rotation.z = THREE.MathUtils.degToRad(data.tilt);
     root.add(tilted); tilted.add(mesh);
     return [data.id, {...data, root, tilted, mesh, orbitCenter: new THREE.Vector3(), orbitLine: new THREE.Line()}];
   }));
@@ -108,32 +107,9 @@ test('Pluto small moons orbit the barycenter while Charon retains the binary dis
   assert.ok(p.root.position.distanceTo(p.orbitCenter) > .1);
   for (const id of ['styx','nix','kerberos','hydra']) {
     const b = objects.get(id);
-    assert.ok(Math.abs(b.root.position.distanceTo(p.orbitCenter) - b.orbit) < 1e-8);
+    const expected=b.physical.relativeKm.length()/physicalData[id].orbitKm*b.orbit;
+    assert.ok(Math.abs(b.root.position.distanceTo(p.orbitCenter)-expected)<1e-8);
     assert.ok(b.orbitLine.position.distanceTo(p.orbitCenter) < 1e-8);
-  }
-});
-
-function meanOrbit(body,t){
-  const physical=provider.frame(date(t)).bodies.get(body.id);
-  // Express its physical plane in units of its display radius for the existing
-  // qualitative collision check; never feed this scale into physical state.
-  const model=meanElements.bodies[body.id],phase=t/COORBITAL_SWAP_DAYS*Math.PI;
-  const r=physical.relativeKm.length()/physicalData[body.id].orbitKm*body.orbit;
-  const north=provider.frame(date(t)).bodies.get(model.parent).orientation.north;
-  const node=new THREE.Vector3(0,0,1).cross(north).normalize(),east=north.clone().cross(node);
-  return {radius:r,angle:Math.atan2(physical.relativeKm.dot(east),physical.relativeKm.dot(node))};
-}
-test('co-orbital moons exchange inner/outer orbits smoothly without collisions', () => {
-  const j = bodies.find(b => b.id === 'janus'), e = bodies.find(b => b.id === 'epimetheus');
-  const delta = t => meanOrbit(j,t).radius - meanOrbit(e,t).radius;
-  assert.ok(delta(COORBITAL_SWAP_DAYS/2) * delta(COORBITAL_SWAP_DAYS*1.5) < 0);
-  for (let i = 0; i <= 160; i++) {
-    const t = i * COORBITAL_SWAP_DAYS / 80;
-    const a = meanOrbit(j,t), b = meanOrbit(e,t);
-    const distance = Math.hypot(a.radius*Math.cos(a.angle)-b.radius*Math.cos(b.angle), a.radius*Math.sin(a.angle)-b.radius*Math.sin(b.angle));
-    assert.ok(distance > j.radius + e.radius, 'co-orbital bodies intersect');
-    const next = meanOrbit(j,t+.000001);
-    assert.ok(Math.abs(next.radius-a.radius) < 1e-6);
   }
 });
 

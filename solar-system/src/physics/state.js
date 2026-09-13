@@ -7,8 +7,9 @@ import { bodyOrientation } from './orientation.js';
 import { EphemerisStore, EPHEMERIS_SYSTEMS, inEphemerisRange, evaluateEphemeris } from './ephemeris.js';
 import { keplerPosition } from './kepler.js';
 import anchors from './kepler-anchors.json';
+import { AU_KM } from './definitions.js';
 
-export const AU_KM = 149597870.7;
+export { AU_KM } from './definitions.js';
 export const physicalNames = Object.freeze({ sun:'Sun', mercury:'Mercury', venus:'Venus', earth:'Earth',
   moon:'Moon', mars:'Mars', jupiter:'Jupiter', io:'Io', europa:'Europa', ganymede:'Ganymede', callisto:'Callisto',
   saturn:'Saturn', enceladus:'Enceladus', titan:'Titan', uranus:'Uranus', miranda:'Miranda',
@@ -98,7 +99,7 @@ export class PhysicalState {
     }
     this.current = {date:time.date,time,bodies:states,missing,barycenters,barycenterVelocities,revision:this.ephemeris.revision,
       frame:'J2000 equatorial', units:'km', geometric:true,
-      accuracy:inRange ? '1900—2100 校准范围；其它小天体为未校准初始相位的平均模型。星历编码误差小于1 km不代表轨道解、姿态或落点的总误差。'
+      accuracy:inRange ? '1900—2100 为核心星历校准范围；其它小天体为有来源的固定平均椭圆，不能预测真实交会或掩食。星历编码误差小于1 km不代表轨道解、姿态或落点的总误差。'
         : '范围外近似推算：卫星采用边界二体外推，行星沿用 Astronomy Engine；误差随外推时间增大。' };
     return this.current;
   }

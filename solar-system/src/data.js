@@ -1,4 +1,4 @@
-import { physicalData } from "./physical-scale.js";
+import { resolvePhysicalFacts } from './catalog-facts.js';
 import { additionalBodies } from "./additional-bodies.js";
 
 export const ORBIT_SPACING = 2;
@@ -15,12 +15,10 @@ export const bodies = [
     high: "8k_sun.jpg",
     radius: 4.5,
     orbit: 0,
-    tilt: 7.25,
-    spin: 0.018,
     description:
       "太阳系的中心恒星。持续的核聚变释放光和热，为遥远的行星带来能量。",
     facts: [
-      ["采用半径", physicalData.sun.radiusKm.toLocaleString("en-US"), "km"],
+      ["physical:radius"],
       ["光球温度", "5,500", "°C"],
       ["年龄 · 约", "46", "亿年"],
       ["类型", "黄矮星", ""],
@@ -43,15 +41,13 @@ export const bodies = [
     high: "8k_mercury.jpg",
     radius: 0.62,
     orbit: 9,
-    tilt: 0.03,
-    spin: 0.013,
     description:
       "距离太阳最近，也是八大行星中最小的一颗。稀薄的外逸层下，古老撞击坑遍布地表。",
     facts: [
-      ["平均半径", "2,440", "km"],
-      ["公转周期", "88", "天"],
+      ["physical:radius"],
+      ["physical:orbit", "天"],
       ["日照面温度 · 约", "430", "°C"],
-      ["平均日距", "0.39", "AU"],
+      ["physical:distance"],
     ],
     feature: "撞击坑与古老平原",
     featureText: "明亮的撞击射纹与暗色平原，记录了这颗岩石世界漫长的演化。",
@@ -71,15 +67,13 @@ export const bodies = [
     high: "8k_venus_surface.jpg",
     radius: 1.02,
     orbit: 13,
-    tilt: 177.4,
-    spin: 0.009,
     description:
       "浓密的二氧化碳大气包裹着金星。强烈的温室效应，让它成为太阳系最炽热的行星。",
     facts: [
-      ["平均半径", "6,052", "km"],
-      ["公转周期", "225", "天"],
+      ["physical:radius"],
+      ["physical:orbit", "天"],
       ["平均地表温度", "464", "°C"],
-      ["平均日距", "0.72", "AU"],
+      ["physical:distance"],
     ],
     feature: "云海之下的火山世界",
     featureText: "硫酸云遮住了地表。雷达地图揭示出大片火山平原和起伏的高地。",
@@ -100,15 +94,13 @@ export const bodies = [
     high: "8k_earth_daymap.jpg",
     radius: 1.08,
     orbit: 17,
-    tilt: 23.44,
-    spin: 0.028,
     description:
       "我们的蓝色家园。海洋、陆地与流动的云层共同构成了目前唯一已知孕育生命的世界。",
     facts: [
-      ["平均半径", "6,371", "km"],
-      ["公转周期", "365.25", "天"],
+      ["physical:radius"],
+      ["physical:orbit", "天"],
       ["海洋覆盖率 · 约", "71", "%"],
-      ["平均日距", "1.00", "AU"],
+      ["physical:distance"],
     ],
     feature: "海洋、大陆与云层",
     featureText: "从海岸线到广阔山脉，蓝白相间的地球不断变换着自己的面貌。",
@@ -129,15 +121,13 @@ export const bodies = [
     high: "8k_mars.jpg",
     radius: 0.82,
     orbit: 22,
-    tilt: 25.2,
-    spin: 0.025,
     description:
       "一颗寒冷、干燥的红色星球。富含氧化铁的尘土之下，仍留着远古河流与湖泊的痕迹。",
     facts: [
-      ["平均半径", "3,390", "km"],
-      ["公转周期", "687", "天"],
+      ["physical:radius"],
+      ["physical:orbit", "天"],
       ["平均地表温度 · 约", "−65", "°C"],
-      ["平均日距", "1.52", "AU"],
+      ["physical:distance"],
     ],
     feature: "峡谷、火山与极冠",
     featureText: "水手号峡谷横跨地表，奥林帕斯山则是一座巨大的盾状火山。",
@@ -157,15 +147,13 @@ export const bodies = [
     high: "8k_jupiter.jpg",
     radius: 2.65,
     orbit: 31,
-    tilt: 3.1,
-    spin: 0.049,
     description:
       "太阳系最大的行星。快速自转将高层大气织成明暗相间的云带，巨大的风暴在其中翻涌。",
     facts: [
-      ["平均半径", "69,911", "km"],
-      ["公转周期", "11.86", "年"],
-      ["自转周期 · 约", "9.9", "小时"],
-      ["平均日距", "5.20", "AU"],
+      ["physical:radius"],
+      ["physical:orbit", "年"],
+      ["physical:spin"],
+      ["physical:distance"],
     ],
     feature: "云带与大红斑",
     featureText:
@@ -186,15 +174,13 @@ export const bodies = [
     high: "8k_saturn.jpg",
     radius: 2.18,
     orbit: 41,
-    tilt: 26.7,
-    spin: 0.043,
     description:
       "被明亮冰环环绕的气态巨行星。轻盈的淡金色云层之下，是以氢和氦为主的大气。",
     facts: [
-      ["平均半径", "58,232", "km"],
-      ["公转周期", "29.45", "年"],
-      ["自转周期 · 约", "10.7", "小时"],
-      ["平均日距", "9.58", "AU"],
+      ["physical:radius"],
+      ["physical:orbit", "年"],
+      ["physical:spin"],
+      ["physical:distance"],
     ],
     feature: "冰粒组成的光环",
     featureText:
@@ -215,15 +201,13 @@ export const bodies = [
     high: null,
     radius: 1.58,
     orbit: 51,
-    tilt: 97.8,
-    spin: 0.031,
     description:
       "几乎侧躺着绕太阳运行的冰巨行星。大气中的甲烷吸收红光，让它呈现淡淡的蓝绿色。",
     facts: [
-      ["平均半径", "25,362", "km"],
-      ["公转周期", "84.02", "年"],
-      ["自转周期 · 约", "17.2", "小时"],
-      ["平均日距", "19.2", "AU"],
+      ["physical:radius"],
+      ["physical:orbit", "年"],
+      ["physical:spin"],
+      ["physical:distance"],
     ],
     feature: "平静外观下的大气",
     featureText:
@@ -244,15 +228,13 @@ export const bodies = [
     high: null,
     radius: 1.52,
     orbit: 61,
-    tilt: 28.3,
-    spin: 0.033,
     description:
       "八大行星中距离太阳最远的一颗。寒冷的大气中，强烈的风推动着云层与不断变化的风暴。",
     facts: [
-      ["平均半径", "24,622", "km"],
-      ["公转周期", "164.8", "年"],
-      ["自转周期 · 约", "16.1", "小时"],
-      ["平均日距", "30.1", "AU"],
+      ["physical:radius"],
+      ["physical:orbit", "年"],
+      ["physical:spin"],
+      ["physical:distance"],
     ],
     feature: "遥远世界的风暴",
     featureText:
@@ -263,7 +245,8 @@ export const bodies = [
     source: "neptune",
   },
   ...additionalBodies,
-].map((body) => ({ ...body, orbit: body.orbit * ORBIT_SPACING }));
+].map((body) => ({ ...body,
+  facts: resolvePhysicalFacts(body), orbit: body.orbit * ORBIT_SPACING }));
 
 // Reserve the full moon system, so neighbouring systems cannot intersect at conjunction.
 let outerEdge = 0;

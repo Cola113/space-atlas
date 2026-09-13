@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { bindPhysicalSun } from '../physical-lighting.js';
 import { surfaceFrame, angularDiameter, horizonAngles } from './geometry.js';
 import { physicalData } from '../physical-scale.js';
+import { AU_KM } from '../physics/definitions.js';
 import { physicalState } from '../physics/state.js';
 import { brightStars } from '../sky-data/bright-stars.js';
 import { equatorialDirection, starAppearance } from '../sky-coordinates.js';
@@ -184,7 +185,7 @@ export function createSurfaceSky({scene,renderer,site,parentMap,cloudMap,ringMap
       if(!target){globe.visible=false;continue;}
       globe.visible=true;
       sunlight.copy(frame.local(target.positionKm.clone().negate().normalize()));
-      const distance=name==='Sun'?1200:300+400*target.distanceKm/(target.distanceKm+149597870.7);
+      const distance=name==='Sun'?1200:300+400*target.distanceKm/(target.distanceKm+AU_KM);
       globe.position.copy(target.direction).multiplyScalar(distance);
       globe.scale.setScalar(distance*radiusKm/target.distanceKm);
       if(target.orientation){

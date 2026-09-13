@@ -1,12 +1,26 @@
 import { defineConfig } from "vite";
 import { fileURLToPath } from "node:url";
+import { readFile } from "node:fs/promises";
 import { cloudPlugin } from "./solar-system/server/cloud-service.js";
 import { scenes } from "./platform/scenes.js";
 
 const localPath = (path) => fileURLToPath(new URL(path, import.meta.url));
 
+// Emit the maintained sources once at build time, so published citations do
+// not point at missing repository-only files or diverging copied documents.
+const scientificSources = {
+  name: 'scientific-sources',
+  async generateBundle() {
+    for (const [fileName, sourcePath] of [
+      ['solar-system/BODY_MODELS.md', './solar-system/BODY_MODELS.md'],
+      ['REALISM_STANDARD.md', './REALISM_STANDARD.md'],
+      ['solar-system/physical-definitions.json', './solar-system/src/physics/body-definitions.json'],
+    ]) this.emitFile({type:'asset',fileName,source:await readFile(localPath(sourcePath),'utf8')});
+  },
+};
+
 export default defineConfig({
-  plugins: [cloudPlugin(process.env.CLOUD_CACHE_DIR || localPath("./data/clouds/"))],
+  plugins: [cloudPlugin(process.env.CLOUD_CACHE_DIR || localPath("./data/clouds/")), scientificSources],
   server: { watch: { usePolling: process.platform === "win32", interval: 350 } },
   build: {
     target: "es2022",

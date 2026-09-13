@@ -1,90 +1,25 @@
-// Mean radii and orbital sizes, in km and AU respectively. Sources:
-// https://ssd.jpl.nasa.gov/planets/phys_par.html
-// https://ssd.jpl.nasa.gov/planets/approx_pos.html
-// https://ssd.jpl.nasa.gov/sats/phys_par/
-// https://ssd.jpl.nasa.gov/sats/elem/
-// https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/pck00011.tpc
-// https://science.nasa.gov/solar-system/asteroids/4-vesta/
-// Small-body orbital sizes are rounded means, not positional ephemerides.
-export const physicalData = {
-  sun: { radiusKm: 695700, orbitAU: 0 },
-  mercury: { radiusKm: 2439.4, orbitAU: 0.38709927, orbitYears: 0.2408467 },
-  venus: { radiusKm: 6051.8, orbitAU: 0.72333566, orbitYears: 0.61519726 },
-  earth: { radiusKm: 6371.0084, orbitAU: 1.00000261, orbitYears: 1.0000174 },
-  mars: { radiusKm: 3389.5, orbitAU: 1.52371034, orbitYears: 1.8808476 },
-  jupiter: { radiusKm: 69911, orbitAU: 5.202887, orbitYears: 11.862615 },
-  saturn: { radiusKm: 58232, orbitAU: 9.53667594, orbitYears: 29.447498 },
-  uranus: { radiusKm: 25362, orbitAU: 19.18916464, orbitYears: 84.016846 },
-  neptune: { radiusKm: 24622, orbitAU: 30.06992276, orbitYears: 164.79132 },
-  pluto: { radiusKm: 1188.3, orbitAU: 39.48211675, orbitYears: 247.92065 },
-  ceres: { radiusKm: 469.7, orbitAU: 2.77 },
-  vesta: { radiusKm: 262.7, orbitAU: 2.36 },
-  makemake: { radiusKm: 715, orbitAU: 45.56 },
-  haumea: { radiusKm: 816, orbitAU: 43.22 },
-  eris: { radiusKm: 1163, orbitAU: 67.78 },
-  moon: { radiusKm: 1737.4, orbitKm: 384400 },
-  phobos: { radiusKm: 11.08, orbitKm: 9375 },
-  io: { radiusKm: 1821.49, orbitKm: 421800 },
-  europa: { radiusKm: 1560.8, orbitKm: 671100 },
-  ganymede: { radiusKm: 2631.2, orbitKm: 1070400 },
-  callisto: { radiusKm: 2410.3, orbitKm: 1882700 },
-  enceladus: { radiusKm: 252.1, orbitKm: 238400 },
-  titan: { radiusKm: 2574.76, orbitKm: 1221900 },
-  triton: { radiusKm: 1352.6, orbitKm: 354800 },
-  charon: { radiusKm: 606, orbitKm: 19600 },
-  deimos: { radiusKm: 6.2, orbitKm: 23460 },
-  miranda: { radiusKm: 235.8, orbitKm: 129900 },
-  amalthea: { radiusKm: 83.5, orbitKm: 181400 },
-  thebe: { radiusKm: 49.3, orbitKm: 221900 },
-  adrastea: { radiusKm: 8.2, orbitKm: 128900 },
-  metis: { radiusKm: 21.5, orbitKm: 128300 },
-  himalia: { radiusKm: 85, orbitKm: 11439000 },
-  mimas: { radiusKm: 198.2, orbitKm: 185540 },
-  tethys: { radiusKm: 531.1, orbitKm: 294660 },
-  dione: { radiusKm: 561.4, orbitKm: 377400 },
-  rhea: { radiusKm: 763.5, orbitKm: 527040 },
-  iapetus: { radiusKm: 734.3, orbitKm: 3561300 },
-  phoebe: { radiusKm: 106.5, orbitKm: 12952000 },
-  hyperion: { radiusKm: 135, orbitKm: 1481000 },
-  janus: { radiusKm: 89.2, orbitKm: 151460 },
-  epimetheus: { radiusKm: 58.2, orbitKm: 151410 },
-  prometheus: { radiusKm: 43.1, orbitKm: 139350 },
-  pandora: { radiusKm: 40.6, orbitKm: 141700 },
-  atlas: { radiusKm: 15.1, orbitKm: 137670 },
-  pan: { radiusKm: 14, orbitKm: 133580 },
-  ariel: { radiusKm: 578.9, orbitKm: 190900 },
-  umbriel: { radiusKm: 584.7, orbitKm: 266000 },
-  titania: { radiusKm: 788.9, orbitKm: 436300 },
-  oberon: { radiusKm: 761.4, orbitKm: 583500 },
-  nereid: { radiusKm: 170, orbitKm: 5513900 },
-  proteus: { radiusKm: 208, orbitKm: 117600 },
-  styx: { radiusKm: 5.2, orbitKm: 42413 },
-  nix: { radiusKm: 18, orbitKm: 48690 },
-  kerberos: { radiusKm: 6, orbitKm: 57750 },
-  hydra: { radiusKm: 18.5, orbitKm: 64721 },
-  // Estimates, not resolved surface measurements; see BODY_MODELS.md.
-  hiiaka: { radiusKm: 160, orbitKm: 49880, estimated: true },
-  namaka: { radiusKm: 80, orbitKm: 25657, estimated: true },
-  dysnomia: { radiusKm: 350, orbitKm: 37273, estimated: true },
-};
+import { physicalDefinitions, JULIAN_YEAR_DAYS, sourceFor } from './physics/definitions.js';
 
-// Definitions are constant shape summaries, not dated ephemerides or a claim
-// that terrain is spherical. Keep metadata alongside the values used by every
-// angular-size and catalogue consumer. Small-body estimates retain their source
-// discussion in BODY_MODELS.md instead of inventing measurement precision.
-for (const [id, body] of Object.entries(physicalData)) {
-  const satellite = body.orbitKm !== undefined;
-  Object.assign(body, {
-    radiusType: id === 'sun' ? 'NAIF PCK00011 adopted spherical solar radius' : body.estimated ? 'estimated equivalent radius' : 'mean / volume-equivalent radius',
-    units: Object.freeze({radiusKm:'km',orbitKm:'km',orbitAU:'au',orbitYears:'Julian year'}),
-    radiusSource: id === 'sun' ? 'https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/pck00011.tpc'
-      : satellite ? 'https://ssd.jpl.nasa.gov/sats/phys_par/'
-      : ['vesta','makemake','haumea','eris'].includes(id) ? '/solar-system/BODY_MODELS.md'
-      : 'https://ssd.jpl.nasa.gov/planets/phys_par.html',
-    orbitSource: satellite ? 'https://ssd.jpl.nasa.gov/sats/elem/' : 'https://ssd.jpl.nasa.gov/planets/approx_pos.html',
-    epoch: body.orbitYears ? 'J2000 mean orbital size; radius is a static shape summary' : 'Radius is a static summary; rounded mean orbital size, no positional epoch',
-    validity: 'Display reference at all dates; radii approximate each body as a sphere. Mean orbital sizes are not positional ephemerides.',
-  });
-  Object.freeze(body);
+// Compatibility view for angular sizes, catalogue sorting and display scaling.
+// All numerical values are derived from the canonical physical registry.
+export const physicalData = Object.freeze(Object.fromEntries(
+  Object.entries(physicalDefinitions.bodies).map(([id, body]) => {
+    const { radius, orbit } = body;
+    return [id, Object.freeze({
+      radiusKm: radius.value, radiusType: radius.type,
+      radiusSource: sourceFor(radius.source).url,
+      radiusEpoch: radius.epoch, radiusUncertaintyKm: radius.uncertainty,
+      estimated: Boolean(radius.estimated),
+      ...(orbit.a.unit === 'km' ? { orbitKm: orbit.a.value } : { orbitAU: orbit.a.value }),
+      ...(orbit.periodDays ? { orbitYears: orbit.periodDays / JULIAN_YEAR_DAYS } : {}),
+      orbitSource: sourceFor(orbit.source).url, epoch: orbit.epochTdbJd,
+      units: Object.freeze({ radiusKm: 'km', orbitKm: 'km', orbitAU: 'au', orbitYears: 'Julian year' }),
+      validity: `${radius.validity} ${orbit.validity}`,
+    })];
+  })
+));
+
+export function radiusFact(id) {
+  const radius = physicalDefinitions.bodies[id].radius;
+  return [radius.label, radius.value.toLocaleString('en-US', { maximumFractionDigits: 2 }), 'km'];
 }
-Object.freeze(physicalData);

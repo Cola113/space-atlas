@@ -4,7 +4,7 @@ import { readFile } from 'node:fs/promises';
 import { iauOrientation, bodyOrientation } from '../src/physics/orientation.js';
 import { physicalTime } from '../src/physics/time.js';
 
-test('eight satellite attitudes agree with independent CSPICE IAU matrices at historical and future epochs', async () => {
+test('34 small-body and satellite attitudes agree with independent CSPICE IAU matrices at historical and future epochs', async () => {
   const {fixtures} = JSON.parse(await readFile(new URL('iau-reference.json',import.meta.url),'utf8'));
   for (const {body,tdbSeconds,basis} of fixtures) {
     const actual = iauOrientation(body,tdbSeconds);

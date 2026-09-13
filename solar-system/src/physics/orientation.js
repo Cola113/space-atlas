@@ -1,7 +1,9 @@
-import { Vector3, Matrix3, Matrix4, Quaternion } from 'three';
+import { Vector3, Matrix3, Matrix4, Quaternion, Euler } from 'three';
 import { RotationAxis, Rotation_EQD_EQJ, SiderealTime } from 'astronomy-engine';
 import data from './iau-coefficients.json';
 import { physicalTime } from './time.js';
+import { physicalDefinitions, sourceFor } from './definitions.js';
+import { orbitalBasis, poleVector } from './reference-planes.js';
 
 const radians = degrees => (degrees % 360) * Math.PI / 180;
 const polynomial = (terms, time) => terms.reduceRight((value, coefficient) => value * time + coefficient, 0);
@@ -33,6 +35,10 @@ export function iauOrientation(id, tdbSeconds) {
 export function bodyOrientation(id, dateOrTime) {
   const time = dateOrTime instanceof Date ? physicalTime(dateOrTime) : dateOrTime;
   if (data.bodies[id]) return iauOrientation(id, time.tdbSeconds);
+  const definition = physicalDefinitions.bodies[id]?.rotation;
+  if (definition?.provider === 'mean-spin' || definition?.provider === 'illustrative-tumbling') {
+    return meanOrientation(id,time);
+  }
   if(id==='earth') {
     // EarthRotationAxis.spin uses an ERA-like origin, while its reported pole
     // includes precession/nutation. It is not W measured from that pole's IAU
@@ -52,4 +58,33 @@ export function bodyOrientation(id, dateOrTime) {
   return { ...basis(axis.ra * 15, axis.dec, axis.spin), source: 'Astronomy Engine 2.1.19 RotationAxis',
     model: id === 'moon' ? 'IAU 月球姿态及周期项' : 'Astronomy Engine 旋转轴',
     limitations: 'Astronomy Engine 使用 TT，与 TDB 的毫秒级周期差属于本模型时标近似；未添加额外物理天平动。' };
+}
+
+function fixedPole(id) {
+  const pole = physicalDefinitions.bodies[id].rotation.pole;
+  if (pole.referenceBody) return fixedPole(pole.referenceBody);
+  if (pole.orbitNormalOf) return orbitalBasis(physicalDefinitions.bodies[pole.orbitNormalOf].orbit).north;
+  return poleVector(pole);
+}
+
+function meanOrientation(id, time) {
+  const rotation = physicalDefinitions.bodies[id].rotation;
+  const pole = fixedPole(id);
+  const ra = Math.atan2(pole.y,pole.x)*180/Math.PI;
+  const dec = Math.asin(pole.z)*180/Math.PI;
+  const days = time.tdbDays-(rotation.epochTdbJd-2451545);
+  const spin = days/rotation.periodDays*2*Math.PI;
+  let attitude = basis(ra,dec,rotation.primeMeridianDegrees+spin*180/Math.PI);
+  if (rotation.provider === 'illustrative-tumbling') {
+    // This explicitly labelled display attitude is never used for a landing.
+    const turn = new Quaternion().setFromEuler(new Euler(
+      .9*Math.sin(spin*.371)+.35*Math.sin(spin*.113),
+      .7*Math.sin(spin*.613),spin+.7*Math.sin(spin*.173)));
+    const quaternion = basis(ra,dec,rotation.primeMeridianDegrees).quaternion.multiply(turn);
+    attitude = {quaternion,prime:new Vector3(1,0,0).applyQuaternion(quaternion),
+      east:new Vector3(0,1,0).applyQuaternion(quaternion),north:new Vector3(0,0,1).applyQuaternion(quaternion)};
+  }
+  return {...attitude,source:sourceFor(rotation.source).url,
+    model:rotation.provider==='illustrative-tumbling'?'混沌姿态示意':'独立平均自转',
+    limitations:rotation.validity+(rotation.pole.note || '')};
 }
