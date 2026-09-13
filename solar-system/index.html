@@ -26,15 +26,53 @@
             <i data-lucide="gallery-horizontal-end"></i><span>天体图鉴</span>
           </button>
         </nav>
-        <div class="header-actions">
-          <span class="live-state"><b></b><span id="scene-mode-label">动态模拟</span></span>
+        <details id="display-settings" class="display-settings">
+          <summary aria-controls="display-settings-panel" aria-expanded="false">显示设置</summary>
+          <div id="display-settings-panel" role="group" aria-label="显示设置">
+            <div class="display-settings-heading"><strong>显示设置</strong><button id="display-settings-close" aria-label="关闭显示设置">×</button></div>
+        <button
+          class="icon-button"
+          id="reset-camera"
+          aria-label="重置视角"
+          data-tip="重置视角"
+        >
+          <i data-lucide="scan"></i><span>复位镜头</span>
+        </button>
+            <span class="live-state"><b></b><span id="scene-mode-label">动态模拟</span></span>
+        <button
+          class="icon-button active"
+          id="activity-toggle"
+          aria-label="动态活动"
+          aria-pressed="true"
+          data-tip="动态活动"
+        >
+          <i data-lucide="waves"></i><span>动态活动 · 开</span>
+        </button>
+        <button
+          class="icon-button active"
+          id="orbit-toggle"
+          aria-label="显示轨道"
+          aria-pressed="true"
+          data-tip="显示轨道"
+        >
+          <i data-lucide="orbit"></i><span>轨道线 · 开</span>
+        </button>
+        <button
+          class="icon-button"
+          id="label-toggle"
+          aria-label="显示名称"
+          aria-pressed="false"
+          data-tip="显示名称"
+        >
+          <i data-lucide="tags"></i><span>天体名称 · 关</span>
+        </button>
           <button
             class="icon-button"
             id="info-button"
             aria-label="资料来源"
             data-tip="资料来源"
           >
-            <i data-lucide="info"></i>
+            <i data-lucide="info"></i><span>关于图鉴与计算说明</span>
           </button>
           <button
             class="icon-button"
@@ -42,9 +80,10 @@
             aria-label="全屏"
             data-tip="全屏"
           >
-            <i data-lucide="maximize"></i>
+            <i data-lucide="maximize"></i><span>全屏 · 关</span>
           </button>
-        </div>
+          </div>
+        </details>
       </header>
 
       <section class="intro" id="intro" aria-labelledby="overview-title">
@@ -65,16 +104,20 @@
         </button>
       </section>
 
-      <aside
-        id="planet-info"
-        class="planet-info"
-        hidden
-        aria-labelledby="planet-title"
-      >
+      <aside id="planet-info" class="planet-info" hidden aria-labelledby="selected-name">
+        <div class="selected-identity"><strong id="selected-name"></strong><span id="selected-english"></span></div>
+        <div class="planet-navigation">
+          <button class="back-button" id="back-button"><i data-lucide="arrow-left"></i>返回太阳系</button>
+          <button id="body-details-button" aria-haspopup="dialog" aria-controls="body-details-dialog">天体资料与活动</button>
+        </div>
+        <div class="planet-info-actions">
+          <button class="primary-action" id="surface-button"><i data-lucide="scan-search"></i><span>近距离观测</span></button>
+          <button class="landing-action" id="landing-button" hidden><i data-lucide="map-pin"></i><span>降落到表面</span></button>
+        </div>
+      </aside>
+      <dialog id="body-details-dialog" aria-labelledby="planet-title">
+        <div class="body-details-heading"><span>天体资料与活动</span><button id="close-body-details" aria-label="关闭天体资料">×</button></div>
         <div id="planet-info-content" class="planet-info-content">
-          <button class="back-button" id="back-button">
-            <i data-lucide="arrow-left"></i>返回太阳系
-          </button>
           <div class="eyebrow" id="planet-category"></div>
           <h1 id="planet-title"></h1>
           <div class="planet-english" id="planet-english"></div>
@@ -113,15 +156,6 @@
               </select>
             </div>
           </div>
-        </div>
-        <div class="planet-info-actions">
-          <button class="primary-action" id="surface-button">
-            <i data-lucide="scan-search"></i><span>近距离观测</span
-            ><i data-lucide="arrow-up-right"></i>
-          </button>
-          <button class="landing-action" id="landing-button" hidden>
-            <i data-lucide="map-pin"></i><span>降落到表面</span>
-          </button>
           <label class="layer-toggle" id="layer-control" hidden
             ><span id="layer-label">显示云层</span
             ><input type="checkbox" id="layer-toggle" checked /><span
@@ -129,7 +163,7 @@
             ></span
           ></label>
         </div>
-      </aside>
+      </dialog>
 
       <div id="observation-tools" class="observation-tools" role="toolbar" aria-label="天体观测" hidden>
         <button id="rotation-toggle" class="follow-button" aria-pressed="false"><i data-lucide="crosshair"></i><span>跟随自转 · 已关闭</span></button>
@@ -153,7 +187,7 @@
           data-tip="退出地标观测"
           hidden
         >
-          <i data-lucide="x"></i>
+          <i data-lucide="x"></i><span>退出地标</span>
         </button>
         <button
           id="night-view"
@@ -189,35 +223,7 @@
         </div>
       </div>
 
-      <div class="scene-toolbar" role="toolbar" aria-label="场景控制">
-        <button
-          class="icon-button active"
-          id="activity-toggle"
-          aria-label="动态活动"
-          aria-pressed="true"
-          data-tip="动态活动"
-        >
-          <i data-lucide="waves"></i>
-        </button>
-        <button
-          class="icon-button active"
-          id="orbit-toggle"
-          aria-label="显示轨道"
-          aria-pressed="true"
-          data-tip="显示轨道"
-        >
-          <i data-lucide="orbit"></i>
-        </button>
-        <button
-          class="icon-button"
-          id="label-toggle"
-          aria-label="显示名称"
-          aria-pressed="false"
-          data-tip="显示名称"
-        >
-          <i data-lucide="tags"></i>
-        </button>
-        <span class="toolbar-divider"></span>
+      <div class="scene-toolbar" role="toolbar" aria-label="镜头变焦与复位">
         <button
           class="icon-button"
           id="zoom-in"
@@ -234,14 +240,7 @@
         >
           <i data-lucide="minus"></i>
         </button>
-        <button
-          class="icon-button"
-          id="reset-camera"
-          aria-label="重置视角"
-          data-tip="重置视角"
-        >
-          <i data-lucide="scan"></i>
-        </button>
+
       </div>
 
       <div class="observation-status">
@@ -258,7 +257,7 @@
               <option value="planets">太阳与行星</option>
               <option value="dwarfs">矮行星</option>
               <option value="asteroids">小行星</option></select
-            ><small id="body-count">正在加载天体</small>
+            ><small id="body-count">正在加载天体</small><time id="simulation-date"></time>
           </div>
           <div class="time-controls">
             <button
@@ -269,17 +268,17 @@
               data-tip="暂停运动"
             >
               <i data-lucide="pause"></i></button
-            ><label for="time-speed">轨道流速</label
-            ><input
-              id="time-speed"
-              type="range"
-              min="0"
-              max="4"
-              step="1"
-              value="1"
-              aria-label="时间流速"
-            /><output id="speed-value" for="time-speed">1k×</output
-            ><time id="simulation-date"></time>
+>
+            <details id="time-settings" class="time-settings">
+              <summary id="time-settings-toggle" aria-controls="time-settings-panel" aria-expanded="false">时间设置 · 正放 1k×</summary>
+              <div id="time-settings-panel" class="time-settings-panel" role="group" aria-label="轨道时间设置">
+                <div class="time-settings-heading"><strong>轨道时间 · 与地表同步</strong><button type="button" id="time-settings-close" aria-label="关闭时间设置">×</button></div>
+                <button type="button" id="time-direction" aria-pressed="false">时间方向 · 正放</button>
+                <label for="time-speed">时间倍率 <output id="speed-value" for="time-speed">1k×</output></label>
+                <input id="time-speed" type="range" min="0" max="4" step="1" value="1" aria-label="时间流速" />
+                <p id="time-equivalent"></p>
+              </div>
+            </details>
           </div>
         </div>
         <div class="dock-strip">
@@ -327,7 +326,7 @@
         <p id="atlas-empty" class="atlas-empty" hidden>没有匹配的天体</p>
       </section>
 
-      <dialog id="credits-dialog">
+      <dialog id="credits-dialog" aria-labelledby="credits-title">
         <button
           class="icon-button dialog-close"
           id="close-credits"
@@ -336,7 +335,7 @@
           <i data-lucide="x"></i>
         </button>
         <span class="eyebrow">ABOUT THE ATLAS</span>
-        <h2>关于星际图鉴</h2>
+        <h2 id="credits-title">关于星际图鉴</h2>
         <h3>当前观测的计算说明</h3><p id="physics-accuracy" class="physics-accuracy"></p>
         <p>
           行星资料参考

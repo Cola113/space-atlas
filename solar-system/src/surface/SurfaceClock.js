@@ -9,6 +9,7 @@ export class SurfaceClock {
     this.time = this.epoch;
     this.onTimeChange = onTimeChange;
     this.setRate(rate);
+    this.direction = 1;
     this.playing = true;
     this.previous = null;
     this.canAdvance = () => true;
@@ -17,7 +18,7 @@ export class SurfaceClock {
     const elapsed = this.previous === null ? 0 : Math.max(0, now - this.previous);
     this.previous = active ? now : null;
     if (active && this.playing && elapsed > 0 && elapsed <= 1000) {
-      const candidate = this.time + simulationElapsed(elapsed, this.rate);
+      const candidate = this.time + simulationElapsed(elapsed, this.rate, this.direction);
       if (this.canAdvance(candidate)) {
         this.time = candidate;
         this.onTimeChange?.(this.time);
@@ -29,6 +30,11 @@ export class SurfaceClock {
     if (!simulationRates.includes(rate))
       throw new RangeError('Unsupported surface rate');
     this.rate = rate;
+  }
+  setDirection(direction) {
+    if(direction!==1 && direction!==-1)throw new RangeError('Unsupported time direction');
+    this.direction=direction;
+    this.suspend();
   }
   setTime(time) {
     if (!Number.isFinite(time)) throw new RangeError('Invalid surface date');

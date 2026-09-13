@@ -189,3 +189,15 @@ test('display exposure freezes when paused, resets on rewind, and is independent
   assert.deepEqual(thirty.update(night,0),paused);
   assert.deepEqual(thirty.reset(day),day);
 });
+
+test('direction changes preserve dates, reverse elapsed time, and survive pause/resume without catch-up',()=>{
+  const date=Date.UTC(1900,0,1),orbit={date},clock=new SurfaceClock(date,5000,time=>orbit.date=time);
+  clock.tick(0);clock.tick(200);assert.equal(clock.time,date+1_000_000);
+  clock.setDirection(-1);assert.equal(clock.time,date+1_000_000);
+  clock.tick(9000);assert.equal(clock.time,date+1_000_000);
+  clock.tick(9200);assert.equal(clock.time,date);assert.equal(orbit.date,date);
+  clock.playing=false;clock.tick(9300);clock.setDirection(1);clock.tick(9999);assert.equal(clock.time,date);
+  clock.playing=true;clock.suspend();clock.tick(10000);clock.tick(10200);assert.equal(clock.time,date+1_000_000);
+  assert.equal(simulationElapsed(200,5000,-1),-1_000_000);
+  for(const invalid of [0,2,-2,NaN])assert.throws(()=>clock.setDirection(invalid),RangeError);
+});

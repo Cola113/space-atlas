@@ -1,0 +1,21 @@
+import {chromium} from 'playwright';import assert from 'node:assert/strict';import {mkdir,writeFile} from 'node:fs/promises';
+const out='test-results/solar-controls',results=[];await mkdir(out,{recursive:true});const browser=await chromium.launch({channel:'msedge',headless:true});
+try{for(const [name,width,height,dpr] of [['desktop',1440,900,1],['phone',390,844,3],['tablet',800,450,2],['short',640,360,2]]){
+ const context=await browser.newContext({viewport:{width,height},deviceScaleFactor:dpr,reducedMotion:'reduce'});await context.addInitScript(()=>sessionStorage.setItem('space-atlas:scene:solar-system',JSON.stringify({version:1,value:{selected:'titan',playing:false,date:Date.UTC(1971,7,1),speed:1000,speedUnit:'realtime'}})));
+ let fail=true;const calls={};await context.route(/\/ephemeris\/saturn\/1971.bin|\/textures\/completed\/titan-\d+.webp/,route=>{const key=new URL(route.request().url()).pathname;calls[key]=(calls[key]||0)+1;return fail?route.fulfill({status:503,body:'unavailable'}):route.continue();});
+ const page=await context.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));await page.goto((process.env.ATLAS_URL||'http://127.0.0.1:5191')+'/solar-system/');await page.waitForFunction(()=>window.solarAtlas?.snapshot().ephemeris.error&&!document.querySelector('#resource-retry').hidden,null,{timeout:60000});
+ const beforeResize=await page.evaluate(()=>({camera:window.solarAtlas.snapshot().camera,target:window.solarAtlas.snapshot().target}));
+ await page.addStyleTag({content:'#app{--safe-top:20px;--safe-bottom:20px;--safe-left:24px;--safe-right:24px}'});await page.evaluate(()=>window.dispatchEvent(new Event('resize')));await page.waitForTimeout(100);
+ assert.deepEqual(await page.evaluate(()=>({camera:window.solarAtlas.snapshot().camera,target:window.solarAtlas.snapshot().target})),beforeResize,'missing ephemeris must not retarget the placeholder origin on resize');
+ const rects=[];for(const sel of ['#scene-switcher','#overview-tab','#atlas-tab','#display-settings summary','#rotation-toggle','#observation-settings summary','#back-button','#body-details-button','#surface-button','#landing-button','#zoom-in','#zoom-out','#play-toggle','#time-settings summary','#catalog-filter','#ephemeris-retry','#resource-retry']){
+  const loc=page.locator(sel);if(!await loc.isVisible())continue;const r=await loc.boundingBox();assert.ok(r.width>=44&&r.height>=44&&r.x>=0&&r.y>=0&&r.x+r.width<=width+.1&&r.y+r.height<=height+.1,`${name} bounds ${sel} ${JSON.stringify(r)}`);
+  assert.equal(await loc.evaluate(e=>{const r=e.getBoundingClientRect(),t=document.elementFromPoint(r.x+r.width/2,r.y+r.height/2);return t===e||e.contains(t)}),true,`${name} covered ${sel}`);rects.push({...r,sel});
+ }
+ for(let i=0;i<rects.length;i++)for(let j=i+1;j<rects.length;j++){const a=rects[i],b=rects[j],dx=Math.max(0,a.x-b.x-b.width,b.x-a.x-a.width),dy=Math.max(0,a.y-b.y-b.height,b.y-a.y-a.height);assert.ok(Math.hypot(dx,dy)>=7.9,`${name} ${a.sel}/${b.sel} ${dx},${dy}`);}
+ for(const id of ['landing-button','surface-button','zoom-in','zoom-out'])assert.equal(await page.locator('#'+id).isDisabled(),true);
+ await page.keyboard.press('+');assert.deepEqual(await page.evaluate(()=>window.solarAtlas.snapshot().camera),beforeResize.camera);
+ assert.equal(await page.locator('#landing-button').isDisabled(),true);await page.screenshot({path:`${out}/${name}-errors-safe.png`});
+ const held=await page.evaluate(()=>window.solarAtlas.snapshot().date);await page.waitForTimeout(500);assert.equal(await page.evaluate(()=>window.solarAtlas.snapshot().date),held);
+ fail=false;await page.locator('#ephemeris-retry').focus();await page.keyboard.press('Enter');await page.waitForFunction(()=>!window.solarAtlas.snapshot().ephemeris.blocked);await page.locator('#resource-retry').click();await page.waitForFunction(()=>document.querySelector('#resource-status').hidden,null,{timeout:60000});assert.equal(await page.locator('#landing-button').isDisabled(),false);assert.deepEqual(errors,[]);
+ results.push({name,simulatedSafeArea:true,bothResourceFailures:true,rects,calls,held,passed:true});console.log(name,'errors and retry passed');await context.close();
+}await writeFile(`${out}/errors-report.json`,JSON.stringify(results,null,2));}finally{await browser.close();}

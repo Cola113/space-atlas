@@ -118,3 +118,18 @@ test('a year-loading failure suspends the observing clock until retry, preservin
   assert.equal(clock.time,start+100000,'only elapsed time after resume is applied');
   gate.dispose();provider.dispose();
 });
+
+test('reverse year failure holds date; changing direction into cached data clears the gate without retrying the failed year',async()=>{
+  let failures=0;
+  const provider=new PhysicalState({ephemeris:new EphemerisStore({fetcher:async path=>{
+    if(path==='/ephemeris/saturn/1970.bin'){failures++;return {ok:false,status:503};}
+    return localFetcher(path);
+  }})});
+  const start=Date.parse('1971-01-01T00:00:01Z');await provider.ensure(new Date(start),['titan'],{prefetch:false});
+  const gate=new ObservationGate(provider,['titan']);const clock=new SurfaceClock(start,1000);
+  clock.setDirection(-1);clock.canAdvance=time=>gate.check(new Date(time));clock.tick(0);clock.tick(100);
+  await assert.rejects(gate.pending,MissingEphemerisError);assert.equal(clock.time,start);assert.equal(failures,1);
+  clock.setDirection(1);assert.equal(gate.check(new Date(clock.time)),true);assert.equal(gate.blocked,false);
+  clock.tick(10000);clock.tick(10100);assert.equal(clock.time,start+100000);assert.equal(failures,1);
+  gate.dispose();provider.dispose();
+});

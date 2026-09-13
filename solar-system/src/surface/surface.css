@@ -84,3 +84,6 @@
 .surface-view .surface-ephemeris{top:calc(var(--surface-header-bottom,60px) + 8px)}
 @media(max-width:600px){.surface-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));width:100%}.surface-view .surface-actions button{padding:8px 5px;font-size:11px;gap:5px}.surface-actions svg{display:none}.surface-bearing{gap:8px}.surface-bearing small{padding-left:8px;font-size:10px}.surface-time-row{flex-wrap:wrap}.surface-view .surface-footer{row-gap:8px}.surface-location{top:84px}.surface-location h1 small{font-size:12px}}
 @media(max-height:500px){.surface-header{top:max(8px,env(safe-area-inset-top))}.surface-location{top:65px}.surface-location .surface-eyebrow{display:none}.surface-view .surface-footer{row-gap:8px}.surface-bearing{display:none}.surface-actions{flex-wrap:nowrap}.surface-view .surface-actions button{font-size:11px;padding:8px;gap:5px}.surface-actions svg{display:none}.surface-footer{bottom:max(8px,env(safe-area-inset-bottom))}}
+.surface-clock-actions {display:flex;flex-wrap:wrap;gap:8px;}
+.surface-clock-actions button {flex:1 0 130px;}
+.surface-view .surface-time-toggle {font-variant-numeric:tabular-nums;}

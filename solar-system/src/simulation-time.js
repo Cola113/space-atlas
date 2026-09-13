@@ -5,9 +5,12 @@ export const simulationRates = Object.freeze([
 export const defaultSimulationRate = 1_000;
 export const defaultSimulationDate = Date.UTC(1971,7,1,17);
 
-export function simulationElapsed(elapsedMilliseconds, rate) {
-  return elapsedMilliseconds * rate;
+export function simulationElapsed(elapsedMilliseconds, rate, direction = 1) {
+  return elapsedMilliseconds * rate * direction;
 }
+
+export const restoreSimulationDirection = saved => saved?.direction === -1 ? -1 : 1;
+export const simulationDirectionLabel = direction => direction === -1 ? '倒放' : '正放';
 
 export function restoreSimulationRate(saved) {
   // Legacy rates used three days per second at 1x; never read them as real-time units.

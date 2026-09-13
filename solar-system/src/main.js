@@ -1,4 +1,5 @@
 import "./style.css";
+import "./controls-layout.css";
 import { mountNavigation } from "../../platform/navigation.ts";
 import { readSession, rememberScene } from "../../platform/session.ts";
 import * as THREE from "three";
@@ -51,7 +52,7 @@ import { createStarfield } from "./starfield.js";
 import { FrameWorkQueue } from './resource-queue.js';
 import { createTextureResources, firstScreenTextures, firstScreenIds, textureRoot } from './texture-resources.js';
 import { simulationElapsed, simulationRates, defaultSimulationRate, restoreSimulationRate,
-  defaultSimulationDate, restoreSimulationDate, formatSimulationRate, simulationRateEquivalent } from "./simulation-time.js";
+  defaultSimulationDate, restoreSimulationDate, formatSimulationRate, simulationRateEquivalent, restoreSimulationDirection, simulationDirectionLabel } from "./simulation-time.js";
 
 const icons = {
   Orbit,
@@ -86,6 +87,7 @@ const state = {
   close: false,
   playing: !reducedMotion,
   speed: defaultSimulationRate,
+  direction: 1,
   orbits: true,
   labels: false,
   atlas: false,
@@ -159,7 +161,7 @@ function saveObservation() {
   const center = body?.root.position || new THREE.Vector3();
   return {
     selected: state.selected, system: state.system, close: state.close, catalog: state.catalog,
-    playing: state.playing, speed: state.speed, speedUnit: "realtime", orbits: state.orbits, labels: state.labels,
+    playing: state.playing, speed: state.speed, direction: state.direction, speedUnit: "realtime", orbits: state.orbits, labels: state.labels,
     dynamics: state.dynamics, followRotation: state.followRotation, activityRate: state.activityRate,
     nightLights: state.nightLights, shadows: state.shadows, nightView: state.nightView,
     observedEarth: state.observedEarth, date: state.date, timelineEpoch: defaultSimulationDate,
@@ -176,6 +178,7 @@ function restoreObservation() {
     if (typeof saved[key] === "boolean") state[key] = saved[key];
   state.followRotation = restoreFollowRotation(saved);
   state.speed = restoreSimulationRate(saved);
+  state.direction = restoreSimulationDirection(saved);
   if ([0.5, 1, 2, 4].includes(saved.activityRate)) state.activityRate = saved.activityRate;
   state.date = restoreSimulationDate(saved);
   if (typeof saved.observedEarth === "boolean") {
@@ -212,6 +215,7 @@ function restoreObservation() {
     $(id).classList.toggle("active", state[key]);
     $(id).setAttribute("aria-pressed", String(state[key]));
   }
+  updateDisplaySettings();
   updateTimeRateUi();
   $("activity-rate").value = String(state.activityRate);
   dynamics.setEnabled(state.dynamics);
@@ -388,6 +392,7 @@ function selectSystem(id) {
   if (!familyOf(objects.get(id))) return;
   state.system = true;
   $("app").classList.add("system-view");
+  $("selected-name").textContent = `${objects.get(id).name}与卫星`;
   clearLandmark();
   state.nightView = false;
   $("surface-button").querySelector("span").textContent =
@@ -478,6 +483,8 @@ function updateResourceStatus() {
   $('resource-status').hidden = !state.ready || (!textureFailures.size && !observationGate?.blocked);
   $('resource-message').textContent = observationGate?.blocked ? (observationGate.error ? '星历加载失败，时间已暂缓。' : '正在加载当前年份星历，时间暂缓。') : `${textureFailures.size} 项纹理未加载，可继续观测。`;
   $('ephemeris-retry').hidden = !observationGate?.error;
+  $('surface-button').disabled = Boolean(body && !body.physicalAvailable);
+  for (const id of ['zoom-in', 'zoom-out']) $(id).disabled = Boolean(body && !body.physicalAvailable);
   if(body && landableBodyIds.includes(body.id))$('landing-button').disabled=!body.physicalAvailable || Boolean(observationGate?.blocked);
   $('resource-retry').hidden = !textureFailures.size;
   $('app').classList.toggle('has-resource-notice', !$('resource-status').hidden);
@@ -918,6 +925,12 @@ function updateCloudUi() {
 function updateTimeRateUi() {
   const observed = isEarthObservation();
   const rate = observed ? 1 : state.speed;
+  const direction=simulationDirectionLabel(state.direction);
+  $('time-direction').disabled=observed;
+  $('time-direction').textContent=observed?'时间方向 · 实时':`时间方向 · ${direction}`;
+  $('time-direction').setAttribute('aria-pressed',String(!observed&&state.direction===-1));
+  $('time-settings-toggle').textContent=observed?'时间设置 · 实时':`时间设置 · ${direction} ${formatSimulationRate(rate)}`;
+  $('time-equivalent').textContent=observed?'卫星观测使用当前时间；切回动态模拟可调节方向与倍率。':`${direction} · ${simulationRateEquivalent(rate)}`;
   const slider = $("time-speed");
   slider.min = "0";
   slider.max = String(simulationRates.length - 1);
@@ -933,6 +946,7 @@ function updateTimeRateUi() {
 function changeCloudMode(enabled) {
   clearLandmark();
   state.observedEarth = enabled;
+  rotationFollow.reset();
   if (isEarthObservation()) {
     const earth = objects.get("earth");
     const before = earth.root.position.clone();
@@ -947,17 +961,17 @@ function changeCloudMode(enabled) {
 }
 
 function systemDescription() {
-  return "大小、轨道间距与绕行速度为示意";
+  return "大小和距离为示意 · 时间倍率与地表同步";
 }
 
 function compactSceneBounds() {
   if (width < 560 || height > 540) return null;
   const tools = $("observation-tools");
   return {
-    left: 260,
-    right: width - 76,
+    left: Math.max(252, $("planet-info").hidden ? 252 : $("planet-info").getBoundingClientRect().right + 16),
+    right: width - 180,
     top: state.selected && !tools.hidden ? tools.getBoundingClientRect().bottom + 12 : 76,
-    bottom: document.querySelector(".explorer-bottom").getBoundingClientRect().top - 44,
+    bottom: document.querySelector(".explorer-bottom").getBoundingClientRect().top - 8,
   };
 }
 
@@ -1253,8 +1267,26 @@ function arrivalOffset(body) {
   return best.clone().multiplyScalar(distance);
 }
 
+function infoDialogOpen() {
+  return $('credits-dialog').open || $('body-details-dialog').open;
+}
+function closeSettings() {
+  for (const id of ['display-settings','observation-settings','time-settings']) {
+    const menu = $(id), restore = menu.open && menu.contains(document.activeElement);
+    menu.open = false;
+    if (restore) menu.querySelector('summary').focus();
+  }
+}
+function updateDisplaySettings() {
+  for (const [id, key, name] of [['activity-toggle','dynamics','动态活动'],['orbit-toggle','orbits','轨道线'],['label-toggle','labels','天体名称']]) {
+    $(id).querySelector('span').textContent = `${name} · ${state[key] ? '开' : '关'}`;
+  }
+}
+
 function setAtlas(open) {
+  const restore = !open && $('atlas-panel').contains(document.activeElement);
   state.atlas = open;
+  closeSettings();
   $("app").classList.toggle('atlas-open', open);
   if (!open) requestAnimationFrame(() => { revealDockSelection(); updateDockScroll(); });
   $("atlas-panel").hidden = !open;
@@ -1264,9 +1296,12 @@ function setAtlas(open) {
   $("overview-tab").setAttribute("aria-pressed", String(!open));
   controls.enabled = !open;
   updateObservationTools();
+  if (open) $('atlas-search').focus();
+  else if (restore) $('atlas-tab').focus();
 }
 
 function updateResolution(body) {
+  if (state.selected === body.id) $('selected-english').textContent = (!body.detailReady || baseJobs.has(body.id) || highInFlight.has(body.id)) ? '细节加载中…' : body.english;
   const map =
     body.id === "venus" && body.layerVisible
       ? body.lowMap
@@ -1369,6 +1404,7 @@ function selectBody(id) {
   if (!state.ready) return;
   const body = objects.get(id);
   if (!body) return;
+  const fromAtlas = state.atlas;
   clearLandmark();
   setAtlas(false);
   state.selected = id;
@@ -1392,6 +1428,8 @@ function selectBody(id) {
   $("focus-caption").hidden = false;
   $("planet-category").textContent = body.category;
   $("planet-title").textContent = body.name;
+  $("selected-name").textContent = body.name;
+  $("selected-english").textContent = body.english;
   $("planet-english").textContent = body.english;
   $("planet-description").textContent = body.description;
   $("planet-facts").innerHTML = body.facts
@@ -1425,6 +1463,7 @@ function selectBody(id) {
   landmarkView.setBody(id);
   updateFamilyPicker();
   updateObservationTools();
+  if (fromAtlas) $('body-details-button').focus();
   updateActivityUi();
   setSceneVisibility();
   refreshObservationGate();
@@ -1470,7 +1509,7 @@ function goOverview() {
 
 function toggleClose() {
   const body = objects.get(state.selected);
-  if (!body) return;
+  if (!body || !body.physicalAvailable) return;
   if (state.system) {
     selectBody(body.id);
     return;
@@ -1497,6 +1536,7 @@ function toggleClose() {
 
 function zoom(factor) {
   if (!state.ready || state.atlas) return;
+  if (state.selected && !objects.get(state.selected)?.physicalAvailable) return;
   applyDistanceLimits();
   const target = objects.get(state.selected)?.root.position || controls.target;
   const offset = camera.position.clone().sub(target);
@@ -1537,7 +1577,7 @@ function updateActivityUi() {
   );
   if ($("event-label").textContent !== profile.trigger) $("event-label").textContent = profile.trigger;
   $("event-trigger").disabled =
-    !state.playing || !state.dynamics || state.system || Boolean(status?.event);
+    !state.playing || !state.dynamics || state.system || !objects.get(state.selected)?.physicalAvailable || Boolean(status?.event);
   $('rotation-toggle').classList.toggle('active',state.followRotation);
   $('rotation-toggle').setAttribute('aria-pressed',String(state.followRotation));
   const followLabel='跟随自转 · '+(state.followRotation ? (state.system ? '暂缓' : '已开启') : '已关闭');
@@ -1550,6 +1590,7 @@ function triggerActivity() {
   if (!state.selected || !state.playing || !state.dynamics || state.system)
     return;
   const body = objects.get(state.selected);
+  if (!body.physicalAvailable) return;
   clearLandmark();
   state.nightView = false;
   updateObservationTools();
@@ -1577,6 +1618,7 @@ function updateObservationTools() {
   $("landing-button").hidden = state.system || !landableBodyIds.includes(id);
   const family = familyOf(objects.get(id));
   $("observation-settings").hidden = !(family || landmarks[id]?.length || ["earth","saturn"].includes(id));
+  if ($('observation-settings').hidden && $('observation-settings').contains(document.activeElement)) $('body-details-button').focus();
   const visible =
     id &&
     !state.atlas &&
@@ -1672,7 +1714,7 @@ async function landOnSurface() {
     controls.enabled=previousControls;
   };
   rotationFollow.reset();
-  $("observation-settings").open=false;
+  $("observation-settings").open=false;$("time-settings").open=false;
   landingBusy = true;
   controls.enabled = false;
   $("app").inert = true;
@@ -1684,6 +1726,8 @@ async function landOnSurface() {
     surfaceView = createSurfaceView(id, {
       initialDate: state.date,
       initialRate: state.speed,
+      initialDirection: state.direction,
+      onDirectionChange: direction => { state.direction=direction; updateTimeRateUi(); },
       initialPlaying: state.playing,
       onPlayingChange: playing => { state.playing=playing; updatePlayButton(); },
       onRateChange: rate => {
@@ -1723,7 +1767,13 @@ async function landOnSurface() {
 }
 
 function bindEvents() {
-  document.addEventListener('pointerdown',event=>{const menu=$('observation-settings');if(menu.open&&!menu.contains(event.target))menu.open=false;});
+  const timeSettings=$('time-settings');
+  $('time-settings-close').addEventListener('click',()=>{timeSettings.open=false;$('time-settings-toggle').focus();});
+  $('time-direction').addEventListener('click',()=>{
+    if(isEarthObservation())return;
+    state.direction=-state.direction;lastFrame=performance.now();
+    observationGate?.check(new Date(state.date));updateTimeRateUi();
+  });
   $("planet-dock").addEventListener('scroll', updateDockScroll, {passive: true});
   for (const [id, direction] of [['dock-prev', -1], ['dock-next', 1]]) $(id).addEventListener('click', () => {
     const dock = $("planet-dock");
@@ -1755,9 +1805,10 @@ function bindEvents() {
   $("explore-earth").addEventListener("click", () => selectBody("earth"));
   $("surface-button").addEventListener("click", toggleClose);
   $("landing-button").addEventListener("click", landOnSurface);
-  $("event-trigger").addEventListener("click", triggerActivity);
+  $("event-trigger").addEventListener("click", () => {triggerActivity();$("body-details-dialog").close();});
   $("activity-toggle").addEventListener("click", () => {
     state.dynamics = !state.dynamics;
+    updateDisplaySettings();
     dynamics.setEnabled(state.dynamics);
     $("activity-toggle").classList.toggle("active", state.dynamics);
     $("activity-toggle").setAttribute("aria-pressed", String(state.dynamics));
@@ -1809,22 +1860,24 @@ function bindEvents() {
         : goOverview(),
   );
   $("play-toggle").addEventListener("click", () => {
-    state.playing = !state.playing;
+    state.playing = !state.playing;lastFrame=performance.now();
     updatePlayButton();
     observedClouds?.renderStatus();
   });
   $("time-speed").addEventListener("input", (event) => {
-    state.speed = simulationRates[Number(event.target.value)];
+    state.speed = simulationRates[Number(event.target.value)];lastFrame=performance.now();
     updateTimeRateUi();
   });
   $("orbit-toggle").addEventListener("click", () => {
     state.orbits = !state.orbits;
+    updateDisplaySettings();
     $("orbit-toggle").classList.toggle("active", state.orbits);
     $("orbit-toggle").setAttribute("aria-pressed", String(state.orbits));
     setSceneVisibility();
   });
   $("label-toggle").addEventListener("click", () => {
     state.labels = !state.labels;
+    updateDisplaySettings();
     $("label-toggle").classList.toggle("active", state.labels);
     $("label-toggle").setAttribute("aria-pressed", String(state.labels));
   });
@@ -1839,13 +1892,25 @@ function bindEvents() {
   document.addEventListener("fullscreenchange", () => {
     const active = Boolean(document.fullscreenElement);
     $("fullscreen").innerHTML =
-      `<i data-lucide="${active ? "minimize" : "maximize"}"></i>`;
+      `<i data-lucide="${active ? "minimize" : "maximize"}"></i><span>全屏 · ${active ? "开" : "关"}</span>`;
     $("fullscreen").setAttribute("aria-label", active ? "退出全屏" : "全屏");
     $("fullscreen").dataset.tip = active ? "退出全屏" : "全屏";
     refreshIcons();
   });
   $('info-button').setAttribute('aria-label','关于图鉴与计算说明');
-  $('info-button').addEventListener('click',()=>{updatePositions();$('credits-dialog').showModal();});
+  $('info-button').addEventListener('click',()=>{updatePositions();closeSettings();$('credits-dialog').showModal();});
+  $('body-details-button').addEventListener('click',()=>{closeSettings();$('body-details-dialog').showModal();});
+  $('close-body-details').addEventListener('click',()=>$('body-details-dialog').close());
+  $('body-details-dialog').addEventListener('close',()=>{lastFrame=performance.now();$('body-details-button').focus();});
+  $('credits-dialog').addEventListener('close',()=>{lastFrame=performance.now();$('display-settings').querySelector('summary').focus();});
+  for(const id of ['display-settings','observation-settings','time-settings']) {
+    const menu=$(id);
+    menu.addEventListener('toggle',()=>{menu.querySelector('summary').setAttribute('aria-expanded',String(menu.open));});
+    menu.querySelector('summary').addEventListener('click',()=>{if(!menu.open)for(const other of ['display-settings','observation-settings','time-settings'])if(other!==id)$(other).open=false;});
+    document.addEventListener('pointerdown',event=>{if(menu.open&&!menu.contains(event.target))menu.open=false;});
+  }
+  $('display-settings-close').addEventListener('click',()=>{$('display-settings').open=false;$('display-settings').querySelector('summary').focus();});
+  updateDisplaySettings();
   $("close-credits").addEventListener("click", () =>
     $("credits-dialog").close(),
   );
@@ -1863,9 +1928,11 @@ function bindEvents() {
   });
   document.addEventListener("keydown", (event) => {
     if (surfaceView || landingBusy) return;
+    if(event.key==='Escape' && $('display-settings').open){event.preventDefault();$('display-settings').open=false;$('display-settings').querySelector('summary').focus();return;}
+    if(event.key==='Escape' && $('time-settings').open){event.preventDefault();$('time-settings').open=false;$('time-settings-toggle').focus();return;}
     if(event.key==='Escape' && $('observation-settings').open){event.preventDefault();$('observation-settings').open=false;$('observation-settings').querySelector('summary').focus();return;}
     if (
-      $("credits-dialog").open ||
+      infoDialogOpen() ||
       /INPUT|TEXTAREA|SELECT/.test(event.target.tagName)
     )
       return;
@@ -1875,7 +1942,7 @@ function bindEvents() {
     }
     if (event.code === "Space" && event.target === document.body) {
       event.preventDefault();
-      state.playing = !state.playing;
+      state.playing = !state.playing;lastFrame=performance.now();
       updatePlayButton();
     }
     if (event.key === "+" || event.key === "=") zoom(0.8);
@@ -1899,6 +1966,9 @@ function resize() {
   applyViewOffset();
   if (state.ready) {
     const body = objects.get(state.selected);
+    // An unavailable body's placeholder origin is not an observing target.
+    // Resize only the projection while waiting for its real ephemeris position.
+    if (body && !body.physicalAvailable) return;
     const bearing = camera.position.clone().sub(controls.target).normalize();
     flyTo(
       body ? body.root.position : new THREE.Vector3(),
@@ -2171,8 +2241,8 @@ function animate(now) {
   if (document.hidden || surfaceView || landingBusy) return;
   const focused = objects.get(state.selected);
   const previous = focused?.root.position.clone();
-  if (state.playing && !state.atlas && !$("credits-dialog").open) {
-    const candidate=isEarthObservation()?Date.now():state.date+(elapsed<=1000?simulationElapsed(elapsed,state.speed):0);
+  if (state.playing && !state.atlas && !infoDialogOpen()) {
+    const candidate=isEarthObservation()?Date.now():state.date+(elapsed<=1000?simulationElapsed(elapsed,state.speed,state.direction):0);
     if(!observationGate || observationGate.check(new Date(candidate))) state.date=candidate;
     // The asteroid belt is also keyed to the shared simulation date.
     belt.rotation.y = ((state.date - Date.UTC(2000, 0, 1, 12)) / 86400000) * 0.001333;
@@ -2186,7 +2256,7 @@ function animate(now) {
     controls.target.add(delta);
   }
   if (flight) {
-    if (!state.atlas && !$("credits-dialog").open) flight.elapsed += dt * 1000;
+    if (!state.atlas && !infoDialogOpen()) flight.elapsed += dt * 1000;
     const t =
       flight.duration === 0 ? 1 : Math.min(flight.elapsed / flight.duration, 1);
     const eased = smoothProgress(t);
@@ -2209,7 +2279,7 @@ function animate(now) {
       applyDistanceLimits();
     }
   }
-  rotationFollow.update(focused,camera,controls.target,state.followRotation && !state.system && !state.atlas && !flight && !$('credits-dialog').open);
+  rotationFollow.update(focused,camera,controls.target,state.followRotation && !state.system && !state.atlas && !flight && !infoDialogOpen());
   if (!flight) controls.update(dt);
   for (const body of objects.values()) {
     if(!body.physicalAvailable)continue;
@@ -2224,7 +2294,7 @@ function animate(now) {
   setSceneVisibility();
   dynamics.update({
     dt,
-    moving: state.playing && !observationGate?.blocked && !state.atlas && !$("credits-dialog").open,
+    moving: state.playing && !observationGate?.blocked && !state.atlas && !infoDialogOpen(),
     selected: state.system ? null : state.selected,
     isMobile: mobile,
     pixelScale: height * renderer.getPixelRatio(),
@@ -2260,7 +2330,7 @@ function animate(now) {
       !state.selected ||
       state.system ||
       state.atlas ||
-      $("credits-dialog").open,
+      infoDialogOpen(),
     reserved,
   });
   if (now - lastActivityUi > 160) {
@@ -2345,7 +2415,7 @@ async function init() {
       initialEnabled: state.observedEarth, autoStart: !window.__promoOffline, deferStart: true,
       resourceQueue: textureResources.queue,
       prepareTexture: texture => frameWork.run('observed-cloud-upload', () => renderer.initTexture(texture), { priority: 75 }),
-      isPaused: () => !state.playing || state.atlas || $("credits-dialog").open,
+      isPaused: () => !state.playing || state.atlas || infoDialogOpen(),
       onChange: changeCloudMode });
     updatePositions();
     updateSimulationDate();
@@ -2384,6 +2454,7 @@ async function init() {
         scale: "display",
         playing: state.playing,
         speed: state.speed,
+        direction: state.direction,
         date: state.date,
         surface: surfaceView?.snapshot() || null,
         earthObservation: isEarthObservation(),

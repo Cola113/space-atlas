@@ -19,12 +19,13 @@ for(const [name,width,height,dpr] of [['desktop',1440,900,1],['phone',390,844,3]
  const panel=await page.locator('#observation-settings-panel').boundingBox();assert.ok(panel.x>=0&&panel.y>=0&&panel.x+panel.width<=width+.1&&panel.y+panel.height<=height+.1,JSON.stringify(panel));
  await page.screenshot({path:`${out}/${name}-settings.png`});await page.keyboard.press('Escape');
  assert.equal(await summary.evaluate(e=>document.activeElement===e),true);assert.equal(await page.locator('#observation-settings').getAttribute('open'),null);
- const button=page.locator('#info-button');await button.click();
+ await page.locator('#display-settings summary').click();
+ const button=page.locator('#info-button');await button.scrollIntoViewIfNeeded();const bounds=await button.boundingBox();await button.click();
  await page.waitForFunction(()=>document.querySelector('#credits-dialog').open);
  assert.match(await page.locator('#physics-accuracy').textContent(),/GAST/);
  await page.screenshot({path:`${out}/${name}-calculation.png`});await page.locator('#close-credits').click();
- assert.equal(await button.evaluate(e=>document.activeElement===e),true);
- const bounds=await button.boundingBox();assert.ok(bounds.width>=44&&bounds.height>=44&&bounds.x>=0&&bounds.y>=0&&bounds.x+bounds.width<=width+.1&&bounds.y+bounds.height<=height+.1,JSON.stringify(bounds));
+ assert.equal(await page.locator('#display-settings summary').evaluate(e=>document.activeElement===e),true);
+ assert.ok(bounds.width>=44&&bounds.height>=44&&bounds.x>=0&&bounds.y>=0&&bounds.x+bounds.width<=width+.1&&bounds.y+bounds.height<=height+.1,JSON.stringify(bounds));
  await page.screenshot({path:`${out}/${name}.png`});
  await page.reload();await page.waitForFunction(()=>window.solarAtlas?.snapshot().loading.renderedFrames>4,null,{timeout:60000});
  const saved=await page.evaluate(()=>JSON.parse(sessionStorage.getItem('space-atlas:scene:solar-system')).value);

@@ -43,10 +43,12 @@ try {
   assert.equal(first.snapshot.loading.queue.concurrency, 2);
   assert.equal(first.snapshot.observedClouds.failed, false);
   assert.equal(first.snapshot.observedClouds.frame.file, frame().file);
+  await page.locator('#body-details-button').click();
   await page.locator('#cloud-refresh').click();
   await page.waitForFunction(() => window.solarAtlas.snapshot().observedClouds.pendingObservedAt !== null, null, { timeout: 30000 });
   const paused = await page.evaluate(() => window.solarAtlas.snapshot().observedClouds);
   assert.equal(paused.frame.file, first.snapshot.observedClouds.frame.file, 'new weather must not replace a paused frame');
+  await page.locator('#close-body-details').click();
   await page.locator('#play-toggle').click();
   await page.waitForFunction(file => window.solarAtlas.snapshot().observedClouds.frame.file === file && window.solarAtlas.snapshot().observedClouds.blend === 1, frame().file, { timeout: 60000 });
   const final = await page.evaluate(() => window.solarAtlas.snapshot());

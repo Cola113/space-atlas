@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { landingSites, surfaceFrame, angularDiameter, horizonAngles, lookDirection, nextDaylightAsync } from './geometry.js';
 import { createIcons, ArrowLeft, Info, X, RotateCcw, Camera, Sunrise, ArrowUpRight } from 'lucide';
 import { SurfaceClock } from './SurfaceClock.js';
-import { simulationRates, formatSimulationRate, simulationRateEquivalent } from '../simulation-time.js';
+import { simulationRates, formatSimulationRate, simulationRateEquivalent, simulationDirectionLabel } from '../simulation-time.js';
 import { SurfaceJourney } from './SurfaceJourney.js';
 import { createSurfaceSky, surfaceCameraRange } from './SurfaceSky.js';
 import './surface.css';
@@ -17,7 +17,7 @@ const compass = angle => ['北','东北','东','东南','南','西南','西','�
 
 // Camera position is fixed. A brief lens/attitude change settles the arrival;
 // after landing, only the look direction changes. Time and rate carry across views.
-export function createSurfaceView(id, {renderOrbit,onClosed,initialDate,initialRate,initialPlaying=true,onPlayingChange,onRateChange,onTimeChange,provider=physicalState}) {
+export function createSurfaceView(id, {renderOrbit,onClosed,initialDate,initialRate,initialDirection=1,initialPlaying=true,onDirectionChange,onPlayingChange,onRateChange,onTimeChange,provider=physicalState}) {
   const site = landingSites[id];
   if (!site) throw new Error('这个天体还没有开放着陆点。');
   const parsedDate = initialDate instanceof Date ? initialDate.getTime()
@@ -26,6 +26,7 @@ export function createSurfaceView(id, {renderOrbit,onClosed,initialDate,initialR
   let frame = null;
   const clock = new SurfaceClock(startTime,initialRate,onTimeChange);
   clock.playing=initialPlaying;
+  clock.setDirection(initialDirection);
   const journey = new SurfaceJourney(matchMedia('(prefers-reduced-motion: reduce)').matches);
   const root = document.createElement('dialog');
   root.className = 'surface-view';
@@ -62,7 +63,7 @@ export function createSurfaceView(id, {renderOrbit,onClosed,initialDate,initialR
       <input id="surface-rate" class="surface-rate" type="range" min="0" max="${simulationRates.length-1}" step="1" value="${simulationRates.indexOf(clock.rate)}">
       <div class="surface-rate-limits" aria-hidden="true"><span>${formatSimulationRate(simulationRates[0])}</span><span>${formatSimulationRate(simulationRates.at(-1))}</span></div>
       <p class="surface-rate-equivalent"></p>
-      <div class="surface-clock-actions"><button type="button" class="surface-rewind">回到着陆时刻</button></div>
+      <div class="surface-clock-actions"><button type="button" class="surface-direction" aria-pressed="false">时间方向 · 正放</button><button type="button" class="surface-rewind">回到着陆时刻</button></div>
     </section>
     <footer class="surface-footer"><div class="surface-bearing"><span>朝向</span><strong></strong><small>眼高 1.65 m</small></div>
       <div class="surface-actions" role="toolbar" aria-label="地表观测"><button type="button" class="surface-parent"><span>望向${site.parentName}</span><i data-lucide="arrow-up-right"></i></button>
@@ -184,6 +185,13 @@ export function createSurfaceView(id, {renderOrbit,onClosed,initialDate,initialR
     clock.playing=!clock.playing;clock.suspend();lastFrame=null;exposureElapsed=0;invalidate();
     onPlayingChange?.(clock.playing);
   });
+  listen($('.surface-direction'),'click',()=>{
+    clock.tick(performance.now(),journey.phase==='landed'&&!document.hidden&&!gate.blocked);
+    clock.setDirection(-clock.direction);onDirectionChange?.(clock.direction);
+    // A failed year ahead must not trap a user who reverses into available data.
+    gate.check(new Date(clock.time));lastFrame=null;exposureElapsed=0;
+    updateReadout();invalidate();
+  });
   listen($('.surface-rewind'),'click',()=>{clock.reset();lastSkyUpdate=-Infinity;resetExposure=true;exposureElapsed=0;invalidate();});
   listen(document,'visibilitychange',()=>{
     clock.suspend();lastFrame=null;exposureElapsed=0;
@@ -203,9 +211,10 @@ export function createSurfaceView(id, {renderOrbit,onClosed,initialDate,initialR
       $('.surface-sun-data').textContent=`${horizonAngles(frame.targets.Sun.direction).altitude.toFixed(1)}°`;
       }
     }
-    $('.surface-time-toggle').textContent=gate.blocked?'星历未就绪 · 时间暂缓':clock.playing
-      ? `地表流速 · ${formatSimulationRate(clock.rate)}`
-      : '时间已暂停';
+    const direction=simulationDirectionLabel(clock.direction);
+    $('.surface-time-toggle').textContent=gate.blocked?'星历未就绪 · 时间暂缓':`${clock.playing?'时间设置':'已暂停'} · ${direction} ${formatSimulationRate(clock.rate)}`;
+    $('.surface-direction').textContent=`时间方向 · ${direction}`;
+    $('.surface-direction').setAttribute('aria-pressed',String(clock.direction===-1));
     const equivalent = simulationRateEquivalent(clock.rate);
     $('.surface-rate-value').textContent=formatSimulationRate(clock.rate);
     $('.surface-rate-equivalent').textContent=equivalent;
@@ -426,7 +435,7 @@ export function createSurfaceView(id, {renderOrbit,onClosed,initialDate,initialR
   }
   updateReadout();invalidate();
   load();
-  return { dispose, getTime:()=>clock.time, snapshot:()=>({date:clock.time,playing:clock.playing,magnification,fieldOfView:camera.getEffectiveFOV(),cameraZoom:camera.zoom,ephemeris:root.dataset.ephemeris,
+  return { dispose, getTime:()=>clock.time, snapshot:()=>({date:clock.time,playing:clock.playing,rate:clock.rate,direction:clock.direction,magnification,fieldOfView:camera.getEffectiveFOV(),cameraZoom:camera.zoom,ephemeris:root.dataset.ephemeris,
     observerKm:frame?.observerKm.toArray(),centerKm:frame?.centerKm.toArray(),
     targets:frame&&Object.fromEntries(Object.entries(frame.targets).map(([name,target])=>[name,{direction:target.direction.toArray(),distanceKm:target.distanceKm,angularDiameter:target.angularDiameter}])),
     accuracy:frame?.accuracy}) };

@@ -64,7 +64,9 @@ try {
     await checkHeader(page);
     await screenshot(page, name + '-solar');
     await canvasPixels(page);
+    await page.locator('#display-settings summary').click();
     await page.locator('#orbit-toggle').click();
+    await page.keyboard.press('Escape');
     await page.locator('.planet-choice[data-body="saturn"]').click();
     await page.waitForFunction(() => window.solarAtlas.snapshot().selected === 'saturn' && !window.solarAtlas.snapshot().flight, null, { timeout:30000 });
     await page.locator('#play-toggle').click();

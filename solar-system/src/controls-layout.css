@@ -1,0 +1,152 @@
+/* Final control layout: persistent observation actions, scrollable named settings. */
+#app {
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+  --header-height: 88px;
+}
+button:focus-visible, summary:focus-visible, a:focus-visible, input:focus-visible {
+  outline: 2px solid #c6f6df;
+  outline-offset: 3px;
+}
+#app button:disabled { opacity: .5; cursor: not-allowed; }
+#app .topbar {
+  top: var(--safe-top);
+  left: max(24px, var(--safe-left));
+  right: max(24px, var(--safe-right));
+  height: var(--header-height);
+  gap: 16px;
+}
+#app .view-switch {
+  position: static; transform: none; height: auto; padding: 0;
+  display: flex; gap: 8px; border: 0; background: none;
+}
+#app .view-switch button { min-height: 44px; padding: 0 16px; border: 1px solid #536b5f; }
+#app .display-settings { position: relative; }
+#app .display-settings summary {
+  display: flex; align-items: center; justify-content: center; min-height: 44px; min-width: 100px;
+  padding: 0 12px; list-style: none; font-size: 12px; cursor: pointer;
+  border: 1px solid #536b5f; border-radius: 5px; color: #e3f1e9; background: #0c1211f5;
+}
+.display-settings summary::after { content: '⌄'; margin-left: 8px; }
+.display-settings[open] summary::after { content: '⌃'; }
+#display-settings-panel {
+  position: absolute; top: calc(100% + 8px); right: 0; width: min(308px, calc(100vw - 32px));
+  max-height: calc(100dvh - var(--safe-top) - var(--safe-bottom) - var(--header-height) - 24px);
+  overflow: auto; overscroll-behavior: contain; display: flex; flex-direction: column; gap: 8px;
+  padding: 12px; border: 1px solid #536b5f; border-radius: 8px; background: #101b17fa;
+  box-shadow: 0 8px 26px #0009;
+}
+#display-settings-panel .icon-button { display: flex; width: 100%; min-height: 44px; height: 44px; gap: 8px; justify-content: flex-start; padding: 0 12px; font-size: 12px; flex: none; }
+#display-settings-panel .live-state { display: flex; margin: 0; min-height: 20px; }
+.display-settings-heading { display: flex; justify-content: space-between; align-items: center; gap: 8px; font-size: 13px; }
+#display-settings-close { min-width: 44px; min-height: 44px; font-size: 24px; }
+#app .scene-toolbar {
+  top: calc(var(--safe-top) + var(--header-height) + 96px); bottom: auto;
+  right: max(16px, var(--safe-right)); transform: none; max-height: none; overflow: visible;
+  display: flex; flex-direction: column; gap: 8px; padding: 0; border: 0; background: none;
+}
+#app .scene-toolbar .icon-button {
+  width: 44px; height: 44px; min-width: 44px; min-height: 44px;
+  border: 1px solid #536b5f; background: #0c1211f5;
+}
+#app #planet-info {
+  position: absolute; top: calc(var(--safe-top) + var(--header-height) + 28px); bottom: auto;
+  left: max(24px, var(--safe-left)); right: auto; width: 284px; height: auto;
+  max-height: none; padding: 0; margin: 0; overflow: visible;
+  display: flex; flex-direction: column; gap: 8px;
+}
+.selected-identity { display: flex; align-items: baseline; gap: 8px; min-height: 26px; flex-wrap: wrap; }
+#selected-name { font-size: 22px; font-weight: 500; }
+#selected-english { color: #a5bbae; font-size: 12px; }
+#app #planet-info .planet-navigation,
+#app #planet-info .planet-info-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; padding: 0; margin: 0; }
+#app #planet-info button {
+  grid-area: auto; align-self: stretch;
+  position: static; width: 100%; height: auto; min-height: 44px; margin: 0; padding: 6px 8px;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  font-size: 12px; line-height: 1.4; letter-spacing: 0; border: 1px solid #536b5f; border-radius: 5px;
+  background: #0c1211f5; color: #e3f1e9;
+}
+#app #planet-info #surface-button { background: #bde5c9; color: #162a1e; }
+#app #planet-info #landing-button { background: #231f17f5; color: #e8d6b7; border-color: #9a8863; }
+#app #planet-info button svg { width: 16px; height: 16px; margin: 0; }
+#body-details-dialog { width: min(560px, calc(100vw - 32px)); padding: 0; }
+#body-details-dialog[open] { display: flex; flex-direction: column; }
+#body-details-dialog, #credits-dialog {
+  max-height: calc(100dvh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px) - 32px);
+  border: 1px solid #536b5f; border-radius: 10px; background: #101b17; color: #e4eee8;
+  overscroll-behavior: contain;
+}
+.body-details-heading { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 12px 20px; flex: none; border-bottom: 1px solid #344c3d; font-size: 13px; }
+#close-body-details { min-width: 44px; min-height: 44px; font-size: 24px; }
+#body-details-dialog #planet-info-content {
+  display: block; min-height: 0; padding: 20px; overflow: auto; overscroll-behavior: contain;
+  scrollbar-width: thin; scrollbar-gutter: stable;
+}
+#body-details-dialog h1 { margin: 8px 0; font-size: 30px; }
+#body-details-dialog .planet-description { display: block; font-size: 13px; line-height: 1.8; margin: 16px 0; }
+#body-details-dialog .planet-facts { display: grid; margin: 20px 0; gap: 20px 16px; }
+#body-details-dialog .planet-facts dt { font-size: 12px; }
+#body-details-dialog .surface-feature, #body-details-dialog .cloud-panel { position: static; display: block; height: auto; max-height: none; width: auto; margin: 16px 0; }
+#body-details-dialog .surface-feature p, #body-details-dialog .cloud-panel p { display: block; font-size: 12px; line-height: 1.8; }
+#body-details-dialog .activity-controls, #body-details-dialog .cloud-controls { display: flex; gap: 8px; margin-top: 8px; }
+#body-details-dialog .activity-controls button, #body-details-dialog .cloud-controls button { min-height: 44px; height: auto; font-size: 12px; }
+#body-details-dialog select { min-height: 44px; min-width: 72px; font-size: 12px; }
+#body-details-dialog #layer-control { display: flex; margin: 8px 0 0; min-height: 44px; font-size: 12px; }
+#body-details-dialog .cloud-source summary { display: flex; align-items: center; min-height: 44px; font-size: 12px; }
+#body-details-dialog .cloud-heading, #body-details-dialog .cloud-time { font-size: 12px; }
+#app .observation-tools { top: calc(var(--safe-top) + var(--header-height) + 24px); right: max(80px, var(--safe-right)); }
+#app .explorer-bottom { padding-bottom: var(--safe-bottom); height: calc(var(--explorer-height) + var(--safe-bottom)); }
+#app .observation-status { bottom: calc(var(--explorer-height) + var(--safe-bottom) + 12px); }
+#app .planet-dock { gap: 8px; }
+#app .dock-scroll { min-width: 44px; min-height: 44px; }
+#app .dock-strip { gap: 8px; grid-template-columns: 44px minmax(0, 1fr) 44px; }
+#app .atlas-filters { gap: 8px; }
+#app .atlas-filters input, #app .atlas-filters select, #atlas-reset, #explore-earth { min-height: 44px; }
+#app .atlas-panel { top: calc(var(--safe-top) + var(--header-height)); padding-bottom: max(20px, var(--safe-bottom)); }
+#app.atlas-open .planet-info, #app.atlas-open .scene-toolbar { display: none; }
+#app .resource-status { top: calc(var(--safe-top) + var(--header-height) + 8px); width: min(440px, calc(100% - 48px)); max-width: none; flex-wrap: nowrap; }
+#resource-message { flex: 1; min-width: 0; }
+#app.has-resource-notice .observation-tools { top: calc(var(--safe-top) + var(--header-height) + 72px); }
+@media(max-width: 760px) and (min-height: 541px) {
+  #app { --header-height: 112px; }
+  #app .topbar { left: max(16px, var(--safe-left)); right: max(16px, var(--safe-right)); display: grid; grid-template-columns: 1fr auto; gap: 8px; align-content: center; }
+  #app .view-switch { grid-row: 2; grid-column: 1/-1; }
+  #app .view-switch button { flex: 1; }
+  #app .display-settings { grid-column: 2; grid-row: 1; }
+  #app .observation-tools { left: max(16px, var(--safe-left)); right: max(16px, var(--safe-right)); width: auto; top: calc(var(--safe-top) + var(--header-height) + 8px); }
+  #app #planet-info { top: auto; bottom: calc(var(--explorer-height) + var(--safe-bottom) + 8px); left: max(16px, var(--safe-left)); right: max(16px, var(--safe-right)); width: auto; }
+  #selected-name { font-size: 20px; }
+  #app .scene-toolbar { top: calc(var(--safe-top) + var(--header-height) + 68px); }
+  #app .explorer-bottom { left: max(16px, var(--safe-left)); right: max(16px, var(--safe-right)); }
+  #app .observation-status, #app .focus-caption { display: none; }
+  #app .intro { top: calc(var(--safe-top) + var(--header-height) + 32px); }
+  #app .time-settings-panel { max-height: calc(100dvh - var(--safe-top) - var(--safe-bottom) - var(--header-height) - var(--explorer-height) - 24px); }
+  #app.has-resource-notice .scene-toolbar { top: calc(var(--safe-top) + var(--header-height) + 132px); }
+}
+@media(min-width: 560px) and (max-height: 540px) {
+  #app { --header-height: 56px; --explorer-height: 124px; }
+  #app .topbar { left: max(16px, var(--safe-left)); right: max(16px, var(--safe-right)); gap: 8px; }
+  #app .view-switch button { padding: 0 10px; font-size: 11px; }
+  #app .view-switch svg { display: none; }
+  #app .timeline-title { flex-direction: row; flex-wrap: nowrap; align-items: center; width: auto; }
+  #app .timeline { height: 48px; min-height: 48px; }
+  #app .timeline-title #catalog-filter { width: auto; max-width: 164px; flex: none; }
+  #app .display-settings summary { min-width: 92px; }
+  #app #planet-info { left: max(16px, var(--safe-left)); top: calc(var(--safe-top) + var(--header-height) + 8px); bottom: auto; width: 220px; gap: 8px; }
+  #selected-name { font-size: 16px; }
+  #selected-english { font-size: 10px; }
+  .selected-identity { min-height: 20px; line-height: 20px; flex-wrap: nowrap; align-items: center; }
+  #app #planet-info button { font-size: 11px; padding: 4px; gap: 4px; }
+  #app #planet-info button svg { display: none; }
+  #app .observation-tools { left: max(252px, calc(var(--safe-left) + 236px)); right: max(16px, var(--safe-right)); width: auto; top: calc(var(--safe-top) + var(--header-height) + 8px); padding: 0; }
+  #app .observation-settings-panel { max-height: calc(100dvh - var(--safe-top) - var(--safe-bottom) - var(--header-height) - 76px); }
+  #app .scene-toolbar { top: auto; bottom: calc(var(--explorer-height) + var(--safe-bottom) + 8px); flex-direction: row; }
+  #app .explorer-bottom { left: max(16px, var(--safe-left)); right: max(16px, var(--safe-right)); }
+  #app .observation-status, #app .focus-caption { display: none; }
+  #app .time-settings-panel { top: calc(var(--safe-top) + var(--header-height) + 8px); bottom: calc(var(--explorer-height) + var(--safe-bottom) + 8px); }
+  #app.has-resource-notice .observation-tools { top: calc(var(--safe-top) + var(--header-height) + 8px); }
+  #app .resource-status { top: calc(var(--safe-top) + var(--header-height) + 60px); left: max(252px, calc(var(--safe-left) + 236px)); right: calc(max(16px, var(--safe-right)) + 104px); transform: none; width: auto; font-size: 11px; padding: 4px 8px; }
+}
