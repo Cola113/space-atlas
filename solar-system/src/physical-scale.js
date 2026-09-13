@@ -3,11 +3,11 @@
 // https://ssd.jpl.nasa.gov/planets/approx_pos.html
 // https://ssd.jpl.nasa.gov/sats/phys_par/
 // https://ssd.jpl.nasa.gov/sats/elem/
-// https://science.nasa.gov/sun/facts/
+// https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/pck00011.tpc
 // https://science.nasa.gov/solar-system/asteroids/4-vesta/
 // Small-body orbital sizes are rounded means, not positional ephemerides.
 export const physicalData = {
-  sun: { radiusKm: 696340, orbitAU: 0 },
+  sun: { radiusKm: 695700, orbitAU: 0 },
   mercury: { radiusKm: 2439.4, orbitAU: 0.38709927, orbitYears: 0.2408467 },
   venus: { radiusKm: 6051.8, orbitAU: 0.72333566, orbitYears: 0.61519726 },
   earth: { radiusKm: 6371.0084, orbitAU: 1.00000261, orbitYears: 1.0000174 },
@@ -67,3 +67,24 @@ export const physicalData = {
   namaka: { radiusKm: 80, orbitKm: 25657, estimated: true },
   dysnomia: { radiusKm: 350, orbitKm: 37273, estimated: true },
 };
+
+// Definitions are constant shape summaries, not dated ephemerides or a claim
+// that terrain is spherical. Keep metadata alongside the values used by every
+// angular-size and catalogue consumer. Small-body estimates retain their source
+// discussion in BODY_MODELS.md instead of inventing measurement precision.
+for (const [id, body] of Object.entries(physicalData)) {
+  const satellite = body.orbitKm !== undefined;
+  Object.assign(body, {
+    radiusType: id === 'sun' ? 'NAIF PCK00011 adopted spherical solar radius' : body.estimated ? 'estimated equivalent radius' : 'mean / volume-equivalent radius',
+    units: Object.freeze({radiusKm:'km',orbitKm:'km',orbitAU:'au',orbitYears:'Julian year'}),
+    radiusSource: id === 'sun' ? 'https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/pck00011.tpc'
+      : satellite ? 'https://ssd.jpl.nasa.gov/sats/phys_par/'
+      : ['vesta','makemake','haumea','eris'].includes(id) ? '/solar-system/BODY_MODELS.md'
+      : 'https://ssd.jpl.nasa.gov/planets/phys_par.html',
+    orbitSource: satellite ? 'https://ssd.jpl.nasa.gov/sats/elem/' : 'https://ssd.jpl.nasa.gov/planets/approx_pos.html',
+    epoch: body.orbitYears ? 'J2000 mean orbital size; radius is a static shape summary' : 'Radius is a static summary; rounded mean orbital size, no positional epoch',
+    validity: 'Display reference at all dates; radii approximate each body as a sphere. Mean orbital sizes are not positional ephemerides.',
+  });
+  Object.freeze(body);
+}
+Object.freeze(physicalData);

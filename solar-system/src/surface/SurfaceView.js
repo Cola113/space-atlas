@@ -1,11 +1,15 @@
 import * as THREE from 'three';
-import { landingSites, surfaceFrame, angularDiameter, horizonAngles, lookDirection, nextDaylight } from './geometry.js';
+import { landingSites, surfaceFrame, angularDiameter, horizonAngles, lookDirection, nextDaylightAsync } from './geometry.js';
 import { createIcons, ArrowLeft, Info, X, RotateCcw, Camera, Sunrise, ArrowUpRight } from 'lucide';
 import { SurfaceClock } from './SurfaceClock.js';
 import { simulationRates, formatSimulationRate, simulationRateEquivalent } from '../simulation-time.js';
 import { SurfaceJourney } from './SurfaceJourney.js';
 import { createSurfaceSky, surfaceCameraRange } from './SurfaceSky.js';
 import './surface.css';
+import { SURFACE_FOV_DEGREES, TELESCOPE_MAGNIFICATIONS, telescopeFieldOfView } from './lens.js';
+import { physicalState } from '../physics/state.js';
+import { MissingEphemerisError } from '../physics/ephemeris.js';
+import { ObservationGate } from '../physics/observation-gate.js';
 
 const rad = THREE.MathUtils.degToRad;
 const deg = THREE.MathUtils.radToDeg;
@@ -13,13 +17,13 @@ const compass = angle => ['北','东北','东','东南','南','西南','西','�
 
 // Camera position is fixed. A brief lens/attitude change settles the arrival;
 // after landing, only the look direction changes. Time and rate carry across views.
-export function createSurfaceView(id, {renderOrbit,onClosed,initialDate,initialRate,onRateChange,onTimeChange}) {
+export function createSurfaceView(id, {renderOrbit,onClosed,initialDate,initialRate,onRateChange,onTimeChange,provider=physicalState}) {
   const site = landingSites[id];
   if (!site) throw new Error('这个天体还没有开放着陆点。');
   const parsedDate = initialDate instanceof Date ? initialDate.getTime()
     : (typeof initialDate === 'number' ? initialDate : Date.parse(initialDate || site.date));
   const startTime = Number.isFinite(parsedDate) ? parsedDate : Date.parse(site.date);
-  let frame = surfaceFrame(site,new Date(startTime));
+  let frame = null;
   const clock = new SurfaceClock(startTime,initialRate,onTimeChange);
   const journey = new SurfaceJourney(matchMedia('(prefers-reduced-motion: reduce)').matches);
   const root = document.createElement('dialog');
@@ -32,7 +36,7 @@ export function createSurfaceView(id, {renderOrbit,onClosed,initialDate,initialR
     <header class="surface-header">
       <button class="surface-exit" type="button"><i data-lucide="arrow-left"></i><span>返回轨道</span></button>
       <span class="surface-mode"><b></b> SURFACE EXPLORER</span>
-      <button class="surface-info-button" type="button" aria-label="观景资料" title="观景资料" aria-expanded="false" aria-controls="surface-details"><i data-lucide="info"></i></button>
+      <button class="surface-info-button" type="button" aria-label="观景资料" title="观景资料" aria-expanded="false" aria-controls="surface-details"><i data-lucide="info"></i><span>观景资料</span></button>
     </header>
     <div class="surface-location"><span class="surface-eyebrow">${site.english}</span>
       <h1>${site.name}<span>·</span><small>${site.title}</small></h1>
@@ -48,7 +52,7 @@ export function createSurfaceView(id, {renderOrbit,onClosed,initialDate,initialR
       <div><dt>${site.parentName}视直径 / 高度角</dt><dd class="surface-parent-data"></dd></div>
       <div><dt>太阳高度角</dt><dd class="surface-sun-data"></dd></div></dl>
       <p>${site.notes}</p><p>${site.coordinateNote||''} 天空随模拟日期与对应天体模型更新。地表随日照和遮挡整体调光，原图中的局部阴影保持原样；曝光与大气散射是展示近似。</p>
-      <p class="surface-credit">${site.credit}</p>
+      <p class="surface-accuracy"></p><p class="surface-credit">${site.credit}</p>
       <p class="surface-links"><a href="${site.source}" target="_blank" rel="noreferrer">地表资料 ↗</a><a href="/surface/README.md" target="_blank" rel="noreferrer">加工与来源 ↗</a></p>
     </section>
     <section class="surface-clock-panel" aria-label="表面时间设置" id="surface-clock-panel" hidden>
@@ -57,16 +61,19 @@ export function createSurfaceView(id, {renderOrbit,onClosed,initialDate,initialR
       <input id="surface-rate" class="surface-rate" type="range" min="0" max="${simulationRates.length-1}" step="1" value="${simulationRates.indexOf(clock.rate)}">
       <div class="surface-rate-limits" aria-hidden="true"><span>${formatSimulationRate(simulationRates[0])}</span><span>${formatSimulationRate(simulationRates.at(-1))}</span></div>
       <p class="surface-rate-equivalent"></p>
-      <div class="surface-clock-actions"><button type="button" class="surface-pause" aria-pressed="false">暂停时间</button><button type="button" class="surface-rewind">回到着陆时刻</button></div>
+      <div class="surface-clock-actions"><button type="button" class="surface-rewind">回到着陆时刻</button></div>
     </section>
     <footer class="surface-footer"><div class="surface-bearing"><span>朝向</span><strong></strong><small>眼高 1.65 m</small></div>
-      <div class="surface-actions"><button type="button" class="surface-parent"><span>望向${site.parentName}</span><i data-lucide="arrow-up-right"></i></button>
-        <button type="button" class="surface-daylight" aria-label="前往下一次日照" title="前往下一次日照"><i data-lucide="sunrise"></i></button>
-        <button type="button" class="surface-reset" aria-label="恢复着陆视角" title="恢复着陆视角"><i data-lucide="rotate-ccw"></i></button>
-        <button type="button" class="surface-photo" aria-label="留张照片" title="留张照片"><i data-lucide="camera"></i></button></div>
+      <div class="surface-actions" role="toolbar" aria-label="地表观测"><button type="button" class="surface-parent"><span>望向${site.parentName}</span><i data-lucide="arrow-up-right"></i></button>
+        <button type="button" class="surface-daylight" aria-label="前往下一次日照" title="前往下一次日照"><i data-lucide="sunrise"></i><span>寻找日照</span></button>
+        <button type="button" class="surface-reset" aria-label="恢复着陆视角" title="恢复着陆视角"><i data-lucide="rotate-ccw"></i><span>重置朝向</span></button>
+        <button type="button" class="surface-photo" aria-label="留张照片" title="留张照片"><i data-lucide="camera"></i><span>留张照片</span></button>
+        <button type="button" class="surface-telescope" aria-label="望远镜 1 倍，点击切换倍率"><span>望远镜 1×</span><small class="surface-angle-scale">纵向视场 62.0°</small></button>
+        <button type="button" class="surface-pause" aria-pressed="false">暂停时间</button></div>
       <div class="surface-time-row"><button type="button" class="surface-time-toggle" aria-expanded="false" aria-controls="surface-clock-panel">地表流速 · ${formatSimulationRate(clock.rate)}</button><time class="surface-time-readout"></time></div>
       </footer>
     <div class="surface-message" role="status" hidden></div>
+    <div class="surface-ephemeris" hidden><span role="status"></span><button type="button" class="surface-ephemeris-retry" hidden>重试星历</button></div>
     <div class="surface-transition-cover" aria-hidden="true"></div>
     <div class="surface-journey-caption" role="status"><span class="surface-eyebrow">DESTINATION / ${site.english}</span><strong>准备前往${site.name}</strong><p>准备地表全景与天空</p><div class="surface-journey-track"><b></b></div></div>
     <button type="button" class="surface-skip">跳过动画</button>`;
@@ -84,14 +91,42 @@ export function createSurfaceView(id, {renderOrbit,onClosed,initialDate,initialR
   let heading = site.initialHeading, pitch = resetPitch, motion = null, drag = null;
   const scene = new THREE.Scene();
   scene.background = new THREE.Color('#020305');
-  const camera = new THREE.PerspectiveCamera(62,innerWidth/innerHeight,surfaceCameraRange.near,surfaceCameraRange.far);
+  const camera = new THREE.PerspectiveCamera(SURFACE_FOV_DEGREES,innerWidth/innerHeight,surfaceCameraRange.near,surfaceCameraRange.far);
   camera.position.set(0,0,0);
+  let magnification=1;
+  const resizeObserver=new ResizeObserver(()=>{
+    root.style.setProperty('--surface-footer-height',`${$('.surface-footer').getBoundingClientRect().height}px`);
+    root.style.setProperty('--surface-header-bottom',`${$('.surface-header').getBoundingClientRect().bottom}px`);
+  });
+  resizeObserver.observe($('.surface-footer'));resizeObserver.observe($('.surface-header'));
 
   const listen = (target, name, callback, options = {}) => target.addEventListener(name,callback,{...options,signal:events.signal});
-  function setClockPanel(open) {
+  const gate=new ObservationGate(provider,[site.id,site.parent.toLowerCase()],()=>{
+    if(disposed)return;
+    const status=$('.surface-ephemeris'), retry=$('.surface-ephemeris-retry');
+    status.hidden=!gate.blocked;
+    status.querySelector('span').textContent=gate.error
+      ? `${gate.error.message}。观景时间已暂停，可重试或返回轨道。`
+      : '正在加载当前观景所需星历，观景时间暂缓。';
+    retry.hidden=!gate.error;retry.disabled=Boolean(gate.pending);
+    root.dataset.ephemeris=gate.error?'error':gate.pending?'loading':'ready';
+    if(!gate.blocked&&document.activeElement===retry)$('.surface-exit').focus();
+    clock.suspend();lastFrame=null;invalidate();
+  });
+  clock.canAdvance=time=>gate.check(new Date(time));
+  listen($('.surface-ephemeris-retry'),'click',async()=>{
+    try {
+      await gate.retry();
+      if(disposed)return;
+      if(!loaded){journey.enter('preparing');void load();}
+      else {lastSkyUpdate=-Infinity;invalidate();}
+    } catch { /* The persistent notice keeps the retry reachable. */ }
+  });
+  function setClockPanel(open, focus=true) {
     $('.surface-clock-panel').hidden=!open;
     $('.surface-time-toggle').setAttribute('aria-expanded',String(open));
     if(open)info(false,false);
+    if(focus)(open?$('.surface-clock-close'):$('.surface-time-toggle')).focus();
   }
   function notice(text) {
     $('.surface-message').textContent = text;
@@ -102,13 +137,13 @@ export function createSurfaceView(id, {renderOrbit,onClosed,initialDate,initialR
   function info(open, focus = true) {
     $('.surface-details').hidden = !open;
     $('.surface-info-button').setAttribute('aria-expanded',String(open));
-    if(open)setClockPanel(false);
+    if(open)setClockPanel(false,false);
     if(focus)(open?$('.surface-details-close'):$('.surface-info-button')).focus();
   }
   function dispose() {
     if (disposed) return;
     disposed = true;
-    events.abort(); clearTimeout(noticeTimer); cancelAnimationFrame(raf);
+    events.abort(); gate.dispose(); resizeObserver.disconnect(); clearTimeout(noticeTimer); cancelAnimationFrame(raf);
     scene.traverse(object => { object.geometry?.dispose();
       for (const material of [object.material].flat().filter(Boolean)) material.dispose();
     });
@@ -128,6 +163,14 @@ export function createSurfaceView(id, {renderOrbit,onClosed,initialDate,initialR
   listen($('.surface-skip'),'click',()=>{journey.skip();invalidate();});
   listen($('.surface-time-toggle'),'click',()=>setClockPanel($('.surface-clock-panel').hidden));
   listen($('.surface-clock-close'),'click',()=>setClockPanel(false));
+  listen($('.surface-telescope'),'click',()=>{
+    magnification=TELESCOPE_MAGNIFICATIONS[(TELESCOPE_MAGNIFICATIONS.indexOf(magnification)+1)%TELESCOPE_MAGNIFICATIONS.length];
+    camera.zoom=magnification;camera.updateProjectionMatrix();
+    const button=$('.surface-telescope');button.querySelector('span').textContent=`望远镜 ${magnification}×`;
+    button.setAttribute('aria-label',`望远镜 ${magnification} 倍，点击切换倍率`);
+    $('.surface-angle-scale').textContent=`纵向视场 ${telescopeFieldOfView(magnification).toFixed(1)}°`;
+    root.dataset.magnification=String(magnification);invalidate();
+  });
   listen($('.surface-rate'),'input',event=>{
     clock.tick(performance.now(),journey.phase==='landed'&&!document.hidden);
     clock.setRate(simulationRates[Number(event.target.value)]);
@@ -151,11 +194,14 @@ export function createSurfaceView(id, {renderOrbit,onClosed,initialDate,initialR
       lastReadout=time;$('.surface-time-readout').textContent=time;
       $('.surface-time-readout').dateTime=new Date(clock.time).toISOString();
       $('.surface-details-time').textContent=time;
-      const parent=frame.targets[site.parent];
+      const parent=frame?.targets[site.parent];
+      if(parent){
+      $('.surface-accuracy').textContent=frame.accuracy;
       $('.surface-parent-data').textContent=`${deg(angularDiameter(site.parentRadiusKm,parent.distanceKm)).toFixed(2)}° / ${horizonAngles(parent.direction).altitude.toFixed(1)}°`;
       $('.surface-sun-data').textContent=`${horizonAngles(frame.targets.Sun.direction).altitude.toFixed(1)}°`;
+      }
     }
-    $('.surface-time-toggle').textContent=clock.playing
+    $('.surface-time-toggle').textContent=gate.blocked?'星历未就绪 · 时间暂缓':clock.playing
       ? `地表流速 · ${formatSimulationRate(clock.rate)}`
       : '时间已暂停';
     const equivalent = simulationRateEquivalent(clock.rate);
@@ -169,7 +215,7 @@ export function createSurfaceView(id, {renderOrbit,onClosed,initialDate,initialR
   function updateCamera(settle = 1) {
     heading = THREE.MathUtils.euclideanModulo(heading,360);
     pitch = THREE.MathUtils.clamp(pitch,-85,89);
-    const lens=62+(1-settle)*8;
+    const lens=SURFACE_FOV_DEGREES+(1-settle)*8;
     if(camera.fov!==lens){camera.fov=lens;camera.updateProjectionMatrix();}
     camera.lookAt(lookDirection(heading,pitch-(1-settle)*10));
     if(settle<1)camera.rotateZ(rad((1-settle)*.8));
@@ -187,7 +233,7 @@ export function createSurfaceView(id, {renderOrbit,onClosed,initialDate,initialR
     label.hidden = !inView||occluded;
     if (inView) {
       label.style.left = `${(point.x*.5+.5)*innerWidth}px`;
-      const disc = Math.tan(angularDiameter(site.parentRadiusKm,parent.distanceKm)/2) / Math.tan(rad(camera.fov/2)) * innerHeight*.5;
+      const disc = Math.tan(angularDiameter(site.parentRadiusKm,parent.distanceKm)/2) / Math.tan(rad(camera.fov/2)) * camera.zoom * innerHeight*.5;
       label.style.top = `${(-point.y*.5+.5)*innerHeight+disc+17}px`;
       label.querySelector('span').textContent = site.parentName;
       label.querySelector('small').textContent = `${(parent.distanceKm/10000).toFixed(1)} 万公里`;
@@ -206,7 +252,7 @@ export function createSurfaceView(id, {renderOrbit,onClosed,initialDate,initialR
     if(journey.phase==='closed'){const finalTime=clock.time;dispose();onClosed(finalTime);return;}
     const sample=journey.sample(), interactive=journey.phase==='landed';
     if(interactive&&clock.playing)exposureElapsed+=dt/1000;
-    clock.tick(now,interactive);
+    clock.tick(now,interactive&&!gate.blocked);
     if(root.dataset.phase!==journey.phase){
       root.dataset.phase=journey.phase;dirty=true;
       root.dataset.ready=String(interactive);
@@ -237,7 +283,7 @@ export function createSurfaceView(id, {renderOrbit,onClosed,initialDate,initialR
       sky.faceCamera(camera);updateReadout();renderer.render(scene,camera);
       lastDraw=now;dirty=false;
     }
-    if(motion||['approach','settling','departing','retreating'].includes(journey.phase)||(interactive&&clock.playing))schedule();
+    if(motion||['approach','settling','departing','retreating'].includes(journey.phase)||(interactive&&clock.playing&&!gate.blocked))schedule();
   }
   function schedule(){if(!raf&&!disposed&&!document.hidden)raf=requestAnimationFrame(render);}
   function invalidate(){dirty=true;schedule();}
@@ -254,16 +300,26 @@ export function createSurfaceView(id, {renderOrbit,onClosed,initialDate,initialR
     if(angles.altitude<0){notice(`${site.parentName}目前位于地平线下。`);return;}
     aim(angles.azimuth,angles.altitude);
   });
-  listen($('.surface-daylight'),'click',()=>{
-    const time=nextDaylight(site,clock.time);
-    if(time===null){notice('未来两个当地太阳日内，太阳仍未升到适合观景的高度。');return;}
-    clock.time=time;clock.suspend();onTimeChange?.(time);lastSkyUpdate=-Infinity;resetExposure=true;exposureElapsed=0;invalidate();
+  listen($('.surface-daylight'),'click',async()=>{
+    const button=$('.surface-daylight');button.disabled=true;
+    const wasPlaying=clock.playing;clock.playing=false;clock.suspend();
+    try {
+      const time=await nextDaylightAsync(site,clock.time,provider,{signal:events.signal});
+      if(disposed)return;
+      if(time===null){notice('未来两个当地太阳日内，太阳仍未升到适合观景的高度。');return;}
+      clock.setTime(time);lastSkyUpdate=-Infinity;resetExposure=true;exposureElapsed=0;
+    } catch(error) {
+      if(disposed)return;
+      notice(error instanceof MissingEphemerisError?'寻找日照所需的星历未加载，请再次点击日照重试。':'暂时无法查找下一次日照。');
+    } finally {
+      if(!disposed){clock.playing=wasPlaying;clock.suspend();button.disabled=false;invalidate();}
+    }
   });
   listen($('.surface-reset'),'click',()=>aim(site.initialHeading,initialPitch()));
   listen(root,'keydown',event=>{
     if (journey.phase!=='landed'||!$('.surface-details').hidden||/INPUT|TEXTAREA|SELECT/.test(event.target.tagName)) return;
     const moves={ArrowLeft:[-3,0],ArrowRight:[3,0],ArrowUp:[0,3],ArrowDown:[0,-3]};
-    if (moves[event.key]) {event.preventDefault();motion=null;heading+=moves[event.key][0];pitch+=moves[event.key][1];invalidate();}
+    if (moves[event.key]) {event.preventDefault();motion=null;heading+=moves[event.key][0]/magnification;pitch+=moves[event.key][1]/magnification;invalidate();}
   });
 
   async function texture(url) {
@@ -275,6 +331,10 @@ export function createSurfaceView(id, {renderOrbit,onClosed,initialDate,initialR
   }
   async function load() {
     try {
+      await gate.wait(new Date(clock.time));
+      if(disposed)return;
+      frame=surfaceFrame(site,new Date(clock.time),provider);
+      lastReadout="";
       renderer=new THREE.WebGLRenderer({antialias:true,alpha:false,preserveDrawingBuffer:false,powerPreference:'low-power'});
       renderer.setPixelRatio(Math.min(devicePixelRatio,1.75));renderer.setSize(innerWidth,innerHeight);
       renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.NoToneMapping;
@@ -309,7 +369,7 @@ export function createSurfaceView(id, {renderOrbit,onClosed,initialDate,initialR
           }`,
         side:THREE.BackSide,transparent:true,depthWrite:false,depthTest:false,
       }));dome.renderOrder=20;scene.add(dome);
-      sky=createSurfaceSky({scene,renderer,site,parentMap,cloudMap,ringMap,groundMaterial:dome.material,signal:events.signal,
+      sky=createSurfaceSky({scene,renderer,site,parentMap,cloudMap,ringMap,groundMaterial:dome.material,signal:events.signal,provider,initialFrame:frame,
         onCatalogueReady:()=>{lastSkyUpdate=-Infinity;invalidate();},
         onCatalogueError:()=>{notice('完整星表暂未加载，已显示主要亮星。');invalidate();}});
       listen(canvas,'pointerdown',event=>{
@@ -318,8 +378,8 @@ export function createSurfaceView(id, {renderOrbit,onClosed,initialDate,initialR
       });
       listen(canvas,'pointermove',event=>{
         if(!drag||drag.id!==event.pointerId)return;
-        heading-=(event.clientX-drag.x)*camera.fov/innerHeight;
-        pitch+=(event.clientY-drag.y)*camera.fov/innerHeight;
+        heading-=(event.clientX-drag.x)*camera.getEffectiveFOV()/innerHeight;
+        pitch+=(event.clientY-drag.y)*camera.getEffectiveFOV()/innerHeight;
         drag.x=event.clientX;drag.y=event.clientY;invalidate();
       });
       for(const eventName of ['pointerup','pointercancel','lostpointercapture'])listen(canvas,eventName,event=>{if(drag?.id===event.pointerId)drag=null;});
@@ -342,7 +402,7 @@ export function createSurfaceView(id, {renderOrbit,onClosed,initialDate,initialR
         const scale=photo.width/innerWidth;
         context.scale(scale,scale);context.fillStyle='rgba(0,0,0,.65)';context.fillRect(0,innerHeight-98,innerWidth,98);
         context.fillStyle='#eee';context.font='15px sans-serif';context.fillText(`星际图鉴 · ${site.name} / ${site.title}`,20,innerHeight-68,innerWidth-40);
-        context.font='11px sans-serif';context.fillStyle='#b9bac0';context.fillText(`${site.provenance} · ${new Date(clock.time).toISOString().replace('T',' ').slice(0,19)} UTC`,20,innerHeight-43,innerWidth-40);
+        context.font='11px sans-serif';context.fillStyle='#b9bac0';context.fillText(`${site.provenance} · ${magnification}× / 纵向 ${telescopeFieldOfView(magnification).toFixed(1)}° · ${new Date(clock.time).toISOString().replace('T',' ').slice(0,19)} UTC`,20,innerHeight-43,innerWidth-40);
         context.fillText(site.credit,20,innerHeight-22,innerWidth-40);
         photo.toBlob(blob=>{
           if(disposed)return;
@@ -357,11 +417,15 @@ export function createSurfaceView(id, {renderOrbit,onClosed,initialDate,initialR
     } catch(error) {
       if(disposed)return;
       journey.fail();invalidate();
+      if(error instanceof MissingEphemerisError)return;
       $('.surface-message').hidden=false;
       $('.surface-message').textContent=error.message || '观景暂时无法打开，请返回轨道重试。';
     }
   }
   updateReadout();invalidate();
   load();
-  return { dispose, getTime:()=>clock.time };
+  return { dispose, getTime:()=>clock.time, snapshot:()=>({date:clock.time,playing:clock.playing,magnification,fieldOfView:camera.getEffectiveFOV(),cameraZoom:camera.zoom,ephemeris:root.dataset.ephemeris,
+    observerKm:frame?.observerKm.toArray(),centerKm:frame?.centerKm.toArray(),
+    targets:frame&&Object.fromEntries(Object.entries(frame.targets).map(([name,target])=>[name,{direction:target.direction.toArray(),distanceKm:target.distanceKm,angularDiameter:target.angularDiameter}])),
+    accuracy:frame?.accuracy}) };
 }

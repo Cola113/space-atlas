@@ -1,5 +1,7 @@
 import * as THREE from 'three';
-import { surfaceFrame, bodyBasis, angularDiameter, horizonAngles } from './geometry.js';
+import { surfaceFrame, angularDiameter, horizonAngles } from './geometry.js';
+import { physicalData } from '../physical-scale.js';
+import { physicalState } from '../physics/state.js';
 import { brightStars } from '../sky-data/bright-stars.js';
 import { equatorialDirection, starAppearance } from '../sky-coordinates.js';
 import { SurfaceExposure } from './SurfaceExposure.js';
@@ -26,7 +28,7 @@ export function solarVisibility(frame, parentRadiusKm, parentName) {
   const sun = frame.targets.Sun, parent = frame.targets[parentName];
   if(parentName==='Sun'||!parent) return 1;
   if (parent.distanceKm >= sun.distanceKm) return 1;
-  const r = angularDiameter(695700,sun.distanceKm)/2;
+  const r = angularDiameter(physicalData.sun.radiusKm,sun.distanceKm)/2;
   const R = angularDiameter(parentRadiusKm,parent.distanceKm)/2;
   const d = sun.direction.angleTo(parent.direction);
   if (d >= r + R) return 1;
@@ -46,9 +48,9 @@ export function surfaceLight(frame, site, referenceAltitude) {
     stars:THREE.MathUtils.lerp(1.25,.35,smoothstep(direct*eclipse,0,.15)) };
 }
 
-export function createSurfaceSky({scene,renderer,site,parentMap,cloudMap,ringMap,groundMaterial,onCatalogueError,onCatalogueReady,signal}) {
+export function createSurfaceSky({scene,renderer,site,parentMap,cloudMap,ringMap,groundMaterial,onCatalogueError,onCatalogueReady,signal,provider=physicalState,initialFrame}) {
   const epoch=Date.parse(site.date), objects=new Map();
-  let frame=surfaceFrame(site), stars, clouds;
+  let frame=initialFrame || surfaceFrame(site,new Date(site.date),provider), stars, clouds;
   const referenceAltitude=site.referenceSolarAltitude??horizonAngles(frame.targets.Sun.direction).altitude;
   const exposure=new SurfaceExposure();
   let illumination;
@@ -116,11 +118,13 @@ export function createSurfaceSky({scene,renderer,site,parentMap,cloudMap,ringMap
     windMaterial(material,.0009);
     clouds=new THREE.Mesh(globe.geometry,material);clouds.scale.setScalar(1.003);globe.add(clouds);
   }
-  for(const [name,radius] of [['Mercury',2439.7],['Venus',6051.8],['Earth',6371.0084],['Mars',3389.5],['Jupiter',69911],['Saturn',58232],['Uranus',25362],['Neptune',24622]])
-    if(name!==site.parent&&frame.targets[name])addGlobe(name,radius,null);
-  if(site.id==='europa'||site.id==='io')for(const [name,radius] of [['Io',1821.49],['Europa',1560.8],['Ganymede',2631.2],['Callisto',2410.3]])
-    if(frame.targets[name])addGlobe(name,radius,null);
-  if(site.parent!=='Sun')addGlobe('Sun',695700,null,true);
+  for(const name of ['Mercury','Venus','Earth','Mars','Jupiter','Saturn','Uranus','Neptune'])
+    if(name!==site.parent&&frame.targets[name])addGlobe(name,frame.targets[name].radiusKm,null);
+  for(const [name,target] of Object.entries(frame.targets)) {
+    const physicalBody=frame.physical.bodies.get(target.id);
+    if(!objects.has(name)&&physicalBody.parent===site.parent.toLowerCase())addGlobe(name,target.radiusKm,null);
+  }
+  if(site.parent!=='Sun')addGlobe('Sun',physicalData.sun.radiusKm,null,true);
 
   const atmosphere=site.atmosphere?new THREE.Mesh(new THREE.SphereGeometry(1800,48,32),new THREE.ShaderMaterial({
     uniforms:{sun:{value:frame.targets.Sun.direction.clone()},day:{value:1},kind:{value:{mars:1,titan:2,pluto:3}[site.atmosphere]}},
@@ -169,7 +173,7 @@ export function createSurfaceSky({scene,renderer,site,parentMap,cloudMap,ringMap
     }).catch(()=>{if(!signal.aborted)onCatalogueError();});
 
   function update(time,camera,{resetExposure=false}={}) {
-    frame=surfaceFrame(site,new Date(time));
+    frame=surfaceFrame(site,new Date(time),provider);
     for(const [name,{globe,radiusKm}] of objects){
       const target=frame.targets[name];
       if(!target){globe.visible=false;continue;}
@@ -177,7 +181,7 @@ export function createSurfaceSky({scene,renderer,site,parentMap,cloudMap,ringMap
       globe.position.copy(target.direction).multiplyScalar(distance);
       globe.scale.setScalar(distance*radiusKm/target.distanceKm);
       if(['Earth','Jupiter','Saturn','Uranus','Charon'].includes(name)){
-        const basis=bodyBasis(name,frame.date);
+        const basis=target.orientation;
         globe.setRotationFromMatrix(new THREE.Matrix4().makeBasis(frame.local(basis.prime),frame.local(basis.north),frame.local(basis.east).negate()));
       }
     }
@@ -190,7 +194,7 @@ export function createSurfaceSky({scene,renderer,site,parentMap,cloudMap,ringMap
     stars.material.uniforms.rotation.value.copy(frame.rotation);
     const sun=frame.targets.Sun;
     halo.position.copy(sun.direction).multiplyScalar(1199);
-    halo.scale.setScalar(1199*Math.max(.012,angularDiameter(695700,sun.distanceKm)*7));
+    halo.scale.setScalar(1199*Math.max(.012,angularDiameter(physicalData.sun.radiusKm,sun.distanceKm)*7));
     halo.quaternion.copy(camera.quaternion);halo.material.uniforms.visibility.value=illumination.eclipse;
     return frame;
   }

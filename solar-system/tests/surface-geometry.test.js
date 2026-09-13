@@ -1,4 +1,6 @@
-import test from 'node:test';
+import test, {before} from 'node:test';
+import {prepareSurfaceTests} from './physical-fixture.js';
+before(prepareSurfaceTests);
 import assert from 'node:assert/strict';
 import { Vector3, MathUtils } from 'three';
 import { landingSites, surfaceFrame, angularDiameter, horizonAngles, lookDirection } from '../src/surface/geometry.js';
@@ -34,8 +36,10 @@ test('Earth and Jupiter retain physical angular size at both landing sites', () 
   const jupiterSize=MathUtils.radToDeg(angularDiameter(69911,europa.targets.Jupiter.distanceKm));
   assert.ok(earthSize>1.8&&earthSize<2.0);
   assert.ok(jupiterSize>11&&jupiterSize<13);
-  assert.ok(Math.abs(horizonAngles(europa.targets.Jupiter.direction).altitude-28)<.5);
-  assert.ok(Math.abs(horizonAngles(europa.targets.Sun.direction).altitude-12)<.1);
+  // Independent IAU meridians replace the former exact sub-Jovian frame.
+  // The precision check is in physical-state.test.js / CSPICE fixtures.
+  assert.ok(horizonAngles(europa.targets.Jupiter.direction).altitude>20);
+  assert.ok(horizonAngles(europa.targets.Sun.direction).altitude>0);
   assert.throws(()=>angularDiameter(100,50),RangeError);
 });
 

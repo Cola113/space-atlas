@@ -11,13 +11,17 @@ export class SurfaceClock {
     this.setRate(rate);
     this.playing = true;
     this.previous = null;
+    this.canAdvance = () => true;
   }
   tick(now, active = true) {
     const elapsed = this.previous === null ? 0 : Math.max(0, now - this.previous);
     this.previous = active ? now : null;
     if (active && this.playing && elapsed > 0 && elapsed <= 1000) {
-      this.time += simulationElapsed(elapsed, this.rate);
-      this.onTimeChange?.(this.time);
+      const candidate = this.time + simulationElapsed(elapsed, this.rate);
+      if (this.canAdvance(candidate)) {
+        this.time = candidate;
+        this.onTimeChange?.(this.time);
+      } else this.previous = null;
     }
     return this.time;
   }
@@ -26,6 +30,11 @@ export class SurfaceClock {
       throw new RangeError('Unsupported surface rate');
     this.rate = rate;
   }
-  reset() { this.time = this.epoch; this.previous = null; this.onTimeChange?.(this.time); }
+  setTime(time) {
+    if (!Number.isFinite(time)) throw new RangeError('Invalid surface date');
+    if (!this.canAdvance(time)) return false;
+    this.time = time; this.previous = null; this.onTimeChange?.(this.time); return true;
+  }
+  reset() { return this.setTime(this.epoch); }
   suspend() { this.previous = null; }
 }

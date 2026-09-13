@@ -1,3 +1,4 @@
+import { physicalData } from "./physical-scale.js";
 import { additionalBodies } from "./additional-bodies.js";
 
 export const ORBIT_SPACING = 2;
@@ -19,7 +20,7 @@ export const bodies = [
     description:
       "太阳系的中心恒星。持续的核聚变释放光和热，为遥远的行星带来能量。",
     facts: [
-      ["平均半径", "696,340", "km"],
+      ["采用半径", physicalData.sun.radiusKm.toLocaleString("en-US"), "km"],
       ["光球温度", "5,500", "°C"],
       ["年龄 · 约", "46", "亿年"],
       ["类型", "黄矮星", ""],

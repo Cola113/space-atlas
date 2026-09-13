@@ -57,10 +57,10 @@ export function inEphemerisRange(date) {
 }
 
 export class EphemerisStore {
-  constructor({fetcher = globalThis.fetch, maxEntries = 9, timeoutMs = 15000} = {}) {
+  constructor({fetcher = (...args) => globalThis.fetch(...args), maxEntries = 9, timeoutMs = 15000} = {}) {
     this.fetcher = fetcher; this.maxEntries = maxEntries; this.timeoutMs = timeoutMs;
     this.cache = new Map(); this.pending = new Map(); this.failures = new Map();
-    this.disposed = false;
+    this.disposed = false; this.revision = 0;
   }
   get(system, year) {
     const key = `${system}/${year}`, bundle = this.cache.get(key);
@@ -89,6 +89,7 @@ export class EphemerisStore {
       if (this.disposed) throw new Error('Ephemeris store disposed');
       this.cache.set(key, bundle); this.failures.delete(key);
       while (this.cache.size > this.maxEntries) this.cache.delete(this.cache.keys().next().value);
+      this.revision++;
       return bundle;
     }).catch(error => { this.failures.set(key, error); throw new MissingEphemerisError(system, year, error); })
       .finally(() => { clearTimeout(timer); this.pending.delete(key); });
@@ -107,5 +108,6 @@ export class EphemerisStore {
     this.disposed = true;
     for (const item of this.pending.values()) item.controller.abort();
     this.cache.clear(); this.failures.clear();
+    this.revision++;
   }
 }

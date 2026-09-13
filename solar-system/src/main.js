@@ -2363,6 +2363,7 @@ async function init() {
         playing: state.playing,
         speed: state.speed,
         date: state.date,
+        surface: surfaceView?.snapshot() || null,
         earthObservation: isEarthObservation(),
         observedClouds: observedClouds.snapshot(),
         subsolarPoint: observedSun,

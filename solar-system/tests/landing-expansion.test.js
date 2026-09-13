@@ -1,4 +1,6 @@
-import test from 'node:test';
+import test, {before} from 'node:test';
+import {prepareSurfaceTests} from './physical-fixture.js';
+before(prepareSurfaceTests);
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { MathUtils } from 'three';
@@ -36,12 +38,12 @@ test('Sputnik Planitia stays on the hemisphere facing away from Charon',()=>{
   }
 });
 
-test('outer moon parent sizes and mean tidal orientation remain consistent',()=>{
+test('outer moon parent sizes retain physical scale with independently changing IAU attitudes',()=>{
   for(const [id,min,max] of [['titan',5,6],['enceladus',27,30],['miranda',21,24]]){
     const site=landingSites[id],a=surfaceFrame(site),b=surfaceFrame(site,new Date(Date.parse(site.date)+86400000));
     const size=MathUtils.radToDeg(angularDiameter(site.parentRadiusKm,a.targets[site.parent].distanceKm));
     assert.ok(size>min&&size<max,`${id}: ${size}`);
-    assert.ok(a.targets[site.parent].direction.angleTo(b.targets[site.parent].direction)<1e-6,id);
+    assert.notDeepEqual(a.targets[site.parent].direction.toArray(),b.targets[site.parent].direction.toArray(),'geometric libration remains; precise amplitude is checked against CSPICE');
     assert.ok(a.targets.Sun.direction.angleTo(b.targets.Sun.direction)>.01,id);
     const basis=bodyBasis(site.body,new Date(site.date));
     assert.ok(Math.abs(basis.prime.dot(basis.north))<1e-12);

@@ -1,0 +1,3288 @@
+{
+  "generatedWith": "CSPICE CSPICE_N0067 / spiceypy 8.2.0",
+  "sourceSha256": {
+    "saturn-1899-2101.bsp": "aac6a6c2914e4781c869cee3f53a5197ffed39dc6db0e50d518287465c5d731c",
+    "uranus-1899-2101.bsp": "2d3e0022ff652a7b9c28c0e6895b57e6fc45f7968404327e97f28a8df57c29e6",
+    "pluto-1899-2101.bsp": "76283ee8def69880a49a7817e74f9ae8e26b27313be3aa828d64d128ad448ca5",
+    "pck00011.tpc": "3dff7b1dbeceaa01f25467767d3fa25816051c85d162d1edf04acb310ee28bb1"
+  },
+  "scope": "Original float64 SPK records rewrapped with actual segment coverage + CSPICE geometric relative positions, IAU and topocentric ENU calculation; dates from separately tested time conversion.",
+  "fixtures": [
+    {
+      "id": "enceladus",
+      "date": "1900-01-01T00:00:00Z",
+      "tdbSeconds": -3155716802.7589946,
+      "latitude": -75,
+      "longitude": 30,
+      "radiusKm": 252.1,
+      "parentRadiusKm": 58232,
+      "parentRelativeKm": [
+        -189010.81213773703,
+        145622.55828863196,
+        5493.422802734
+      ],
+      "parentDirection": [
+        -0.5488538396908154,
+        0.21534569501804918,
+        -0.8077039645153674
+      ],
+      "distanceKm": 238611.02827763374,
+      "angularDiameter": 0.49307107230182545
+    },
+    {
+      "id": "enceladus",
+      "date": "1900-12-31T23:59:59Z",
+      "tdbSeconds": -3124180802.4052444,
+      "latitude": -75,
+      "longitude": 30,
+      "radiusKm": 252.1,
+      "parentRadiusKm": 58232,
+      "parentRelativeKm": [
+        40180.07183403555,
+        -235054.97223536987,
+        13833.926140430494
+      ],
+      "parentDirection": [
+        -0.5497915499346144,
+        0.21563113569120096,
+        -0.8069897551648453
+      ],
+      "distanceKm": 238810.8626600453,
+      "angularDiameter": 0.49264991931485813
+    },
+    {
+      "id": "enceladus",
+      "date": "1971-08-01T17:00:00Z",
+      "tdbSeconds": -896813958.2280614,
+      "latitude": -75,
+      "longitude": 30,
+      "radiusKm": 252.1,
+      "parentRadiusKm": 58232,
+      "parentRelativeKm": [
+        205170.87468886626,
+        119985.74209963677,
+        -26501.04030504155
+      ],
+      "parentDirection": [
+        -0.5643922030957492,
+        0.21246784602597807,
+        -0.7976959668255869
+      ],
+      "distanceKm": 239098.92045418094,
+      "angularDiameter": 0.4920441124796057
+    },
+    {
+      "id": "enceladus",
+      "date": "2000-01-01T12:00:00Z",
+      "tdbSeconds": 64.18392728473108,
+      "latitude": -75,
+      "longitude": 30,
+      "radiusKm": 252.1,
+      "parentRadiusKm": 58232,
+      "parentRelativeKm": [
+        -162300.86964746655,
+        172588.16989483027,
+        1274.501992105122
+      ],
+      "parentDirection": [
+        -0.5581094325538984,
+        0.21351116654197325,
+        -0.8018271902699803
+      ],
+      "distanceKm": 236863.48473984175,
+      "angularDiameter": 0.4967852860155488
+    },
+    {
+      "id": "enceladus",
+      "date": "2026-09-12T12:00:00Z",
+      "tdbSeconds": 842486469.1824722,
+      "latitude": -75,
+      "longitude": 30,
+      "radiusKm": 252.1,
+      "parentRadiusKm": 58232,
+      "parentRelativeKm": [
+        8858.964465111085,
+        -237379.9528893521,
+        16698.352455041248
+      ],
+      "parentDirection": [
+        -0.558934415717727,
+        0.2140521144944763,
+        -0.8011079897284303
+      ],
+      "distanceKm": 238077.29842613687,
+      "angularDiameter": 0.4941994892946802
+    },
+    {
+      "id": "enceladus",
+      "date": "2100-12-31T23:59:59Z",
+      "tdbSeconds": 3187252868.183877,
+      "latitude": -75,
+      "longitude": 30,
+      "radiusKm": 252.1,
+      "parentRadiusKm": 58232,
+      "parentRelativeKm": [
+        -36514.24092215418,
+        -234322.65826709857,
+        20433.28381858498
+      ],
+      "parentDirection": [
+        -0.5679558552767587,
+        0.21226086212618844,
+        -0.7952178776073213
+      ],
+      "distanceKm": 237975.59691336306,
+      "angularDiameter": 0.49441510004539324
+    },
+    {
+      "id": "enceladus",
+      "date": "2026-09-12T12:00:00.000Z",
+      "tdbSeconds": 842486469.1824722,
+      "latitude": -75,
+      "longitude": 30,
+      "radiusKm": 252.1,
+      "parentRadiusKm": 58232,
+      "parentRelativeKm": [
+        8858.964465111085,
+        -237379.9528893521,
+        16698.352455041248
+      ],
+      "parentDirection": [
+        -0.558934415717727,
+        0.2140521144944763,
+        -0.8011079897284303
+      ],
+      "distanceKm": 238077.29842613687,
+      "angularDiameter": 0.4941994892946802
+    },
+    {
+      "id": "enceladus",
+      "date": "2026-09-12T16:06:38.354Z",
+      "tdbSeconds": 842501267.5364703,
+      "latitude": -75,
+      "longitude": 30,
+      "radiusKm": 252.1,
+      "parentRadiusKm": 58232,
+      "parentRelativeKm": [
+        173932.48791383498,
+        -163715.80717367257,
+        -2916.9138164424226
+      ],
+      "parentDirection": [
+        -0.561642193865489,
+        0.21332377384705137,
+        -0.7994066634583507
+      ],
+      "distanceKm": 238826.57486369277,
+      "angularDiameter": 0.49261683651705396
+    },
+    {
+      "id": "enceladus",
+      "date": "2026-09-12T20:13:16.708Z",
+      "tdbSeconds": 842516065.8904685,
+      "latitude": -75,
+      "longitude": 30,
+      "radiusKm": 252.1,
+      "parentRadiusKm": 58232,
+      "parentRelativeKm": [
+        238174.24894325662,
+        5021.37459856126,
+        -20853.23985882669
+      ],
+      "parentDirection": [
+        -0.5672042572726484,
+        0.21198742918851649,
+        -0.7958270291953063
+      ],
+      "distanceKm": 239084.55956798652,
+      "angularDiameter": 0.49207427881989146
+    },
+    {
+      "id": "enceladus",
+      "date": "2026-09-13T00:19:55.063Z",
+      "tdbSeconds": 842530864.2454666,
+      "latitude": -75,
+      "longitude": 30,
+      "radiusKm": 252.1,
+      "parentRadiusKm": 58232,
+      "parentRelativeKm": [
+        164634.61526368294,
+        170838.79101428678,
+        -26725.101620762634
+      ],
+      "parentDirection": [
+        -0.5723930828247361,
+        0.2108087941504527,
+        -0.7924176998548348
+      ],
+      "distanceKm": 238703.25652076575,
+      "angularDiameter": 0.49287660995032545
+    },
+    {
+      "id": "enceladus",
+      "date": "2026-09-13T04:26:33.417Z",
+      "tdbSeconds": 842545662.5994649,
+      "latitude": -75,
+      "longitude": 30,
+      "radiusKm": 252.1,
+      "parentRadiusKm": 58232,
+      "parentRelativeKm": [
+        -4457.0507471396795,
+        237298.68440375724,
+        -17071.025526249225
+      ],
+      "parentDirection": [
+        -0.5742193363603137,
+        0.21047900257828178,
+        -0.7911831287531178
+      ],
+      "distanceKm": 237900.48398022068,
+      "angularDiameter": 0.4945744642041414
+    },
+    {
+      "id": "enceladus",
+      "date": "2026-09-13T08:33:11.772Z",
+      "tdbSeconds": 842560460.9544629,
+      "latitude": -75,
+      "longitude": 30,
+      "radiusKm": 252.1,
+      "parentRadiusKm": 58232,
+      "parentRelativeKm": [
+        -170746.5707031414,
+        164622.71612485306,
+        2576.0454207380153
+      ],
+      "parentDirection": [
+        -0.5715871136286514,
+        0.21120806769911318,
+        -0.7928930089693527
+      ],
+      "distanceKm": 237142.04359787563,
+      "angularDiameter": 0.49618945455589203
+    },
+    {
+      "id": "enceladus",
+      "date": "2026-09-13T12:39:50.126Z",
+      "tdbSeconds": 842575259.3084612,
+      "latitude": -75,
+      "longitude": 30,
+      "radiusKm": 252.1,
+      "parentRadiusKm": 58232,
+      "parentRelativeKm": [
+        -235965.6433277995,
+        -5325.3996919249785,
+        20685.494846179914
+      ],
+      "parentDirection": [
+        -0.5659831615172753,
+        0.21256893859726,
+        -0.7965409639325174
+      ],
+      "distanceKm": 236876.72509245854,
+      "angularDiameter": 0.49675693244244234
+    },
+    {
+      "id": "enceladus",
+      "date": "2026-09-13T16:46:28.480Z",
+      "tdbSeconds": 842590057.6624594,
+      "latitude": -75,
+      "longitude": 30,
+      "radiusKm": 252.1,
+      "parentRadiusKm": 58232,
+      "parentRelativeKm": [
+        -161206.49504511544,
+        -172129.33634071905,
+        26525.133643431527
+      ],
+      "parentDirection": [
+        -0.5607101286423313,
+        0.21374831892231053,
+        -0.799947378141704
+      ],
+      "distanceKm": 237263.54781573653,
+      "angularDiameter": 0.495930011902788
+    },
+    {
+      "id": "enceladus",
+      "date": "2026-09-13T20:53:06.835Z",
+      "tdbSeconds": 842604856.0174575,
+      "latitude": -75,
+      "longitude": 30,
+      "radiusKm": 252.1,
+      "parentRadiusKm": 58232,
+      "parentRelativeKm": [
+        8868.884555077664,
+        -237373.16235041036,
+        16697.14362294242
+      ],
+      "parentDirection": [
+        -0.5588985668476062,
+        0.21405775297914084,
+        -0.8011314938043648
+      ],
+      "distanceKm": 238070.8123896535,
+      "angularDiameter": 0.494213234243506
+    },
+    {
+      "id": "enceladus",
+      "date": "2026-09-14T00:59:45.189Z",
+      "tdbSeconds": 842619654.3714558,
+      "latitude": -75,
+      "longitude": 30,
+      "radiusKm": 252.1,
+      "parentRadiusKm": 58232,
+      "parentRelativeKm": [
+        173942.6064862688,
+        -163700.6048963294,
+        -2918.572060394715
+      ],
+      "parentDirection": [
+        -0.5615792048432894,
+        0.21333346407076414,
+        -0.7994483284085011
+      ],
+      "distanceKm": 238823.5420166408,
+      "angularDiameter": 0.4926232219721311
+    },
+    {
+      "id": "enceladus",
+      "date": "2026-09-14T05:06:23.544Z",
+      "tdbSeconds": 842634452.726454,
+      "latitude": -75,
+      "longitude": 30,
+      "radiusKm": 252.1,
+      "parentRadiusKm": 58232,
+      "parentRelativeKm": [
+        238176.1607148062,
+        5040.358364462448,
+        -20854.469799615155
+      ],
+      "parentDirection": [
+        -0.5671386275844339,
+        0.21199777071313794,
+        -0.795871046284701
+      ],
+      "distanceKm": 239086.96765096448,
+      "angularDiameter": 0.4920692201629424
+    },
+    {
+      "id": "enceladus",
+      "date": "2026-09-14T09:13:01.898Z",
+      "tdbSeconds": 842649251.0804524,
+      "latitude": -75,
+      "longitude": 30,
+      "radiusKm": 252.1,
+      "parentRadiusKm": 58232,
+      "parentRelativeKm": [
+        164631.26476012936,
+        170852.14479859016,
+        -26725.652695270863
+      ],
+      "parentDirection": [
+        -0.5723526093741338,
+        0.2108155503628494,
+        -0.7924451364402643
+      ],
+      "distanceKm": 238710.56155917372,
+      "angularDiameter": 0.4928612139735785
+    },
+    {
+      "id": "enceladus",
+      "date": "2026-09-14T13:19:40.252Z",
+      "tdbSeconds": 842664049.4344507,
+      "latitude": -75,
+      "longitude": 30,
+      "radiusKm": 252.1,
+      "parentRadiusKm": 58232,
+      "parentRelativeKm": [
+        -4455.983614122049,
+        237307.94329430885,
+        -17071.92502227679
+      ],
+      "parentDirection": [
+        -0.574223312941133,
+        0.21047883001765064,
+        -0.7911802885495255
+      ],
+      "distanceKm": 237909.76197915565,
+      "angularDiameter": 0.49455477381760427
+    },
+    {
+      "id": "enceladus",
+      "date": "2026-09-14T17:26:18.607Z",
+      "tdbSeconds": 842678847.789449,
+      "latitude": -75,
+      "longitude": 30,
+      "radiusKm": 252.1,
+      "parentRadiusKm": 58232,
+      "parentRelativeKm": [
+        -170741.50258265546,
+        164637.43788549173,
+        2574.2041087266152
+      ],
+      "parentDirection": [
+        -0.5716360419246315,
+        0.21120055607849542,
+        -0.7928597358201988
+      ],
+      "distanceKm": 237148.59507391133,
+      "angularDiameter": 0.49617545847664707
+    },
+    {
+      "id": "enceladus",
+      "date": "2026-09-14T21:32:56.961Z",
+      "tdbSeconds": 842693646.1434473,
+      "latitude": -75,
+      "longitude": 30,
+      "radiusKm": 252.1,
+      "parentRadiusKm": 58232,
+      "parentRelativeKm": [
+        -235965.4618739894,
+        -5306.000445775711,
+        20683.720501630374
+      ],
+      "parentDirection": [
+        -0.566050554420891,
+        0.21255827311412118,
+        -0.7964959198706197
+      ],
+      "distanceKm": 236875.95692384924,
+      "angularDiameter": 0.4967585773488716
+    },
+    {
+      "id": "enceladus",
+      "date": "2026-09-15T01:39:35.316Z",
+      "tdbSeconds": 842708444.4984456,
+      "latitude": -75,
+      "longitude": 30,
+      "radiusKm": 252.1,
+      "parentRadiusKm": 58232,
+      "parentRelativeKm": [
+        -161209.3876291055,
+        -172115.37092047872,
+        26524.197029564046
+      ],
+      "parentDirection": [
+        -0.5607505108386082,
+        0.21374184043814315,
+        -0.7999208024800676
+      ],
+      "distanceKm": 237255.28064587296,
+      "angularDiameter": 0.4959476557344923
+    },
+    {
+      "id": "enceladus",
+      "date": "2026-09-15T05:46:13.670Z",
+      "tdbSeconds": 842723242.8524439,
+      "latitude": -75,
+      "longitude": 30,
+      "radiusKm": 252.1,
+      "parentRadiusKm": 58232,
+      "parentRelativeKm": [
+        8872.47172784402,
+        -237363.05592194124,
+        16696.19086173183
+      ],
+      "parentDirection": [
+        -0.5588844003951965,
+        0.21405977930441164,
+        -0.8011408352337611
+      ],
+      "distanceKm": 238060.80417957218,
+      "angularDiameter": 0.49423444475784084
+    },
+    {
+      "id": "enceladus",
+      "date": "2026-09-15T09:52:52.024Z",
+      "tdbSeconds": 842738041.2064422,
+      "latitude": -75,
+      "longitude": 30,
+      "radiusKm": 252.1,
+      "parentRadiusKm": 58232,
+      "parentRelativeKm": [
+        173949.72965052453,
+        -163684.4421461701,
+        -2920.0795846519172
+      ],
+      "parentDirection": [
+        -0.5615209167935205,
+        0.21334246323995168,
+        -0.799486868799028
+      ],
+      "distanceKm": 238817.66941095324,
+      "angularDiameter": 0.49263558682327424
+    },
+    {
+      "id": "enceladus",
+      "date": "2026-09-15T13:59:30.379Z",
+      "tdbSeconds": 842752839.5614406,
+      "latitude": -75,
+      "longitude": 30,
+      "radiusKm": 252.1,
+      "parentRadiusKm": 58232,
+      "parentRelativeKm": [
+        238176.15329959607,
+        5060.79563728551,
+        -20855.65780034806
+      ],
+      "parentDirection": [
+        -0.5670677891735193,
+        0.21200909304562449,
+        -0.7959185052176065
+      ],
+      "distanceKm": 239087.4926443751,
+      "angularDiameter": 0.4920681173238868
+    },
+    {
+      "id": "enceladus",
+      "date": "2026-09-15T18:06:08.733Z",
+      "tdbSeconds": 842767637.9154389,
+      "latitude": -75,
+      "longitude": 30,
+      "radiusKm": 252.1,
+      "parentRadiusKm": 58232,
+      "parentRelativeKm": [
+        164624.47272332903,
+        170866.604476614,
+        -26725.979436418802
+      ],
+      "parentDirection": [
+        -0.5723009873173327,
+        0.21082427164413006,
+        -0.7924800984260288
+      ],
+      "distanceKm": 238716.26009830288,
+      "angularDiameter": 0.49284920450276276
+    },
+    {
+      "id": "enceladus",
+      "date": "2026-09-15T22:12:47.088Z",
+      "tdbSeconds": 842782436.2704374,
+      "latitude": -75,
+      "longitude": 30,
+      "radiusKm": 252.1,
+      "parentRadiusKm": 58232,
+      "parentRelativeKm": [
+        -4460.157343530711,
+        237315.28876094215,
+        -17072.20302556239
+      ],
+      "parentDirection": [
+        -0.5742091009319492,
+        0.21048183437601645,
+        -0.7911898039058831
+      ],
+      "distanceKm": 237917.18460782483,
+      "angularDiameter": 0.4945390221622721
+    },
+    {
+      "id": "enceladus",
+      "date": "2026-09-16T02:19:25.442Z",
+      "tdbSeconds": 842797234.6244357,
+      "latitude": -75,
+      "longitude": 30,
+      "radiusKm": 252.1,
+      "parentRadiusKm": 58232,
+      "parentRelativeKm": [
+        -170740.70774884959,
+        164645.5474557798,
+        2573.2506728873354
+      ],
+      "parentDirection": [
+        -0.5716580545329404,
+        0.2111977672580215,
+        -0.7928446075952337
+      ],
+      "distanceKm": 237153.64208819228,
+      "angularDiameter": 0.4961646769602541
+    },
+    {
+      "id": "enceladus",
+      "date": "2026-09-16T06:26:03.796Z",
+      "tdbSeconds": 842812032.9784341,
+      "latitude": -75,
+      "longitude": 30,
+      "radiusKm": 252.1,
+      "parentRadiusKm": 58232,
+      "parentRelativeKm": [
+        -235965.12428299696,
+        -5295.431494052238,
+        20682.605393856342
+      ],
+      "parentDirection": [
+        -0.5660871258497525,
+        0.21255300625169704,
+        -0.7964713337468792
+      ],
+      "distanceKm": 236875.28823379698,
+      "angularDiameter": 0.4967600092473369
+    },
+    {
+      "id": "enceladus",
+      "date": "2026-09-16T10:32:42.151Z",
+      "tdbSeconds": 842826831.3334326,
+      "latitude": -75,
+      "longitude": 30,
+      "radiusKm": 252.1,
+      "parentRadiusKm": 58232,
+      "parentRelativeKm": [
+        -161208.43481150764,
+        -172107.18850718,
+        26523.37584532334
+      ],
+      "parentDirection": [
+        -0.5607672574933691,
+        0.21373943179886368,
+        -0.7999097062904439
+      ],
+      "distanceKm": 237248.60771595774,
+      "angularDiameter": 0.4959618980575719
+    },
+    {
+      "id": "enceladus",
+      "date": "2026-09-16T14:39:20.505Z",
+      "tdbSeconds": 842841629.6874309,
+      "latitude": -75,
+      "longitude": 30,
+      "radiusKm": 252.1,
+      "parentRadiusKm": 58232,
+      "parentRelativeKm": [
+        8880.301680648741,
+        -237354.04220198854,
+        16694.974000457154
+      ],
+      "parentDirection": [
+        -0.5588555538519064,
+        0.214064285472402,
+        -0.8011597541152882
+      ],
+      "distanceKm": 238052.02435045925,
+      "angularDiameter": 0.4942530534655984
+    },
+    {
+      "id": "enceladus",
+      "date": "2026-09-16T18:45:58.860Z",
+      "tdbSeconds": 842856428.0424293,
+      "latitude": -75,
+      "longitude": 30,
+      "radiusKm": 252.1,
+      "parentRadiusKm": 58232,
+      "parentRelativeKm": [
+        173959.95746580744,
+        -163666.45284022353,
+        -2921.965847123425
+      ],
+      "parentDirection": [
+        -0.5614506183264532,
+        0.21335347683525918,
+        -0.7995332995586549
+      ],
+      "distanceKm": 238812.8115899987,
+      "angularDiameter": 0.49264581550546466
+    },
+    {
+      "id": "enceladus",
+      "date": "2026-09-16T22:52:37.214Z",
+      "tdbSeconds": 842871226.3964278,
+      "latitude": -75,
+      "longitude": 30,
+      "radiusKm": 252.1,
+      "parentRadiusKm": 58232,
+      "parentRelativeKm": [
+        238179.16617993702,
+        5083.719285195314,
+        -20857.20790658559
+      ],
+      "parentDirection": [
+        -0.5669886013750031,
+        0.2120215855753121,
+        -0.7959715906745344
+      ],
+      "distanceKm": 239091.11162144662,
+      "angularDiameter": 0.4920605151753291
+    },
+    {
+      "id": "enceladus",
+      "date": "2026-09-17T02:59:15.568Z",
+      "tdbSeconds": 842886024.7504263,
+      "latitude": -75,
+      "longitude": 30,
+      "radiusKm": 252.1,
+      "parentRadiusKm": 58232,
+      "parentRelativeKm": [
+        164626.5943481695,
+        170884.42606892093,
+        -26727.0360994491
+      ],
+      "parentDirection": [
+        -0.5722633898725997,
+        0.21082935521408186,
+        -0.792505896250328
+      ],
+      "distanceKm": 238730.59350742117,
+      "angularDiameter": 0.4928189999619755
+    },
+    {
+      "id": "enceladus",
+      "date": "2026-09-17T07:05:53.923Z",
+      "tdbSeconds": 842900823.1054248,
+      "latitude": -75,
+      "longitude": 30,
+      "radiusKm": 252.1,
+      "parentRadiusKm": 58232,
+      "parentRelativeKm": [
+        -4444.076835012617,
+        237336.21094306675,
+        -17074.778912722253
+      ],
+      "parentDirection": [
+        -0.5742655294501847,
+        0.21047026788434792,
+        -0.7911519247413797
+      ],
+      "distanceKm": 237937.93610173036,
+      "angularDiameter": 0.4944949905318942
+    },
+    {
+      "id": "enceladus",
+      "date": "2026-09-17T11:12:32.277Z",
+      "tdbSeconds": 842915621.4594232,
+      "latitude": -75,
+      "longitude": 30,
+      "radiusKm": 252.1,
+      "parentRadiusKm": 58232,
+      "parentRelativeKm": [
+        -170720.46692346263,
+        164690.65384319812,
+        2568.2598343139603
+      ],
+      "parentDirection": [
+        -0.5718196157596916,
+        0.21116834050354358,
+        -0.7927359327048434
+      ],
+      "distanceKm": 237170.33909497122,
+      "angularDiameter": 0.4961290119098841
+    },
+    {
+      "id": "enceladus",
+      "date": "2026-09-17T15:19:10.632Z",
+      "tdbSeconds": 842930419.8144218,
+      "latitude": -75,
+      "longitude": 30,
+      "radiusKm": 252.1,
+      "parentRadiusKm": 58232,
+      "parentRelativeKm": [
+        -235970.0078652545,
+        -5232.3583159772925,
+        20678.135543702425
+      ],
+      "parentDirection": [
+        -0.5663072468122272,
+        0.21251479016744132,
+        -0.7963250380140283
+      ],
+      "distanceKm": 236878.37015322907,
+      "angularDiameter": 0.49675340985306404
+    },
+    {
+      "id": "enceladus",
+      "date": "2026-09-17T19:25:48.986Z",
+      "tdbSeconds": 842945218.1684204,
+      "latitude": -75,
+      "longitude": 30,
+      "radiusKm": 252.1,
+      "parentRadiusKm": 58232,
+      "parentRelativeKm": [
+        -161239.67988644107,
+        -172059.56510337183,
+        26522.140785078893
+      ],
+      "parentDirection": [
+        -0.5609601127818756,
+        0.21370722153934782,
+        -0.799783080172166
+      ],
+      "distanceKm": 237235.17060690516,
+      "angularDiameter": 0.495990579969931
+    },
+    {
+      "id": "enceladus",
+      "date": "2026-09-17T23:32:27.340Z",
+      "tdbSeconds": 842960016.522419,
+      "latitude": -75,
+      "longitude": 30,
+      "radiusKm": 252.1,
+      "parentRadiusKm": 58232,
+      "parentRelativeKm": [
+        8854.042834071204,
+        -237332.11215193555,
+        16695.276207182837
+      ],
+      "parentDirection": [
+        -0.5589440189741167,
+        0.21405016225555906,
+        -0.8011018110648802
+      ],
+      "distanceKm": 238029.21033124055,
+      "angularDiameter": 0.49430141403776184
+    },
+    {
+      "id": "titan",
+      "date": "1900-01-01T00:00:00Z",
+      "tdbSeconds": -3155716802.7589946,
+      "latitude": -10.3,
+      "longitude": 192.3,
+      "radiusKm": 2574.76,
+      "parentRadiusKm": 58232,
+      "parentRelativeKm": [
+        -318827.9102669269,
+        1141598.155560685,
+        -50419.64590131637
+      ],
+      "parentDirection": [
+        0.17482313948682177,
+        -0.9695183641094598,
+        0.17167123100417261
+      ],
+      "distanceKm": 1188851.759934098,
+      "angularDiameter": 0.09800264803016187
+    },
+    {
+      "id": "titan",
+      "date": "1900-12-31T23:59:59Z",
+      "tdbSeconds": -3124180802.4052444,
+      "latitude": -10.3,
+      "longitude": 192.3,
+      "radiusKm": 2574.76,
+      "parentRadiusKm": 58232,
+      "parentRelativeKm": [
+        521405.55284499255,
+        1068249.6853657784,
+        -115146.8565729597
+      ],
+      "parentDirection": [
+        0.21279447858556202,
+        -0.9627916576537339,
+        0.1665855150842175
+      ],
+      "distanceKm": 1196748.3822580853,
+      "angularDiameter": 0.0973554745918443
+    },
+    {
+      "id": "titan",
+      "date": "1971-08-01T17:00:00Z",
+      "tdbSeconds": -896813958.2280614,
+      "latitude": -10.3,
+      "longitude": 192.3,
+      "radiusKm": 2574.76,
+      "parentRadiusKm": 58232,
+      "parentRelativeKm": [
+        1117293.0896823783,
+        -570866.361822017,
+        -57425.19321807571
+      ],
+      "parentDirection": [
+        0.19025941884903513,
+        -0.9659936056811069,
+        0.17509342455512586
+      ],
+      "distanceKm": 1258484.600146705,
+      "angularDiameter": 0.09257610253037347
+    },
+    {
+      "id": "titan",
+      "date": "2000-01-01T12:00:00Z",
+      "tdbSeconds": 64.18392728473108,
+      "latitude": -10.3,
+      "longitude": 192.3,
+      "radiusKm": 2574.76,
+      "parentRadiusKm": 58232,
+      "parentRelativeKm": [
+        947031.4820705674,
+        -823838.5529397428,
+        -27119.731044556574
+      ],
+      "parentDirection": [
+        0.16174765441166547,
+        -0.9705321557765811,
+        0.1786197942446097
+      ],
+      "distanceKm": 1258012.203999006,
+      "angularDiameter": 0.09261089064456701
+    },
+    {
+      "id": "titan",
+      "date": "2026-09-12T12:00:00Z",
+      "tdbSeconds": 842486469.1824722,
+      "latitude": -10.3,
+      "longitude": 192.3,
+      "radiusKm": 2574.76,
+      "parentRadiusKm": 58232,
+      "parentRelativeKm": [
+        -972079.5855263397,
+        684399.2652377934,
+        40226.79921054254
+      ],
+      "parentDirection": [
+        0.19924342439036252,
+        -0.9648053288125794,
+        0.17161799244849538
+      ],
+      "distanceKm": 1192004.5562806511,
+      "angularDiameter": 0.097743228763335
+    },
+    {
+      "id": "titan",
+      "date": "2100-12-31T23:59:59Z",
+      "tdbSeconds": 3187252868.183877,
+      "latitude": -10.3,
+      "longitude": 192.3,
+      "radiusKm": 2574.76,
+      "parentRadiusKm": 58232,
+      "parentRelativeKm": [
+        -751140.8831140316,
+        953579.2410678568,
+        7182.617008585412
+      ],
+      "parentDirection": [
+        0.23291110003326634,
+        -0.9583513972202518,
+        0.16527255951090178
+      ],
+      "distanceKm": 1216377.3437329226,
+      "angularDiameter": 0.09578321475560778
+    },
+    {
+      "id": "titan",
+      "date": "2026-09-12T12:00:00.000Z",
+      "tdbSeconds": 842486469.1824722,
+      "latitude": -10.3,
+      "longitude": 192.3,
+      "radiusKm": 2574.76,
+      "parentRadiusKm": 58232,
+      "parentRelativeKm": [
+        -972079.5855263397,
+        684399.2652377934,
+        40226.79921054254
+      ],
+      "parentDirection": [
+        0.19924342439036252,
+        -0.9648053288125794,
+        0.17161799244849538
+      ],
+      "distanceKm": 1192004.5562806511,
+      "angularDiameter": 0.097743228763335
+    },
+    {
+      "id": "titan",
+      "date": "2026-09-14T11:50:10.546Z",
+      "tdbSeconds": 842658679.7284513,
+      "latitude": -10.3,
+      "longitude": 192.3,
+      "radiusKm": 2574.76,
+      "parentRadiusKm": 58232,
+      "parentRelativeKm": [
+        -1155879.5347283487,
+        -254728.50338235355,
+        119516.34960218573
+      ],
+      "parentDirection": [
+        0.1545761119592867,
+        -0.9718408762014227,
+        0.17785257084338368
+      ],
+      "distanceKm": 1192135.7731769914,
+      "angularDiameter": 0.09773246171608503
+    },
+    {
+      "id": "titan",
+      "date": "2026-09-16T11:40:21.093Z",
+      "tdbSeconds": 842830890.2754321,
+      "latitude": -10.3,
+      "longitude": 192.3,
+      "radiusKm": 2574.76,
+      "parentRadiusKm": 58232,
+      "parentRelativeKm": [
+        -611409.7900257127,
+        -1036159.4725960257,
+        123690.68186986932
+      ],
+      "parentDirection": [
+        0.12402559438254743,
+        -0.9753793020233165,
+        0.182353692374363
+      ],
+      "distanceKm": 1211952.3336128688,
+      "angularDiameter": 0.09613320196494608
+    },
+    {
+      "id": "titan",
+      "date": "2026-09-18T11:30:31.640Z",
+      "tdbSeconds": 843003100.8224148,
+      "latitude": -10.3,
+      "longitude": 192.3,
+      "radiusKm": 2574.76,
+      "parentRadiusKm": 58232,
+      "parentRelativeKm": [
+        306429.8699414223,
+        -1196526.602696122,
+        53114.92457442069
+      ],
+      "parentDirection": [
+        0.12564155670438582,
+        -0.9750947754331538,
+        0.18276864652304634
+      ],
+      "distanceKm": 1238793.794029755,
+      "angularDiameter": 0.09404869013039024
+    },
+    {
+      "id": "titan",
+      "date": "2026-09-20T11:20:42.187Z",
+      "tdbSeconds": 843175311.3693992,
+      "latitude": -10.3,
+      "longitude": 192.3,
+      "radiusKm": 2574.76,
+      "parentRadiusKm": 58232,
+      "parentRelativeKm": [
+        1055341.9884626635,
+        -676535.9525133144,
+        -48132.707334602754
+      ],
+      "parentDirection": [
+        0.15645480481923077,
+        -0.9712863983010722,
+        0.17923344142293143
+      ],
+      "distanceKm": 1256998.335920705,
+      "angularDiameter": 0.09268564211551947
+    },
+    {
+      "id": "titan",
+      "date": "2026-09-22T11:10:52.734Z",
+      "tdbSeconds": 843347521.9163854,
+      "latitude": -10.3,
+      "longitude": 192.3,
+      "radiusKm": 2574.76,
+      "parentRadiusKm": 58232,
+      "parentRelativeKm": [
+        1229839.013927946,
+        213974.77438493815,
+        -123334.45305358456
+      ],
+      "parentDirection": [
+        0.19827693028767493,
+        -0.9646552270118047,
+        0.1735700202065429
+      ],
+      "distanceKm": 1256876.0927257554,
+      "angularDiameter": 0.09269466313864488
+    },
+    {
+      "id": "titan",
+      "date": "2026-09-24T11:01:03.280Z",
+      "tdbSeconds": 843519732.4623737,
+      "latitude": -10.3,
+      "longitude": 192.3,
+      "radiusKm": 2574.76,
+      "parentRadiusKm": 58232,
+      "parentRelativeKm": [
+        733935.5849931121,
+        985847.0296683447,
+        -131170.31628481587
+      ],
+      "parentDirection": [
+        0.22844963006024746,
+        -0.9588236700480711,
+        0.16872443889633573
+      ],
+      "distanceKm": 1238495.0066951253,
+      "angularDiameter": 0.0940713961533984
+    },
+    {
+      "id": "titan",
+      "date": "2026-09-26T10:51:13.827Z",
+      "tdbSeconds": 843691943.0093638,
+      "latitude": -10.3,
+      "longitude": 192.3,
+      "radiusKm": 2574.76,
+      "parentRadiusKm": 58232,
+      "parentRelativeKm": [
+        -174597.3670904339,
+        1194757.351477678,
+        -64676.09739595763
+      ],
+      "parentDirection": [
+        0.22967895684364617,
+        -0.9587029939313798,
+        0.1677383265989714
+      ],
+      "distanceKm": 1211646.5950997681,
+      "angularDiameter": 0.09615747825749163
+    },
+    {
+      "id": "titan",
+      "date": "2026-09-28T10:41:24.374Z",
+      "tdbSeconds": 843864153.5563558,
+      "latitude": -10.3,
+      "longitude": 192.3,
+      "radiusKm": 2574.76,
+      "parentRadiusKm": 58232,
+      "parentRelativeKm": [
+        -972056.7741244206,
+        684438.7618653005,
+        40222.97194303984
+      ],
+      "parentDirection": [
+        0.1992706592095318,
+        -0.964800037871672,
+        0.17161611608767527
+      ],
+      "distanceKm": 1192008.497202602,
+      "angularDiameter": 0.09774290535506887
+    },
+    {
+      "id": "titan",
+      "date": "2026-09-30T10:31:34.921Z",
+      "tdbSeconds": 844036364.1033497,
+      "latitude": -10.3,
+      "longitude": 192.3,
+      "radiusKm": 2574.76,
+      "parentRadiusKm": 58232,
+      "parentRelativeKm": [
+        -1155890.7373994894,
+        -254681.28389217748,
+        119510.99159093211
+      ],
+      "parentDirection": [
+        0.1546061820573836,
+        -0.9718358126358547,
+        0.17785410242118901
+      ],
+      "distanceKm": 1192135.9968322346,
+      "angularDiameter": 0.09773244336600351
+    },
+    {
+      "id": "titan",
+      "date": "2026-10-02T10:21:45.468Z",
+      "tdbSeconds": 844208574.6503457,
+      "latitude": -10.3,
+      "longitude": 192.3,
+      "radiusKm": 2574.76,
+      "parentRadiusKm": 58232,
+      "parentRelativeKm": [
+        -611426.618200867,
+        -1036132.7089075071,
+        123685.23547635166
+      ],
+      "parentDirection": [
+        0.12403807998148153,
+        -0.9753770045676311,
+        0.1823574886731633
+      ],
+      "distanceKm": 1211937.3490259433,
+      "angularDiameter": 0.09613439148745564
+    },
+    {
+      "id": "titan",
+      "date": "2026-10-04T10:11:56.014Z",
+      "tdbSeconds": 844380785.1963434,
+      "latitude": -10.3,
+      "longitude": 192.3,
+      "radiusKm": 2574.76,
+      "parentRadiusKm": 58232,
+      "parentRelativeKm": [
+        306416.974264449,
+        -1196509.5258473214,
+        53110.71704000425
+      ],
+      "parentDirection": [
+        0.12563747774549902,
+        -0.9750946612484581,
+        0.18277205965492666
+      ],
+      "distanceKm": 1238773.8889362353,
+      "angularDiameter": 0.09405020245570148
+    },
+    {
+      "id": "titan",
+      "date": "2026-10-06T10:02:06.561Z",
+      "tdbSeconds": 844552995.7433431,
+      "latitude": -10.3,
+      "longitude": 192.3,
+      "radiusKm": 2574.76,
+      "parentRadiusKm": 58232,
+      "parentRelativeKm": [
+        1055342.013028791,
+        -676526.7376188688,
+        -48134.092487803566
+      ],
+      "parentDirection": [
+        0.15643827415562622,
+        -0.9712888711031346,
+        0.17923447003968696
+      ],
+      "distanceKm": 1256993.446651542,
+      "angularDiameter": 0.09268600288887772
+    },
+    {
+      "id": "titan",
+      "date": "2026-10-08T09:52:17.108Z",
+      "tdbSeconds": 844725206.2903448,
+      "latitude": -10.3,
+      "longitude": 192.3,
+      "radiusKm": 2574.76,
+      "parentRadiusKm": 58232,
+      "parentRelativeKm": [
+        1229840.494819047,
+        213994.03927336112,
+        -123332.97795758185
+      ],
+      "parentDirection": [
+        0.19825219066291114,
+        -0.9646605720250125,
+        0.17356857341619228
+      ],
+      "distanceKm": 1256880.6997390364,
+      "angularDiameter": 0.0926943231289838
+    },
+    {
+      "id": "titan",
+      "date": "2026-10-10T09:42:27.655Z",
+      "tdbSeconds": 844897416.8373486,
+      "latitude": -10.3,
+      "longitude": 192.3,
+      "radiusKm": 2574.76,
+      "parentRadiusKm": 58232,
+      "parentRelativeKm": [
+        733942.3086643899,
+        985854.9172969072,
+        -131166.36980043206
+      ],
+      "parentDirection": [
+        0.22843988486043854,
+        -0.958826624486343,
+        0.16872084394370088
+      ],
+      "distanceKm": 1238504.879065633,
+      "angularDiameter": 0.09407064573798322
+    },
+    {
+      "id": "titan",
+      "date": "2026-10-12T09:32:38.202Z",
+      "tdbSeconds": 845069627.3843541,
+      "latitude": -10.3,
+      "longitude": 192.3,
+      "radiusKm": 2574.76,
+      "parentRadiusKm": 58232,
+      "parentRelativeKm": [
+        -174571.8435661676,
+        1194778.2102961391,
+        -64675.55535090047
+      ],
+      "parentDirection": [
+        0.22969127544581816,
+        -0.9587007314818667,
+        0.1677343895574395
+      ],
+      "distanceKm": 1211663.4852259192,
+      "angularDiameter": 0.09615613682523472
+    },
+    {
+      "id": "titan",
+      "date": "2026-10-14T09:22:48.748Z",
+      "tdbSeconds": 845241837.9303616,
+      "latitude": -10.3,
+      "longitude": 192.3,
+      "radiusKm": 2574.76,
+      "parentRadiusKm": 58232,
+      "parentRelativeKm": [
+        -972042.7307969454,
+        684476.3355794472,
+        40220.018936411805
+      ],
+      "parentDirection": [
+        0.19929242635248692,
+        -0.9647958302010795,
+        0.1716144947990935
+      ],
+      "distanceKm": 1192018.5306755665,
+      "angularDiameter": 0.0977420819766694
+    },
+    {
+      "id": "titan",
+      "date": "2026-10-16T09:12:59.295Z",
+      "tdbSeconds": 845414048.4773712,
+      "latitude": -10.3,
+      "longitude": 192.3,
+      "radiusKm": 2574.76,
+      "parentRadiusKm": 58232,
+      "parentRelativeKm": [
+        -1155891.8038056486,
+        -254637.1972947646,
+        119505.14623179822
+      ],
+      "parentDirection": [
+        0.15463188961071442,
+        -0.9718314459202446,
+        0.17785561401312808
+      ],
+      "distanceKm": 1192126.9970696603,
+      "angularDiameter": 0.09773318176851872
+    },
+    {
+      "id": "titan",
+      "date": "2026-10-18T09:03:09.842Z",
+      "tdbSeconds": 845586259.0243826,
+      "latitude": -10.3,
+      "longitude": 192.3,
+      "radiusKm": 2574.76,
+      "parentRadiusKm": 58232,
+      "parentRelativeKm": [
+        -611447.3751902981,
+        -1036105.6408860583,
+        123680.35115946524
+      ],
+      "parentDirection": [
+        0.12405346964223234,
+        -0.9753743864690324,
+        0.18236102349428385
+      ],
+      "distanceKm": 1211924.1473355428,
+      "angularDiameter": 0.09613543950256775
+    },
+    {
+      "id": "titan",
+      "date": "2026-10-20T08:53:20.389Z",
+      "tdbSeconds": 845758469.571396,
+      "latitude": -10.3,
+      "longitude": 192.3,
+      "radiusKm": 2574.76,
+      "parentRadiusKm": 58232,
+      "parentRelativeKm": [
+        306410.2100749691,
+        -1196502.9543213726,
+        53107.16974903778
+      ],
+      "parentDirection": [
+        0.1256307643794098,
+        -0.9750949492068662,
+        0.18277513800488399
+      ],
+      "distanceKm": 1238765.7005351572,
+      "angularDiameter": 0.09405082459833791
+    },
+    {
+      "id": "titan",
+      "date": "2026-10-22T08:43:30.936Z",
+      "tdbSeconds": 845930680.1184113,
+      "latitude": -10.3,
+      "longitude": 192.3,
+      "radiusKm": 2574.76,
+      "parentRadiusKm": 58232,
+      "parentRelativeKm": [
+        1055339.26414031,
+        -676512.6924409473,
+        -48135.302008922554
+      ],
+      "parentDirection": [
+        0.15641973893464262,
+        -0.9712916946289745,
+        0.17923534589023848
+      ],
+      "distanceKm": 1256983.6135575427,
+      "angularDiameter": 0.09268672846969989
+    },
+    {
+      "id": "titan",
+      "date": "2026-10-24T08:33:41.482Z",
+      "tdbSeconds": 846102890.6644284,
+      "latitude": -10.3,
+      "longitude": 192.3,
+      "radiusKm": 2574.76,
+      "parentRadiusKm": 58232,
+      "parentRelativeKm": [
+        1229843.2603799524,
+        214001.90007060632,
+        -123330.57105422566
+      ],
+      "parentDirection": [
+        0.19823640820318847,
+        -0.9646641637026369,
+        0.1735666377233562
+      ],
+      "distanceKm": 1256884.5248166395,
+      "angularDiameter": 0.09269404083012213
+    },
+    {
+      "id": "titan",
+      "date": "2026-10-26T08:23:52.029Z",
+      "tdbSeconds": 846275101.2114474,
+      "latitude": -10.3,
+      "longitude": 192.3,
+      "radiusKm": 2574.76,
+      "parentRadiusKm": 58232,
+      "parentRelativeKm": [
+        733955.0315106637,
+        985867.6246009337,
+        -131163.32179558894
+      ],
+      "parentDirection": [
+        0.22843166042638308,
+        -0.958829220342033,
+        0.1687172271379973
+      ],
+      "distanceKm": 1238522.2522559632,
+      "angularDiameter": 0.09406932520177455
+    },
+    {
+      "id": "titan",
+      "date": "2026-10-28T08:14:02.576Z",
+      "tdbSeconds": 846447311.7584684,
+      "latitude": -10.3,
+      "longitude": 192.3,
+      "radiusKm": 2574.76,
+      "parentRadiusKm": 58232,
+      "parentRelativeKm": [
+        -174551.7375060308,
+        1194792.3545865428,
+        -64674.13535407202
+      ],
+      "parentDirection": [
+        0.22969848200423063,
+        -0.9586996477686013,
+        0.16773071493710318
+      ],
+      "distanceKm": 1211674.4796147824,
+      "angularDiameter": 0.09615526365898733
+    },
+    {
+      "id": "titan",
+      "date": "2026-10-30T08:04:13.123Z",
+      "tdbSeconds": 846619522.305491,
+      "latitude": -10.3,
+      "longitude": 192.3,
+      "radiusKm": 2574.76,
+      "parentRadiusKm": 58232,
+      "parentRelativeKm": [
+        -972020.7969349135,
+        684518.227452037,
+        40215.95856400124
+      ],
+      "parentDirection": [
+        0.19932088142943655,
+        -0.9647902727309293,
+        0.1716126914594954
+      ],
+      "distanceKm": 1192024.561679939,
+      "angularDiameter": 0.09774158706012931
+    },
+    {
+      "id": "titan",
+      "date": "2026-11-01T07:54:23.670Z",
+      "tdbSeconds": 846791732.8525156,
+      "latitude": -10.3,
+      "longitude": 192.3,
+      "radiusKm": 2574.76,
+      "parentRadiusKm": 58232,
+      "parentRelativeKm": [
+        -1155901.1056387436,
+        -254590.6673634156,
+        119499.55970565956
+      ],
+      "parentDirection": [
+        0.15466106703208402,
+        -0.9718265013006743,
+        0.17785726219130824
+      ],
+      "distanceKm": 1192125.5024855745,
+      "angularDiameter": 0.09773330439557314
+    },
+    {
+      "id": "titan",
+      "date": "2026-11-03T07:44:34.216Z",
+      "tdbSeconds": 846963943.3985419,
+      "latitude": -10.3,
+      "longitude": 192.3,
+      "radiusKm": 2574.76,
+      "parentRadiusKm": 58232,
+      "parentRelativeKm": [
+        -611461.1509838358,
+        -1036078.9919763224,
+        123674.49592822873
+      ],
+      "parentDirection": [
+        0.12406374585848313,
+        -0.9753723372851844,
+        0.18236499286430582
+      ],
+      "distanceKm": 1211907.6780598452,
+      "angularDiameter": 0.09613674694671749
+    },
+    {
+      "id": "titan",
+      "date": "2026-11-05T07:34:44.763Z",
+      "tdbSeconds": 847136153.9455699,
+      "latitude": -10.3,
+      "longitude": 192.3,
+      "radiusKm": 2574.76,
+      "parentRadiusKm": 58232,
+      "parentRelativeKm": [
+        306397.5157304655,
+        -1196487.210712945,
+        53102.86642172228
+      ],
+      "parentDirection": [
+        0.12562678237842467,
+        -0.9750947979938789,
+        0.18277868167409603
+      ],
+      "distanceKm": 1238747.1316088054,
+      "angularDiameter": 0.09405223546848224
+    },
+    {
+      "id": "titan",
+      "date": "2026-11-07T07:24:55.310Z",
+      "tdbSeconds": 847308364.4925997,
+      "latitude": -10.3,
+      "longitude": 192.3,
+      "radiusKm": 2574.76,
+      "parentRadiusKm": 58232,
+      "parentRelativeKm": [
+        1055342.1468069172,
+        -676501.8292311114,
+        -48137.20589199935
+      ],
+      "parentDirection": [
+        0.15640088141617686,
+        -0.9712945093248395,
+        0.17923654886116844
+      ],
+      "distanceKm": 1256980.2607054398,
+      "angularDiameter": 0.09268697587816899
+    },
+    {
+      "id": "titan",
+      "date": "2026-11-09T07:15:05.857Z",
+      "tdbSeconds": 847480575.0396311,
+      "latitude": -10.3,
+      "longitude": 192.3,
+      "radiusKm": 2574.76,
+      "parentRadiusKm": 58232,
+      "parentRelativeKm": [
+        1229846.1128959018,
+        214020.09152369044,
+        -123329.16425938155
+      ],
+      "parentDirection": [
+        0.1982126829940115,
+        -0.9646693020391015,
+        0.17356517508909508
+      ],
+      "distanceKm": 1256890.3000322194,
+      "angularDiameter": 0.09269361461018957
+    },
+    {
+      "id": "titan",
+      "date": "2026-11-11T07:05:16.404Z",
+      "tdbSeconds": 847652785.5866643,
+      "latitude": -10.3,
+      "longitude": 192.3,
+      "radiusKm": 2574.76,
+      "parentRadiusKm": 58232,
+      "parentRelativeKm": [
+        733964.7066447993,
+        985872.7948680134,
+        -131159.22252257483
+      ],
+      "parentDirection": [
+        0.2284250488355994,
+        -0.9588314815212619,
+        0.16871332818777587
+      ],
+      "distanceKm": 1238531.6918739306,
+      "angularDiameter": 0.0940686077119569
+    },
+    {
+      "id": "titan",
+      "date": "2026-11-13T06:55:26.950Z",
+      "tdbSeconds": 847824996.1326991,
+      "latitude": -10.3,
+      "longitude": 192.3,
+      "radiusKm": 2574.76,
+      "parentRadiusKm": 58232,
+      "parentRelativeKm": [
+        -174527.2964212354,
+        1194814.6018176824,
+        -64673.18388605638
+      ],
+      "parentDirection": [
+        0.22971006183954387,
+        -0.9586976138159937,
+        0.1677264819674951
+      ],
+      "distanceKm": 1211692.8777067878,
+      "angularDiameter": 0.09615380253158684
+    },
+    {
+      "id": "titan",
+      "date": "2026-11-15T06:45:37.497Z",
+      "tdbSeconds": 847997206.6797354,
+      "latitude": -10.3,
+      "longitude": 192.3,
+      "radiusKm": 2574.76,
+      "parentRadiusKm": 58232,
+      "parentRelativeKm": [
+        -972005.2876168449,
+        684556.1029686502,
+        40213.29746060495
+      ],
+      "parentDirection": [
+        0.19934350943430026,
+        -0.9647859570102401,
+        0.17161067100344352
+      ],
+      "distanceKm": 1192033.5833466467,
+      "angularDiameter": 0.09774084673308799
+    },
+    {
+      "id": "miranda",
+      "date": "1900-01-01T00:00:00Z",
+      "tdbSeconds": -3155716802.7589946,
+      "latitude": -18,
+      "longitude": 316,
+      "radiusKm": 235.8,
+      "parentRadiusKm": 25362,
+      "parentRelativeKm": [
+        12780.178413715803,
+        -30116.717488317623,
+        125798.73844637537
+      ],
+      "parentDirection": [
+        0.7004743395371311,
+        0.6783606251864008,
+        -0.22172632195284184
+      ],
+      "distanceKm": 129823.27963997859,
+      "angularDiameter": 0.39324468525670886
+    },
+    {
+      "id": "miranda",
+      "date": "1900-12-31T23:59:59Z",
+      "tdbSeconds": -3124180802.4052444,
+      "latitude": -18,
+      "longitude": 316,
+      "radiusKm": 235.8,
+      "parentRadiusKm": 25362,
+      "parentRelativeKm": [
+        124696.14841996029,
+        -35657.57997767392,
+        -4666.131863575635
+      ],
+      "parentDirection": [
+        0.6972379464457173,
+        0.6798352970484214,
+        -0.2273394266801153
+      ],
+      "distanceKm": 129617.71698146513,
+      "angularDiameter": 0.3938765208564884
+    },
+    {
+      "id": "miranda",
+      "date": "1971-08-01T17:00:00Z",
+      "tdbSeconds": -896813958.2280614,
+      "latitude": -18,
+      "longitude": 316,
+      "radiusKm": 235.8,
+      "parentRadiusKm": 25362,
+      "parentRelativeKm": [
+        -123110.54776669873,
+        38401.73539170107,
+        -15858.128339155179
+      ],
+      "parentDirection": [
+        0.6960514382668136,
+        0.6843506854025448,
+        -0.217201599155639
+      ],
+      "distanceKm": 129770.7301902597,
+      "angularDiameter": 0.39340601166886163
+    },
+    {
+      "id": "miranda",
+      "date": "2000-01-01T12:00:00Z",
+      "tdbSeconds": 64.18392728473108,
+      "latitude": -18,
+      "longitude": 316,
+      "radiusKm": 235.8,
+      "parentRadiusKm": 25362,
+      "parentRelativeKm": [
+        104577.76622315925,
+        -34804.24753996924,
+        68521.40746003293
+      ],
+      "parentDirection": [
+        0.7066051344299563,
+        0.6731427609097094,
+        -0.2181467566389131
+      ],
+      "distanceKm": 129621.84705836605,
+      "angularDiameter": 0.3938638061663848
+    },
+    {
+      "id": "miranda",
+      "date": "2026-09-12T12:00:00Z",
+      "tdbSeconds": 842486469.1824722,
+      "latitude": -18,
+      "longitude": 316,
+      "radiusKm": 235.8,
+      "parentRadiusKm": 25362,
+      "parentRelativeKm": [
+        -123917.86470554156,
+        38939.11506884642,
+        -2353.3294375853516
+      ],
+      "parentDirection": [
+        0.7038494413286034,
+        0.6770250666447558,
+        -0.21501865750691673
+      ],
+      "distanceKm": 129753.40390259902,
+      "angularDiameter": 0.3934592324545091
+    },
+    {
+      "id": "miranda",
+      "date": "2100-12-31T23:59:59Z",
+      "tdbSeconds": 3187252868.183877,
+      "latitude": -18,
+      "longitude": 316,
+      "radiusKm": 235.8,
+      "parentRadiusKm": 25362,
+      "parentRelativeKm": [
+        -10409.388590351487,
+        45396.74532683769,
+        -121023.50136121502
+      ],
+      "parentDirection": [
+        0.7222492831901448,
+        0.6591269124057055,
+        -0.20954160988654114
+      ],
+      "distanceKm": 129520.6204213158,
+      "angularDiameter": 0.39417567672934956
+    },
+    {
+      "id": "miranda",
+      "date": "2026-09-12T12:00:00.000Z",
+      "tdbSeconds": 842486469.1824722,
+      "latitude": -18,
+      "longitude": 316,
+      "radiusKm": 235.8,
+      "parentRadiusKm": 25362,
+      "parentRelativeKm": [
+        -123917.86470554156,
+        38939.11506884642,
+        -2353.3294375853516
+      ],
+      "parentDirection": [
+        0.7038494413286034,
+        0.6770250666447558,
+        -0.21501865750691673
+      ],
+      "distanceKm": 129753.40390259902,
+      "angularDiameter": 0.3934592324545091
+    },
+    {
+      "id": "miranda",
+      "date": "2026-09-12T16:14:25.573Z",
+      "tdbSeconds": 842501734.7554704,
+      "latitude": -18,
+      "longitude": 316,
+      "radiusKm": 235.8,
+      "parentRadiusKm": 25362,
+      "parentRelativeKm": [
+        -96157.36951834982,
+        6411.464206774549,
+        87261.54023892814
+      ],
+      "parentDirection": [
+        0.7048780747858607,
+        0.675119484080404,
+        -0.21762486508022802
+      ],
+      "distanceKm": 129848.08524341822,
+      "angularDiameter": 0.3931685785092219
+    },
+    {
+      "id": "miranda",
+      "date": "2026-09-12T20:28:51.146Z",
+      "tdbSeconds": 842517000.3284682,
+      "latitude": -18,
+      "longitude": 316,
+      "radiusKm": 235.8,
+      "parentRadiusKm": 25362,
+      "parentRelativeKm": [
+        -12249.26609179242,
+        -29865.562917439653,
+        125936.03329772022
+      ],
+      "parentDirection": [
+        0.7063316287720134,
+        0.6723938311692087,
+        -0.22131914965015667
+      ],
+      "distanceKm": 129848.56510386894,
+      "angularDiameter": 0.39316710652868647
+    },
+    {
+      "id": "miranda",
+      "date": "2026-09-13T00:43:16.719Z",
+      "tdbSeconds": 842532265.9014665,
+      "latitude": -18,
+      "longitude": 316,
+      "radiusKm": 235.8,
+      "parentRadiusKm": 25362,
+      "parentRelativeKm": [
+        78799.40979382231,
+        -48702.62396211979,
+        91082.40676920078
+      ],
+      "parentDirection": [
+        0.7073418157357138,
+        0.670455853816741,
+        -0.22395647745615296
+      ],
+      "distanceKm": 129754.44051456047,
+      "angularDiameter": 0.39345604790812966
+    },
+    {
+      "id": "miranda",
+      "date": "2026-09-13T04:57:42.292Z",
+      "tdbSeconds": 842547531.4744647,
+      "latitude": -18,
+      "longitude": 316,
+      "radiusKm": 235.8,
+      "parentRadiusKm": 25362,
+      "parentRelativeKm": [
+        123729.77085055487,
+        -39045.91280156261,
+        2964.1791639758376
+      ],
+      "parentDirection": [
+        0.70732216144724,
+        0.6704623995517893,
+        -0.22399895248161616
+      ],
+      "distanceKm": 129620.15801417446,
+      "angularDiameter": 0.39386900589062684
+    },
+    {
+      "id": "miranda",
+      "date": "2026-09-13T09:12:07.866Z",
+      "tdbSeconds": 842562797.0484627,
+      "latitude": -18,
+      "longitude": 316,
+      "radiusKm": 235.8,
+      "parentRadiusKm": 25362,
+      "parentRelativeKm": [
+        96072.63975046255,
+        -6487.445032664669,
+        -86865.33779757765
+      ],
+      "parentDirection": [
+        0.7062794759412391,
+        0.6724190545077787,
+        -0.22140893613184096
+      ],
+      "distanceKm": 129524.11479889989,
+      "angularDiameter": 0.3941649025672634
+    },
+    {
+      "id": "miranda",
+      "date": "2026-09-13T13:26:33.439Z",
+      "tdbSeconds": 842578062.6214608,
+      "latitude": -18,
+      "longitude": 316,
+      "radiusKm": 235.8,
+      "parentRadiusKm": 25362,
+      "parentRelativeKm": [
+        11949.95522509464,
+        29881.97373260886,
+        -125625.63021231309
+      ],
+      "parentDirection": [
+        0.7047962928446329,
+        0.6751793898393363,
+        -0.21770387485904735
+      ],
+      "distanceKm": 129523.10531896749,
+      "angularDiameter": 0.3941680150207208
+    },
+    {
+      "id": "miranda",
+      "date": "2026-09-13T17:40:59.012Z",
+      "tdbSeconds": 842593328.1944591,
+      "latitude": -18,
+      "longitude": 316,
+      "radiusKm": 235.8,
+      "parentRadiusKm": 25362,
+      "parentRelativeKm": [
+        -79208.56365718585,
+        48690.33699726557,
+        -90541.13033368094
+      ],
+      "parentDirection": [
+        0.703724677291453,
+        0.6771370823936078,
+        -0.21507428999885733
+      ],
+      "distanceKm": 129618.64728384143,
+      "angularDiameter": 0.3938736567925708
+    },
+    {
+      "id": "miranda",
+      "date": "2026-09-13T21:55:24.585Z",
+      "tdbSeconds": 842608593.7674571,
+      "latitude": -18,
+      "longitude": 316,
+      "radiusKm": 235.8,
+      "parentRadiusKm": 25362,
+      "parentRelativeKm": [
+        -123921.76522949961,
+        38935.33477923921,
+        -2322.9452809101444
+      ],
+      "parentDirection": [
+        0.7037071663103445,
+        0.6771583059467693,
+        -0.21506476413110256
+      ],
+      "distanceKm": 129755.41322508943,
+      "angularDiameter": 0.3934530597187325
+    },
+    {
+      "id": "miranda",
+      "date": "2026-09-14T02:09:50.158Z",
+      "tdbSeconds": 842623859.3404554,
+      "latitude": -18,
+      "longitude": 316,
+      "radiusKm": 235.8,
+      "parentRadiusKm": 25362,
+      "parentRelativeKm": [
+        -96148.18548462045,
+        6395.872703821406,
+        87280.91013145508
+      ],
+      "parentDirection": [
+        0.7047671616522362,
+        0.6752234425433237,
+        -0.21766155034041698
+      ],
+      "distanceKm": 129853.50281110227,
+      "angularDiameter": 0.393151960667679
+    },
+    {
+      "id": "miranda",
+      "date": "2026-09-14T06:24:15.732Z",
+      "tdbSeconds": 842639124.9144535,
+      "latitude": -18,
+      "longitude": 316,
+      "radiusKm": 235.8,
+      "parentRadiusKm": 25362,
+      "parentRelativeKm": [
+        -12238.804333072558,
+        -29883.551060858084,
+        125939.69602827358
+      ],
+      "parentDirection": [
+        0.7062728457616873,
+        0.6724495082902479,
+        -0.22133758411054308
+      ],
+      "distanceKm": 129855.24814546647,
+      "angularDiameter": 0.3931466073320112
+    },
+    {
+      "id": "miranda",
+      "date": "2026-09-14T10:38:41.305Z",
+      "tdbSeconds": 842654390.4874518,
+      "latitude": -18,
+      "longitude": 316,
+      "radiusKm": 235.8,
+      "parentRadiusKm": 25362,
+      "parentRelativeKm": [
+        78803.69152335596,
+        -48714.79291242953,
+        91078.38409914177
+      ],
+      "parentDirection": [
+        0.7073319898505714,
+        0.6704658810592491,
+        -0.22395749255043004
+      ],
+      "distanceKm": 129758.77757246865,
+      "angularDiameter": 0.39344272471754543
+    },
+    {
+      "id": "miranda",
+      "date": "2026-09-14T14:53:06.878Z",
+      "tdbSeconds": 842669656.0604501,
+      "latitude": -18,
+      "longitude": 316,
+      "radiusKm": 235.8,
+      "parentRadiusKm": 25362,
+      "parentRelativeKm": [
+        123728.70099403299,
+        -39047.63672868064,
+        2960.173863275031
+      ],
+      "parentDirection": [
+        0.7073292442336285,
+        0.6704565116551661,
+        -0.22399421026238608
+      ],
+      "distanceKm": 129619.56667197733,
+      "angularDiameter": 0.39387082637083976
+    },
+    {
+      "id": "miranda",
+      "date": "2026-09-14T19:07:32.451Z",
+      "tdbSeconds": 842684921.6334481,
+      "latitude": -18,
+      "longitude": 316,
+      "radiusKm": 235.8,
+      "parentRadiusKm": 25362,
+      "parentRelativeKm": [
+        96065.86019475757,
+        -6477.694323701477,
+        -86865.8810322033
+      ],
+      "parentDirection": [
+        0.7062604461802945,
+        0.6724376946216574,
+        -0.22141302810160438
+      ],
+      "distanceKm": 129518.9644529826,
+      "angularDiameter": 0.39418078275879936
+    },
+    {
+      "id": "miranda",
+      "date": "2026-09-14T23:21:58.024Z",
+      "tdbSeconds": 842700187.2064465,
+      "latitude": -18,
+      "longitude": 316,
+      "radiusKm": 235.8,
+      "parentRadiusKm": 25362,
+      "parentRelativeKm": [
+        11936.171466057847,
+        29897.597359631338,
+        -125616.49667184608
+      ],
+      "parentDirection": [
+        0.7047251819930388,
+        0.6752468202802007,
+        -0.21772494015697078
+      ],
+      "distanceKm": 129516.5733628196,
+      "angularDiameter": 0.3941881557052801
+    },
+    {
+      "id": "miranda",
+      "date": "2026-09-15T03:36:23.598Z",
+      "tdbSeconds": 842715452.7804447,
+      "latitude": -18,
+      "longitude": 316,
+      "radiusKm": 235.8,
+      "parentRadiusKm": 25362,
+      "parentRelativeKm": [
+        -79221.90265254762,
+        48700.19732002308,
+        -90517.56788529614
+      ],
+      "parentDirection": [
+        0.7036068645844233,
+        0.6772478723741834,
+        -0.2151109004079494
+      ],
+      "distanceKm": 129614.02642558003,
+      "angularDiameter": 0.3938878831538945
+    },
+    {
+      "id": "miranda",
+      "date": "2026-09-15T07:50:49.171Z",
+      "tdbSeconds": 842730718.3534431,
+      "latitude": -18,
+      "longitude": 316,
+      "radiusKm": 235.8,
+      "parentRadiusKm": 25362,
+      "parentRelativeKm": [
+        -123922.57748481611,
+        38930.5321947872,
+        -2292.386604973347
+      ],
+      "parentDirection": [
+        0.7035642392474252,
+        0.6772921106543961,
+        -0.21511103667061157
+      ],
+      "distanceKm": 129754.17444547002,
+      "angularDiameter": 0.3934568652865301
+    },
+    {
+      "id": "miranda",
+      "date": "2026-09-15T12:05:14.744Z",
+      "tdbSeconds": 842745983.9264412,
+      "latitude": -18,
+      "longitude": 316,
+      "radiusKm": 235.8,
+      "parentRadiusKm": 25362,
+      "parentRelativeKm": [
+        -96135.4285419585,
+        6377.794294742805,
+        87303.41610502171
+      ],
+      "parentDirection": [
+        0.7046273345498524,
+        0.6753534695391614,
+        -0.21771084168361296
+      ],
+      "distanceKm": 129858.26129126207,
+      "angularDiameter": 0.39313736567700547
+    },
+    {
+      "id": "miranda",
+      "date": "2026-09-15T16:19:40.317Z",
+      "tdbSeconds": 842761249.4994396,
+      "latitude": -18,
+      "longitude": 316,
+      "radiusKm": 235.8,
+      "parentRadiusKm": 25362,
+      "parentRelativeKm": [
+        -12227.569643277815,
+        -29905.292694043677,
+        125950.33667766182
+      ],
+      "parentDirection": [
+        0.706203024546272,
+        0.6725119747657303,
+        -0.22137057599960075
+      ],
+      "distanceKm": 129869.48232543706,
+      "angularDiameter": 0.3931029533576778
+    },
+    {
+      "id": "miranda",
+      "date": "2026-09-15T20:34:05.890Z",
+      "tdbSeconds": 842776515.072438,
+      "latitude": -18,
+      "longitude": 316,
+      "radiusKm": 235.8,
+      "parentRadiusKm": 25362,
+      "parentRelativeKm": [
+        78804.74350807053,
+        -48733.415755046284,
+        91094.38891980766
+      ],
+      "parentDirection": [
+        0.7074062274828425,
+        0.6703912430262681,
+        -0.22394644581280665
+      ],
+      "distanceKm": 129777.63739848534,
+      "angularDiameter": 0.39338479898620093
+    },
+    {
+      "id": "miranda",
+      "date": "2026-09-16T00:48:31.464Z",
+      "tdbSeconds": 842791780.6464362,
+      "latitude": -18,
+      "longitude": 316,
+      "radiusKm": 235.8,
+      "parentRadiusKm": 25362,
+      "parentRelativeKm": [
+        123736.526142852,
+        -39063.43083396948,
+        2993.645354191913
+      ],
+      "parentDirection": [
+        0.7075470616125998,
+        0.6702468477515339,
+        -0.22393373725838647
+      ],
+      "distanceKm": 129632.5969495775,
+      "angularDiameter": 0.39383071585418095
+    },
+    {
+      "id": "miranda",
+      "date": "2026-09-16T05:02:57.037Z",
+      "tdbSeconds": 842807046.2194346,
+      "latitude": -18,
+      "longitude": 316,
+      "radiusKm": 235.8,
+      "parentRadiusKm": 25362,
+      "parentRelativeKm": [
+        96095.01616043292,
+        -6488.146905724849,
+        -86831.54533565376
+      ],
+      "parentDirection": [
+        0.706535609828016,
+        0.6721769223736446,
+        -0.22132694610744733
+      ],
+      "distanceKm": 129518.15501409561,
+      "angularDiameter": 0.39418327863927816
+    },
+    {
+      "id": "miranda",
+      "date": "2026-09-16T09:17:22.610Z",
+      "tdbSeconds": 842822311.792433,
+      "latitude": -18,
+      "longitude": 316,
+      "radiusKm": 235.8,
+      "parentRadiusKm": 25362,
+      "parentRelativeKm": [
+        11970.217434365066,
+        29897.366046713414,
+        -125597.80843729046
+      ],
+      "parentDirection": [
+        0.704931120687285,
+        0.6750550812375996,
+        -0.21765282534776859
+      ],
+      "distanceKm": 129501.60071123682,
+      "angularDiameter": 0.39423433031518346
+    },
+    {
+      "id": "miranda",
+      "date": "2026-09-16T13:31:48.183Z",
+      "tdbSeconds": 842837577.3654314,
+      "latitude": -18,
+      "longitude": 316,
+      "radiusKm": 235.8,
+      "parentRadiusKm": 25362,
+      "parentRelativeKm": [
+        -79203.0050558766,
+        48704.025814957684,
+        -90502.07523457393
+      ],
+      "parentDirection": [
+        0.7036509694563917,
+        0.6772098594593481,
+        -0.21508630694242273
+      ],
+      "distanceKm": 129593.13033868982,
+      "angularDiameter": 0.39395222942131725
+    },
+    {
+      "id": "miranda",
+      "date": "2026-09-16T17:46:13.756Z",
+      "tdbSeconds": 842852842.9384297,
+      "latitude": -18,
+      "longitude": 316,
+      "radiusKm": 235.8,
+      "parentRadiusKm": 25362,
+      "parentRelativeKm": [
+        -123909.40533203667,
+        38923.8464831558,
+        -2266.4256088057155
+      ],
+      "parentDirection": [
+        0.7034502269543224,
+        0.6774013239911347,
+        -0.2151400112786326
+      ],
+      "distanceKm": 129739.12504240556,
+      "angularDiameter": 0.39350310341944666
+    },
+    {
+      "id": "miranda",
+      "date": "2026-09-16T22:00:39.330Z",
+      "tdbSeconds": 842868108.5124282,
+      "latitude": -18,
+      "longitude": 316,
+      "radiusKm": 235.8,
+      "parentRadiusKm": 25362,
+      "parentRelativeKm": [
+        -96111.32778867493,
+        6357.156023593776,
+        87325.82137351103
+      ],
+      "parentDirection": [
+        0.7044448543702141,
+        0.6755256651443841,
+        -0.21776712994059813
+      ],
+      "distanceKm": 129854.4384835525,
+      "angularDiameter": 0.39314909073017307
+    },
+    {
+      "id": "miranda",
+      "date": "2026-09-17T02:15:04.903Z",
+      "tdbSeconds": 842883374.0854267,
+      "latitude": -18,
+      "longitude": 316,
+      "radiusKm": 235.8,
+      "parentRadiusKm": 25362,
+      "parentRelativeKm": [
+        -12197.200474431414,
+        -29928.654020859398,
+        125951.32402833937
+      ],
+      "parentDirection": [
+        0.706032273319735,
+        0.6726737317744261,
+        -0.22142375575270679
+      ],
+      "distanceKm": 129872.92326143717,
+      "angularDiameter": 0.39309240201689877
+    },
+    {
+      "id": "miranda",
+      "date": "2026-09-17T06:29:30.476Z",
+      "tdbSeconds": 842898639.6584251,
+      "latitude": -18,
+      "longitude": 316,
+      "radiusKm": 235.8,
+      "parentRadiusKm": 25362,
+      "parentRelativeKm": [
+        78826.33223447678,
+        -48747.70098311967,
+        91078.29297969217
+      ],
+      "parentDirection": [
+        0.7072819189209844,
+        0.6705100885250292,
+        -0.22398327695077463
+      ],
+      "distanceKm": 129784.77950091394,
+      "angularDiameter": 0.3933628673429867
+    },
+    {
+      "id": "miranda",
+      "date": "2026-09-17T10:43:56.049Z",
+      "tdbSeconds": 842913905.2314235,
+      "latitude": -18,
+      "longitude": 316,
+      "radiusKm": 235.8,
+      "parentRadiusKm": 25362,
+      "parentRelativeKm": [
+        123744.88710321562,
+        -39064.908835074806,
+        2977.832851782436
+      ],
+      "parentDirection": [
+        0.7074864791903134,
+        0.670305390818839,
+        -0.22394991583409393
+      ],
+      "distanceKm": 129640.63523390068,
+      "angularDiameter": 0.3938059760668654
+    },
+    {
+      "id": "miranda",
+      "date": "2026-09-17T14:58:21.622Z",
+      "tdbSeconds": 842929170.8044219,
+      "latitude": -18,
+      "longitude": 316,
+      "radiusKm": 235.8,
+      "parentRadiusKm": 25362,
+      "parentRelativeKm": [
+        96098.04575745897,
+        -6480.072128554819,
+        -86837.16033821137
+      ],
+      "parentDirection": [
+        0.7065331014020695,
+        0.6721797973138536,
+        -0.22132622236481567
+      ],
+      "distanceKm": 129523.7554642846,
+      "angularDiameter": 0.39416601047095123
+    },
+    {
+      "id": "miranda",
+      "date": "2026-09-17T19:12:47.196Z",
+      "tdbSeconds": 842944436.3784205,
+      "latitude": -18,
+      "longitude": 316,
+      "radiusKm": 235.8,
+      "parentRadiusKm": 25362,
+      "parentRelativeKm": [
+        11973.727406392027,
+        29909.3059226458,
+        -125595.1323147707
+      ],
+      "parentDirection": [
+        0.7049557029956504,
+        0.6750317283351841,
+        -0.21764563527606648
+      ],
+      "distanceKm": 129502.09172224085,
+      "angularDiameter": 0.3942328158988934
+    },
+    {
+      "id": "miranda",
+      "date": "2026-09-17T23:27:12.769Z",
+      "tdbSeconds": 842959701.9514189,
+      "latitude": -18,
+      "longitude": 316,
+      "radiusKm": 235.8,
+      "parentRadiusKm": 25362,
+      "parentRelativeKm": [
+        -79199.46062773299,
+        48712.44795652728,
+        -90493.13955463308
+      ],
+      "parentDirection": [
+        0.7036558167929702,
+        0.677204777548758,
+        -0.21508644950009098
+      ],
+      "distanceKm": 129587.8972232585,
+      "angularDiameter": 0.3939683473047736
+    },
+    {
+      "id": "miranda",
+      "date": "2026-09-18T03:41:38.342Z",
+      "tdbSeconds": 842974967.5244174,
+      "latitude": -18,
+      "longitude": 316,
+      "radiusKm": 235.8,
+      "parentRadiusKm": 25362,
+      "parentRelativeKm": [
+        -123901.84609737947,
+        38920.54148558489,
+        -2251.272091493152
+      ],
+      "parentDirection": [
+        0.7033950749019974,
+        0.6774525326489033,
+        -0.21515909139796993
+      ],
+      "distanceKm": 129730.64843669001,
+      "angularDiameter": 0.3935291519549926
+    },
+    {
+      "id": "pluto",
+      "date": "1900-01-01T00:00:00Z",
+      "tdbSeconds": -3155716802.7589946,
+      "latitude": 18,
+      "longitude": 178,
+      "radiusKm": 1188.3,
+      "parentRadiusKm": 606,
+      "parentRelativeKm": [
+        13917.51051794181,
+        13441.022647875172,
+        3084.9732697775685
+      ],
+      "parentDirection": [
+        -0.05186889982270649,
+        -0.9549946182998411,
+        -0.29205289974510185
+      ],
+      "distanceKm": 20724.385441722734,
+      "angularDiameter": 0.05849016783564678
+    },
+    {
+      "id": "pluto",
+      "date": "1900-12-31T23:59:59Z",
+      "tdbSeconds": -3124180802.4052444,
+      "latitude": 18,
+      "longitude": 178,
+      "radiusKm": 1188.3,
+      "parentRadiusKm": 606,
+      "parentRelativeKm": [
+        11437.92137202198,
+        8670.920797876808,
+        -13339.296575838183
+      ],
+      "parentDirection": [
+        -0.052113252118698175,
+        -0.9553272693924209,
+        -0.29091926252627964
+      ],
+      "distanceKm": 20726.653944159432,
+      "angularDiameter": 0.05848376434559209
+    },
+    {
+      "id": "pluto",
+      "date": "1971-08-01T17:00:00Z",
+      "tdbSeconds": -896813958.2280614,
+      "latitude": 18,
+      "longitude": 178,
+      "radiusKm": 1188.3,
+      "parentRadiusKm": 606,
+      "parentRelativeKm": [
+        740.1804285990206,
+        -2221.3974645708163,
+        -19456.846321059635
+      ],
+      "parentDirection": [
+        -0.055510250784465046,
+        -0.9553140894940475,
+        -0.2903336054817025
+      ],
+      "distanceKm": 20729.281121960517,
+      "angularDiameter": 0.05847635014501677
+    },
+    {
+      "id": "pluto",
+      "date": "2000-01-01T12:00:00Z",
+      "tdbSeconds": 64.18392728473108,
+      "latitude": 18,
+      "longitude": 178,
+      "radiusKm": 1188.3,
+      "parentRadiusKm": 606,
+      "parentRelativeKm": [
+        -6846.982645337946,
+        -8798.82576496067,
+        -16118.284613684431
+      ],
+      "parentDirection": [
+        -0.05665244607119341,
+        -0.9552209882164587,
+        -0.29041929003584205
+      ],
+      "distanceKm": 20730.39560151398,
+      "angularDiameter": 0.058473205522330936
+    },
+    {
+      "id": "pluto",
+      "date": "2026-09-12T12:00:00Z",
+      "tdbSeconds": 842486469.1824722,
+      "latitude": 18,
+      "longitude": 178,
+      "radiusKm": 1188.3,
+      "parentRadiusKm": 606,
+      "parentRelativeKm": [
+        14155.733619296861,
+        13447.946857115512,
+        1626.548540700332
+      ],
+      "parentDirection": [
+        -0.05789290492002408,
+        -0.9546783385943959,
+        -0.2919549303892046
+      ],
+      "distanceKm": 20724.05114194743,
+      "angularDiameter": 0.05849111160992825
+    },
+    {
+      "id": "pluto",
+      "date": "2100-12-31T23:59:59Z",
+      "tdbSeconds": 3187252868.183877,
+      "latitude": 18,
+      "longitude": 178,
+      "radiusKm": 1188.3,
+      "parentRadiusKm": 606,
+      "parentRelativeKm": [
+        8037.99504763074,
+        9740.60985840044,
+        14979.781932069456
+      ],
+      "parentDirection": [
+        -0.06117994184684717,
+        -0.9542368298356989,
+        -0.29272698423741456
+      ],
+      "distanceKm": 20723.623290194377,
+      "angularDiameter": 0.0584923195387615
+    },
+    {
+      "id": "pluto",
+      "date": "2026-09-12T12:00:00.000Z",
+      "tdbSeconds": 842486469.1824722,
+      "latitude": 18,
+      "longitude": 178,
+      "radiusKm": 1188.3,
+      "parentRadiusKm": 606,
+      "parentRelativeKm": [
+        14155.733619296861,
+        13447.946857115512,
+        1626.548540700332
+      ],
+      "parentDirection": [
+        -0.05789290492002408,
+        -0.9546783385943959,
+        -0.2919549303892046
+      ],
+      "distanceKm": 20724.05114194743,
+      "angularDiameter": 0.05849111160992825
+    },
+    {
+      "id": "pluto",
+      "date": "2026-09-13T07:09:42.084Z",
+      "tdbSeconds": 842555451.2664635,
+      "latitude": 18,
+      "longitude": 178,
+      "radiusKm": 1188.3,
+      "parentRadiusKm": 606,
+      "parentRelativeKm": [
+        11879.310843655188,
+        9199.390404307154,
+        -12577.542413545078
+      ],
+      "parentDirection": [
+        -0.058063607758865286,
+        -0.9549690206483031,
+        -0.2909687045990433
+      ],
+      "distanceKm": 20726.041184637787,
+      "angularDiameter": 0.058485493894498156
+    },
+    {
+      "id": "pluto",
+      "date": "2026-09-14T02:19:24.168Z",
+      "tdbSeconds": 842624433.3504554,
+      "latitude": 18,
+      "longitude": 178,
+      "radiusKm": 1188.3,
+      "parentRadiusKm": 606,
+      "parentRelativeKm": [
+        2642.640723700799,
+        -439.2999867614733,
+        -19412.869732430165
+      ],
+      "parentDirection": [
+        -0.0580743568838702,
+        -0.9551554339460154,
+        -0.29035403574933144
+      ],
+      "distanceKm": 20728.691322951294,
+      "angularDiameter": 0.05847801446258448
+    },
+    {
+      "id": "pluto",
+      "date": "2026-09-14T21:29:06.252Z",
+      "tdbSeconds": 842693415.4344472,
+      "latitude": 18,
+      "longitude": 178,
+      "radiusKm": 1188.3,
+      "parentRadiusKm": 606,
+      "parentRelativeKm": [
+        -8142.193434042843,
+        -9821.040424783576,
+        -14878.10180423485
+      ],
+      "parentDirection": [
+        -0.05791858758675441,
+        -0.9551293502640835,
+        -0.2904709305181251
+      ],
+      "distanceKm": 20730.445162855205,
+      "angularDiameter": 0.05847306568758703
+    },
+    {
+      "id": "pluto",
+      "date": "2026-09-15T16:38:48.336Z",
+      "tdbSeconds": 842762397.5184395,
+      "latitude": 18,
+      "longitude": 178,
+      "radiusKm": 1188.3,
+      "parentRadiusKm": 606,
+      "parentRelativeKm": [
+        -14159.452355957665,
+        -13452.114417103405,
+        -1631.2161546629266
+      ],
+      "parentDirection": [
+        -0.05768688578095982,
+        -0.9549059222009736,
+        -0.2912505844704912
+      ],
+      "distanceKm": 20730.27342445406,
+      "angularDiameter": 0.05847355024140146
+    },
+    {
+      "id": "pluto",
+      "date": "2026-09-16T11:48:30.420Z",
+      "tdbSeconds": 842831379.6024319,
+      "latitude": 18,
+      "longitude": 178,
+      "radiusKm": 1188.3,
+      "parentRadiusKm": 606,
+      "parentRelativeKm": [
+        -11885.652696550762,
+        -9206.338817884396,
+        12570.64227423132
+      ],
+      "parentDirection": [
+        -0.057515250541563714,
+        -0.9546150616027483,
+        -0.292236342908137
+      ],
+      "distanceKm": 20728.277808001676,
+      "angularDiameter": 0.05847918139150547
+    },
+    {
+      "id": "pluto",
+      "date": "2026-09-17T06:58:12.504Z",
+      "tdbSeconds": 842900361.6864249,
+      "latitude": 18,
+      "longitude": 178,
+      "radiusKm": 1188.3,
+      "parentRadiusKm": 606,
+      "parentRelativeKm": [
+        -2650.8738322377976,
+        431.15484652770033,
+        19409.761008214376
+      ],
+      "parentDirection": [
+        -0.05750520872493104,
+        -0.9544272590289946,
+        -0.29285108535209997
+      ],
+      "distanceKm": 20725.627233842642,
+      "angularDiameter": 0.05848666235227248
+    },
+    {
+      "id": "pluto",
+      "date": "2026-09-18T02:07:54.588Z",
+      "tdbSeconds": 842969343.7704179,
+      "latitude": 18,
+      "longitude": 178,
+      "radiusKm": 1188.3,
+      "parentRadiusKm": 606,
+      "parentRelativeKm": [
+        8136.617357743915,
+        9815.696254909042,
+        14877.146530201135
+      ],
+      "parentDirection": [
+        -0.057662621656087557,
+        -0.9544534812078962,
+        -0.2927346482292033
+      ],
+      "distanceKm": 20723.875537203432,
+      "angularDiameter": 0.05849160737849541
+    },
+    {
+      "id": "pluto",
+      "date": "2026-09-18T21:17:36.672Z",
+      "tdbSeconds": 843038325.8544114,
+      "latitude": 18,
+      "longitude": 178,
+      "radiusKm": 1188.3,
+      "parentRadiusKm": 606,
+      "parentRelativeKm": [
+        14155.754676283124,
+        13447.94274466466,
+        1626.3849888665313
+      ],
+      "parentDirection": [
+        -0.057894351316433945,
+        -0.954678255005999,
+        -0.29195491690387804
+      ],
+      "distanceKm": 20724.049850609113,
+      "angularDiameter": 0.058491115255613145
+    },
+    {
+      "id": "pluto",
+      "date": "2026-09-19T16:27:18.756Z",
+      "tdbSeconds": 843107307.9384052,
+      "latitude": 18,
+      "longitude": 178,
+      "radiusKm": 1188.3,
+      "parentRadiusKm": 606,
+      "parentRelativeKm": [
+        11879.24769090157,
+        9199.313646138702,
+        -12577.666180498163
+      ],
+      "parentDirection": [
+        -0.058064751414088685,
+        -0.9549689520859495,
+        -0.29096870140117115
+      ],
+      "distanceKm": 20726.046220994904,
+      "angularDiameter": 0.058485479678674235
+    },
+    {
+      "id": "pluto",
+      "date": "2026-09-20T11:37:00.840Z",
+      "tdbSeconds": 843176290.0223991,
+      "latitude": 18,
+      "longitude": 178,
+      "radiusKm": 1188.3,
+      "parentRadiusKm": 606,
+      "parentRelativeKm": [
+        2642.532260877135,
+        -439.40299112642435,
+        -19412.883529497867
+      ],
+      "parentDirection": [
+        -0.05807509207262828,
+        -0.9551553913771834,
+        -0.2903540287370841
+      ],
+      "distanceKm": 20728.69262056102,
+      "angularDiameter": 0.05847801080083536
+    },
+    {
+      "id": "pluto",
+      "date": "2026-09-21T06:46:42.924Z",
+      "tdbSeconds": 843245272.1063935,
+      "latitude": 18,
+      "longitude": 178,
+      "radiusKm": 1188.3,
+      "parentRadiusKm": 606,
+      "parentRelativeKm": [
+        -8142.284582283228,
+        -9821.110304437667,
+        -14877.9983729223
+      ],
+      "parentDirection": [
+        -0.05791952562501463,
+        -0.9551293017720252,
+        -0.2904709029280849
+      ],
+      "distanceKm": 20730.439467316945,
+      "angularDiameter": 0.05847308175721768
+    },
+    {
+      "id": "pluto",
+      "date": "2026-09-22T01:56:25.008Z",
+      "tdbSeconds": 843314254.1903881,
+      "latitude": 18,
+      "longitude": 178,
+      "radiusKm": 1188.3,
+      "parentRadiusKm": 606,
+      "parentRelativeKm": [
+        -14159.470665099985,
+        -13452.107455585461,
+        -1631.050827812298
+      ],
+      "parentDirection": [
+        -0.0576883988144247,
+        -0.9549058442647929,
+        -0.2912505403105222
+      ],
+      "distanceKm": 20730.268015597463,
+      "angularDiameter": 0.05847356550242919
+    },
+    {
+      "id": "pluto",
+      "date": "2026-09-22T21:06:07.092Z",
+      "tdbSeconds": 843383236.2743828,
+      "latitude": 18,
+      "longitude": 178,
+      "radiusKm": 1188.3,
+      "parentRadiusKm": 606,
+      "parentRelativeKm": [
+        -11885.58342239864,
+        -9206.255224919856,
+        12570.773423533139
+      ],
+      "parentDirection": [
+        -0.057516950173752635,
+        -0.9546149714198028,
+        -0.29223630298763165
+      ],
+      "distanceKm": 20728.280536933835,
+      "angularDiameter": 0.05847917369037399
+    },
+    {
+      "id": "pluto",
+      "date": "2026-09-23T16:15:49.176Z",
+      "tdbSeconds": 843452218.3583782,
+      "latitude": 18,
+      "longitude": 178,
+      "radiusKm": 1188.3,
+      "parentRadiusKm": 606,
+      "parentRelativeKm": [
+        -2650.760613679119,
+        431.2638753647775,
+        19409.785402152367
+      ],
+      "parentDirection": [
+        -0.05750635353095759,
+        -0.9544271949930533,
+        -0.29285106925067705
+      ],
+      "distanceKm": 20725.638401768563,
+      "angularDiameter": 0.05848663082798571
+    },
+    {
+      "id": "pluto",
+      "date": "2026-09-24T11:25:31.260Z",
+      "tdbSeconds": 843521200.4423736,
+      "latitude": 18,
+      "longitude": 178,
+      "radiusKm": 1188.3,
+      "parentRadiusKm": 606,
+      "parentRelativeKm": [
+        8136.7056167220235,
+        9815.766994237798,
+        14877.067034578393
+      ],
+      "parentDirection": [
+        -0.0576627598116336,
+        -0.9544534688949322,
+        -0.2927346611614979
+      ],
+      "distanceKm": 20723.88725374693,
+      "angularDiameter": 0.05849157430000445
+    },
+    {
+      "id": "pluto",
+      "date": "2026-09-25T06:35:13.344Z",
+      "tdbSeconds": 843590182.5263695,
+      "latitude": 18,
+      "longitude": 178,
+      "radiusKm": 1188.3,
+      "parentRadiusKm": 606,
+      "parentRelativeKm": [
+        14155.772242835794,
+        13447.941276099627,
+        1626.261287755222
+      ],
+      "parentDirection": [
+        -0.05789387075831448,
+        -0.9546782768885572,
+        -0.2919549406427555
+      ],
+      "distanceKm": 20724.05129421642,
+      "angularDiameter": 0.058491111180045005
+    },
+    {
+      "id": "pluto",
+      "date": "2026-09-26T01:44:55.428Z",
+      "tdbSeconds": 843659164.6103655,
+      "latitude": 18,
+      "longitude": 178,
+      "radiusKm": 1188.3,
+      "parentRadiusKm": 606,
+      "parentRelativeKm": [
+        11879.18501603676,
+        9199.24166402114,
+        -12577.760643400514
+      ],
+      "parentDirection": [
+        -0.058064696000046885,
+        -0.9549689540015065,
+        -0.29096870617248616
+      ],
+      "distanceKm": 20726.03506615389,
+      "angularDiameter": 0.05848551116478588
+    },
+    {
+      "id": "pluto",
+      "date": "2026-09-26T20:54:37.512Z",
+      "tdbSeconds": 843728146.694362,
+      "latitude": 18,
+      "longitude": 178,
+      "radiusKm": 1188.3,
+      "parentRadiusKm": 606,
+      "parentRelativeKm": [
+        2642.4167722222237,
+        -439.51048543442283,
+        -19412.88339895225
+      ],
+      "parentDirection": [
+        -0.058076162027387,
+        -0.9551553341549105,
+        -0.29035400296808334
+      ],
+      "distanceKm": 20728.679254997132,
+      "angularDiameter": 0.058478048517391676
+    },
+    {
+      "id": "pluto",
+      "date": "2026-09-27T16:04:19.596Z",
+      "tdbSeconds": 843797128.7783587,
+      "latitude": 18,
+      "longitude": 178,
+      "radiusKm": 1188.3,
+      "parentRadiusKm": 606,
+      "parentRelativeKm": [
+        -8142.387494433437,
+        -9821.189806633392,
+        -14877.886047923981
+      ],
+      "parentDirection": [
+        -0.05792129989393858,
+        -0.955129206034492,
+        -0.29047086394080385
+      ],
+      "distanceKm": 20730.43667202966,
+      "angularDiameter": 0.05847308964396176
+    },
+    {
+      "id": "pluto",
+      "date": "2026-09-28T11:14:01.680Z",
+      "tdbSeconds": 843866110.8623558,
+      "latitude": 18,
+      "longitude": 178,
+      "radiusKm": 1188.3,
+      "parentRadiusKm": 606,
+      "parentRelativeKm": [
+        -14159.497867884775,
+        -13452.109201084731,
+        -1630.8885398254256
+      ],
+      "parentDirection": [
+        -0.05768981730959074,
+        -0.9549057679619011,
+        -0.2912505095135083
+      ],
+      "distanceKm": 20730.275266814733,
+      "angularDiameter": 0.05847354504320347
+    },
+    {
+      "id": "pluto",
+      "date": "2026-09-29T06:23:43.764Z",
+      "tdbSeconds": 843935092.9463531,
+      "latitude": 18,
+      "longitude": 178,
+      "radiusKm": 1188.3,
+      "parentRadiusKm": 606,
+      "parentRelativeKm": [
+        -11885.523275870475,
+        -9206.182240024205,
+        12570.890266898601
+      ],
+      "parentDirection": [
+        -0.057517688112101666,
+        -0.9546149334586073,
+        -0.2922362817516981
+      ],
+      "distanceKm": 20728.28467564677,
+      "angularDiameter": 0.05847916201080116
+    },
+    {
+      "id": "pluto",
+      "date": "2026-09-30T01:33:25.848Z",
+      "tdbSeconds": 844004075.0303508,
+      "latitude": 18,
+      "longitude": 178,
+      "radiusKm": 1188.3,
+      "parentRadiusKm": 606,
+      "parentRelativeKm": [
+        -2650.649604918897,
+        431.3681534044453,
+        19409.79149867362
+      ],
+      "parentDirection": [
+        -0.057507187751533205,
+        -0.9544271520248091,
+        -0.29285104547315866
+      ],
+      "distanceKm": 20725.631664110395,
+      "angularDiameter": 0.05848664984672064
+    },
+    {
+      "id": "pluto",
+      "date": "2026-09-30T20:43:07.932Z",
+      "tdbSeconds": 844073057.1143488,
+      "latitude": 18,
+      "longitude": 178,
+      "radiusKm": 1188.3,
+      "parentRadiusKm": 606,
+      "parentRelativeKm": [
+        8136.805261169217,
+        9815.843134337176,
+        14876.952330286236
+      ],
+      "parentDirection": [
+        -0.05766443764676093,
+        -0.9544533766952881,
+        -0.29273463127181487
+      ],
+      "distanceKm": 20723.879567642176,
+      "angularDiameter": 0.05849159599963773
+    },
+    {
+      "id": "pluto",
+      "date": "2026-10-01T15:52:50.016Z",
+      "tdbSeconds": 844142039.1983471,
+      "latitude": 18,
+      "longitude": 178,
+      "radiusKm": 1188.3,
+      "parentRadiusKm": 606,
+      "parentRelativeKm": [
+        14155.800180720553,
+        13447.942276333604,
+        1626.0892310509416
+      ],
+      "parentDirection": [
+        -0.05789576308538804,
+        -0.954678167283259,
+        -0.29195492379721616
+      ],
+      "distanceKm": 20724.057748672483,
+      "angularDiameter": 0.05849109295793898
+    },
+    {
+      "id": "pluto",
+      "date": "2026-10-02T11:02:32.100Z",
+      "tdbSeconds": 844211021.2823455,
+      "latitude": 18,
+      "longitude": 178,
+      "radiusKm": 1188.3,
+      "parentRadiusKm": 606,
+      "parentRelativeKm": [
+        11879.132567229337,
+        9199.17442065706,
+        -12577.887139538403
+      ],
+      "parentDirection": [
+        -0.058065497131647444,
+        -0.9549689017263655,
+        -0.29096871786911077
+      ],
+      "distanceKm": 20726.052835577208,
+      "angularDiameter": 0.05848546100809901
+    },
+    {
+      "id": "pluto",
+      "date": "2026-10-03T06:12:14.184Z",
+      "tdbSeconds": 844280003.3663446,
+      "latitude": 18,
+      "longitude": 178,
+      "radiusKm": 1188.3,
+      "parentRadiusKm": 606,
+      "parentRelativeKm": [
+        2642.3294004191216,
+        -439.5950553032618,
+        -19412.905049728033
+      ],
+      "parentDirection": [
+        -0.058075586493704486,
+        -0.9551553620706791,
+        -0.2903540262525083
+      ],
+      "distanceKm": 20728.690855469682,
+      "angularDiameter": 0.058478015781779684
+    },
+    {
+      "id": "pluto",
+      "date": "2026-10-04T01:21:56.268Z",
+      "tdbSeconds": 844348985.4503436,
+      "latitude": 18,
+      "longitude": 178,
+      "radiusKm": 1188.3,
+      "parentRadiusKm": 606,
+      "parentRelativeKm": [
+        -8142.456053824925,
+        -9821.242027751128,
+        -14877.805141512748
+      ],
+      "parentDirection": [
+        -0.05792048230634801,
+        -0.9551292554688318,
+        -0.2904708644200918
+      ],
+      "distanceKm": 20730.429967362918,
+      "angularDiameter": 0.05847310856080628
+    },
+    {
+      "id": "pluto",
+      "date": "2026-10-04T20:31:38.352Z",
+      "tdbSeconds": 844417967.5343431,
+      "latitude": 18,
+      "longitude": 178,
+      "radiusKm": 1188.3,
+      "parentRadiusKm": 606,
+      "parentRelativeKm": [
+        -14159.503182745846,
+        -13452.09348956461,
+        -1630.7456712364842
+      ],
+      "parentDirection": [
+        -0.05769018116575477,
+        -0.9549057571111484,
+        -0.2912504730177219
+      ],
+      "distanceKm": 20730.25641778923,
+      "angularDiameter": 0.058473598225540824
+    },
+    {
+      "id": "pluto",
+      "date": "2026-10-05T15:41:20.436Z",
+      "tdbSeconds": 844486949.618343,
+      "latitude": 18,
+      "longitude": 178,
+      "radiusKm": 1188.3,
+      "parentRadiusKm": 606,
+      "parentRelativeKm": [
+        -11885.444068856623,
+        -9206.090550591496,
+        12571.013489603649
+      ],
+      "parentDirection": [
+        -0.05751948897865337,
+        -0.9546148412516288,
+        -0.2922362285031795
+      ],
+      "distanceKm": 20728.272490043582,
+      "angularDiameter": 0.05847919639895454
+    },
+    {
+      "id": "pluto",
+      "date": "2026-10-06T10:51:02.520Z",
+      "tdbSeconds": 844555931.7023431,
+      "latitude": 18,
+      "longitude": 178,
+      "radiusKm": 1188.3,
+      "parentRadiusKm": 606,
+      "parentRelativeKm": [
+        -2650.5226967341755,
+        431.4893974073782,
+        19409.811896721127
+      ],
+      "parentDirection": [
+        -0.05750919544538177,
+        -0.9544270415713312,
+        -0.2928510111927588
+      ],
+      "distanceKm": 20725.63723432817,
+      "angularDiameter": 0.05848663412337899
+    },
+    {
+      "id": "pluto",
+      "date": "2026-10-07T06:00:44.604Z",
+      "tdbSeconds": 844624913.7863437,
+      "latitude": 18,
+      "longitude": 178,
+      "radiusKm": 1188.3,
+      "parentRadiusKm": 606,
+      "parentRelativeKm": [
+        8136.903973464329,
+        9815.921969410421,
+        14876.861335741167
+      ],
+      "parentDirection": [
+        -0.05766541927442338,
+        -0.9544533176395358,
+        -0.29273463045357073
+      ],
+      "distanceKm": 20723.890893576117,
+      "angularDiameter": 0.05849156402393901
+    },
+    {
+      "id": "pluto",
+      "date": "2026-10-08T01:10:26.688Z",
+      "tdbSeconds": 844693895.8703444,
+      "latitude": 18,
+      "longitude": 178,
+      "radiusKm": 1188.3,
+      "parentRadiusKm": 606,
+      "parentRelativeKm": [
+        14155.81783497076,
+        13447.93811836665,
+        1625.9465375745592
+      ],
+      "parentDirection": [
+        -0.057896191318311724,
+        -0.9546781395368036,
+        -0.2919549296062337
+      ],
+      "distanceKm": 20724.055772556814,
+      "angularDiameter": 0.05849109853687253
+    }
+  ]
+}

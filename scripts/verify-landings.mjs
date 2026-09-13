@@ -18,8 +18,8 @@ async function pixels(page,checkBrightness=true){
   return {data,lit,channels:info.channels};
 }
 try{
-  for(const [name,viewport] of [['desktop',{width:1440,height:900}],['phone',{width:390,height:844}],['short',{width:640,height:360}]]){
-    const context=await browser.newContext({viewport,deviceScaleFactor:1,reducedMotion:'reduce',acceptDownloads:true});
+  for(const [name,viewport] of [['desktop',{width:1440,height:900}],['phone',{width:390,height:844}],['tablet',{width:800,height:450}],['short',{width:640,height:360}]]){
+    const context=await browser.newContext({viewport,deviceScaleFactor:name==='phone'?3:name==='desktop'?1:2,reducedMotion:'reduce',acceptDownloads:true});
     const page=await context.newPage();
     const errors=[];
     page.on('pageerror',e=>errors.push(e.message));
@@ -27,18 +27,40 @@ try{
     page.on('response',r=>{if(r.url().startsWith(base)&&r.status()>=400)errors.push(`${r.status()} ${r.url()}`);});
     await page.goto(base+'/solar-system/',{waitUntil:'domcontentloaded'});
     await page.waitForFunction(()=>window.solarAtlas?.snapshot().ready&&document.getElementById('loading-screen').hidden,null,{timeout:90000});
-    for(const id of name==='short'?ids.filter(id=>['mars','mercury','titan'].includes(id)):ids){
+    for(const id of ids){
       await page.locator('#atlas-tab').click();
       await page.locator('#atlas-search').fill(id);
       await page.locator(`.atlas-item[data-body="${id}"]`).click();
       await page.waitForFunction(id=>window.solarAtlas.snapshot().selected===id&&!window.solarAtlas.snapshot().flight,id,{timeout:30000});
       await page.locator('#landing-button').click();
-      await page.waitForFunction(()=>document.querySelector('.surface-view')?.dataset.ready==='true',null,{timeout:90000});
+      try{await page.waitForFunction(()=>document.querySelector('.surface-view')?.dataset.ready==='true',null,{timeout:90000});}
+      catch(error){await writeFile(new URL('failure.json',output),JSON.stringify({name,id,errors,snapshot:await page.evaluate(()=>window.solarAtlas.snapshot()),message:await page.locator('.surface-view').textContent()},null,2));await page.screenshot({path:fileURLToPath(new URL('failure.png',output))});throw error;}
       await page.locator('.surface-time-toggle').click();
       await page.locator('.surface-pause').click();
       await page.locator('.surface-clock-close').click();
       await page.locator('.surface-daylight').click();
-      await page.waitForTimeout(300);
+      await page.waitForFunction(()=>!document.querySelector('.surface-daylight').disabled);
+      await page.waitForTimeout(200);
+      const physical=await page.evaluate(()=>window.solarAtlas.snapshot().surface);
+      assert.equal(physical.playing,false);
+      assert.equal(physical.magnification,1);
+      for(const zoom of [2,4,8,1]){
+        await page.locator('.surface-telescope').click();
+        const current=await page.evaluate(()=>window.solarAtlas.snapshot().surface);
+        assert.equal(current.magnification,zoom);assert.equal(current.cameraZoom,zoom);
+        assert.ok(Math.abs(current.fieldOfView-2*Math.atan(Math.tan(31*Math.PI/180)/zoom)*180/Math.PI)<1e-10);
+        assert.equal(current.date,physical.date);
+        assert.deepEqual(current.targets,physical.targets,'zoom must not change physical directions or sizes');
+        if(zoom===8&&['europa','mercury'].includes(id))await page.screenshot({path:fileURLToPath(new URL(`${name}-${id}-8x.png`,output)),animations:'disabled'});
+      }
+      const controls=await page.locator('.surface-view button').evaluateAll(buttons=>buttons.filter(b=>!b.disabled&&b.getClientRects().length&&getComputedStyle(b).visibility!=='hidden').map(b=>{
+        const r=b.getBoundingClientRect();return {name:b.getAttribute('aria-label')||b.textContent.trim(),width:r.width,height:r.height,x:r.x,y:r.y,right:r.right,bottom:r.bottom};
+      }));
+      for(const control of controls){assert.ok(control.width>=43.9&&control.height>=43.9,JSON.stringify(control));assert.ok(control.x>=0&&control.y>=0&&control.right<=viewport.width+.1&&control.bottom<=viewport.height+.1,JSON.stringify(control));}
+      for(let a=0;a<controls.length;a++)for(let b=a+1;b<controls.length;b++){
+        const x=controls[a],y=controls[b],dx=Math.max(x.x-y.right,y.x-x.right),dy=Math.max(x.y-y.bottom,y.y-x.bottom);
+        assert.ok(dx>=7.9||dy>=7.9,`Controls lack 8px gap: ${x.name} / ${y.name}`);
+      }
       const initial=await pixels(page);
       await page.screenshot({path:fileURLToPath(new URL(`${name}-${id}.png`,output)),animations:'disabled'});
       const bounds=await page.evaluate(()=>{
@@ -72,6 +94,7 @@ try{
       assert.ok((await page.locator('.surface-details').textContent()).includes(id==='mars'?'341':id==='mercury'?'176':'地表'));
       await page.screenshot({path:fileURLToPath(new URL(`${name}-${id}-info.png`,output)),animations:'disabled'});
       await page.locator('.surface-details-close').click();
+      assert.equal(await page.locator('.surface-info-button').evaluate(b=>document.activeElement===b),true);
       if(id==='mercury'&&name==='desktop'){
         const download=page.waitForEvent('download');
         await page.locator('.surface-photo').click();
@@ -80,11 +103,11 @@ try{
       await page.locator('.surface-exit').click();
       await page.waitForFunction(()=>!document.querySelector('.surface-view'),null,{timeout:10000});
       assert.equal(await page.evaluate(()=>window.solarAtlas.snapshot().selected),id);
-      report.push({viewport:name,id,litChannels:initial.lit,passed:true});
+      report.push({viewport:name,id,litChannels:initial.lit,physicalDate:physical.date,controls:controls.length,zoom:[1,2,4,8],passed:true});
       console.log(`${name}/${id}: passed`);
     }
     assert.deepEqual(errors,[]);
     await context.close();
   }
-  await writeFile(new URL('report.json',output),JSON.stringify({base,report},null,2));
+  await writeFile(new URL(process.env.ATLAS_REPORT||'report.json',output),JSON.stringify({base,report},null,2));
 }finally{await browser.close();}
