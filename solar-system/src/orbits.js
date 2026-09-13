@@ -90,9 +90,11 @@ export function updateSatelliteOrbits(objects, date, lockedId) {
     // Independent spin is updated separately. A synchronous moon points its
     // local +X toward its parent; all axes honor the fixed-rotation control.
     if (body.id !== lockedId && !ROTATION_PERIOD_DAYS[body.id]) body.mesh.rotation.set(0, Math.PI - angle, 0);
-    body.orbitLine.position.copy(center);
-    body.orbitLine.quaternion.copy(parent.tilted.quaternion);
-    body.orbitLine.scale.setScalar(radius / body.orbit);
+    if (body.orbitLine) {
+      body.orbitLine.position.copy(center);
+      body.orbitLine.quaternion.copy(parent.tilted.quaternion);
+      body.orbitLine.scale.setScalar(radius / body.orbit);
+    }
   }
 }
 

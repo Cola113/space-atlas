@@ -16,6 +16,8 @@ export interface Capabilities {
   maxTextureSize: number;
 }
 
+export const isSoftwareRenderer = (gpu: string) => /swiftshader|llvmpipe|software|microsoft basic render/i.test(gpu);
+
 export function detectCapabilities(gl: WebGL2RenderingContext): Capabilities {
   const debug = gl.getExtension('WEBGL_debug_renderer_info');
   return {
@@ -40,19 +42,28 @@ export class QualityController {
   readonly history: { at: number; quality: QualityName; fps: number }[] = [];
 
   constructor(readonly capabilities: Capabilities, readonly onChange: () => void) {
-    this.current = capabilities.mobile ? 'medium' : 'high';
+    this.current = this.initialQuality;
   }
+
+  private get initialQuality(): QualityName {
+    return isSoftwareRenderer(this.capabilities.gpu) ? 'low' : this.capabilities.mobile ? 'medium' : 'high';
+  }
+
+  get renderPixelLimit() { return this.mode === 'auto' && isSoftwareRenderer(this.capabilities.gpu) ? 160000 : Infinity; }
 
   setMode(mode: QualityMode) {
     this.mode = mode;
     this.slowWindows = this.fastWindows = 0;
     this.lastChange = performance.now();
-    if (mode !== 'auto') this.current = mode;
+    this.current = mode === 'auto' ? this.initialQuality : mode;
+    this.resetSampling();
     this.onChange();
   }
 
   sample(frameMs: number, now: number) {
-    if (frameMs <= 0 || frameMs > 250) return;
+    // Visibility, resize and capture reset their own sampling windows. Slow
+    // visible frames must count, otherwise a struggling device never adapts.
+    if (!Number.isFinite(frameMs) || frameMs <= 0) return;
     this.duration += frameMs;
     this.count++;
     if (this.duration < 2500) return;

@@ -9,6 +9,8 @@ const output = new URL('../test-results/', import.meta.url);
 await mkdir(output, { recursive: true });
 const browser = await chromium.launch({ channel: 'msedge', headless: true });
 const report = [];
+let currentPage, currentName, currentErrors;
+const events = [];
 const settle = page => page.waitForFunction(() => window.solarAtlas?.snapshot().ready || window.observatory?.getState().ready || window.orionAtlas?.snapshot().ready, null, { timeout: 90000 });
 async function screenshot(page, name) {
   await page.screenshot({ path: fileURLToPath(new URL(name + '.png', output)), animations: 'disabled' });
@@ -42,10 +44,15 @@ async function checkHeader(page) {
   return bounds;
 }
 try {
-  for (const [name, viewport] of [['desktop',{width:1920,height:1080}],['phone',{width:390,height:844}],['short',{width:800,height:450}],['compact',{width:640,height:360}]]) {
+  const viewports = [['desktop',{width:1920,height:1080}],['phone',{width:390,height:844}],['short',{width:800,height:450}],['compact',{width:640,height:360}]];
+  for (const [name, viewport] of viewports.filter(([name]) => !process.env.INTEGRATION_VIEWPORT || name === process.env.INTEGRATION_VIEWPORT)) {
     const context = await browser.newContext({ viewport, deviceScaleFactor:1, isMobile:name==='phone', hasTouch:name==='phone' });
     const page = await context.newPage();
     const errors = [], requests = [];
+    currentPage = page; currentName = name; currentErrors = errors;
+    page.on('console', message => { if (message.type() === 'error') events.push(message.text().slice(0, 3000)); });
+    page.on('crash', () => events.push('page crashed'));
+    page.on('requestfailed', request => events.push(`${request.failure()?.errorText}: ${request.url()}`));
     page.on('pageerror', error => errors.push(error.message));
     page.on('response', response => { if (response.url().startsWith(base) && response.status() >= 400) errors.push(`${response.status()} ${response.url()}`); });
     page.on('request', request => requests.push(request.url()));
@@ -73,6 +80,8 @@ try {
     assert.ok(before.some((value,index) => Math.abs(value-after[index]) > 3), 'Black hole is not changing');
     await page.evaluate(() => { window.observatory.setPaused(true); window.observatory.setView('edge', true); });
     const hole = await page.evaluate(() => window.observatory.getState());
+    if (/swiftshader|llvmpipe|software|microsoft basic render/i.test(hole.capabilities.gpu) && hole.qualityMode === 'auto')
+      assert.ok(hole.resolution[0] * hole.resolution[1] <= 160000, 'software rendering exceeded its automatic pixel budget');
     await switchScene(page, 'solar-system');
     const returned = await page.evaluate(() => window.solarAtlas.snapshot());
     assert.equal(returned.selected, 'saturn');
@@ -111,7 +120,9 @@ try {
       assert.ok(Math.abs(nebulaRestored.pose[key][index]-value)<1e-8, 'Nebula camera was not restored');
     });
     assert.deepEqual(errors, []);
+    assert.ok(!requests.some(url => /^https?:/.test(url) && new URL(url).origin !== new URL(base).origin), 'scene boot or navigation requested an external service');
     report.push({name, viewport, passed:true, solarBodies:returned.bodies.length, browserErrors:errors});
+    await writeFile(new URL(`integration-${name}.json`, output), JSON.stringify({ base, report: report.at(-1), blackHole: hole }, null, 2));
     console.log(`${name}: passed`);
     await context.close();
   }
@@ -124,4 +135,16 @@ try {
   assert.ok(!requests.some(url => /(?:\/solar-system\/src\/|\/assets\/solar-system-)/.test(url)), 'Inactive solar engine was loaded');
   await context.close();
   await writeFile(new URL('integration.json', output), JSON.stringify({ base, report }, null, 2));
+} catch (error) {
+  const state = await currentPage?.evaluate(() => {
+    const button = document.getElementById('scene-switcher');
+    const box = button?.getBoundingClientRect();
+    const hit = box ? document.elementFromPoint(box.x + box.width / 2, box.y + box.height / 2) : null;
+    return { url: location.href, visibility: document.visibilityState, ready: document.documentElement.dataset.sceneReady,
+      text: document.body.innerText, switcher: button?.outerHTML, hit: hit?.outerHTML,
+      solar: window.solarAtlas?.snapshot(), blackHole: window.observatory?.getState(), orion: window.orionAtlas?.snapshot() };
+  }).catch(() => null);
+  await writeFile(new URL('integration-failure.json', output), JSON.stringify({ name: currentName, error: String(error), errors: currentErrors, events, state }, null, 2));
+  await currentPage?.screenshot({ path: fileURLToPath(new URL('integration-failure.png', output)) }).catch(() => {});
+  throw error;
 } finally { await browser.close(); }

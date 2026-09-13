@@ -29,7 +29,7 @@ export class CaptureController {
     camera.updateMatrixWorld();
     const destination = new WebGLRenderTarget(width, height, { type: UnsignedByteType, depthBuffer: false, stencilBuffer: false });
     const pixels = new Uint8Array(width * height * 4);
-    const old = { width: this.pipeline.width, height: this.pipeline.height, quality: this.pipeline.quality, pixelRatio: this.pipeline.renderer.getPixelRatio() };
+    const old = { width: this.pipeline.width, height: this.pipeline.height, quality: this.pipeline.quality, pixelRatio: this.pipeline.renderer.getPixelRatio(), maxRenderPixels: this.pipeline.maxRenderPixels };
     try {
       this.pipeline.resize(width, height, quality, 1);
       // Warm newly allocated HDR and postprocess attachments at this exact timestamp.
@@ -39,7 +39,7 @@ export class CaptureController {
       this.pipeline.renderer.readRenderTargetPixels(destination, 0, 0, width, height, pixels);
     } finally {
       destination.dispose();
-      this.pipeline.resize(old.width, old.height, old.quality, old.pixelRatio);
+      this.pipeline.resize(old.width, old.height, old.quality, old.pixelRatio, old.maxRenderPixels);
       this.restore();
     }
     const imageData = new ImageData(width, height);

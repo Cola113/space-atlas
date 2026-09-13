@@ -49,6 +49,8 @@ import { createBodyGeometry, createNarrowRing } from './body-geometry.js';
 import { createObservedClouds } from "./observed-clouds.js";
 import { alignObservedEarth, subsolarPoint } from "./earth-observation.js";
 import { createStarfield } from "./starfield.js";
+import { FrameWorkQueue } from './resource-queue.js';
+import { createTextureResources, firstScreenTextures, firstScreenIds, textureRoot } from './texture-resources.js';
 import { simulationElapsed, simulationRates, defaultSimulationRate, restoreSimulationRate,
   defaultSimulationDate, restoreSimulationDate, formatSimulationRate, simulationRateEquivalent } from "./simulation-time.js";
 
@@ -104,6 +106,18 @@ const objects = new Map();
 const highTextures = new Map();
 const highInFlight = new Map();
 const failedTextures = new Set();
+const textureResources = createTextureResources(configureTexture);
+const frameWork = new FrameWorkQueue();
+const textureFailures = new Map();
+const baseJobs = new Map();
+const textureMap = new Map();
+const uploadJobs = new Map();
+const detailSphere = new THREE.SphereGeometry(1, 112, 80);
+let thumbnailObserver;
+let backgroundStarted = false;
+let firstFrameAt = null;
+let interactiveAt = null;
+let renderedFrames = 0;
 let scene,
   camera,
   renderer,
@@ -213,6 +227,10 @@ function disposeScene() {
   if (disposed) return;
   disposed = true;
   contextLost = true;
+  thumbnailObserver?.disconnect();
+  frameWork.dispose();
+  textureResources.dispose();
+  detailSphere.dispose();
   surfaceView?.dispose();
   observedClouds?.dispose();
   starfield?.dispose();
@@ -228,12 +246,27 @@ function disposeScene() {
     }
   });
   for (const texture of textures) texture.dispose();
+  for (const geometry of new Set([...objects.values()].map(body => body.placeholderGeometry))) geometry.dispose();
   renderer?.dispose();
   renderer?.forceContextLoss();
 }
 
 function thumb(body) {
-  return `<span class="planet-thumb ${body.id}" style="--body-color:${body.color};--texture:url('/solar-system/textures/${body.baseTexture || `2k_${body.texture}.jpg`}')" aria-hidden="true"></span>`;
+  return `<span class="planet-thumb ${body.id}" data-thumbnail="${body.id}" style="--body-color:${body.color}" aria-hidden="true"></span>`;
+}
+
+function startThumbnails() {
+  thumbnailObserver = new IntersectionObserver(entries => {
+    for (const entry of entries) {
+      if (!entry.isIntersecting) continue;
+      const element = entry.target;
+      thumbnailObserver.unobserve(element);
+      void textureResources.thumbnail(element.dataset.thumbnail).then(url => {
+        if (!disposed) element.style.setProperty('--texture', `url("${url}")`);
+      }).catch(() => { /* The named, coloured navigation button remains usable. */ });
+    }
+  }, { rootMargin: '0px' });
+  document.querySelectorAll('[data-thumbnail]').forEach(element => thumbnailObserver.observe(element));
 }
 
 function makeNavigation() {
@@ -398,37 +431,212 @@ function configureTexture(texture, color = true, longitude = true) {
 }
 
 async function loadBaseTextures() {
-  const names = [
-    ...new Set([
-      ...bodies.map((body) => body.baseTexture || `2k_${body.texture}.jpg`),
-      "2k_earth_clouds.jpg",
-      "2k_venus_surface.jpg",
-      "2k_saturn_ring_alpha.png",
-      "earth_night_2016.jpg",
-      "2k_titan-haze.png",
-    ]),
-  ];
   let loaded = 0;
-  const loader = new THREE.TextureLoader();
-  const textureMap = new Map();
-  await Promise.all(
-    names.map(async (name) => {
-      try {
-        const texture = await loader.loadAsync(`/solar-system/textures/${name}`);
-        textureMap.set(
-          name,
-          configureTexture(texture, true, name !== "2k_saturn_ring_alpha.png"),
-        );
-      } catch {
-        failedTextures.add(name);
-      } finally {
-        loaded++;
-        $("loading-progress").style.width = `${(loaded / names.length) * 100}%`;
-        $("loading-text").textContent = `${loaded} / ${names.length}`;
-      }
-    }),
-  );
+  await Promise.all(firstScreenTextures.map(async item => {
+    const retry = () => loadPreview(item);
+    try { await retry(); }
+    catch { recordTextureFailure(item.file, retry); }
+    finally {
+      loaded++;
+      $('loading-progress').style.width = `${loaded / firstScreenTextures.length * 100}%`;
+      $('loading-text').textContent = `首屏纹理 ${loaded} / ${firstScreenTextures.length}`;
+    }
+  }));
   return textureMap;
+}
+
+async function loadPreview(item) {
+  const texture = await textureResources.texture(textureRoot + item.file,
+    { priority: 100, timeout: 8000, longitude: item.id !== 'saturn-ring', preempt: state.ready });
+  if (disposed) return;
+  // A slow retry must never replace a full-resolution map already in use.
+  if ((textureMap.get(item.key)?.image?.width || 0) <= texture.image.width) {
+    textureMap.set(item.key, texture);
+    if (state.ready) void queueTextureUpload(item.key, texture, 100).catch(() => {});
+  }
+  clearTextureFailure(item.file);
+}
+
+function recordTextureFailure(key, retry) {
+  if (disposed) return;
+  failedTextures.add(key);
+  textureFailures.set(key, retry);
+  updateResourceStatus();
+}
+
+function clearTextureFailure(key) {
+  failedTextures.delete(key);
+  textureFailures.delete(key);
+  updateResourceStatus();
+}
+
+function updateResourceStatus() {
+  const body = objects.get(state.selected);
+  if (body) {
+    const pending = !body.detailReady || baseJobs.has(body.id) || highInFlight.has(body.id);
+    $('planet-english').textContent = body.english + (pending ? ' · 细节加载中' : '');
+  }
+  const wasFocused = document.activeElement === $('resource-retry');
+  $('resource-status').hidden = !state.ready || !textureFailures.size;
+  $('resource-message').textContent = `${textureFailures.size} 项纹理未加载，可继续观测。`;
+  $('resource-retry').hidden = !textureFailures.size;
+  $('app').classList.toggle('has-resource-notice', !$('resource-status').hidden);
+  if (wasFocused && $('resource-status').hidden)
+    document.querySelector(`.planet-choice[data-body="${state.selected || 'sun'}"]`)?.focus({ preventScroll: true });
+  if (body) updateResolution(body);
+}
+
+const baseKey = body => body.baseTexture || `2k_${body.texture}.jpg`;
+function bodiesForTexture(key) {
+  if (key === '2k_earth_clouds.jpg' || key === 'earth_night_2016.jpg') return [objects.get('earth')];
+  if (key === '2k_venus_surface.jpg') return [objects.get('venus')];
+  if (key === '2k_saturn_ring_alpha.png') return [objects.get('saturn')];
+  if (key === '2k_titan-haze.png') return [objects.get('titan')];
+  return [...objects.values()].filter(body => baseKey(body) === key);
+}
+
+function usefulToUpload(body) {
+  if (!body) return false;
+  if (body.id === state.selected || (state.system && body.parent === state.selected)) return true;
+  const projected = projectBody(body);
+  return projected.onScreen && !projected.occluded && projected.radius >= 2;
+}
+
+function applyTexture(key, texture) {
+  const preview = firstScreenTextures.find(item => item.key === key);
+  if (preview && texture.image.width >= (preview.id === 'earth-clouds' || preview.id === 'saturn-ring' ? 512 : 768))
+    clearTextureFailure(preview.file);
+  for (const body of bodiesForTexture(key)) {
+    if (baseKey(body) === key) {
+      body.lowMap = texture;
+      if (!highTextures.has(body.id) || (body.id === 'venus' && body.layerVisible)) {
+        if (body.id !== 'venus' || body.layerVisible) body.mesh.material.map = texture;
+      }
+      body.mesh.material.color.set('#ffffff');
+      if (['mercury', 'mars'].includes(body.id)) body.mesh.material.bumpMap = body.mesh.material.map;
+      body.mesh.material.needsUpdate = true;
+    }
+    if (key === '2k_venus_surface.jpg') {
+      body.surfaceMap = texture;
+      if (!body.layerVisible && !highTextures.has(body.id)) {
+        body.mesh.material.map = texture; body.mesh.material.needsUpdate = true;
+      }
+    }
+    if (key === 'earth_night_2016.jpg') body.nightMap = texture;
+    if (key === '2k_earth_clouds.jpg' && body.clouds) {
+      body.clouds.material.map = body.clouds.material.alphaMap = texture;
+      body.clouds.material.needsUpdate = true;
+    }
+    if (key === '2k_titan-haze.png' && body.clouds) {
+      body.clouds.material.map = texture; body.clouds.material.needsUpdate = true;
+    }
+    if (key === '2k_saturn_ring_alpha.png' && body.ring) {
+      body.ring.material.map = texture; body.ring.material.needsUpdate = true;
+    }
+    dynamics?.refreshTextures(body.id);
+  }
+  updateResourceStatus();
+}
+
+function queueTextureUpload(key, texture, priority = 0) {
+  const id = `upload:${key}`;
+  if (uploadJobs.get(key)?.texture === texture) {
+    frameWork.reprioritize(id, priority);
+    return uploadJobs.get(key).promise;
+  }
+  const promise = frameWork.run(id, () => {
+    // Always apply the newest decoded map if multiple requests shared a key.
+    const current = textureMap.get(key) || texture;
+    renderer.initTexture(current);
+    applyTexture(key, current);
+  }, { priority, visible: () => bodiesForTexture(key).some(usefulToUpload) });
+  uploadJobs.set(key, { texture, promise });
+  return promise;
+}
+
+async function requestBaseTexture(key, priority = 0, preempt = false) {
+  const retry = () => requestBaseTexture(key, 100, true);
+  try {
+    const texture = await textureResources.texture(textureRoot + key,
+      { priority, timeout: 60000, longitude: key !== '2k_saturn_ring_alpha.png', preempt });
+    if (disposed) return;
+    textureMap.set(key, texture);
+    clearTextureFailure(key);
+    // Download completion and GPU upload have separate lifetimes. Invisible
+    // bodies keep their decoded map in CPU memory until it can be seen.
+    void queueTextureUpload(key, texture, priority).catch(() => {});
+    return texture;
+  } catch {
+    recordTextureFailure(key, retry);
+  }
+}
+
+function prepareBody(body, priority = 0) {
+  if (body.detailReady) return Promise.resolve();
+  return frameWork.run(`body:${body.id}`, () => {
+    const oldGeometry = body.mesh.geometry;
+    body.mesh.geometry = createBodyGeometry(body, detailSphere);
+    if (oldGeometry !== body.placeholderGeometry) oldGeometry.dispose();
+    attachBodyDetails(body, textureMap);
+    if (body.parent && body.orbitLine) {
+      const parent = objects.get(body.parent);
+      const center = body.orbitFrame === 'barycenter' ? parent.orbitCenter : parent.root.position;
+      body.orbitLine.position.copy(center);
+      body.orbitLine.quaternion.copy(parent.tilted.quaternion);
+      body.orbitLine.scale.setScalar(body.root.position.distanceTo(center) / body.orbit);
+    }
+    dynamics.activate(body.id);
+    body.detailReady = true;
+    updateResourceStatus();
+  }, { priority });
+}
+
+function requestBody(body, priority = 0) {
+  void prepareBody(body, priority).catch(() => {});
+  const key = baseKey(body);
+  textureResources.queue.reprioritize(textureRoot + key, priority);
+  frameWork.reprioritize(`upload:${key}`, priority);
+  if (baseJobs.has(body.id)) return baseJobs.get(body.id);
+  const promise = requestBaseTexture(key, priority).finally(() => {
+    baseJobs.delete(body.id); updateResourceStatus();
+  });
+  baseJobs.set(body.id, promise);
+  return promise;
+}
+
+function prioritizeObservation(body) {
+  const family = familyOf(body);
+  const members = family ? systemMembers(family.id).map(item => objects.get(item.id)) : [body];
+  textureResources.queue.setPaused(true);
+  for (const item of objects.values()) {
+    const priority = item.id === body.id ? 90 : members.includes(item) ? 60 : 0;
+    for (const key of [baseKey(item), item.high].filter(Boolean)) textureResources.queue.reprioritize(textureRoot + key, priority);
+    frameWork.reprioritize(`body:${item.id}`, priority);
+    frameWork.reprioritize(`upload:${baseKey(item)}`, priority);
+    frameWork.reprioritize(`high:${item.id}`, priority);
+  }
+  void requestBody(body, 90);
+  for (const member of members) if (member !== body) void requestBody(member, 60);
+  for (const key of body.id === 'earth' ? ['2k_earth_clouds.jpg', 'earth_night_2016.jpg']
+    : body.id === 'saturn' ? ['2k_saturn_ring_alpha.png']
+      : body.id === 'titan' ? ['2k_titan-haze.png'] : []) void requestBaseTexture(key, 75);
+  textureResources.queue.setPaused(document.hidden);
+  updateResourceStatus();
+}
+
+function startBackgroundResources() {
+  if (backgroundStarted || disposed) return;
+  backgroundStarted = true;
+  const selected = objects.get(state.selected);
+  if (selected) { prioritizeObservation(selected); loadHighTexture(selected); }
+  startThumbnails();
+  const family = familyOf(selected);
+  const related = new Set(family ? systemMembers(family.id).map(body => body.id) : []);
+  for (const body of objects.values()) void requestBody(body, body.id === state.selected ? 90 : related.has(body.id) ? 60 : 0);
+  for (const key of ['2k_earth_clouds.jpg', 'earth_night_2016.jpg', '2k_saturn_ring_alpha.png', '2k_titan-haze.png'])
+    void requestBaseTexture(key, -5);
+  starfield.loadBackground();
+  observedClouds.startBackground();
 }
 
 function addAtmosphere(group, radius, color, strength = 0.5) {
@@ -469,7 +677,7 @@ function addAtmosphere(group, radius, color, strength = 0.5) {
 }
 
 function createStars() {
-  starfield = createStarfield(renderer);
+  starfield = createStarfield(renderer, { resources: textureResources, frameWork, autoStart: false });
   scene.add(starfield.group);
   let seed = 7813;
   const random = () => {
@@ -508,7 +716,7 @@ function createStars() {
 }
 
 function createBodies(textures) {
-  const sphere = new THREE.SphereGeometry(1, 112, 80);
+  const sphere = new THREE.SphereGeometry(1, 24, 16);
   for (const body of bodies) {
     const root = new THREE.Group();
     const tilted = new THREE.Group();
@@ -539,125 +747,121 @@ function createBodies(textures) {
       body.id === "earth" ? 3.3 : body.id === "jupiter" ? -1.0 : 0;
     mesh.userData.bodyId = body.id;
     tilted.add(mesh);
-    let clouds = null,
-      ring = null;
-    if (body.id === "earth") {
-      clouds = new THREE.Mesh(
-        sphere,
-        new THREE.MeshStandardMaterial({
-          map: textures.get("2k_earth_clouds.jpg"),
-          alphaMap: textures.get("2k_earth_clouds.jpg"),
-          transparent: true,
-          opacity: 0.72,
-          depthWrite: false,
-          roughness: 1,
-        }),
-      );
-      clouds.scale.setScalar(body.radius * 1.012);
-      clouds.rotation.y = mesh.rotation.y;
-      tilted.add(clouds);
-      addAtmosphere(tilted, body.radius, "#489dd8", 0.74);
-    }
-    if (body.id === "titan") {
-      clouds = new THREE.Mesh(
-        sphere,
-        new THREE.MeshStandardMaterial({
-          map: textures.get("2k_titan-haze.png"),
-          transparent: true,
-          opacity: 0.3,
-          depthWrite: false,
-          roughness: 1,
-        }),
-      );
-      clouds.scale.setScalar(body.radius * 1.028);
-      tilted.add(clouds);
-    }
-    if (body.id === "sun") {
-      const corona = new THREE.Mesh(
-        new THREE.SphereGeometry(body.radius * 1.13, 64, 48),
-        new THREE.ShaderMaterial({
-          vertexShader: `varying vec3 vN; varying vec3 vV; void main(){vec4 p=modelViewMatrix*vec4(position,1.0);vN=normalize(normalMatrix*normal);vV=normalize(-p.xyz);gl_Position=projectionMatrix*p;}`,
-          fragmentShader: `varying vec3 vN; varying vec3 vV; void main(){float f=abs(dot(normalize(vN),normalize(vV)));float a=pow(f,2.0)*.32;gl_FragColor=vec4(1.0,.18,.012,a);}`,
-          transparent: true,
-          blending: THREE.AdditiveBlending,
-          depthWrite: false,
-          side: THREE.BackSide,
-        }),
-      );
-      tilted.add(corona);
-    }
-    if (["venus", "uranus", "neptune", "titan"].includes(body.id))
-      addAtmosphere(tilted, body.radius, body.color, 0.23);
-    if (body.id === "saturn") {
-      const geometry = new THREE.RingGeometry(
-        body.radius * 1.28,
-        body.radius * 2.35,
-        192,
-        1,
-      );
-      const positions = geometry.attributes.position;
-      const uv = geometry.attributes.uv;
-      for (let index = 0; index < positions.count; index++) {
-        scratch.fromBufferAttribute(positions, index);
-        uv.setXY(
-          index,
-          (scratch.length() - body.radius * 1.28) / (body.radius * 1.07),
-          0.5,
-        );
-      }
-      ring = new THREE.Mesh(
-        geometry,
-        new THREE.MeshStandardMaterial({
-          map: textures.get("2k_saturn_ring_alpha.png"),
-          transparent: true,
-          side: THREE.DoubleSide,
-          roughness: 1,
-          depthWrite: false,
-          opacity: 0.95,
-        }),
-      );
-      ring.rotation.x = -Math.PI / 2;
-      ring.userData.bodyId = body.id;
-      tilted.add(ring);
-    } else if (body.rings) {
-      ring = createNarrowRing(body);
-      tilted.add(ring);
-    }
-    let orbitLine = null;
-    if (body.orbit) {
-      const points = [];
-      for (let index = 0; index < 256; index++) {
-        const angle = (index / 256) * Math.PI * 2;
-        points.push(orbitPoint(body, angle));
-      }
-      orbitLine = new THREE.LineLoop(
-        new THREE.BufferGeometry().setFromPoints(points),
-        new THREE.LineBasicMaterial({
-          color: "#7e9f92",
-          transparent: true,
-          opacity: body.parent ? 0.28 : 0.17,
-        }),
-      );
-      scene.add(orbitLine);
-    }
     scene.add(root);
     objects.set(body.id, {
-      ...body,
-      root,
-      tilted,
-      mesh,
-      clouds,
-      ring,
-      orbitLine,
-      orbitCenter: new THREE.Vector3(),
-      lowMap: map,
-      nightMap:
-        body.id === "earth" ? textures.get("earth_night_2016.jpg") : null,
-      surfaceMap: textures.get("2k_venus_surface.jpg"),
-      layerVisible: true,
+      ...body, root, tilted, mesh, clouds: null, ring: null, orbitLine: null,
+      orbitCenter: new THREE.Vector3(), lowMap: map, nightMap: null, surfaceMap: null,
+      layerVisible: true, detailReady: false, placeholderGeometry: sphere,
       label: document.querySelector(`[data-label="${body.id}"]`),
     });
   }
+}
+
+function attachBodyDetails(body, textures) {
+  const { root, tilted, mesh } = body;
+  const sphere = detailSphere;
+  let clouds = null,
+    ring = null;
+  if (body.id === "earth") {
+    clouds = new THREE.Mesh(
+      sphere,
+      new THREE.MeshStandardMaterial({
+        map: textures.get("2k_earth_clouds.jpg"),
+        alphaMap: textures.get("2k_earth_clouds.jpg"),
+        transparent: true,
+        opacity: 0.72,
+        depthWrite: false,
+        roughness: 1,
+      }),
+    );
+    clouds.scale.setScalar(body.radius * 1.012);
+    clouds.rotation.y = mesh.rotation.y;
+    tilted.add(clouds);
+    addAtmosphere(tilted, body.radius, "#489dd8", 0.74);
+  }
+  if (body.id === "titan") {
+    clouds = new THREE.Mesh(
+      sphere,
+      new THREE.MeshStandardMaterial({
+        map: textures.get("2k_titan-haze.png"),
+        transparent: true,
+        opacity: 0.3,
+        depthWrite: false,
+        roughness: 1,
+      }),
+    );
+    clouds.scale.setScalar(body.radius * 1.028);
+    tilted.add(clouds);
+  }
+  if (body.id === "sun") {
+    const corona = new THREE.Mesh(
+      new THREE.SphereGeometry(body.radius * 1.13, 64, 48),
+      new THREE.ShaderMaterial({
+        vertexShader: `varying vec3 vN; varying vec3 vV; void main(){vec4 p=modelViewMatrix*vec4(position,1.0);vN=normalize(normalMatrix*normal);vV=normalize(-p.xyz);gl_Position=projectionMatrix*p;}`,
+        fragmentShader: `varying vec3 vN; varying vec3 vV; void main(){float f=abs(dot(normalize(vN),normalize(vV)));float a=pow(f,2.0)*.32;gl_FragColor=vec4(1.0,.18,.012,a);}`,
+        transparent: true,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false,
+        side: THREE.BackSide,
+      }),
+    );
+    tilted.add(corona);
+  }
+  if (["venus", "uranus", "neptune", "titan"].includes(body.id))
+    addAtmosphere(tilted, body.radius, body.color, 0.23);
+  if (body.id === "saturn") {
+    const geometry = new THREE.RingGeometry(
+      body.radius * 1.28,
+      body.radius * 2.35,
+      192,
+      1,
+    );
+    const positions = geometry.attributes.position;
+    const uv = geometry.attributes.uv;
+    for (let index = 0; index < positions.count; index++) {
+      scratch.fromBufferAttribute(positions, index);
+      uv.setXY(
+        index,
+        (scratch.length() - body.radius * 1.28) / (body.radius * 1.07),
+        0.5,
+      );
+    }
+    ring = new THREE.Mesh(
+      geometry,
+      new THREE.MeshStandardMaterial({
+        map: textures.get("2k_saturn_ring_alpha.png"),
+        transparent: true,
+        side: THREE.DoubleSide,
+        roughness: 1,
+        depthWrite: false,
+        opacity: 0.95,
+      }),
+    );
+    ring.rotation.x = -Math.PI / 2;
+    ring.userData.bodyId = body.id;
+    tilted.add(ring);
+  } else if (body.rings) {
+    ring = createNarrowRing(body);
+    tilted.add(ring);
+  }
+  let orbitLine = null;
+  if (body.orbit) {
+    const points = [];
+    for (let index = 0; index < 256; index++) {
+      const angle = (index / 256) * Math.PI * 2;
+      points.push(orbitPoint(body, angle));
+    }
+    orbitLine = new THREE.LineLoop(
+      new THREE.BufferGeometry().setFromPoints(points),
+      new THREE.LineBasicMaterial({
+        color: "#7e9f92",
+        transparent: true,
+        opacity: body.parent ? 0.28 : 0.17,
+      }),
+    );
+    scene.add(orbitLine);
+  }
+  Object.assign(body, { clouds, ring, orbitLine });
 }
 
 function updatePositions() {
@@ -1061,27 +1265,27 @@ function updateResolution(body) {
       ? body.lowMap
       : body.mesh.material.map;
   const pixels = map?.image?.width;
-  $("resolution-status").textContent = pixels
+  $("resolution-status").textContent = (!body.detailReady || baseJobs.has(body.id) || highInFlight.has(body.id))
+    ? `${pixels ? '预览可用' : '基础色预览'} · 正在加载细节`
+    : pixels
     ? `${(pixels / 1024).toFixed(pixels % 1024 ? 1 : 0)}K ${body.id === "venus" && !body.layerVisible ? "雷达地表" : "星球纹理"}`
     : "纹理暂不可用";
 }
 
-async function loadHighTexture(body) {
+async function loadHighTexture(body, retry = false) {
   if (!body.high) return;
   if (highTextures.has(body.id)) {
-    applyHighTexture(body);
+    queueHighTexture(body, highTextures.get(body.id));
     return;
   }
   if (highInFlight.has(body.id)) return highInFlight.get(body.id);
-  if (state.selected === body.id)
-    $("resolution-status").textContent = "高清纹理加载中";
   const promise = (async () => {
     try {
-      const loaded = await new THREE.TextureLoader().loadAsync(
-        `/solar-system/textures/${body.high}`,
-      );
-      highTextures.set(body.id, configureTexture(loaded));
-      applyHighTexture(body);
+      const loaded = await textureResources.texture(textureRoot + body.high, { priority: retry ? 100 : 85, timeout: 30000, preempt: retry });
+      if (disposed) return;
+      highTextures.set(body.id, loaded);
+      clearTextureFailure(body.high);
+      queueHighTexture(body, loaded);
       // Keep at most three large GPU maps resident; base maps remain available for every planet.
       while (highTextures.size > 3) {
         const oldest = [...highTextures.keys()].find(
@@ -1098,23 +1302,34 @@ async function loadHighTexture(body) {
           oldBody.mesh.material.bumpMap = oldBody.lowMap;
         oldBody.mesh.material.needsUpdate = true;
         highTextures.delete(oldest);
-        oldMap.dispose();
+        textureResources.release(textureRoot + oldBody.high, oldMap);
       }
     } catch {
-      if (state.selected === body.id)
-        toast("高清纹理暂未加载，当前显示基础纹理。");
+      recordTextureFailure(body.high, () => loadHighTexture(body, true));
     } finally {
       highInFlight.delete(body.id);
-      if (state.selected === body.id) updateResolution(body);
+      updateResourceStatus();
     }
   })();
   highInFlight.set(body.id, promise);
+  updateResourceStatus();
   return promise;
+}
+
+function queueHighTexture(body, texture) {
+  void frameWork.run(`high:${body.id}`, () => {
+    const current = highTextures.get(body.id);
+    if (!current) return;
+    renderer.initTexture(current);
+    applyHighTexture(body);
+  }, { priority: body.id === state.selected ? 85 : 0,
+    visible: () => highTextures.get(body.id) !== texture || usefulToUpload(body) }).catch(() => {});
 }
 
 function applyHighTexture(body) {
   if (body.id !== "venus" || !body.layerVisible) {
     body.mesh.material.map = highTextures.get(body.id);
+    body.mesh.material.color.set('#ffffff');
     if (body.mesh.material.bumpMap)
       body.mesh.material.bumpMap = body.mesh.material.map;
     body.mesh.material.needsUpdate = true;
@@ -1128,6 +1343,7 @@ function setLayer(visible) {
   body.layerVisible = visible;
   if (body.clouds) body.clouds.visible = visible;
   if (body.id === "venus") {
+    if (!visible && !body.surfaceMap) void requestBaseTexture('2k_venus_surface.jpg', 90);
     body.mesh.material.map = visible
       ? body.lowMap
       : highTextures.get(body.id) || body.surfaceMap;
@@ -1205,7 +1421,7 @@ function selectBody(id) {
   flyTo(body.root.position, arrivalOffset(body));
   setLayer(body.layerVisible);
   updateResolution(body);
-  loadHighTexture(body);
+  if (firstFrameAt !== null) { prioritizeObservation(body); loadHighTexture(body); }
 }
 
 function goOverview() {
@@ -1262,6 +1478,7 @@ function toggleClose() {
     950,
     "zoom",
   );
+  prioritizeObservation(body);
   loadHighTexture(body);
 }
 
@@ -1415,6 +1632,7 @@ function selectLandmark(id) {
   updateActivityUi();
   updateObservationTools();
   flyTo(body.root.position, currentFocusOffset(body), 1100);
+  prioritizeObservation(body);
   loadHighTexture(body);
 }
 
@@ -1994,7 +2212,17 @@ function animate(now) {
   dynamics.updateLighting(state);
   camera.updateMatrixWorld();
   starfield.update({ camera, date: state.date, dt, brightOccupancy: brightSkyOccupancy() });
+  frameWork.drainOne();
   renderer.render(scene, camera);
+  renderedFrames++;
+  if (firstFrameAt === null) {
+    firstFrameAt = performance.now();
+    // Interaction handlers and session restoration are already active. Remove
+    // the cover only after a real scene frame, then admit background requests.
+    $('loading-screen').hidden = true;
+    document.documentElement.dataset.sceneReady = 'true';
+    interactiveAt = performance.now();
+  } else if (renderedFrames === 3) startBackgroundResources();
   updateLabels();
   const reserved = [
     $("planet-info"),
@@ -2069,11 +2297,32 @@ async function init() {
     scene.add(keyLight, keyLight.target, fillLight, fillLight.target);
     createStars();
     const textures = await loadBaseTextures();
+    let preparedCount = 0;
+    const preparationCount = new Set(textures.values()).size + firstScreenIds.size;
+    const preparationProgress = () => {
+      $('loading-progress').style.width = `${preparedCount / preparationCount * 100}%`;
+      $('loading-text').textContent = `准备首屏画面 ${preparedCount} / ${preparationCount}`;
+    };
+    preparationProgress();
+    for (const texture of new Set(textures.values())) {
+      await new Promise(resolve => requestAnimationFrame(() => { renderer.initTexture(texture); resolve(); }));
+      preparedCount++; preparationProgress();
+    }
     createBodies(textures);
-    dynamics = createDynamics(objects);
+    dynamics = createDynamics(objects, { defer: true });
+    // Prepare one main body per frame; secondary bodies retain small meshes.
+    for (const id of firstScreenIds) {
+      const prepared = prepareBody(objects.get(id), 100);
+      await new Promise(resolve => requestAnimationFrame(() => { frameWork.drainOne(); resolve(); }));
+      await prepared;
+      preparedCount++; preparationProgress();
+    }
+    textureResources.queue.setConcurrency(2);
     landmarkView = createLandmarks(objects, camera, selectLandmark);
     observedClouds = createObservedClouds({ dynamics, reducedMotion,
-      initialEnabled: state.observedEarth, autoStart: !window.__promoOffline,
+      initialEnabled: state.observedEarth, autoStart: !window.__promoOffline, deferStart: true,
+      resourceQueue: textureResources.queue,
+      prepareTexture: texture => frameWork.run('observed-cloud-upload', () => renderer.initTexture(texture), { priority: 75 }),
       isPaused: () => !state.playing || state.atlas || $("credits-dialog").open,
       onChange: changeCloudMode });
     updatePositions();
@@ -2085,24 +2334,27 @@ async function init() {
     state.date = epochDate.getTime();
     restoreObservation();
     updateTimeRateUi();
-    document.documentElement.dataset.sceneReady = "true";
     rememberScene("solar-system", saveObservation);
     window.addEventListener("pagehide", disposeScene);
     window.addEventListener("pageshow", event => { if (event.persisted && disposed) location.reload(); });
-    $("loading-screen").style.opacity = "0";
-    setTimeout(
-      () => {
-        $("loading-screen").hidden = true;
-      },
-      reducedMotion ? 0 : 650,
-    );
-    if (failedTextures.size)
-      toast(`${failedTextures.size} 张纹理未能加载，部分天体暂用基础色显示。`);
+    updateResourceStatus();
+    $('resource-retry').addEventListener('click', async () => {
+      const retries = [...textureFailures.values()];
+      $('resource-retry').disabled = true;
+      $('resource-retry').textContent = '正在重试';
+      await Promise.allSettled(retries.map(retry => retry()));
+      $('resource-retry').disabled = false;
+      $('resource-retry').textContent = '重试纹理';
+      updateResourceStatus();
+    });
+    document.addEventListener('visibilitychange', () => textureResources.queue.setPaused(document.hidden));
     requestAnimationFrame(animate);
     // Read-only diagnostics for verifying camera framing and rendered asset state.
     window.solarAtlas = {
       snapshot: () => ({
         ready: state.ready,
+        loading: { firstFrameAt, interactiveAt, renderedFrames, backgroundStarted,
+          queue: textureResources.queue.snapshot(), frameWork: frameWork.entries.size },
         selected: state.selected,
         close: state.close,
         system: state.system,
@@ -2174,6 +2426,7 @@ async function init() {
             orientation: body.mesh.quaternion.toArray(),
             ringVisible: Boolean(body.ring?.visible && body.root.visible),
             ringOuterRadius: body.rings ? body.radius * body.rings.outer : null,
+            detailReady: body.detailReady,
             textureWidth: body.mesh.material.map?.image?.width || 0,
             cloudsVisible: body.clouds?.visible,
             cloudRotation: body.clouds?.rotation.y,

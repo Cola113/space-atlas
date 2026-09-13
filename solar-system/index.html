@@ -453,7 +453,7 @@
       <div id="loading-screen" class="loading-screen">
         <i data-lucide="orbit"></i><span>正在抵达太阳系</span>
         <div class="loading-track"><div id="loading-progress"></div></div>
-        <small id="loading-text">准备星球纹理</small>
+        <small id="loading-text" role="status">准备首屏预览</small>
       </div>
       <div id="error-screen" class="error-screen" hidden>
         <i data-lucide="orbit"></i>
@@ -462,6 +462,10 @@
         <button class="primary-action" id="reload-button">重新加载</button>
       </div>
       <div class="toast" id="toast" role="status" hidden></div>
+      <div class="resource-status" id="resource-status" hidden>
+        <span id="resource-message" role="status"></span>
+        <button id="resource-retry" type="button" hidden>重试纹理</button>
+      </div>
       <div class="sr-only" id="selection-announcement" aria-live="polite"></div>
     </main>
     <script type="module" src="./src/main.js"></script>

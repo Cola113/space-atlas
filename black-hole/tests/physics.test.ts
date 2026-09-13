@@ -48,6 +48,25 @@ test('all authored camera poses remain outside the outer disk with portrait fram
   }
 });
 
+test('software auto mode starts with bounded work while manual quality stays explicit', () => {
+  const quality = new QualityController({ webgl2: true, floatBuffer: true, gpu: 'ANGLE SwiftShader', mobile: false, maxTextureSize: 8192 }, () => {});
+  assert.equal(quality.current, 'low');
+  assert.equal(quality.renderPixelLimit, 160000);
+  quality.setMode('high');
+  assert.equal(quality.current, 'high');
+  assert.equal(quality.renderPixelLimit, Infinity);
+  quality.setMode('auto');
+  assert.equal(quality.current, 'low');
+});
+
+test('sustained frames slower than 250ms contribute to automatic downshifts', () => {
+  const quality = new QualityController({ webgl2: true, floatBuffer: true, gpu: 'hardware', mobile: false, maxTextureSize: 8192 }, () => {});
+  let now = 20000;
+  for (let i = 0; i < 15; i++) { now += 500; quality.sample(500, now); }
+  assert.equal(quality.current, 'medium');
+  assert.equal(quality.fps, 2);
+});
+
 test('adaptive quality uses sustained evidence and cooldown instead of oscillating', () => {
   let changes=0,now=20000;
   const quality=new QualityController({webgl2:true,floatBuffer:true,gpu:'test',mobile:false,maxTextureSize:8192},()=>changes++);

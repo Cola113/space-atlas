@@ -1,7 +1,11 @@
-@import url("https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&display=swap");
+/* Local Latin subsets; font loading never blocks scene initialization. */
+@font-face { font-family: Barlow; font-style: normal; font-weight: 400; font-display: swap; src: url('/shared/fonts/barlow-latin-400-normal.woff2') format('woff2'); }
+@font-face { font-family: Barlow; font-style: normal; font-weight: 500; font-display: swap; src: url('/shared/fonts/barlow-latin-500-normal.woff2') format('woff2'); }
+@font-face { font-family: Barlow; font-style: normal; font-weight: 600; font-display: swap; src: url('/shared/fonts/barlow-latin-600-normal.woff2') format('woff2'); }
+@font-face { font-family: Barlow; font-style: normal; font-weight: 700; font-display: swap; src: url('/shared/fonts/barlow-latin-700-normal.woff2') format('woff2'); }
 
 :root {
-  font-family: Barlow, "Microsoft YaHei", "PingFang SC", sans-serif;
+  font-family: Barlow, "Segoe UI", "Microsoft YaHei", "PingFang SC", sans-serif;
   color: #eef1f0;
   background: #07090b;
   font-synthesis: none;
@@ -490,13 +494,49 @@ output {
   background: #17251c9e;
   border-color: #648572;
 }
+.resource-status {
+  position: fixed;
+  z-index: 45;
+  top: calc(env(safe-area-inset-top, 0px) + 84px);
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  max-width: min(440px, calc(100vw - 32px));
+  padding: 6px 10px;
+  border: 1px solid #8da69b50;
+  border-radius: 10px;
+  background: #121c1bf2;
+  color: #d7e4df;
+  font-size: 12px;
+  line-height: 1.5;
+}
+.resource-status[hidden], .resource-status button[hidden] { display: none; }
+.resource-status button {
+  flex: 0 0 auto;
+  min-width: 80px;
+  min-height: 44px;
+  border: 1px solid #8da69b80;
+  border-radius: 6px;
+  color: inherit;
+  background: #314b40;
+  cursor: pointer;
+}
+.resource-status button:focus-visible { outline: 2px solid #c6f6df; outline-offset: 3px; }
+@media (max-width: 760px) {
+  .resource-status { top: calc(env(safe-area-inset-top, 0px) + 72px); width: max-content; }
+}
+@media (max-height: 500px) and (min-width: 600px) {
+  .resource-status { top: calc(env(safe-area-inset-top, 0px) + 62px); max-width: 310px; }
+}
 .planet-thumb {
   display: block;
   width: 43px;
   height: 43px;
   border-radius: 50%;
   background-color: var(--body-color);
-  background-image: var(--texture);
+  background-image: var(--texture, none);
   background-size: auto 100%;
   background-position: center;
   box-shadow:
@@ -2319,3 +2359,13 @@ dialog .dialog-close {
 .atlas-open .explorer-bottom { display: none; }
 .atlas-open .atlas-panel { bottom: 0; }
 .landing-action{display:flex;justify-content:center;align-items:center;gap:10px;width:100%;padding:11px 16px;margin-top:9px;border:1px solid #bea98266;border-radius:6px;background:#b59e7515;color:#dac49e;cursor:pointer;font:inherit;font-size:12px;letter-spacing:1px}.landing-action:hover{background:#b59e7530}.landing-action[hidden]{display:none}.landing-action:disabled{opacity:.6;cursor:wait}
+
+/* Reserve a separate row while a recoverable resource error is visible. */
+.has-resource-notice .observation-tools { top: calc(env(safe-area-inset-top, 0px) + 154px); }
+@media (max-width: 760px) {
+  .has-resource-notice .observation-tools { top: calc(env(safe-area-inset-top, 0px) + 142px); }
+  .has-resource-notice:not(.focused) .intro { margin-top: 56px; }
+}
+@media (max-height: 500px) and (min-width: 600px) {
+  .has-resource-notice .observation-tools { top: calc(env(safe-area-inset-top, 0px) + 132px); }
+}

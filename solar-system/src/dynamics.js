@@ -782,7 +782,7 @@ function createParticles(record, kind) {
   record.particles.push({ mesh: points, count, kind });
 }
 
-export function createDynamics(objects) {
+export function createDynamics(objects, { defer = false } = {}) {
   let enabled = true;
   let focus = null;
   let mobile = false;
@@ -829,6 +829,15 @@ export function createDynamics(objects) {
       },
     };
     records.set(body.id, record);
+    if (!defer) activate(body.id);
+  }
+
+  function activate(id) {
+    const record = records.get(id);
+    if (!record || record.activated) return;
+    record.activated = true;
+    const body = record.body;
+    refreshTextures(id);
     if (body.id === "sun") attachSolarSurface(record);
     if (body.id === "earth") {
       attachEarthClouds(record);
@@ -863,6 +872,18 @@ export function createDynamics(objects) {
       });
     }
     if (body.id === "saturn") attachRingSurface(record);
+    if (id === focus) ensureDetail(record);
+  }
+
+  function refreshTextures(id) {
+    const record = records.get(id);
+    if (!record) return;
+    const { body, uniforms } = record;
+    const clouds = body.clouds?.material.alphaMap || null;
+    uniforms.uCloudTexture.value = clouds;
+    uniforms.uCloudAvailable.value = clouds ? 1 : 0;
+    uniforms.uNightTexture.value = body.nightMap || null;
+    uniforms.uRingTexture.value = body.ring?.material.map || null;
   }
 
   function ensureDetail(record) {
@@ -894,7 +915,7 @@ export function createDynamics(objects) {
     if (id === focus) return;
     focus = id;
     const record = records.get(id);
-    if (record) {
+    if (record?.activated) {
       ensureDetail(record);
       if (record.time - record.eventStart > activityProfiles[id].duration)
         record.nextEvent = record.time + 11;
@@ -956,7 +977,7 @@ export function createDynamics(objects) {
   }
 
   return {
-    update,
+    update, activate, refreshTextures,
     earthCloudTexture: () => records.get("earth").uniforms.uCloudTexture.value,
     setEarthClouds({ enabled, available, previous, next, mix }) {
       const uniforms = records.get("earth").uniforms;

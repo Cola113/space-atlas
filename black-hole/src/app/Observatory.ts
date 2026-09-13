@@ -114,9 +114,11 @@ export class Observatory {
 
   private resize() {
     this.pendingResize = false;
+    this.previousFrame = 0;
+    this.quality.resetSampling();
     const width = Math.max(1,this.canvas.clientWidth), height = Math.max(1,this.canvas.clientHeight);
     this.camera.resize(width,height);
-    this.pipeline.resize(width,height,this.quality.current);
+    this.pipeline.resize(width,height,this.quality.current,undefined,this.quality.renderPixelLimit);
   }
 
   private frame = (now: number) => {
@@ -124,8 +126,8 @@ export class Observatory {
     if (this.pendingResize) this.resize();
     const dt = this.clock.tick(now);
     this.camera.update(dt,this.clock.paused);
-    this.render();
     if (this.previousFrame) this.quality.sample(now-this.previousFrame,now);
+    this.render();
     this.previousFrame = now;
     if (now-this.previousUI >= 500) { this.syncUI(); this.previousUI=now; }
     this.raf=requestAnimationFrame(this.frame);

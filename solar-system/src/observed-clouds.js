@@ -41,10 +41,27 @@ async function textureFromBlob(blob) {
   } finally { URL.revokeObjectURL(url); }
 }
 
-export function createObservedClouds({ dynamics, isPaused, reducedMotion, onChange, initialEnabled = true, autoStart = true }) {
+export function createObservedClouds({ dynamics, isPaused, reducedMotion, onChange, initialEnabled = true, autoStart = true, deferStart = false, resourceQueue, prepareTexture }) {
   let enabled = initialEnabled, current = null, previous = null, pending = null;
   let mix = 1, busy = false, failed = false, server = null, lastPoll = 0, disposed = false;
   let started = false;
+  let mayStart = !deferStart;
+  async function request(url, { method = 'GET', timeout = 12000, image = false } = {}) {
+    const key = `observed-cloud:${method}:${url}`;
+    const task = async signal => {
+      const response = await fetch(url, { method, cache: 'no-store', signal });
+      if (!response.ok) throw new Error('云图服务不可用');
+      if (image) {
+        if (!response.headers.get('content-type')?.startsWith('image/png')) throw new Error('云图加载失败');
+        return response.blob();
+      }
+      return response.json();
+    };
+    try {
+      return resourceQueue ? await resourceQueue.run(key, task, { priority: 75, timeout })
+        : await task(AbortSignal.timeout(timeout));
+    } finally { resourceQueue?.forget(key); }
+  }
   const original = dynamics.earthCloudTexture();
   const publish = () => dynamics.setEarthClouds({ enabled,
     available: Boolean(current), previous: previous?.texture || current?.texture || original,
@@ -83,6 +100,8 @@ export function createObservedClouds({ dynamics, isPaused, reducedMotion, onChan
     if (newest && Date.parse(frame.observedAt) <= Date.parse(newest.observedAt)) return;
     if (current && (isPaused() || mix < 1)) { pending = { frame, blob }; renderStatus(); return; }
     const texture = await textureFromBlob(blob);
+    try { if (prepareTexture) await prepareTexture(texture); }
+    catch (error) { texture.dispose(); throw error; }
     if (disposed) { texture.dispose(); return; }
     if (current && Date.parse(frame.observedAt) <= Date.parse(current.frame.observedAt)) {
       texture.dispose(); return;
@@ -96,25 +115,20 @@ export function createObservedClouds({ dynamics, isPaused, reducedMotion, onChan
     void storedFrame({ frame, blob });
   }
   async function poll(force = false) {
-    if (busy || disposed || !enabled) return;
+    if (busy || disposed || !enabled || !mayStart) return;
     busy = true; lastPoll = Date.now(); renderStatus();
     try {
       if (force) {
-        const refresh = await fetch("/api/clouds/refresh", { method: "POST", signal: AbortSignal.timeout(12000) });
-        if (!refresh.ok) throw new Error("云图服务不可用");
+        await request('/api/clouds/refresh', { method: 'POST' });
       }
-      const response = await fetch("/api/clouds", { cache: "no-store", signal: AbortSignal.timeout(12000) });
-      if (!response.ok) throw new Error("云图服务不可用");
-      const result = await response.json();
+      const result = await request('/api/clouds');
       if (!result || !Object.hasOwn(result, "frame")) throw new Error("云图响应格式错误");
       server = result;
       const frame = result.frame;
       if (frame && !validCloudFrame(frame)) throw new Error("云图元数据无效");
       const newest = pending?.frame || current?.frame;
       if (frame && (!newest || Date.parse(frame.observedAt) > Date.parse(newest.observedAt))) {
-        const image = await fetch(cloudImageUrl(frame), { signal: AbortSignal.timeout(45000) });
-        if (!image.ok || !image.headers.get("content-type")?.startsWith("image/png")) throw new Error("云图加载失败");
-        const blob = await image.blob();
+        const blob = await request(cloudImageUrl(frame), { image: true, timeout: 45000 });
         if (blob.size > 12 * 1024 * 1024) throw new Error("云图过大");
         await accept(frame, blob);
       }
@@ -123,7 +137,7 @@ export function createObservedClouds({ dynamics, isPaused, reducedMotion, onChan
     finally { busy = false; renderStatus(); }
   }
   async function start() {
-    if (started || disposed) return;
+    if (started || disposed || !mayStart) return;
     started = true;
     const saved = await storedFrame();
     if (disposed) return;
@@ -154,6 +168,7 @@ export function createObservedClouds({ dynamics, isPaused, reducedMotion, onChan
   document.addEventListener("visibilitychange", reconnect);
   publish(); renderStatus(); if (autoStart && enabled) void start();
   return {
+    startBackground() { mayStart = true; if (autoStart && enabled) void start(); },
     get enabled() { return enabled; },
     update(dt) {
       if (isPaused()) return;

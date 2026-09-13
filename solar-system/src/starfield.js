@@ -30,7 +30,7 @@ const fragment = `
   }
 `;
 
-export function createStarfield(renderer) {
+export function createStarfield(renderer, { resources, frameWork, autoStart = true } = {}) {
   const group = new THREE.Group();
   group.name = 'HYG stars and Gaia sky';
   let disposed = false, count = brightStars.length, fullCatalogue = false, galaxyReady = false;
@@ -106,31 +106,53 @@ export function createStarfield(renderer) {
   dome.renderOrder = -1000;
   group.add(dome);
 
-  const catalogueReady = fetch('/solar-system/sky/hyg-v41-mag65.json', { signal: abort.signal })
-    .then(response => { if (!response.ok) throw new Error('Star catalogue unavailable'); return response.json(); })
-    .then(data => {
-      if (disposed) return;
-      if (data.version !== 1 || data.epoch !== 'J2000.0' || !Array.isArray(data.stars) || data.stars.length < 8000 || data.stars.length > 12000 ||
-        data.stars.some(row => !Array.isArray(row) || row.length !== 5 || !row.slice(0, 4).every(Number.isFinite) || (row[4] !== null && !Number.isFinite(row[4])))) {
-        throw new Error('Invalid star catalogue');
-      }
-      const geometry = geometryFor(data.stars);
-      points.geometry.dispose(); points.geometry = geometry;
-      count = data.stars.length; fullCatalogue = true;
-    }).catch(() => { if (!disposed) catalogueFailed = true; });
-  const galaxyPromise = new THREE.TextureLoader().loadAsync('/solar-system/sky/gaia-edr3-diffuse.webp')
-    .then(texture => {
-      if (disposed) { texture.dispose(); return; }
-      texture.colorSpace = THREE.SRGBColorSpace;
-      texture.wrapS = THREE.RepeatWrapping;
-      texture.anisotropy = Math.min(4, renderer.capabilities.getMaxAnisotropy());
-      dome.material.uniforms.uMap.value.dispose();
-      dome.material.uniforms.uMap.value = texture;
-      galaxyReady = true;
-    }).catch(() => { if (!disposed) galaxyFailed = true; });
+  let background;
+  function schedule(key, work) {
+    return frameWork ? frameWork.run(key, work, { priority: -10 }) : Promise.resolve().then(work);
+  }
+  function loadBackground() {
+    if (background) return background;
+    const loadCatalogue = async signal => {
+      const response = await fetch('/solar-system/sky/hyg-v41-mag65.json', { signal });
+      if (!response.ok) throw new Error('Star catalogue unavailable');
+      return response.json();
+    };
+    const catalogueReady = (resources ? resources.queue.run('star-catalogue', loadCatalogue, { priority: -10 }) : loadCatalogue(abort.signal))
+      .then(data => {
+        if (disposed) return;
+        if (data.version !== 1 || data.epoch !== 'J2000.0' || !Array.isArray(data.stars) || data.stars.length < 8000 || data.stars.length > 12000 ||
+          data.stars.some(row => !Array.isArray(row) || row.length !== 5 || !row.slice(0, 4).every(Number.isFinite) || (row[4] !== null && !Number.isFinite(row[4])))) {
+          throw new Error('Invalid star catalogue');
+        }
+        return schedule('star-catalogue-geometry', () => {
+          if (disposed) return;
+          const geometry = geometryFor(data.stars);
+          points.geometry.dispose(); points.geometry = geometry;
+          count = data.stars.length; fullCatalogue = true;
+        });
+      }).catch(() => { if (!disposed) catalogueFailed = true; });
+    const galaxyUrl = '/solar-system/sky/gaia-edr3-diffuse.webp';
+    const galaxyPromise = (resources ? resources.texture(galaxyUrl, { priority: -10 }) : new THREE.TextureLoader().loadAsync(galaxyUrl))
+      .then(texture => {
+        if (disposed) { texture.dispose(); return; }
+        return schedule('galaxy-upload', () => {
+          texture.colorSpace = THREE.SRGBColorSpace;
+          texture.wrapS = THREE.RepeatWrapping;
+          texture.anisotropy = Math.min(4, renderer.capabilities.getMaxAnisotropy());
+          renderer.initTexture(texture);
+          dome.material.uniforms.uMap.value.dispose();
+          dome.material.uniforms.uMap.value = texture;
+          galaxyReady = true;
+        });
+      }).catch(() => { if (!disposed) galaxyFailed = true; });
+    background = Promise.all([catalogueReady, galaxyPromise]);
+    return background;
+  }
+  if (autoStart) loadBackground();
   return {
     group,
-    ready: Promise.all([catalogueReady, galaxyPromise]),
+    loadBackground,
+    get ready() { return background || Promise.resolve(); },
     update({ camera, date, dt, brightOccupancy = 0 }) {
       group.position.copy(camera.position);
       const nextDay = Math.floor(date / 86400000);

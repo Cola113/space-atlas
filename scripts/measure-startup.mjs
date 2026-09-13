@@ -30,12 +30,16 @@ try {
       requestAnimationFrame(observe);
     });
     await page.goto(base + '/solar-system/', { waitUntil: 'domcontentloaded', timeout: 120000 });
-    await page.waitForFunction(() => window.startupMeasurement, null, { timeout: 120000 });
+    await page.waitForFunction(() => window.startupMeasurement || !document.getElementById('error-screen')?.hidden, null, { timeout: 120000 });
+    if (errors.length || await page.locator('#error-screen').isVisible()) {
+      await page.screenshot({ path: fileURLToPath(new URL(label + '-failure.png', output)) });
+      throw new Error(errors.join('\n') || await page.locator('#error-message').textContent());
+    }
     const result = await page.evaluate(() => ({
       readyMs: performance.now(),
       observed: window.startupMeasurement,
       snapshot: window.solarAtlas.snapshot(),
-      textures: performance.getEntriesByType('resource').filter(r => r.name.includes('/textures/')).map(r => ({ path: new URL(r.name).pathname, bytes: r.encodedBodySize, end: r.responseEnd })),
+      textures: performance.getEntriesByType('resource').filter(r => r.name.includes('/textures/')).map(r => ({ path: new URL(r.name).pathname, bytes: r.encodedBodySize, start: r.startTime, end: r.responseEnd })),
     }));
     if (errors.length) throw new Error(errors.join('\n'));
     results.push(result);

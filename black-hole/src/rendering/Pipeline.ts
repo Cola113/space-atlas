@@ -40,6 +40,7 @@ export class RenderPipeline {
   renderHeight = 1;
   frames = 0;
   quality: QualityName = 'high';
+  maxRenderPixels = Infinity;
 
   constructor(canvas: HTMLCanvasElement) {
     const context = canvas.getContext('webgl2', { alpha: false, antialias: false, powerPreference: 'high-performance', preserveDrawingBuffer: false });
@@ -97,15 +98,17 @@ export class RenderPipeline {
     if (this.shaderErrors.length) throw new Error(this.shaderErrors.join('\n'));
   }
 
-  resize(width: number, height: number, quality = this.quality, pixelRatio = Math.min(devicePixelRatio, PROFILES[quality].pixelCap)) {
+  resize(width: number, height: number, quality = this.quality, pixelRatio = Math.min(devicePixelRatio, PROFILES[quality].pixelCap), maxRenderPixels = Infinity) {
     this.width = width;
     this.height = height;
     this.quality = quality;
+    this.maxRenderPixels = maxRenderPixels;
     const profile = PROFILES[quality];
     this.renderer.setPixelRatio(pixelRatio);
     this.renderer.setSize(width, height, false);
-    this.renderWidth = Math.max(1, Math.round(width * pixelRatio * profile.scale));
-    this.renderHeight = Math.max(1, Math.round(height * pixelRatio * profile.scale));
+    const renderScale = Math.min(pixelRatio * profile.scale, Math.sqrt(maxRenderPixels / (width * height)));
+    this.renderWidth = Math.max(1, Math.floor(width * renderScale));
+    this.renderHeight = Math.max(1, Math.floor(height * renderScale));
     this.sceneTarget.setSize(this.renderWidth, this.renderHeight);
     this.bloomA.setSize(Math.max(1, this.renderWidth >> 2), Math.max(1, this.renderHeight >> 2));
     this.bloomB.setSize(this.bloomA.width, this.bloomA.height);

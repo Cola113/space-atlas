@@ -1,0 +1,32 @@
+{
+  "family": "Barlow",
+  "package": "@fontsource/barlow",
+  "version": "5.3.0",
+  "license": "OFL-1.1",
+  "upstream": "https://github.com/jpt/barlow",
+  "distribution": "https://registry.npmmirror.com/@fontsource/barlow/-/barlow-5.3.0.tgz",
+  "packageIntegrity": "sha512-tGR0y6QObRtKv71MOth44222+mdNFM/ZWFWDV1VLzNbG4oK9PNRlyJzmkck4vHAi9ibHBXgt4SlY51amFP55CA==",
+  "method": "Copy published Latin WOFF2 subsets without modification",
+  "files": [
+    {
+      "file": "barlow-latin-400-normal.woff2",
+      "bytes": 22196,
+      "sha256": "b0a8ad37ac45f5fb22ced461576db72e44e295107aad7a9c8a7a4bad728fd03b"
+    },
+    {
+      "file": "barlow-latin-500-normal.woff2",
+      "bytes": 22008,
+      "sha256": "cd759df8ef9efc98fee14307b4eb5ba27f08b1f8f2f3ad2872432e25c89907a8"
+    },
+    {
+      "file": "barlow-latin-600-normal.woff2",
+      "bytes": 22772,
+      "sha256": "4b52ddd4836b592df0e4832b8286956883cdc651b015126bdd18f184b7f90cc3"
+    },
+    {
+      "file": "barlow-latin-700-normal.woff2",
+      "bytes": 22788,
+      "sha256": "2d797dd8b35dcb3413e1af9d7052b3f4f8c341a147cdcb01f4f06af80db53289"
+    }
+  ]
+}
