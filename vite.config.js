@@ -13,6 +13,7 @@ const scientificSources = {
   async generateBundle() {
     for (const [fileName, sourcePath] of [
       ['solar-system/BODY_MODELS.md', './solar-system/BODY_MODELS.md'],
+      ['solar-system/GROUND_AUDIT.md', './solar-system/GROUND_AUDIT.md'],
       ['REALISM_STANDARD.md', './REALISM_STANDARD.md'],
       ['solar-system/physical-definitions.json', './solar-system/src/physics/body-definitions.json'],
     ]) this.emitFile({type:'asset',fileName,source:await readFile(localPath(sourcePath),'utf8')});

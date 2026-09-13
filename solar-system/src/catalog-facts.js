@@ -9,7 +9,7 @@ export function resolvePhysicalFacts(body) {
     if (quantity === 'physical:radius') return radiusFact(body.id);
     if (quantity === 'physical:orbit') {
       const divisor = unit==='年'?JULIAN_YEAR_DAYS:unit==='小时'?1/24:1;
-      return ['轨道参考周期 · 约', number(orbit.periodDays/divisor), unit];
+      return ['公转周期 · 约', number(orbit.periodDays/divisor), unit];
     }
     if (quantity === 'physical:spin') return ['自转周期 · 约',number(rotationPeriodDays(body.id)*24),'小时'];
     if (quantity === 'physical:distance') return ['轨道半长轴 · 约',number(orbit.a.value),orbit.a.unit==='au'?'AU':'km'];

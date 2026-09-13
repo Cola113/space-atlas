@@ -1,12 +1,12 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {Vector3,PerspectiveCamera} from 'three';
+import {Vector3} from 'three';
 import {SurfaceClock} from '../src/surface/SurfaceClock.js';
 import {simulationElapsed, simulationRates, defaultSimulationRate, restoreSimulationRate,
   defaultSimulationDate, restoreSimulationDate, formatSimulationRate, simulationRateEquivalent} from '../src/simulation-time.js';
 import {SurfaceJourney} from '../src/surface/SurfaceJourney.js';
 import {SurfaceExposure} from '../src/surface/SurfaceExposure.js';
-import {solarVisibility,surfaceLight,surfaceCameraRange,surfaceWindCycle} from '../src/surface/SurfaceSky.js';
+import {solarVisibility,surfaceLight,surfaceWindCycle} from '../src/surface/SurfaceSky.js';
 import {landingSites,surfaceFrame,bodyBasis} from '../src/surface/geometry.js';
 
 test('surface clock advances at the selected rate, freezes and resets without catch-up',()=>{
@@ -84,16 +84,6 @@ test('time controls abbreviate large multiples and explain real-time conversion'
   assert.equal(simulationRateEquivalent(1),'现实 1 秒 = 模拟 1 秒');
   assert.equal(simulationRateEquivalent(1_000),'现实 1 秒 = 模拟 16.67 分钟');
   assert.equal(simulationRateEquivalent(1_000_000),'现实 1 秒 = 模拟 11.57 天');
-});
-
-test('the thin Earth cloud shell stays separated in a 24-bit surface depth buffer',()=>{
-  const camera=new PerspectiveCamera(62,1,surfaceCameraRange.near,surfaceCameraRange.far);
-  const depthSteps=distance=>Math.round((new Vector3(0,0,-distance).project(camera).z*.5+.5)*(2**24-1));
-  // Lunar distance changes Earth's display radius; test the small, close layers
-  // which used to fall into the same depth-buffer values and flicker.
-  for(const radius of [4.5,5,5.5]){
-    assert.ok(depthSteps(301-radius)-depthSteps(301-radius*1.003)>8);
-  }
 });
 
 test('cloud flow stays bounded over decades and fades continuously through phase wraps',()=>{

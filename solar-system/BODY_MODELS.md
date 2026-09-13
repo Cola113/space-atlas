@@ -33,18 +33,24 @@
 
 其余 39 个天体采用固定平均椭圆：
 
-- 31 颗卫星采用 [JPL 平均元素表](https://ssd.jpl.nasa.gov/sats/elem/) 的 a、e、ω、M、i、node、P、历元与参考平面。拉普拉斯面使用表列 ICRF 极轴，黄道面使用 NAIF ECLIPJ2000，主星赤道面固定在元素历元。海卫二采用表列 2020 历元及 e=0.751；不再放在任意主星赤道圆上。倾角大于 90° 本身决定逆行，不再重复反转相位。
+- 31 颗卫星采用 [JPL 平均元素表](https://ssd.jpl.nasa.gov/sats/elem/) 的 a、e、ω、M、i、node、历元与参考平面。公转周期另按下段记录。拉普拉斯面使用表列 ICRF 极轴，黄道面使用 NAIF ECLIPJ2000，主星赤道面固定在元素历元。海卫二采用表列 2020 历元及 e=0.751；不再放在任意主星赤道圆上。倾角大于 90° 本身决定逆行，不再重复反转相位。
 - 谷神星、灶神星、鸟神星、妊神星、阋神星采用 2026-09-14 保存的 [JPL SBDB](https://ssd-api.jpl.nasa.gov/doc/sbdb.html) 密切元素，历元 JD 2461200.5 TDB。省略摄动的固定椭圆与 JPL 完整轨道解不同。
 - 妊卫一和妊卫二采用 Ragozzine 与 Brown 2009 表 2 的历元元素。论文 HJD 2454615.0 近似作为 TDB 历元，未恢复原观测时标修正；不能用作绝对相位预报。妊卫二真实非开普勒演化在数周内已重要，此处不复现论文的三体积分。
 - 阋卫一采用 [Holler 等，2021](https://arxiv.org/html/2009.13733v1) 表 2 的联合拟合，J2000 赤道面；ω=近点经度−节点经度，M=平均经度−近点经度。论文 JD 历元近似作为 TDB，未重新拟合观测时标/光行时。
 
 **这些平均模型不包含节点和拱线进动、摄动或真实交会预报。** 参考周期用于固定椭圆传播或目录摘要，不能当作核心星历在任意日期的瞬时周期。NAIF ECLIPJ2000 的黄赤交角 84381.448 角秒与 Astronomy Engine 的新黄道辅助变换相差约 0.042 角秒；来源为 JPL/NAIF 的平均元素采用前者，输出后共同处于 J2000 赤道坐标。
 
+周期的 `periodSource`、`periodType`、`periodEpochTdbJd` 和 `periodValidity` 与轨道元素来源分开。29 颗卫星的目录周期采用 NASA NSSDCA 的[木星](https://nssdc.gsfc.nasa.gov/planetary/factsheet/joviansatfact.html)、[土星](https://nssdc.gsfc.nasa.gov/planetary/factsheet/saturniansatfact.html)、[天王星](https://nssdc.gsfc.nasa.gov/planetary/factsheet/uraniansatfact.html)、[海王星](https://nssdc.gsfc.nasa.gov/planetary/factsheet/neptuniansatfact.html)资料表；例如 Io 1.769138 天、Europa 3.551181 天。NASA 摘要未给周期的独立历元与误差，不能把它当成 JPL 元素历元的拟合参数。Himalia、Phoebe、Nereid 保留较新 JPL 平均轨道来源的周期，未用较早目录值覆盖。其余周期沿用各自注明的来源。
+
+这项选择处理了 JPL 平均元素表中部分 P 与目录周期的明显差异，但没有重新拟合进动轨道，亦未断言差异必为网页错误。固定椭圆用采用的公转周期近似推进，绝对相位仍不作预测；核心 19 个天体的位置不依赖这列目录周期。IAU 自转系数不因周期摘要而改写，不能为了同步外观强行令两者相等。`scripts/adopt-satellite-periods.py` 从四份原始 HTML 快照重建这项选择。
+
 Janus 与 Epimetheus 真实轨道约四年交换，但当前平均模型未模拟相互引力。已删除将数千公里任意径向摆动写入物理状态的旧马蹄形动画，不再用它证明物理避碰。放大的示意模型可能重叠，不能据此判断实际碰撞。真实共轨道演化需要另用轨道星历或经过校准的动力学模型。
 
 ## 独立姿态与跟随
 
 34 个适用的卫星及小天体使用 PCK00011 极轴、经线与周期项；包括 Mars 卫星相位中的二次项。周期来自姿态系数，自转不继承公转逆行标志。Phoebe 按 IAU 极轴独立自转，Triton 按负经线速率转动。月球和主要行星继续保留 Astronomy Engine；地球采用 GAST 和 EQD→J2000 岁差章动，UT1≈UTC、无极移。未额外添加未建模的非刚体物理天平动。
+
+适用范围按天体传入运行时说明。例如 [Horizons 的土卫十一摘要](https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=611&MAKE_EPHEM=NO&OBJ_DATA=YES)明确限制其 IAU 极轴/经线模型在 1981 年旅行者飞掠附近使用；其它日期仅作外推示意，不能声称卡西尼时代的地标朝向已获校准。
 
 其余 13 个平均姿态保留边界：鸟神星采用 22.8266 小时双峰解；妊神星采用 3.915341 小时及 2017 掩星环极轴优选解；妊卫一采用 9.68±0.02 小时，并近似与妊神星极轴平行。阋神星采用约 15.7859 天现代同步结果；Himalia 以 7.7819 小时会合周期作近似；Nereid 采用 11.594 小时。来源逐项列在物理定义中。未知极轴、未校准经线以及假定同步的 Namaka/Dysnomia 明确注明；Hyperion 与冥王星四颗小卫星仅作确定性的非规则翻滚示意，不预测混沌朝向。
 
@@ -54,4 +60,5 @@ Janus 与 Epimetheus 真实轨道约四年交换，但当前平均模型未模�
 
 - PCK 提取由 `scripts/build-iau.py` 重建；34 个天体、170 组姿态与独立 CSPICE 矩阵比较，覆盖历史与未来日期。
 - `scripts/build-mean-reference.py` 为 39 个固定椭圆生成 351 组 CSPICE conics 参考，覆盖多个周期及历史范围边界。这验证转换/传播实现，不证明真实星历精度。另以 2009 论文表 3 的妊神星卫星位置及 13.41° 相互倾角检查来源转换；原表 2 的舍入角导致公里至几十公里差异。
-- 年份包的 1 km 编码要求、阿波罗 15、水星共振、太阳视直径和地表独立参考校验继续保留；编码误差不等于总科学误差。地表相位、摆动和遮挡的完整独立审计仍未结束。
+- 年份包的 1 km 编码要求、阿波罗 15、水星共振、太阳视直径和地表独立参考校验继续保留；编码误差不等于总科学误差。
+- 九落点新增 359 个 DE440/Horizons/CSPICE 几何、角尺度、相位及食相样本；另检查实际材质的明暗半球像素及太阳前后遮挡次序。来源、误差、有限摆动和验收边界见[地表科学校核](GROUND_AUDIT.md)。

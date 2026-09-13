@@ -17,7 +17,7 @@ export const additionalLandingSites = Object.freeze({
     provenance:'好奇号 · 实拍拼接 / AI 补绘', credit:'NASA / JPL-Caltech / MSSS · PIA26410 · 缺测地面 gpt-image-2.5-sunburst',
     source:'https://www.jpl.nasa.gov/images/pia26410-curiositys-view-within-gediz-vallis-channel/',
     description:'好奇号在盖迪兹谷拍下的层状岩壁、碎石与古老河道，远处是夏普山的坡地。',
-    notes:'原图由 2024 年 9 月 21–22 日的 341 张照片拼接，色彩经地球白平衡调整。上方已观测地形由原片合成保留；未拍到的脚下及车体区域，经实拍与全景构图双图参考生成补绘。天空替换为散射示意。坐标只定位盖迪兹谷附近，非精确车位；投影与朝向近似。',
+    notes:'原图由 2024 年 9 月 21–22 日的 341 张照片拼接，色彩经地球白平衡调整。上方已观测地形由原片合成保留；未拍到的脚下及车体区域，经实拍与全景构图双图参考生成补绘。天空替换为散射示意。坐标只定位盖迪兹谷附近，非精确车位；投影与朝向近似。火卫一、火卫二采用有来源的平均轨道，显示运动与凌日不用于真实日期预报。',
     atmosphere:'mars', solarDay:1.02749, initialHeading:100, panoramaCenter:180,
   },
   io: {

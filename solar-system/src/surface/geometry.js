@@ -36,6 +36,12 @@ export function angularDiameter(radiusKm, distanceKm) {
   return 2 * Math.asin(radiusKm / distanceKm);
 }
 
+// Direction of the incident light at the target, expressed in the observer's
+// local axes. Its observer direction and its illumination are separate vectors.
+export function surfaceSunDirection(frame, target) {
+  return frame.local(target.positionKm.clone().negate().normalize());
+}
+
 // Shared, independently evaluated IAU attitude in J2000 equatorial axes.
 export function bodyBasis(body, date) { return bodyOrientation(body.toLowerCase(), date); }
 export const satelliteBasis = bodyBasis;

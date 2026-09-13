@@ -29,7 +29,7 @@ export function iauOrientation(id, tdbSeconds) {
   const dec = polynomial(body.POLE_DEC, centuries) + periodic(body.NUT_PREC_DEC, Math.cos);
   const w = polynomial(body.PM, days) + periodic(body.NUT_PREC_PM, Math.sin);
   return { ...basis(ra, dec, w), source: data.source, model: 'IAU PCK00011',
-    limitations: 'IAU 多项式及所列周期项；未额外建模非刚体物理天平动。' };
+    limitations: physicalDefinitions.bodies[id].rotation.validity };
 }
 
 export function bodyOrientation(id, dateOrTime) {

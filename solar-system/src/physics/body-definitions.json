@@ -126,6 +126,40 @@
     "reference-frames": {
       "url": "https://naif.jpl.nasa.gov/pub/naif/toolkit_docs/C/req/frames.html",
       "reference": "NAIF built-in inertial ECLIPJ2000; IAU 1976 obliquity, verified with CSPICE pxform"
+    },
+    "nasa-jovian-periods": {
+      "url": "https://nssdc.gsfc.nasa.gov/planetary/factsheet/joviansatfact.html",
+      "sha256": "e4c85ba5032167dc7bf44cd9896f8c4f745cbddeae95ea20fad0601e7709c9d8",
+      "bytes": 31904,
+      "retrieved": "2026-09-14",
+      "reference": "NASA NSSDCA Satellite Fact Sheet, Orbital parameters / Orbital Period (days)"
+    },
+    "nasa-saturnian-periods": {
+      "url": "https://nssdc.gsfc.nasa.gov/planetary/factsheet/saturniansatfact.html",
+      "sha256": "996611cb9afe83a02171ea1302991980f06eafdd5e15e0cf6829a5d5523e098f",
+      "bytes": 33986,
+      "retrieved": "2026-09-14",
+      "reference": "NASA NSSDCA Satellite Fact Sheet, Orbital parameters / Orbital Period (days)"
+    },
+    "nasa-uranian-periods": {
+      "url": "https://nssdc.gsfc.nasa.gov/planetary/factsheet/uraniansatfact.html",
+      "sha256": "f39381a02a5ae848d6026c8fc51abfa1ad66e7cf59dee54e5c1e15cf791f063e",
+      "bytes": 12282,
+      "retrieved": "2026-09-14",
+      "reference": "NASA NSSDCA Satellite Fact Sheet, Orbital parameters / Orbital Period (days)"
+    },
+    "nasa-neptunian-periods": {
+      "url": "https://nssdc.gsfc.nasa.gov/planetary/factsheet/neptuniansatfact.html",
+      "sha256": "8b657179ac0e93f57f8b38ca43a346e0ff94d0213f55be86dec76be1cbbb237e",
+      "bytes": 7345,
+      "retrieved": "2026-09-14",
+      "reference": "NASA NSSDCA Satellite Fact Sheet, Orbital parameters / Orbital Period (days)"
+    },
+    "epimetheus-horizons": {
+      "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=611&MAKE_EPHEM=NO&OBJ_DATA=YES",
+      "retrieved": "2026-09-14",
+      "sha256": "2a6552344f38f3b33d12130169cc5749839861f4c0465e9bc14f788248adaf69",
+      "reference": "Horizons Epimetheus metadata, revised 2018-10-03; IAU spin-pole validity note"
     }
   },
   "bodies": {
@@ -191,7 +225,9 @@
         "epochTdbJd": 2451545,
         "referencePlane": "ecliptic",
         "source": "planet-elements",
-        "reference": "JPL approximate elements Table 1; a(J2000) only"
+        "reference": "JPL approximate elements Table 1; a(J2000) only",
+        "periodEpochTdbJd": 2451545,
+        "periodValidity": "所列来源的参考周期；保留该来源的定义与平均模型限制，不是任意观测日期的瞬时周期。"
       },
       "rotation": {
         "provider": "astronomy-engine",
@@ -231,7 +267,9 @@
         "epochTdbJd": 2451545,
         "referencePlane": "ecliptic",
         "source": "planet-elements",
-        "reference": "JPL approximate elements Table 1; a(J2000) only"
+        "reference": "JPL approximate elements Table 1; a(J2000) only",
+        "periodEpochTdbJd": 2451545,
+        "periodValidity": "所列来源的参考周期；保留该来源的定义与平均模型限制，不是任意观测日期的瞬时周期。"
       },
       "rotation": {
         "provider": "astronomy-engine",
@@ -272,7 +310,9 @@
         "epochTdbJd": 2451545,
         "referencePlane": "ecliptic",
         "source": "planet-elements",
-        "reference": "JPL approximate elements Table 1; a(J2000) only"
+        "reference": "JPL approximate elements Table 1; a(J2000) only",
+        "periodEpochTdbJd": 2451545,
+        "periodValidity": "所列来源的参考周期；保留该来源的定义与平均模型限制，不是任意观测日期的瞬时周期。"
       },
       "rotation": {
         "provider": "astronomy-engine",
@@ -312,7 +352,9 @@
         "epochTdbJd": 2451545,
         "referencePlane": "ecliptic",
         "source": "planet-elements",
-        "reference": "JPL approximate elements Table 1; a(J2000) only"
+        "reference": "JPL approximate elements Table 1; a(J2000) only",
+        "periodEpochTdbJd": 2451545,
+        "periodValidity": "所列来源的参考周期；保留该来源的定义与平均模型限制，不是任意观测日期的瞬时周期。"
       },
       "rotation": {
         "provider": "astronomy-engine",
@@ -352,7 +394,9 @@
         "epochTdbJd": 2451545,
         "referencePlane": "ecliptic",
         "source": "planet-elements",
-        "reference": "JPL approximate elements Table 1; a(J2000) only"
+        "reference": "JPL approximate elements Table 1; a(J2000) only",
+        "periodEpochTdbJd": 2451545,
+        "periodValidity": "所列来源的参考周期；保留该来源的定义与平均模型限制，不是任意观测日期的瞬时周期。"
       },
       "rotation": {
         "provider": "astronomy-engine",
@@ -392,7 +436,9 @@
         "epochTdbJd": 2451545,
         "referencePlane": "ecliptic",
         "source": "planet-elements",
-        "reference": "JPL approximate elements Table 1; a(J2000) only"
+        "reference": "JPL approximate elements Table 1; a(J2000) only",
+        "periodEpochTdbJd": 2451545,
+        "periodValidity": "所列来源的参考周期；保留该来源的定义与平均模型限制，不是任意观测日期的瞬时周期。"
       },
       "rotation": {
         "provider": "astronomy-engine",
@@ -432,7 +478,9 @@
         "epochTdbJd": 2451545,
         "referencePlane": "ecliptic",
         "source": "planet-elements",
-        "reference": "JPL approximate elements Table 1; a(J2000) only"
+        "reference": "JPL approximate elements Table 1; a(J2000) only",
+        "periodEpochTdbJd": 2451545,
+        "periodValidity": "所列来源的参考周期；保留该来源的定义与平均模型限制，不是任意观测日期的瞬时周期。"
       },
       "rotation": {
         "provider": "astronomy-engine",
@@ -472,7 +520,9 @@
         "epochTdbJd": 2451545,
         "referencePlane": "ecliptic",
         "source": "planet-elements",
-        "reference": "JPL approximate elements Table 1; a(J2000) only"
+        "reference": "JPL approximate elements Table 1; a(J2000) only",
+        "periodEpochTdbJd": 2451545,
+        "periodValidity": "所列来源的参考周期；保留该来源的定义与平均模型限制，不是任意观测日期的瞬时周期。"
       },
       "rotation": {
         "provider": "astronomy-engine",
@@ -512,7 +562,9 @@
         "epochTdbJd": 2451545,
         "referencePlane": "ecliptic",
         "source": "planet-elements",
-        "reference": "J2000 mean size of system heliocentric orbit"
+        "reference": "J2000 mean size of system heliocentric orbit",
+        "periodEpochTdbJd": 2451545,
+        "periodValidity": "所列来源的参考周期；保留该来源的定义与平均模型限制，不是任意观测日期的瞬时周期。"
       },
       "rotation": {
         "provider": "astronomy-engine",
@@ -554,7 +606,10 @@
         "epochTdbJd": 2461200.5,
         "referencePlane": "ecliptic",
         "source": "ceres-sbdb",
-        "reference": "SBDB orbit 48"
+        "reference": "SBDB orbit 48",
+        "periodSource": "ceres-sbdb",
+        "periodEpochTdbJd": 2461200.5,
+        "periodValidity": "所列来源的参考周期；保留该来源的定义与平均模型限制，不是任意观测日期的瞬时周期。"
       },
       "rotation": {
         "provider": "iau-pck",
@@ -598,7 +653,10 @@
         "epochTdbJd": 2461200.5,
         "referencePlane": "ecliptic",
         "source": "makemake-sbdb",
-        "reference": "SBDB orbit 130"
+        "reference": "SBDB orbit 130",
+        "periodSource": "makemake-sbdb",
+        "periodEpochTdbJd": 2461200.5,
+        "periodValidity": "所列来源的参考周期；保留该来源的定义与平均模型限制，不是任意观测日期的瞬时周期。"
       },
       "rotation": {
         "provider": "mean-spin",
@@ -656,7 +714,10 @@
         "epochTdbJd": 2461200.5,
         "referencePlane": "ecliptic",
         "source": "haumea-sbdb",
-        "reference": "SBDB orbit 132"
+        "reference": "SBDB orbit 132",
+        "periodSource": "haumea-sbdb",
+        "periodEpochTdbJd": 2461200.5,
+        "periodValidity": "所列来源的参考周期；保留该来源的定义与平均模型限制，不是任意观测日期的瞬时周期。"
       },
       "rotation": {
         "provider": "mean-spin",
@@ -705,7 +766,10 @@
         "epochTdbJd": 2461200.5,
         "referencePlane": "ecliptic",
         "source": "eris-sbdb",
-        "reference": "SBDB orbit 103"
+        "reference": "SBDB orbit 103",
+        "periodSource": "eris-sbdb",
+        "periodEpochTdbJd": 2461200.5,
+        "periodValidity": "所列来源的参考周期；保留该来源的定义与平均模型限制，不是任意观测日期的瞬时周期。"
       },
       "rotation": {
         "provider": "mean-spin",
@@ -759,7 +823,10 @@
         "epochTdbJd": 2461200.5,
         "referencePlane": "ecliptic",
         "source": "vesta-sbdb",
-        "reference": "SBDB orbit 36"
+        "reference": "SBDB orbit 36",
+        "periodSource": "vesta-sbdb",
+        "periodEpochTdbJd": 2461200.5,
+        "periodValidity": "所列来源的参考周期；保留该来源的定义与平均模型限制，不是任意观测日期的瞬时周期。"
       },
       "rotation": {
         "provider": "iau-pck",
@@ -802,7 +869,10 @@
         "epochTdbJd": 2451545.0,
         "referencePlane": "ecliptic",
         "source": "satellite-elements",
-        "reference": "DE405/LE405; table ref. n/a"
+        "reference": "DE405/LE405; table ref. n/a",
+        "periodSource": "satellite-elements",
+        "periodEpochTdbJd": 2451545.0,
+        "periodValidity": "所列来源的参考周期；保留该来源的定义与平均模型限制，不是任意观测日期的瞬时周期。"
       },
       "rotation": {
         "provider": "astronomy-engine",
@@ -848,7 +918,10 @@
           "raDegrees": 317.7,
           "decDegrees": 52.9,
           "frame": "ICRF equatorial"
-        }
+        },
+        "periodSource": "satellite-elements",
+        "periodEpochTdbJd": 2451545.0,
+        "periodValidity": "所列来源的参考周期；保留该来源的定义与平均模型限制，不是任意观测日期的瞬时周期。"
       },
       "rotation": {
         "provider": "iau-pck",
@@ -886,8 +959,8 @@
         "meanAnomalyDegrees": 330.9,
         "inclinationDegrees": 0.0,
         "ascendingNodeDegrees": 0.0,
-        "periodDays": 1.762732,
-        "periodType": "JPL table P (sidereal; mean-element approximation)",
+        "periodDays": 1.769138,
+        "periodType": "nominal orbital period (NASA catalog summary)",
         "epochTdbJd": 2451545.0,
         "referencePlane": "Laplace",
         "source": "satellite-elements",
@@ -896,7 +969,10 @@
           "raDegrees": 268.1,
           "decDegrees": 64.5,
           "frame": "ICRF equatorial"
-        }
+        },
+        "periodSource": "nasa-jovian-periods",
+        "periodEpochTdbJd": null,
+        "periodValidity": "NASA 目录公转周期摘要，未给独立历元或误差；不视为 JPL 元素历元的拟合平均运动。固定椭圆以此近似传播，不用于绝对相位或交会预报。"
       },
       "rotation": {
         "provider": "iau-pck",
@@ -934,8 +1010,8 @@
         "meanAnomalyDegrees": 345.4,
         "inclinationDegrees": 0.5,
         "ascendingNodeDegrees": 184.0,
-        "periodDays": 3.525463,
-        "periodType": "JPL table P (sidereal; mean-element approximation)",
+        "periodDays": 3.551181,
+        "periodType": "nominal orbital period (NASA catalog summary)",
         "epochTdbJd": 2451545.0,
         "referencePlane": "Laplace",
         "source": "satellite-elements",
@@ -944,7 +1020,10 @@
           "raDegrees": 268.1,
           "decDegrees": 64.5,
           "frame": "ICRF equatorial"
-        }
+        },
+        "periodSource": "nasa-jovian-periods",
+        "periodEpochTdbJd": null,
+        "periodValidity": "NASA 目录公转周期摘要，未给独立历元或误差；不视为 JPL 元素历元的拟合平均运动。固定椭圆以此近似传播，不用于绝对相位或交会预报。"
       },
       "rotation": {
         "provider": "iau-pck",
@@ -982,8 +1061,8 @@
         "meanAnomalyDegrees": 324.8,
         "inclinationDegrees": 0.2,
         "ascendingNodeDegrees": 58.5,
-        "periodDays": 7.155588,
-        "periodType": "JPL table P (sidereal; mean-element approximation)",
+        "periodDays": 7.154553,
+        "periodType": "nominal orbital period (NASA catalog summary)",
         "epochTdbJd": 2451545.0,
         "referencePlane": "Laplace",
         "source": "satellite-elements",
@@ -992,7 +1071,10 @@
           "raDegrees": 268.2,
           "decDegrees": 64.6,
           "frame": "ICRF equatorial"
-        }
+        },
+        "periodSource": "nasa-jovian-periods",
+        "periodEpochTdbJd": null,
+        "periodValidity": "NASA 目录公转周期摘要，未给独立历元或误差；不视为 JPL 元素历元的拟合平均运动。固定椭圆以此近似传播，不用于绝对相位或交会预报。"
       },
       "rotation": {
         "provider": "iau-pck",
@@ -1030,8 +1112,8 @@
         "meanAnomalyDegrees": 87.4,
         "inclinationDegrees": 0.3,
         "ascendingNodeDegrees": 309.1,
-        "periodDays": 16.69044,
-        "periodType": "JPL table P (sidereal; mean-element approximation)",
+        "periodDays": 16.689017,
+        "periodType": "nominal orbital period (NASA catalog summary)",
         "epochTdbJd": 2451545.0,
         "referencePlane": "Laplace",
         "source": "satellite-elements",
@@ -1040,7 +1122,10 @@
           "raDegrees": 268.7,
           "decDegrees": 64.8,
           "frame": "ICRF equatorial"
-        }
+        },
+        "periodSource": "nasa-jovian-periods",
+        "periodEpochTdbJd": null,
+        "periodValidity": "NASA 目录公转周期摘要，未给独立历元或误差；不视为 JPL 元素历元的拟合平均运动。固定椭圆以此近似传播，不用于绝对相位或交会预报。"
       },
       "rotation": {
         "provider": "iau-pck",
@@ -1079,7 +1164,7 @@
         "inclinationDegrees": 0.0,
         "ascendingNodeDegrees": 0.0,
         "periodDays": 1.370218,
-        "periodType": "JPL table P (sidereal; mean-element approximation)",
+        "periodType": "nominal orbital period (NASA catalog summary)",
         "epochTdbJd": 2451545.0,
         "referencePlane": "Laplace",
         "source": "satellite-elements",
@@ -1088,7 +1173,10 @@
           "raDegrees": 40.6,
           "decDegrees": 83.5,
           "frame": "ICRF equatorial"
-        }
+        },
+        "periodSource": "nasa-saturnian-periods",
+        "periodEpochTdbJd": null,
+        "periodValidity": "NASA 目录公转周期摘要，未给独立历元或误差；不视为 JPL 元素历元的拟合平均运动。固定椭圆以此近似传播，不用于绝对相位或交会预报。"
       },
       "rotation": {
         "provider": "iau-pck",
@@ -1126,8 +1214,8 @@
         "meanAnomalyDegrees": 11.7,
         "inclinationDegrees": 0.3,
         "ascendingNodeDegrees": 78.6,
-        "periodDays": 15.945448,
-        "periodType": "JPL table P (sidereal; mean-element approximation)",
+        "periodDays": 15.945421,
+        "periodType": "nominal orbital period (NASA catalog summary)",
         "epochTdbJd": 2451545.0,
         "referencePlane": "Laplace",
         "source": "satellite-elements",
@@ -1136,7 +1224,10 @@
           "raDegrees": 36.4,
           "decDegrees": 84.0,
           "frame": "ICRF equatorial"
-        }
+        },
+        "periodSource": "nasa-saturnian-periods",
+        "periodEpochTdbJd": null,
+        "periodValidity": "NASA 目录公转周期摘要，未给独立历元或误差；不视为 JPL 元素历元的拟合平均运动。固定椭圆以此近似传播，不用于绝对相位或交会预报。"
       },
       "rotation": {
         "provider": "iau-pck",
@@ -1173,8 +1264,8 @@
         "meanAnomalyDegrees": 63.0,
         "inclinationDegrees": 157.3,
         "ascendingNodeDegrees": 178.1,
-        "periodDays": 5.876994,
-        "periodType": "JPL table P (sidereal; mean-element approximation)",
+        "periodDays": 5.876854,
+        "periodType": "nominal orbital period (NASA catalog summary)",
         "epochTdbJd": 2451545.0,
         "referencePlane": "Laplace",
         "source": "satellite-elements",
@@ -1183,7 +1274,10 @@
           "raDegrees": 299.8,
           "decDegrees": 43.1,
           "frame": "ICRF equatorial"
-        }
+        },
+        "periodSource": "nasa-neptunian-periods",
+        "periodEpochTdbJd": null,
+        "periodValidity": "NASA 目录公转周期摘要，未给独立历元或误差；不视为 JPL 元素历元的拟合平均运动。固定椭圆以此近似传播，不用于绝对相位或交会预报。"
       },
       "rotation": {
         "provider": "iau-pck",
@@ -1226,7 +1320,10 @@
         "epochTdbJd": 2451545.0,
         "referencePlane": "equatorial",
         "source": "satellite-elements",
-        "reference": "PLU060; table ref. 6"
+        "reference": "PLU060; table ref. 6",
+        "periodSource": "satellite-elements",
+        "periodEpochTdbJd": 2451545.0,
+        "periodValidity": "所列来源的参考周期；保留该来源的定义与平均模型限制，不是任意观测日期的瞬时周期。"
       },
       "rotation": {
         "provider": "iau-pck",
@@ -1265,11 +1362,14 @@
         "inclinationDegrees": 4.4,
         "ascendingNodeDegrees": 100.9,
         "periodDays": 1.413479,
-        "periodType": "JPL table P (sidereal; mean-element approximation)",
+        "periodType": "nominal orbital period (NASA catalog summary)",
         "epochTdbJd": 2451545.0,
         "referencePlane": "equatorial",
         "source": "satellite-elements",
-        "reference": "URA182; table ref. 45"
+        "reference": "URA182; table ref. 45",
+        "periodSource": "nasa-uranian-periods",
+        "periodEpochTdbJd": null,
+        "periodValidity": "NASA 目录公转周期摘要，未给独立历元或误差；不视为 JPL 元素历元的拟合平均运动。固定椭圆以此近似传播，不用于绝对相位或交会预报。"
       },
       "rotation": {
         "provider": "iau-pck",
@@ -1316,7 +1416,10 @@
           "raDegrees": 316.6,
           "decDegrees": 53.5,
           "frame": "ICRF equatorial"
-        }
+        },
+        "periodSource": "satellite-elements",
+        "periodEpochTdbJd": 2451545.0,
+        "periodValidity": "所列来源的参考周期；保留该来源的定义与平均模型限制，不是任意观测日期的瞬时周期。"
       },
       "rotation": {
         "provider": "iau-pck",
@@ -1353,8 +1456,8 @@
         "meanAnomalyDegrees": 310.6,
         "inclinationDegrees": 0.4,
         "ascendingNodeDegrees": 282.9,
-        "periodDays": 0.499918,
-        "periodType": "JPL table P (sidereal; mean-element approximation)",
+        "periodDays": 0.498179,
+        "periodType": "nominal orbital period (NASA catalog summary)",
         "epochTdbJd": 2451545.0,
         "referencePlane": "Laplace",
         "source": "satellite-elements",
@@ -1363,7 +1466,10 @@
           "raDegrees": 268.1,
           "decDegrees": 64.5,
           "frame": "ICRF equatorial"
-        }
+        },
+        "periodSource": "nasa-jovian-periods",
+        "periodEpochTdbJd": null,
+        "periodValidity": "NASA 目录公转周期摘要，未给独立历元或误差；不视为 JPL 元素历元的拟合平均运动。固定椭圆以此近似传播，不用于绝对相位或交会预报。"
       },
       "rotation": {
         "provider": "iau-pck",
@@ -1400,8 +1506,8 @@
         "meanAnomalyDegrees": 182.1,
         "inclinationDegrees": 1.1,
         "ascendingNodeDegrees": 340.4,
-        "periodDays": 0.676105,
-        "periodType": "JPL table P (sidereal; mean-element approximation)",
+        "periodDays": 0.6745,
+        "periodType": "nominal orbital period (NASA catalog summary)",
         "epochTdbJd": 2451545.0,
         "referencePlane": "Laplace",
         "source": "satellite-elements",
@@ -1410,7 +1516,10 @@
           "raDegrees": 268.1,
           "decDegrees": 64.5,
           "frame": "ICRF equatorial"
-        }
+        },
+        "periodSource": "nasa-jovian-periods",
+        "periodEpochTdbJd": null,
+        "periodValidity": "NASA 目录公转周期摘要，未给独立历元或误差；不视为 JPL 元素历元的拟合平均运动。固定椭圆以此近似传播，不用于绝对相位或交会预报。"
       },
       "rotation": {
         "provider": "iau-pck",
@@ -1448,7 +1557,7 @@
         "inclinationDegrees": 0.0,
         "ascendingNodeDegrees": 0.0,
         "periodDays": 0.29826,
-        "periodType": "JPL table P (sidereal; mean-element approximation)",
+        "periodType": "nominal orbital period (NASA catalog summary)",
         "epochTdbJd": 2451545.0,
         "referencePlane": "Laplace",
         "source": "satellite-elements",
@@ -1457,7 +1566,10 @@
           "raDegrees": 268.1,
           "decDegrees": 64.5,
           "frame": "ICRF equatorial"
-        }
+        },
+        "periodSource": "nasa-jovian-periods",
+        "periodEpochTdbJd": null,
+        "periodValidity": "NASA 目录公转周期摘要，未给独立历元或误差；不视为 JPL 元素历元的拟合平均运动。固定椭圆以此近似传播，不用于绝对相位或交会预报。"
       },
       "rotation": {
         "provider": "iau-pck",
@@ -1495,7 +1607,7 @@
         "inclinationDegrees": 0.0,
         "ascendingNodeDegrees": 0.0,
         "periodDays": 0.294779,
-        "periodType": "JPL table P (sidereal; mean-element approximation)",
+        "periodType": "nominal orbital period (NASA catalog summary)",
         "epochTdbJd": 2451545.0,
         "referencePlane": "Laplace",
         "source": "satellite-elements",
@@ -1504,7 +1616,10 @@
           "raDegrees": 268.1,
           "decDegrees": 64.5,
           "frame": "ICRF equatorial"
-        }
+        },
+        "periodSource": "nasa-jovian-periods",
+        "periodEpochTdbJd": null,
+        "periodValidity": "NASA 目录公转周期摘要，未给独立历元或误差；不视为 JPL 元素历元的拟合平均运动。固定椭圆以此近似传播，不用于绝对相位或交会预报。"
       },
       "rotation": {
         "provider": "iau-pck",
@@ -1546,7 +1661,10 @@
         "epochTdbJd": 2451545.0,
         "referencePlane": "ecliptic",
         "source": "satellite-elements",
-        "reference": "JUP347; table ref. 47"
+        "reference": "JUP347; table ref. 47",
+        "periodSource": "satellite-elements",
+        "periodEpochTdbJd": 2451545.0,
+        "periodValidity": "所列来源的参考周期；保留该来源的定义与平均模型限制，不是任意观测日期的瞬时周期。"
       },
       "rotation": {
         "provider": "mean-spin",
@@ -1589,8 +1707,8 @@
         "meanAnomalyDegrees": 275.3,
         "inclinationDegrees": 1.6,
         "ascendingNodeDegrees": 66.2,
-        "periodDays": 0.942422,
-        "periodType": "JPL table P (sidereal; mean-element approximation)",
+        "periodDays": 0.9424218,
+        "periodType": "nominal orbital period (NASA catalog summary)",
         "epochTdbJd": 2451545.0,
         "referencePlane": "Laplace",
         "source": "satellite-elements",
@@ -1599,7 +1717,10 @@
           "raDegrees": 40.6,
           "decDegrees": 83.5,
           "frame": "ICRF equatorial"
-        }
+        },
+        "periodSource": "nasa-saturnian-periods",
+        "periodEpochTdbJd": null,
+        "periodValidity": "NASA 目录公转周期摘要，未给独立历元或误差；不视为 JPL 元素历元的拟合平均运动。固定椭圆以此近似传播，不用于绝对相位或交会预报。"
       },
       "rotation": {
         "provider": "iau-pck",
@@ -1637,7 +1758,7 @@
         "inclinationDegrees": 1.1,
         "ascendingNodeDegrees": 273.0,
         "periodDays": 1.887802,
-        "periodType": "JPL table P (sidereal; mean-element approximation)",
+        "periodType": "nominal orbital period (NASA catalog summary)",
         "epochTdbJd": 2451545.0,
         "referencePlane": "Laplace",
         "source": "satellite-elements",
@@ -1646,7 +1767,10 @@
           "raDegrees": 40.6,
           "decDegrees": 83.5,
           "frame": "ICRF equatorial"
-        }
+        },
+        "periodSource": "nasa-saturnian-periods",
+        "periodEpochTdbJd": null,
+        "periodValidity": "NASA 目录公转周期摘要，未给独立历元或误差；不视为 JPL 元素历元的拟合平均运动。固定椭圆以此近似传播，不用于绝对相位或交会预报。"
       },
       "rotation": {
         "provider": "iau-pck",
@@ -1683,8 +1807,8 @@
         "meanAnomalyDegrees": 212.0,
         "inclinationDegrees": 0.0,
         "ascendingNodeDegrees": 0.0,
-        "periodDays": 2.736916,
-        "periodType": "JPL table P (sidereal; mean-element approximation)",
+        "periodDays": 2.736915,
+        "periodType": "nominal orbital period (NASA catalog summary)",
         "epochTdbJd": 2451545.0,
         "referencePlane": "Laplace",
         "source": "satellite-elements",
@@ -1693,7 +1817,10 @@
           "raDegrees": 40.6,
           "decDegrees": 83.5,
           "frame": "ICRF equatorial"
-        }
+        },
+        "periodSource": "nasa-saturnian-periods",
+        "periodEpochTdbJd": null,
+        "periodValidity": "NASA 目录公转周期摘要，未给独立历元或误差；不视为 JPL 元素历元的拟合平均运动。固定椭圆以此近似传播，不用于绝对相位或交会预报。"
       },
       "rotation": {
         "provider": "iau-pck",
@@ -1730,8 +1857,8 @@
         "meanAnomalyDegrees": 31.5,
         "inclinationDegrees": 0.3,
         "ascendingNodeDegrees": 133.7,
-        "periodDays": 4.517503,
-        "periodType": "JPL table P (sidereal; mean-element approximation)",
+        "periodDays": 4.5175,
+        "periodType": "nominal orbital period (NASA catalog summary)",
         "epochTdbJd": 2451545.0,
         "referencePlane": "Laplace",
         "source": "satellite-elements",
@@ -1740,7 +1867,10 @@
           "raDegrees": 40.6,
           "decDegrees": 83.5,
           "frame": "ICRF equatorial"
-        }
+        },
+        "periodSource": "nasa-saturnian-periods",
+        "periodEpochTdbJd": null,
+        "periodValidity": "NASA 目录公转周期摘要，未给独立历元或误差；不视为 JPL 元素历元的拟合平均运动。固定椭圆以此近似传播，不用于绝对相位或交会预报。"
       },
       "rotation": {
         "provider": "iau-pck",
@@ -1777,8 +1907,8 @@
         "meanAnomalyDegrees": 74.8,
         "inclinationDegrees": 7.6,
         "ascendingNodeDegrees": 86.5,
-        "periodDays": 79.331002,
-        "periodType": "JPL table P (sidereal; mean-element approximation)",
+        "periodDays": 79.330183,
+        "periodType": "nominal orbital period (NASA catalog summary)",
         "epochTdbJd": 2451545.0,
         "referencePlane": "Laplace",
         "source": "satellite-elements",
@@ -1787,7 +1917,10 @@
           "raDegrees": 288.7,
           "decDegrees": 78.9,
           "frame": "ICRF equatorial"
-        }
+        },
+        "periodSource": "nasa-saturnian-periods",
+        "periodEpochTdbJd": null,
+        "periodValidity": "NASA 目录公转周期摘要，未给独立历元或误差；不视为 JPL 元素历元的拟合平均运动。固定椭圆以此近似传播，不用于绝对相位或交会预报。"
       },
       "rotation": {
         "provider": "iau-pck",
@@ -1834,7 +1967,10 @@
           "raDegrees": 276.0,
           "decDegrees": 67.5,
           "frame": "ICRF equatorial"
-        }
+        },
+        "periodSource": "satellite-elements",
+        "periodEpochTdbJd": 2451545.0,
+        "periodValidity": "所列来源的参考周期；保留该来源的定义与平均模型限制，不是任意观测日期的瞬时周期。"
       },
       "rotation": {
         "provider": "iau-pck",
@@ -1871,8 +2007,8 @@
         "meanAnomalyDegrees": 122.9,
         "inclinationDegrees": 0.6,
         "ascendingNodeDegrees": 87.1,
-        "periodDays": 21.276658,
-        "periodType": "JPL table P (sidereal; mean-element approximation)",
+        "periodDays": 21.276609,
+        "periodType": "nominal orbital period (NASA catalog summary)",
         "epochTdbJd": 2451545.0,
         "referencePlane": "Laplace",
         "source": "satellite-elements",
@@ -1881,7 +2017,10 @@
           "raDegrees": 40.2,
           "decDegrees": 83.6,
           "frame": "ICRF equatorial"
-        }
+        },
+        "periodSource": "nasa-saturnian-periods",
+        "periodEpochTdbJd": null,
+        "periodValidity": "NASA 目录公转周期摘要，未给独立历元或误差；不视为 JPL 元素历元的拟合平均运动。固定椭圆以此近似传播，不用于绝对相位或交会预报。"
       },
       "rotation": {
         "provider": "illustrative-tumbling",
@@ -1924,8 +2063,8 @@
         "meanAnomalyDegrees": 111.7,
         "inclinationDegrees": 0.2,
         "ascendingNodeDegrees": 159.9,
-        "periodDays": 0.697353,
-        "periodType": "JPL table P (sidereal; mean-element approximation)",
+        "periodDays": 0.6945,
+        "periodType": "nominal orbital period (NASA catalog summary)",
         "epochTdbJd": 2451545.0,
         "referencePlane": "Laplace",
         "source": "satellite-elements",
@@ -1934,7 +2073,10 @@
           "raDegrees": 40.6,
           "decDegrees": 83.5,
           "frame": "ICRF equatorial"
-        }
+        },
+        "periodSource": "nasa-saturnian-periods",
+        "periodEpochTdbJd": null,
+        "periodValidity": "NASA 目录公转周期摘要，未给独立历元或误差；不视为 JPL 元素历元的拟合平均运动。固定椭圆以此近似传播，不用于绝对相位或交会预报。"
       },
       "rotation": {
         "provider": "iau-pck",
@@ -1971,8 +2113,8 @@
         "meanAnomalyDegrees": 197.2,
         "inclinationDegrees": 0.3,
         "ascendingNodeDegrees": 189.8,
-        "periodDays": 0.697012,
-        "periodType": "JPL table P (sidereal; mean-element approximation)",
+        "periodDays": 0.6942,
+        "periodType": "nominal orbital period (NASA catalog summary)",
         "epochTdbJd": 2451545.0,
         "referencePlane": "Laplace",
         "source": "satellite-elements",
@@ -1981,14 +2123,18 @@
           "raDegrees": 40.6,
           "decDegrees": 83.5,
           "frame": "ICRF equatorial"
-        }
+        },
+        "periodSource": "nasa-saturnian-periods",
+        "periodEpochTdbJd": null,
+        "periodValidity": "NASA 目录公转周期摘要，未给独立历元或误差；不视为 JPL 元素历元的拟合平均运动。固定椭圆以此近似传播，不用于绝对相位或交会预报。"
       },
       "rotation": {
         "provider": "iau-pck",
         "source": "pck",
         "coefficients": "epimetheus",
         "epochTdbJd": 2451545,
-        "validity": "IAU 多项式与所列周期项；不添加额外物理天平动。系数不是整段日期均经观测校准的保证。"
+        "validity": "Horizons 明示该 IAU 极轴/经线模型仅在 1981 年旅行者飞掠附近有效；未采用尚未由 IAU 公布的卡西尼坐标模型。其它日期仅作姿态外推示意，不用于地标朝向或掩食预报。",
+        "validitySource": "epimetheus-horizons"
       }
     },
     "prometheus": {
@@ -2018,8 +2164,8 @@
         "meanAnomalyDegrees": 135.4,
         "inclinationDegrees": 0.0,
         "ascendingNodeDegrees": 0.0,
-        "periodDays": 0.615878,
-        "periodType": "JPL table P (sidereal; mean-element approximation)",
+        "periodDays": 0.613,
+        "periodType": "nominal orbital period (NASA catalog summary)",
         "epochTdbJd": 2451545.0,
         "referencePlane": "Laplace",
         "source": "satellite-elements",
@@ -2028,7 +2174,10 @@
           "raDegrees": 40.6,
           "decDegrees": 83.5,
           "frame": "ICRF equatorial"
-        }
+        },
+        "periodSource": "nasa-saturnian-periods",
+        "periodEpochTdbJd": null,
+        "periodValidity": "NASA 目录公转周期摘要，未给独立历元或误差；不视为 JPL 元素历元的拟合平均运动。固定椭圆以此近似传播，不用于绝对相位或交会预报。"
       },
       "rotation": {
         "provider": "iau-pck",
@@ -2065,8 +2214,8 @@
         "meanAnomalyDegrees": 123.9,
         "inclinationDegrees": 0.0,
         "ascendingNodeDegrees": 0.0,
-        "periodDays": 0.631369,
-        "periodType": "JPL table P (sidereal; mean-element approximation)",
+        "periodDays": 0.6285,
+        "periodType": "nominal orbital period (NASA catalog summary)",
         "epochTdbJd": 2451545.0,
         "referencePlane": "Laplace",
         "source": "satellite-elements",
@@ -2075,7 +2224,10 @@
           "raDegrees": 40.6,
           "decDegrees": 83.5,
           "frame": "ICRF equatorial"
-        }
+        },
+        "periodSource": "nasa-saturnian-periods",
+        "periodEpochTdbJd": null,
+        "periodValidity": "NASA 目录公转周期摘要，未给独立历元或误差；不视为 JPL 元素历元的拟合平均运动。固定椭圆以此近似传播，不用于绝对相位或交会预报。"
       },
       "rotation": {
         "provider": "iau-pck",
@@ -2112,8 +2264,8 @@
         "meanAnomalyDegrees": 289.1,
         "inclinationDegrees": 0.0,
         "ascendingNodeDegrees": 0.0,
-        "periodDays": 0.604602,
-        "periodType": "JPL table P (sidereal; mean-element approximation)",
+        "periodDays": 0.6019,
+        "periodType": "nominal orbital period (NASA catalog summary)",
         "epochTdbJd": 2451545.0,
         "referencePlane": "Laplace",
         "source": "satellite-elements",
@@ -2122,7 +2274,10 @@
           "raDegrees": 40.6,
           "decDegrees": 83.5,
           "frame": "ICRF equatorial"
-        }
+        },
+        "periodSource": "nasa-saturnian-periods",
+        "periodEpochTdbJd": null,
+        "periodValidity": "NASA 目录公转周期摘要，未给独立历元或误差；不视为 JPL 元素历元的拟合平均运动。固定椭圆以此近似传播，不用于绝对相位或交会预报。"
       },
       "rotation": {
         "provider": "iau-pck",
@@ -2159,8 +2314,8 @@
         "meanAnomalyDegrees": 146.6,
         "inclinationDegrees": 0.0,
         "ascendingNodeDegrees": 0.0,
-        "periodDays": 0.575051,
-        "periodType": "JPL table P (sidereal; mean-element approximation)",
+        "periodDays": 0.575,
+        "periodType": "nominal orbital period (NASA catalog summary)",
         "epochTdbJd": 2451545.0,
         "referencePlane": "Laplace",
         "source": "satellite-elements",
@@ -2169,7 +2324,10 @@
           "raDegrees": 40.6,
           "decDegrees": 83.5,
           "frame": "ICRF equatorial"
-        }
+        },
+        "periodSource": "nasa-saturnian-periods",
+        "periodEpochTdbJd": null,
+        "periodValidity": "NASA 目录公转周期摘要，未给独立历元或误差；不视为 JPL 元素历元的拟合平均运动。固定椭圆以此近似传播，不用于绝对相位或交会预报。"
       },
       "rotation": {
         "provider": "iau-pck",
@@ -2207,11 +2365,14 @@
         "inclinationDegrees": 0.0,
         "ascendingNodeDegrees": 0.0,
         "periodDays": 2.520379,
-        "periodType": "JPL table P (sidereal; mean-element approximation)",
+        "periodType": "nominal orbital period (NASA catalog summary)",
         "epochTdbJd": 2451545.0,
         "referencePlane": "equatorial",
         "source": "satellite-elements",
-        "reference": "URA182; table ref. 45"
+        "reference": "URA182; table ref. 45",
+        "periodSource": "nasa-uranian-periods",
+        "periodEpochTdbJd": null,
+        "periodValidity": "NASA 目录公转周期摘要，未给独立历元或误差；不视为 JPL 元素历元的拟合平均运动。固定椭圆以此近似传播，不用于绝对相位或交会预报。"
       },
       "rotation": {
         "provider": "iau-pck",
@@ -2248,12 +2409,15 @@
         "meanAnomalyDegrees": 253.0,
         "inclinationDegrees": 0.1,
         "ascendingNodeDegrees": 174.8,
-        "periodDays": 4.144177,
-        "periodType": "JPL table P (sidereal; mean-element approximation)",
+        "periodDays": 4.144176,
+        "periodType": "nominal orbital period (NASA catalog summary)",
         "epochTdbJd": 2451545.0,
         "referencePlane": "equatorial",
         "source": "satellite-elements",
-        "reference": "URA182; table ref. 45"
+        "reference": "URA182; table ref. 45",
+        "periodSource": "nasa-uranian-periods",
+        "periodEpochTdbJd": null,
+        "periodValidity": "NASA 目录公转周期摘要，未给独立历元或误差；不视为 JPL 元素历元的拟合平均运动。固定椭圆以此近似传播，不用于绝对相位或交会预报。"
       },
       "rotation": {
         "provider": "iau-pck",
@@ -2290,12 +2454,15 @@
         "meanAnomalyDegrees": 68.1,
         "inclinationDegrees": 0.1,
         "ascendingNodeDegrees": 29.5,
-        "periodDays": 8.705869,
-        "periodType": "JPL table P (sidereal; mean-element approximation)",
+        "periodDays": 8.705867,
+        "periodType": "nominal orbital period (NASA catalog summary)",
         "epochTdbJd": 2451545.0,
         "referencePlane": "equatorial",
         "source": "satellite-elements",
-        "reference": "URA182; table ref. 45"
+        "reference": "URA182; table ref. 45",
+        "periodSource": "nasa-uranian-periods",
+        "periodEpochTdbJd": null,
+        "periodValidity": "NASA 目录公转周期摘要，未给独立历元或误差；不视为 JPL 元素历元的拟合平均运动。固定椭圆以此近似传播，不用于绝对相位或交会预报。"
       },
       "rotation": {
         "provider": "iau-pck",
@@ -2332,12 +2499,15 @@
         "meanAnomalyDegrees": 143.6,
         "inclinationDegrees": 0.1,
         "ascendingNodeDegrees": 76.8,
-        "periodDays": 13.463237,
-        "periodType": "JPL table P (sidereal; mean-element approximation)",
+        "periodDays": 13.463234,
+        "periodType": "nominal orbital period (NASA catalog summary)",
         "epochTdbJd": 2451545.0,
         "referencePlane": "equatorial",
         "source": "satellite-elements",
-        "reference": "URA182; table ref. 45"
+        "reference": "URA182; table ref. 45",
+        "periodSource": "nasa-uranian-periods",
+        "periodEpochTdbJd": null,
+        "periodValidity": "NASA 目录公转周期摘要，未给独立历元或误差；不视为 JPL 元素历元的拟合平均运动。固定椭圆以此近似传播，不用于绝对相位或交会预报。"
       },
       "rotation": {
         "provider": "iau-pck",
@@ -2379,7 +2549,10 @@
         "epochTdbJd": 2458849.5,
         "referencePlane": "ecliptic",
         "source": "satellite-elements",
-        "reference": "NEP105; table ref. 44"
+        "reference": "NEP105; table ref. 44",
+        "periodSource": "satellite-elements",
+        "periodEpochTdbJd": 2458849.5,
+        "periodValidity": "所列来源的参考周期；保留该来源的定义与平均模型限制，不是任意观测日期的瞬时周期。"
       },
       "rotation": {
         "provider": "mean-spin",
@@ -2423,7 +2596,7 @@
         "inclinationDegrees": 0.0,
         "ascendingNodeDegrees": 0.0,
         "periodDays": 1.122315,
-        "periodType": "JPL table P (sidereal; mean-element approximation)",
+        "periodType": "nominal orbital period (NASA catalog summary)",
         "epochTdbJd": 2451545.0,
         "referencePlane": "Laplace",
         "source": "satellite-elements",
@@ -2432,7 +2605,10 @@
           "raDegrees": 299.8,
           "decDegrees": 42.6,
           "frame": "ICRF equatorial"
-        }
+        },
+        "periodSource": "nasa-neptunian-periods",
+        "periodEpochTdbJd": null,
+        "periodValidity": "NASA 目录公转周期摘要，未给独立历元或误差；不视为 JPL 元素历元的拟合平均运动。固定椭圆以此近似传播，不用于绝对相位或交会预报。"
       },
       "rotation": {
         "provider": "iau-pck",
@@ -2474,7 +2650,10 @@
         "epochTdbJd": 2451545.0,
         "referencePlane": "equatorial",
         "source": "satellite-elements",
-        "reference": "PLU060; table ref. 6"
+        "reference": "PLU060; table ref. 6",
+        "periodSource": "satellite-elements",
+        "periodEpochTdbJd": 2451545.0,
+        "periodValidity": "所列来源的参考周期；保留该来源的定义与平均模型限制，不是任意观测日期的瞬时周期。"
       },
       "rotation": {
         "provider": "illustrative-tumbling",
@@ -2522,7 +2701,10 @@
         "epochTdbJd": 2451545.0,
         "referencePlane": "equatorial",
         "source": "satellite-elements",
-        "reference": "PLU060; table ref. 6"
+        "reference": "PLU060; table ref. 6",
+        "periodSource": "satellite-elements",
+        "periodEpochTdbJd": 2451545.0,
+        "periodValidity": "所列来源的参考周期；保留该来源的定义与平均模型限制，不是任意观测日期的瞬时周期。"
       },
       "rotation": {
         "provider": "illustrative-tumbling",
@@ -2570,7 +2752,10 @@
         "epochTdbJd": 2451545.0,
         "referencePlane": "equatorial",
         "source": "satellite-elements",
-        "reference": "PLU060; table ref. 6"
+        "reference": "PLU060; table ref. 6",
+        "periodSource": "satellite-elements",
+        "periodEpochTdbJd": 2451545.0,
+        "periodValidity": "所列来源的参考周期；保留该来源的定义与平均模型限制，不是任意观测日期的瞬时周期。"
       },
       "rotation": {
         "provider": "illustrative-tumbling",
@@ -2618,7 +2803,10 @@
         "epochTdbJd": 2451545.0,
         "referencePlane": "equatorial",
         "source": "satellite-elements",
-        "reference": "PLU060; table ref. 6"
+        "reference": "PLU060; table ref. 6",
+        "periodSource": "satellite-elements",
+        "periodEpochTdbJd": 2451545.0,
+        "periodValidity": "所列来源的参考周期；保留该来源的定义与平均模型限制，不是任意观测日期的瞬时周期。"
       },
       "rotation": {
         "provider": "illustrative-tumbling",
@@ -2678,7 +2866,10 @@
         "referencePlane": "ecliptic",
         "source": "haumea-moons",
         "reference": "Table 2, HJD 2454615.0",
-        "timeApproximation": "论文 HJD 数值近似作为 TDB 历元；未恢复原始日心观测时标修正，不用于绝对相位预报。"
+        "timeApproximation": "论文 HJD 数值近似作为 TDB 历元；未恢复原始日心观测时标修正，不用于绝对相位预报。",
+        "periodSource": "haumea-moons",
+        "periodEpochTdbJd": 2454615,
+        "periodValidity": "所列来源的参考周期；保留该来源的定义与平均模型限制，不是任意观测日期的瞬时周期。"
       },
       "rotation": {
         "provider": "mean-spin",
@@ -2728,7 +2919,10 @@
         "referencePlane": "ecliptic",
         "source": "haumea-moons",
         "reference": "Table 2, HJD 2454615.0",
-        "timeApproximation": "论文 HJD 数值近似作为 TDB 历元；未恢复原始日心观测时标修正，不用于绝对相位预报。"
+        "timeApproximation": "论文 HJD 数值近似作为 TDB 历元；未恢复原始日心观测时标修正，不用于绝对相位预报。",
+        "periodSource": "haumea-moons",
+        "periodEpochTdbJd": 2454615,
+        "periodValidity": "所列来源的参考周期；保留该来源的定义与平均模型限制，不是任意观测日期的瞬时周期。"
       },
       "rotation": {
         "provider": "mean-spin",
@@ -2778,7 +2972,10 @@
         "referencePlane": "J2000-equatorial",
         "source": "dysnomia-orbit",
         "reference": "Table 2 combined fit",
-        "timeApproximation": "论文 JD 历元近似作为 TDB；原始观测时标与光行时未重新拟合。"
+        "timeApproximation": "论文 JD 历元近似作为 TDB；原始观测时标与光行时未重新拟合。",
+        "periodSource": "dysnomia-orbit",
+        "periodEpochTdbJd": 2453979,
+        "periodValidity": "所列来源的参考周期；保留该来源的定义与平均模型限制，不是任意观测日期的瞬时周期。"
       },
       "rotation": {
         "provider": "mean-spin",

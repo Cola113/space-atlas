@@ -1,20 +1,25 @@
 import * as THREE from 'three';
 import { bindPhysicalSun } from '../physical-lighting.js';
-import { surfaceFrame, angularDiameter, horizonAngles } from './geometry.js';
+import { surfaceFrame, surfaceSunDirection, angularDiameter, horizonAngles } from './geometry.js';
 import { physicalData } from '../physical-scale.js';
 import { AU_KM } from '../physics/definitions.js';
 import { physicalState } from '../physics/state.js';
 import { brightStars } from '../sky-data/bright-stars.js';
 import { equatorialDirection, starAppearance } from '../sky-coordinates.js';
 import { SurfaceExposure } from './SurfaceExposure.js';
+import { bindSkyDepth, skyDepthParameters } from './sky-depth.js';
 
 const { smoothstep, clamp, degToRad } = THREE.MathUtils;
 const HOURS = 3600000;
 const WIND_CYCLE_HOURS = 72;
 
-// The panorama is 100 units away. A near plane at 10 preserves enough depth
-// precision to distinguish Earth's surface from its thin cloud shell at ~300.
+// Terrain stays at 100 units, compact celestial meshes at 300–1200, stars at
+// 2000. Celestial fragment depth uses physical distances (see sky-depth.js).
 export const surfaceCameraRange = Object.freeze({near:10, far:3000});
+
+// Bound mesh coordinates inside the camera clip planes; physical fragment
+// depth, rather than these compressed sphere centers, determines occlusion.
+export const surfaceSkyDistance = distanceKm => 300 + 900 * distanceKm / (distanceKm + AU_KM);
 
 // Two bounded flow phases crossfade; a phase is invisible when it wraps.
 // This keeps weather textures intact even decades after the landing-site epoch.
@@ -24,21 +29,58 @@ export function surfaceWindCycle(hours) {
     smoothstep(Math.abs(phase*2-1),0,1)];
 }
 
-// Approximate disk overlap in the sky plane. This affects the observer's ground
-// lighting during an eclipse, not the light illuminating the distant planets.
-export function solarVisibility(frame, parentRadiusKm, parentName) {
-  const sun = frame.targets.Sun, parent = frame.targets[parentName];
-  if(parentName==='Sun'||!parent) return 1;
-  if (parent.distanceKm >= sun.distanceKm) return 1;
-  const r = angularDiameter(physicalData.sun.radiusKm,sun.distanceKm)/2;
-  const R = angularDiameter(parentRadiusKm,parent.distanceKm)/2;
-  const d = sun.direction.angleTo(parent.direction);
+function visibleDiskFraction(r,R,d) {
   if (d >= r + R) return 1;
   if (d <= Math.abs(R-r)) return R >= r ? 0 : 1-R*R/(r*r);
   const overlap = r*r*Math.acos(clamp((d*d+r*r-R*R)/(2*d*r),-1,1))
     + R*R*Math.acos(clamp((d*d+R*R-r*r)/(2*d*R),-1,1))
     - .5*Math.sqrt(Math.max(0,(-d+r+R)*(d+r-R)*(d-r+R)*(d+r+R)));
   return clamp(1-overlap/(Math.PI*r*r),0,1);
+}
+
+// Uniform-brightness circular disks in the angular sky plane; no limb
+// darkening, atmospheric refraction or ellipsoidal limb. The local moons of a
+// planetary landing can transit too. A body farther than the Sun cannot eclipse
+// it. This affects ground illumination, not the target's own lighting direction.
+export function solarVisibility(frame,parentRadiusKm,parentName) {
+  const sun=frame.targets.Sun,r=angularDiameter(physicalData.sun.radiusKm,sun.distanceKm)/2;
+  const blockers=[];
+  for(const [name,target] of Object.entries(frame.targets)) {
+    if(name==='Sun'||target.distanceKm>=sun.distanceKm)continue;
+    const radius=target.radiusKm||(name===parentName?parentRadiusKm:0);
+    if(!(radius>0))continue;
+    const R=angularDiameter(radius,target.distanceKm)/2,d=sun.direction.angleTo(target.direction);
+    if(d>=r+R)continue;
+    const visible=visibleDiskFraction(r,R,d);
+    if(visible===0)return 0;
+    blockers.push({target,R,d,visible});
+  }
+  if(!blockers.length)return 1;
+  if(blockers.length===1)return blockers[0].visible;
+  // Integrate the union of disk intervals, so overlapping foreground moons
+  // cannot dim the same solar area twice. Only multiple simultaneous transits
+  // use this bounded quadrature; the common single-body case is analytical.
+  const axis=new THREE.Vector3(Math.abs(sun.direction.y)>.9?1:0,Math.abs(sun.direction.y)>.9?0:1,0);
+  const x=axis.cross(sun.direction).normalize(),y=sun.direction.clone().cross(x);
+  const circles=blockers.map(({target,R,d})=>{
+    const k=d>1e-12?d/Math.sin(d)/r:0;
+    return {x:target.direction.dot(x)*k,y:target.direction.dot(y)*k,r:R/r};
+  });
+  let covered=0;
+  const slices=1024,step=2/slices;
+  for(let row=0;row<slices;row++) {
+    const v=-1+(row+.5)*step,half=Math.sqrt(1-v*v),intervals=[];
+    for(const c of circles) {
+      const square=c.r*c.r-(v-c.y)**2;
+      if(square<=0)continue;
+      const dx=Math.sqrt(square),left=Math.max(-half,c.x-dx),right=Math.min(half,c.x+dx);
+      if(right>left)intervals.push([left,right]);
+    }
+    intervals.sort((a,b)=>a[0]-b[0]);
+    let end=-half;
+    for(const [left,right] of intervals){covered+=Math.max(0,right-Math.max(end,left))*step;end=Math.max(end,right);}
+  }
+  return clamp(1-covered/Math.PI,0,1);
 }
 
 export function surfaceLight(frame, site, referenceAltitude) {
@@ -57,6 +99,7 @@ export function createSurfaceSky({scene,renderer,site,parentMap,cloudMap,ringMap
   const exposure=new SurfaceExposure();
   let illumination;
   const windCycle={value:new THREE.Vector3()};
+  const depthRange={value:new THREE.Vector2()};
   const ambient=new THREE.AmbientLight('#d4dbed',.018);
   const light=new THREE.DirectionalLight('#ffffff',2.2);
   scene.add(ambient,light);
@@ -102,10 +145,13 @@ export function createSurfaceSky({scene,renderer,site,parentMap,cloudMap,ringMap
   function addGlobe(name,radiusKm,map,emissive=false) {
     const material=emissive?new THREE.MeshBasicMaterial({color:'#fff8e8'}):new THREE.MeshLambertMaterial({map,color:map?'#ffffff':'#bbbcb6'});
     const globe=new THREE.Mesh(new THREE.SphereGeometry(1,map?72:24,map?48:16),material);
+    globe.name=`surface-${name}`;
     if(name==='Jupiter'&&map)windMaterial(material,.0001);
     const sunlight=new THREE.Vector3();
     bindPhysicalSun(material,sunlight);
-    objects.set(name,{globe,radiusKm,sunlight});scene.add(globe);return globe;
+    const physicalScale={value:1};
+    bindSkyDepth(material,physicalScale,depthRange);
+    objects.set(name,{globe,radiusKm,sunlight,physicalScale});scene.add(globe);return globe;
   }
   if(parentMap)parentMap.wrapS=THREE.RepeatWrapping;
   const globe=addGlobe(site.parent,site.parentRadiusKm,parentMap,site.parent==='Sun');
@@ -116,19 +162,21 @@ export function createSurfaceSky({scene,renderer,site,parentMap,cloudMap,ringMap
     const rings=new THREE.Mesh(geometry,new THREE.MeshLambertMaterial({map:ringMap,side:THREE.DoubleSide,transparent:true,depthWrite:false,opacity:.8}));
     rings.rotation.x=-Math.PI/2;globe.add(rings);
     bindPhysicalSun(rings.material,objects.get(site.parent).sunlight);
+    bindSkyDepth(rings.material,objects.get(site.parent).physicalScale,depthRange);
   }
   if(cloudMap){
     cloudMap.wrapS=THREE.RepeatWrapping;
     const material=new THREE.MeshLambertMaterial({map:cloudMap,transparent:true,blending:THREE.AdditiveBlending,depthWrite:false,opacity:.8});
     windMaterial(material,.0009);
     bindPhysicalSun(material,objects.get(site.parent).sunlight);
+    bindSkyDepth(material,objects.get(site.parent).physicalScale,depthRange);
     clouds=new THREE.Mesh(globe.geometry,material);clouds.scale.setScalar(1.003);globe.add(clouds);
   }
   for(const name of ['Mercury','Venus','Earth','Mars','Jupiter','Saturn','Uranus','Neptune'])
     if(name!==site.parent&&frame.targets[name])addGlobe(name,frame.targets[name].radiusKm,null);
   for(const [name,target] of Object.entries(frame.targets)) {
     const physicalBody=frame.physical.bodies.get(target.id);
-    if(!objects.has(name)&&physicalBody.parent===site.parent.toLowerCase())addGlobe(name,target.radiusKm,null);
+    if(!objects.has(name)&&[site.id,site.parent.toLowerCase()].includes(physicalBody.parent))addGlobe(name,target.radiusKm,null);
   }
   if(site.parent!=='Sun')addGlobe('Sun',physicalData.sun.radiusKm,null,true);
 
@@ -164,10 +212,13 @@ export function createSurfaceSky({scene,renderer,site,parentMap,cloudMap,ringMap
 
   // Use a camera-facing disc with a soft exposure halo; there is no atmosphere.
   const halo=new THREE.Mesh(new THREE.PlaneGeometry(1,1),new THREE.ShaderMaterial({uniforms:{visibility:{value:1}},
-    vertexShader:'varying vec2 vUv;void main(){vUv=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}',
-    fragmentShader:`varying vec2 vUv;uniform float visibility;void main(){float r=length(vUv-.5)*2.;float a=exp(-r*7.)*(1.-smoothstep(.6,1.,r))*.22*visibility;gl_FragColor=vec4(1.,.86,.63,a);}`,
+    vertexShader:'varying vec2 vUv;void main(){vUv=uv;vec3 transformed=position;\n#include <project_vertex>\n}',
+    fragmentShader:`varying vec2 vUv;uniform float visibility;void main(){
+      #include <logdepthbuf_fragment>
+      float r=length(vUv-.5)*2.;float a=exp(-r*7.)*(1.-smoothstep(.6,1.,r))*.22*visibility;gl_FragColor=vec4(1.,.86,.63,a);}`,
     transparent:true,blending:THREE.AdditiveBlending,depthWrite:false}));
   halo.renderOrder=2;scene.add(halo);
+  bindSkyDepth(halo.material,objects.get('Sun').physicalScale,depthRange);
   stars=makeStars(brightStars);
   fetch('/solar-system/sky/hyg-v41-mag65.json',{signal})
     .then(r=>{if(!r.ok)throw new Error('catalogue');return r.json();})
@@ -180,12 +231,14 @@ export function createSurfaceSky({scene,renderer,site,parentMap,cloudMap,ringMap
 
   function update(time,camera,{resetExposure=false}={}) {
     frame=surfaceFrame(site,new Date(time),provider);
-    for(const [name,{globe,radiusKm,sunlight}] of objects){
+    depthRange.value.fromArray(skyDepthParameters([...objects.keys()].map(name=>frame.targets[name]).filter(Boolean)));
+    for(const [name,{globe,radiusKm,sunlight,physicalScale}] of objects){
       const target=frame.targets[name];
       if(!target){globe.visible=false;continue;}
       globe.visible=true;
-      sunlight.copy(frame.local(target.positionKm.clone().negate().normalize()));
-      const distance=name==='Sun'?1200:300+400*target.distanceKm/(target.distanceKm+AU_KM);
+      sunlight.copy(surfaceSunDirection(frame,target));
+      const distance=surfaceSkyDistance(target.distanceKm);
+      physicalScale.value=target.distanceKm/distance;
       globe.position.copy(target.direction).multiplyScalar(distance);
       globe.scale.setScalar(distance*radiusKm/target.distanceKm);
       if(target.orientation){
@@ -201,8 +254,9 @@ export function createSurfaceSky({scene,renderer,site,parentMap,cloudMap,ringMap
     advanceExposure(0);
     stars.material.uniforms.rotation.value.copy(frame.rotation);
     const sun=frame.targets.Sun;
-    halo.position.copy(sun.direction).multiplyScalar(1199);
-    halo.scale.setScalar(1199*Math.max(.012,angularDiameter(physicalData.sun.radiusKm,sun.distanceKm)*7));
+    const haloDistance=surfaceSkyDistance(sun.distanceKm)*.999;
+    halo.position.copy(sun.direction).multiplyScalar(haloDistance);
+    halo.scale.setScalar(haloDistance*Math.max(.012,angularDiameter(physicalData.sun.radiusKm,sun.distanceKm)*7));
     halo.quaternion.copy(camera.quaternion);halo.material.uniforms.visibility.value=illumination.eclipse;
     return frame;
   }
