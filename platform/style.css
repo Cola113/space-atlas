@@ -11,6 +11,7 @@
 .space-atlas-menu-title { padding: 7px 10px 12px; font-size: 11px; color: #91a79d; }
 #scene-menu a { display: flex; align-items: center; gap: 14px; padding: 13px 10px; min-height: 64px; box-sizing: border-box; text-decoration: none; color: #d1ded7; border-radius: 5px; letter-spacing: 0; }
 #scene-menu a:hover, #scene-menu a:focus-visible { background: #26392f; outline: none; }
+#scene-menu a + a { margin-top: 8px; }
 #scene-menu a[aria-current] { background: #bce6d50c; color: #bce6d5; }
 #scene-menu a > span:nth-child(2) { flex: 1; }
 #scene-menu a small { display: block; margin-top: 5px; color: #82998d; font-size: 9px; letter-spacing: 0; }
@@ -20,7 +21,7 @@ html[data-scene="black-hole"] .brand-name { letter-spacing: 0; }
 html[data-scene-ready="true"] #universe { animation: atlas-fade-in 380ms ease-out both; }
 @keyframes atlas-fade-in { from { opacity: 0; } }
 @media (max-width: 760px), (max-height: 540px) {
-  #scene-switcher { gap: 8px; min-height: 38px; }
+  #scene-switcher { gap: 8px; min-height: 44px; }
   .space-atlas-title { font-size: 15px; }
   .space-atlas-title small { font-size: 7px; margin-top: 4px; }
   .space-atlas-mark svg { width: 24px; height: 24px; }

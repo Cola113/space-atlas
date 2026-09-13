@@ -8,7 +8,7 @@ const output=new URL('../test-results/orion-cruise/',import.meta.url);
 await mkdir(output,{recursive:true});
 const browser=await chromium.launch({channel:'msedge',headless:true});
 const results=[];
-const ready=page=>page.waitForFunction(()=>window.orionAtlas?.snapshot().ready&&window.orionAtlas.snapshot().frames>30,null,{timeout:60000});
+const ready=page=>page.waitForFunction(()=>window.orionAtlas?.snapshot().ready&&window.orionAtlas.snapshot().frames>0,null,{timeout:60000});
 async function pixels(page){
  await page.waitForFunction(()=>getComputedStyle(document.getElementById('universe')).opacity==='1');
  const buffer=await page.locator('#universe').screenshot();

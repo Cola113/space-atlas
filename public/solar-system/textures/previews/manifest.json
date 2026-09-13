@@ -1,0 +1,710 @@
+{
+  "version": 1,
+  "method": "Resize existing published assets with sharp; no new observed or generated detail",
+  "firstScreen": [
+    {
+      "id": "sun",
+      "key": "2k_sun.jpg",
+      "source": "2k_sun.jpg",
+      "sourceSha256": "ff0f076ba65e03b5ab518451bc96699325be38e3ccbdd5869ee1c00f3a0c8816",
+      "file": "previews/sun.webp",
+      "bytes": 48226,
+      "width": 768,
+      "height": 384,
+      "sha256": "3f3993014c217e1e50d4d37f798259a625422b05c4c49f48d99fc85d3da4f27f"
+    },
+    {
+      "id": "mercury",
+      "key": "2k_mercury.jpg",
+      "source": "2k_mercury.jpg",
+      "sourceSha256": "5a5c80607f643496bac9a631e71957def35ed788895f18b678ac849c2b38e48a",
+      "file": "previews/mercury.webp",
+      "bytes": 42742,
+      "width": 768,
+      "height": 384,
+      "sha256": "a9584a1a8fc8b5974442d904d2e8898154699f73c1a465482d683b45fcfcafbb"
+    },
+    {
+      "id": "venus",
+      "key": "2k_venus_atmosphere.jpg",
+      "source": "2k_venus_atmosphere.jpg",
+      "sourceSha256": "225012ad4911730605c4e189ca2a3bf674fce50cc48aab4102b936b47d6991ac",
+      "file": "previews/venus.webp",
+      "bytes": 7268,
+      "width": 768,
+      "height": 384,
+      "sha256": "81d459a9866b6555d40cab346a888f2a1a981962e1078963080ba8a89b4de913"
+    },
+    {
+      "id": "earth",
+      "key": "2k_earth_daymap.jpg",
+      "source": "2k_earth_daymap.jpg",
+      "sourceSha256": "767ee1dc6eb3802699bfccf6f264880f8acd0b80de3191cd24984fe279b07b7c",
+      "file": "previews/earth.webp",
+      "bytes": 23394,
+      "width": 768,
+      "height": 384,
+      "sha256": "13499625d330a7d819779d95ab8fb37896dda9ac14f2ef47224ae60a58afd468"
+    },
+    {
+      "id": "mars",
+      "key": "2k_mars.jpg",
+      "source": "2k_mars.jpg",
+      "sourceSha256": "2d187f3e77a98eaa8cea5f4cc722f633c122ef170b9e94ace6b5fb6cbc3f8e01",
+      "file": "previews/mars.webp",
+      "bytes": 28670,
+      "width": 768,
+      "height": 384,
+      "sha256": "1373ba09f36543998a30a66ee4d1c0c93ca1fbc5c2453a21527736ee578eac40"
+    },
+    {
+      "id": "jupiter",
+      "key": "2k_jupiter.jpg",
+      "source": "2k_jupiter.jpg",
+      "sourceSha256": "b0f04d005350252636b0e3396fc592548cbd9e9126b269d32d5c6abd4b0e4f2b",
+      "file": "previews/jupiter.webp",
+      "bytes": 19834,
+      "width": 768,
+      "height": 384,
+      "sha256": "a613a21267038bc3d7bb8ac934e2e5654532ed3e2adb4383bfab6e16258f9e0f"
+    },
+    {
+      "id": "saturn",
+      "key": "2k_saturn.jpg",
+      "source": "2k_saturn.jpg",
+      "sourceSha256": "54a900ca9bf7ab62e70f862852759abdf342e6d6436a95a2fe9ebdb6bcd3bbac",
+      "file": "previews/saturn.webp",
+      "bytes": 4662,
+      "width": 768,
+      "height": 384,
+      "sha256": "bc0c21b41723e929af57b7b8579bc71e6fadf2412026c548a4abb07613977b09"
+    },
+    {
+      "id": "uranus",
+      "key": "2k_uranus.jpg",
+      "source": "2k_uranus.jpg",
+      "sourceSha256": "d15239d46f82d3ea13d2b260b5b29b2a382f42f2916dae0694d0387b1204a09d",
+      "file": "previews/uranus.webp",
+      "bytes": 1078,
+      "width": 768,
+      "height": 384,
+      "sha256": "1a196444123d6f80dc219f011107f6e2af8f3114ea66bf84af1d8d603ea4b975"
+    },
+    {
+      "id": "neptune",
+      "key": "2k_neptune.jpg",
+      "source": "2k_neptune.jpg",
+      "sourceSha256": "cb42ea82709741d28b0af44d8b283cbc6dbd0c521a7f0e1e1e010ade00977df6",
+      "file": "previews/neptune.webp",
+      "bytes": 2930,
+      "width": 768,
+      "height": 384,
+      "sha256": "addd8b9618f6e0bde08cd4bfdbc63951332987a8072889aca9bc4961919b3688"
+    },
+    {
+      "id": "earth-clouds",
+      "key": "2k_earth_clouds.jpg",
+      "source": "2k_earth_clouds.jpg",
+      "sourceSha256": "fffd7f68d41b37274822150e54a6ef605af1d3ec35624d9f628c3b896bfa42ed",
+      "file": "previews/earth-clouds.webp",
+      "bytes": 34962,
+      "width": 512,
+      "height": 256,
+      "sha256": "e2929c0a1f376baa6457ba1806d672411a359618a69073aaa38c28a19e55c8f3"
+    },
+    {
+      "id": "saturn-ring",
+      "key": "2k_saturn_ring_alpha.png",
+      "source": "2k_saturn_ring_alpha.png",
+      "sourceSha256": "4b0644b2f3ef259fd0bfaedd9dc52f9e7d9738f65f50363e8c4dd19f650d7334",
+      "file": "previews/saturn-ring.webp",
+      "bytes": 1212,
+      "width": 512,
+      "height": 31,
+      "sha256": "ce0a43d0452990868ed0ff662a813ba3da38e88264c9f663b4f10b605054521a"
+    }
+  ],
+  "thumbnails": [
+    {
+      "id": "sun",
+      "source": "2k_sun.jpg",
+      "sourceSha256": "ff0f076ba65e03b5ab518451bc96699325be38e3ccbdd5869ee1c00f3a0c8816",
+      "file": "thumbnails/sun.webp",
+      "bytes": 3816,
+      "width": 192,
+      "height": 96,
+      "sha256": "28545de7af969a4a8570d049682db67221d9def326abffa9b8f4e9b031129bdb"
+    },
+    {
+      "id": "mercury",
+      "source": "2k_mercury.jpg",
+      "sourceSha256": "5a5c80607f643496bac9a631e71957def35ed788895f18b678ac849c2b38e48a",
+      "file": "thumbnails/mercury.webp",
+      "bytes": 1632,
+      "width": 192,
+      "height": 96,
+      "sha256": "b27c8b7bd742200093870ac1de51c7e8ee48d961c8428096d3a79f8bd667d349"
+    },
+    {
+      "id": "venus",
+      "source": "2k_venus_atmosphere.jpg",
+      "sourceSha256": "225012ad4911730605c4e189ca2a3bf674fce50cc48aab4102b936b47d6991ac",
+      "file": "thumbnails/venus.webp",
+      "bytes": 874,
+      "width": 192,
+      "height": 96,
+      "sha256": "eac2b31e813bc6408bd2e8bea9333513d2129a95cfa1ec716dbe355266a71172"
+    },
+    {
+      "id": "earth",
+      "source": "2k_earth_daymap.jpg",
+      "sourceSha256": "767ee1dc6eb3802699bfccf6f264880f8acd0b80de3191cd24984fe279b07b7c",
+      "file": "thumbnails/earth.webp",
+      "bytes": 2346,
+      "width": 192,
+      "height": 96,
+      "sha256": "a86e1831c66c065020b69340b10bf1dea98461849f7470a9c6561d97ffb8c47e"
+    },
+    {
+      "id": "mars",
+      "source": "2k_mars.jpg",
+      "sourceSha256": "2d187f3e77a98eaa8cea5f4cc722f633c122ef170b9e94ace6b5fb6cbc3f8e01",
+      "file": "thumbnails/mars.webp",
+      "bytes": 2072,
+      "width": 192,
+      "height": 96,
+      "sha256": "95d6efb015f65f1fbdcd4425ca4225326ae5c9834e61e5a66e6c4715324498ce"
+    },
+    {
+      "id": "jupiter",
+      "source": "2k_jupiter.jpg",
+      "sourceSha256": "b0f04d005350252636b0e3396fc592548cbd9e9126b269d32d5c6abd4b0e4f2b",
+      "file": "thumbnails/jupiter.webp",
+      "bytes": 1248,
+      "width": 192,
+      "height": 96,
+      "sha256": "48373f767fd7179166b11d22ae5542ac49f453fc63ee0c468c5969c3332942dd"
+    },
+    {
+      "id": "saturn",
+      "source": "2k_saturn.jpg",
+      "sourceSha256": "54a900ca9bf7ab62e70f862852759abdf342e6d6436a95a2fe9ebdb6bcd3bbac",
+      "file": "thumbnails/saturn.webp",
+      "bytes": 484,
+      "width": 192,
+      "height": 96,
+      "sha256": "1d19592945b24d64f08936f5cd56adb0a490960502c0c4aeacb89eff5af3ada3"
+    },
+    {
+      "id": "uranus",
+      "source": "2k_uranus.jpg",
+      "sourceSha256": "d15239d46f82d3ea13d2b260b5b29b2a382f42f2916dae0694d0387b1204a09d",
+      "file": "thumbnails/uranus.webp",
+      "bytes": 196,
+      "width": 192,
+      "height": 96,
+      "sha256": "cde539821abcaf834c0b12fef156bdbcd8dae1cf442a94fa8560d2e0d78a3277"
+    },
+    {
+      "id": "neptune",
+      "source": "2k_neptune.jpg",
+      "sourceSha256": "cb42ea82709741d28b0af44d8b283cbc6dbd0c521a7f0e1e1e010ade00977df6",
+      "file": "thumbnails/neptune.webp",
+      "bytes": 360,
+      "width": 192,
+      "height": 96,
+      "sha256": "99139705afc14c503d036343c40495e293c4befc184ea33a1bafb5f42ae4fa39"
+    },
+    {
+      "id": "pluto",
+      "source": "completed/pluto-1920.webp",
+      "sourceSha256": "2a661d61c5bf0d1b9910f01c05e213c21678a7938f256c6524def5b6c5a259b5",
+      "file": "thumbnails/pluto.webp",
+      "bytes": 2214,
+      "width": 192,
+      "height": 96,
+      "sha256": "1ddb99d4e2356057418907061e71cea00050526c10161cb5be1b1b90f0822408"
+    },
+    {
+      "id": "ceres",
+      "source": "2k_ceres.jpg",
+      "sourceSha256": "49d520c061e5f5e34506eb2d85a74f3a2c6f8f4884cc5ffc904b8932822c7189",
+      "file": "thumbnails/ceres.webp",
+      "bytes": 1786,
+      "width": 192,
+      "height": 96,
+      "sha256": "2bc8921e53516d6c728e3dd13db5f41de29d1049a2916c466c7a0481c10db32d"
+    },
+    {
+      "id": "makemake",
+      "source": "artistic/makemake-1920.webp",
+      "sourceSha256": "d26096d6f97cb9e3bb1754c4eb9088f158526f7f03ba2cd9f084d658f60d64da",
+      "file": "thumbnails/makemake.webp",
+      "bytes": 2002,
+      "width": 192,
+      "height": 96,
+      "sha256": "bb8b90751663985f7f203a57829253dc4030483f601f20baead504e2c0a45e02"
+    },
+    {
+      "id": "haumea",
+      "source": "artistic/haumea-1920.webp",
+      "sourceSha256": "49694251157152b6a70f34b31f31768bd616ee1cfa5fc7271044ccc5c89661e0",
+      "file": "thumbnails/haumea.webp",
+      "bytes": 2320,
+      "width": 192,
+      "height": 96,
+      "sha256": "8c9743be4ae3dce00c2309e868c61ce05bed4f89895b45da0734acdc34dc3b39"
+    },
+    {
+      "id": "eris",
+      "source": "artistic/eris-1920.webp",
+      "sourceSha256": "5621264b8c23fc141cf01f68ae8c4f6618b3e22b1d1e3a57867a21335827b8e7",
+      "file": "thumbnails/eris.webp",
+      "bytes": 1156,
+      "width": 192,
+      "height": 96,
+      "sha256": "4e5d6dc2ccd064a0f5d24418ffe00e55ac0075080e8063e43ac6e59e4dfa832a"
+    },
+    {
+      "id": "vesta",
+      "source": "2k_vesta.jpg",
+      "sourceSha256": "8407291ba1f5d28a20a417e29f48ee1819cf02a6c8f38c51b537f5ffd511f2c9",
+      "file": "thumbnails/vesta.webp",
+      "bytes": 3350,
+      "width": 192,
+      "height": 96,
+      "sha256": "c35874fbe986c08230c6969681324c79cf56579d49b0d594e2c87504e60beee8"
+    },
+    {
+      "id": "moon",
+      "source": "2k_moon.jpg",
+      "sourceSha256": "81478475112cad419af7ca7588fd6770b909a98dcf2247f0b782aa2fc43f6637",
+      "file": "thumbnails/moon.webp",
+      "bytes": 2236,
+      "width": 192,
+      "height": 96,
+      "sha256": "411452d7780fedfd10f74d1dddcb498e11dcdfd6f351756aced5db837eeb4276"
+    },
+    {
+      "id": "phobos",
+      "source": "completed/phobos-1920.webp",
+      "sourceSha256": "c7c55dc865743e436056fdefa73ca69df568085b694165fcf0975fedff690ad3",
+      "file": "thumbnails/phobos.webp",
+      "bytes": 2602,
+      "width": 192,
+      "height": 96,
+      "sha256": "0cd07f17c49fc07a3a05ac70b5a909673fdfe68cc514d763b79611cbae6566f9"
+    },
+    {
+      "id": "io",
+      "source": "completed/io-1920.webp",
+      "sourceSha256": "4f9da742b7a598e2e6aa61b1643aa4ed38d6ba16f6f2cc8fd78ae0cfdd425180",
+      "file": "thumbnails/io.webp",
+      "bytes": 3648,
+      "width": 192,
+      "height": 96,
+      "sha256": "ffe65165836d522a74b7468955f1d4ed3cfab1da38ba949a54d568b5e12facdf"
+    },
+    {
+      "id": "europa",
+      "source": "completed/europa-1920.webp",
+      "sourceSha256": "b0664c18703c57620d97a226b4f52d6b19a76d59743e46b06109dc579c61586d",
+      "file": "thumbnails/europa.webp",
+      "bytes": 2978,
+      "width": 192,
+      "height": 96,
+      "sha256": "d13de4d68bf221666e57f50477a36dee38a7b06c72e1be90bab7c62f78ccfac3"
+    },
+    {
+      "id": "ganymede",
+      "source": "completed/ganymede-1920.webp",
+      "sourceSha256": "2e7079a743c87d46434ef894afbbda50ff4969e2f69b1009dbd7a0dad2a0dd52",
+      "file": "thumbnails/ganymede.webp",
+      "bytes": 3406,
+      "width": 192,
+      "height": 96,
+      "sha256": "e36e74c733984f019730119d30bfb0df2631f07d39d7a3f910b948a2aa309f85"
+    },
+    {
+      "id": "callisto",
+      "source": "completed/callisto-1920.webp",
+      "sourceSha256": "77dfa53b257162a522d3566b194b19b866f21cea0b9e6162e72d65a82b43d240",
+      "file": "thumbnails/callisto.webp",
+      "bytes": 3036,
+      "width": 192,
+      "height": 96,
+      "sha256": "428a717a7c99f2a8e6efc4a5e06be7b77ce719c97580d1560b5d04106762f296"
+    },
+    {
+      "id": "enceladus",
+      "source": "2k_enceladus.jpg",
+      "sourceSha256": "d5a32504be0f9f8e6bf248674693185f94ddc4df550115af55630a581dc39634",
+      "file": "thumbnails/enceladus.webp",
+      "bytes": 1126,
+      "width": 192,
+      "height": 96,
+      "sha256": "ed4160ba6493344fca9e5fd4f255d0dd030f2b8ff7bfb2ee8f0fc61c6f57bd5b"
+    },
+    {
+      "id": "titan",
+      "source": "completed/titan-1920.webp",
+      "sourceSha256": "76a4863ffe500d13e3edc307e59681d85cad563ab2997dcbdc436b3af919c686",
+      "file": "thumbnails/titan.webp",
+      "bytes": 382,
+      "width": 192,
+      "height": 96,
+      "sha256": "7daeafed1889739787a977b402115318407726dee217236bab5bcc85d82f0c33"
+    },
+    {
+      "id": "triton",
+      "source": "completed/triton-1920.webp",
+      "sourceSha256": "b6ec0b7ad3b2146f291ec21e6f140f224f06e6df5da49a8c2299067854d2a6ea",
+      "file": "thumbnails/triton.webp",
+      "bytes": 1206,
+      "width": 192,
+      "height": 96,
+      "sha256": "fe8e4c1c2516dd5c0a4cd812ecd261bc4b56e93842a2055e53fbb4641ca7473a"
+    },
+    {
+      "id": "charon",
+      "source": "completed/charon-1920.webp",
+      "sourceSha256": "318e779348866c92ab656e836aaf9aa8a9d4b360a0a05e40a2c5a28a17f4db36",
+      "file": "thumbnails/charon.webp",
+      "bytes": 930,
+      "width": 192,
+      "height": 96,
+      "sha256": "4987766282e18b540b390c966c505db87e827341e4984f699dd6b2e32c180825"
+    },
+    {
+      "id": "miranda",
+      "source": "artistic/miranda-1920.webp",
+      "sourceSha256": "5fe83cbcbd236bcc71a0d4ace6d81a4fd07234ebbd4912bd4a277ce68efa43ae",
+      "file": "thumbnails/miranda.webp",
+      "bytes": 1454,
+      "width": 192,
+      "height": 96,
+      "sha256": "b3852df524272dd5673167882058badb60c61f5698218ee58699749cda443998"
+    },
+    {
+      "id": "deimos",
+      "source": "artistic/deimos-1920.webp",
+      "sourceSha256": "9305a14d40f633318610fd1c70e25078eeac0731b4b86c5afc9fa62e1ab4cfeb",
+      "file": "thumbnails/deimos.webp",
+      "bytes": 1200,
+      "width": 192,
+      "height": 96,
+      "sha256": "ebc57e0a62dcf3bf913254e204838d2c0d5f4462a16ae1bd8bd0868d11613e3b"
+    },
+    {
+      "id": "amalthea",
+      "source": "artistic/amalthea-1920.webp",
+      "sourceSha256": "f3ff2ebb6b72c09bb3549754f04babb0739acfe080e33cd6ec9cf77a00ee44e6",
+      "file": "thumbnails/amalthea.webp",
+      "bytes": 2260,
+      "width": 192,
+      "height": 96,
+      "sha256": "fc6bd80b7c2ab288c9800c24de8eb2d5a5e55432cf6298e0f63fcf85ee84e738"
+    },
+    {
+      "id": "thebe",
+      "source": "artistic/thebe-1920.webp",
+      "sourceSha256": "80da865e305d2bea9dc515ae18bad8e3ff978f614def957ac5430f5f06f28bbb",
+      "file": "thumbnails/thebe.webp",
+      "bytes": 1762,
+      "width": 192,
+      "height": 96,
+      "sha256": "074c73bd750c2b754b7f4135eea43233df20957ea0c5a2f4e25639e615819c01"
+    },
+    {
+      "id": "adrastea",
+      "source": "artistic/adrastea-1920.webp",
+      "sourceSha256": "ac8512125fdfacc5c1a1842353fc99099074821b3bd0cb129321261c92a2a2e7",
+      "file": "thumbnails/adrastea.webp",
+      "bytes": 1962,
+      "width": 192,
+      "height": 96,
+      "sha256": "427c4c746bd40075b11501d95230341c0fd25c6c39f75d7b67181ff36a4f3287"
+    },
+    {
+      "id": "metis",
+      "source": "artistic/metis-1920.webp",
+      "sourceSha256": "77607237c452db940b74a1bb5be9f417ef8e090bb646c3d50a4a7e7d510978c0",
+      "file": "thumbnails/metis.webp",
+      "bytes": 1462,
+      "width": 192,
+      "height": 96,
+      "sha256": "689e55425204ed86d23d1e549c5b805dfa5a776f5b1e9e58e3373e56f39519b3"
+    },
+    {
+      "id": "himalia",
+      "source": "artistic/himalia-1920.webp",
+      "sourceSha256": "8bc545a71a746a52fa0df4155e15d0626a3999b5c6a580f9d147f1ba323c25e2",
+      "file": "thumbnails/himalia.webp",
+      "bytes": 1510,
+      "width": 192,
+      "height": 96,
+      "sha256": "f2966697f30e78a621b37b53bfb8d07a4ad8a638f63f61f0a3264cb786b1538d"
+    },
+    {
+      "id": "mimas",
+      "source": "2k_mimas.jpg",
+      "sourceSha256": "48aee6c97ab46bea428b2bffc1fcb7ec12edda72f55ba19763e08f7f4fef490c",
+      "file": "thumbnails/mimas.webp",
+      "bytes": 4602,
+      "width": 192,
+      "height": 96,
+      "sha256": "936adbef31934b89dbeed69dd42a652174a6ead63fd1b94e7cf766997b5aea8b"
+    },
+    {
+      "id": "tethys",
+      "source": "2k_tethys.jpg",
+      "sourceSha256": "55631724c408647adfee4dfcc5253815f0446ea98f826e95e458cb42def916d2",
+      "file": "thumbnails/tethys.webp",
+      "bytes": 2576,
+      "width": 192,
+      "height": 96,
+      "sha256": "8f617d127784d5cbeaf36e17ae7cad3f4138f20638c8e27b26c98a3949a5f498"
+    },
+    {
+      "id": "dione",
+      "source": "2k_dione.jpg",
+      "sourceSha256": "85c0d3ddad1392ac0a15f4eb00d29566b1f0b46831083bbc138691583410a9fe",
+      "file": "thumbnails/dione.webp",
+      "bytes": 1846,
+      "width": 192,
+      "height": 96,
+      "sha256": "bfe145fae00e154663051e7c63066083ef029f12b68518d70c3e9411e2f16d00"
+    },
+    {
+      "id": "rhea",
+      "source": "2k_rhea.jpg",
+      "sourceSha256": "31c4c1ae108dbfb543c9f109c694240f5d528bfcaac8aa103a1fc9e26730dd5d",
+      "file": "thumbnails/rhea.webp",
+      "bytes": 2326,
+      "width": 192,
+      "height": 96,
+      "sha256": "3a5b036979aa014a95393fc59a147d64fef4e118c55d5d0cba8de0322f59be27"
+    },
+    {
+      "id": "iapetus",
+      "source": "2k_iapetus.jpg",
+      "sourceSha256": "39fc4e9370c29cd7a6db2aa9c1206bae94c1e4901502eadc9faccb234072f7c1",
+      "file": "thumbnails/iapetus.webp",
+      "bytes": 1992,
+      "width": 192,
+      "height": 96,
+      "sha256": "4f5c883fda552fbd010441769343aeb5db7a7531ae9dd8764061738bb9e77325"
+    },
+    {
+      "id": "phoebe",
+      "source": "artistic/phoebe-1920.webp",
+      "sourceSha256": "96fdd84ed6b27bc6c031b1036699fe426138ac61b5c6ceab49d072fb8220c9a9",
+      "file": "thumbnails/phoebe.webp",
+      "bytes": 3118,
+      "width": 192,
+      "height": 96,
+      "sha256": "b3d036492addf4a023f93948305d02472854849898381c03cf3f12a9a695c076"
+    },
+    {
+      "id": "hyperion",
+      "source": "artistic/hyperion-1920.webp",
+      "sourceSha256": "12a583d2f62ef6d3611ef49c37026f237842e94679a75a00d8b6d0898e3c104b",
+      "file": "thumbnails/hyperion.webp",
+      "bytes": 4196,
+      "width": 192,
+      "height": 96,
+      "sha256": "a57bec7a918a93d83d4e505dae18f49c5bccbf29357170c4a2d167c93a090bd5"
+    },
+    {
+      "id": "janus",
+      "source": "artistic/janus-1920.webp",
+      "sourceSha256": "63565054179bd89c336c494a3aee93cfcbf2c0d675e59146c9c158245c759058",
+      "file": "thumbnails/janus.webp",
+      "bytes": 1410,
+      "width": 192,
+      "height": 96,
+      "sha256": "8a039435382db288f6bfa2832f5239f123589d143ff5b550a742081b9ed4f37f"
+    },
+    {
+      "id": "epimetheus",
+      "source": "artistic/epimetheus-1920.webp",
+      "sourceSha256": "04267451daec09a8c0fd13e89f9bc7c112b52121f0db963063d622552dbeed18",
+      "file": "thumbnails/epimetheus.webp",
+      "bytes": 2274,
+      "width": 192,
+      "height": 96,
+      "sha256": "50f52181e16e40df94e05256024ffd4ce4bbd2c59cc22390ec9012c0fe3381cb"
+    },
+    {
+      "id": "prometheus",
+      "source": "artistic/prometheus-1920.webp",
+      "sourceSha256": "e8b146d97f591c7e52af6a68a55df256511cb81623f3c7df5c17d69fcff1efd6",
+      "file": "thumbnails/prometheus.webp",
+      "bytes": 2174,
+      "width": 192,
+      "height": 96,
+      "sha256": "13c8bf272dadd6ee3c235431aeedfa3fbf35fe75a65605a970393c578df06b9d"
+    },
+    {
+      "id": "pandora",
+      "source": "artistic/pandora-1920.webp",
+      "sourceSha256": "291906b61eb646c4ca2bdafae61a19031898b5ebed2c84afa5223acb8eecf0de",
+      "file": "thumbnails/pandora.webp",
+      "bytes": 1316,
+      "width": 192,
+      "height": 96,
+      "sha256": "3844c15639e61a545dd9df2abe83bb687fee356ed2096caa811ef2ebd27c3756"
+    },
+    {
+      "id": "atlas",
+      "source": "artistic/atlas-1920.webp",
+      "sourceSha256": "93964b13b7b97aa90d95b46e8ca5bf215c7fb5f8408e186851b9f4ef1e5779d2",
+      "file": "thumbnails/atlas.webp",
+      "bytes": 1134,
+      "width": 192,
+      "height": 96,
+      "sha256": "523d762cfc571cc47429762e8f9759684d91a361f30ebb9f391e2378654152a5"
+    },
+    {
+      "id": "pan",
+      "source": "artistic/pan-1920.webp",
+      "sourceSha256": "cf7dcfbfd39b0aa8f2fa39c817c9daf54e0fc109250145fdbd269f3d94943062",
+      "file": "thumbnails/pan.webp",
+      "bytes": 876,
+      "width": 192,
+      "height": 96,
+      "sha256": "d39f7e6ebaa351e7237d6f359215efb26f4fe667287706830311f269af63bb7d"
+    },
+    {
+      "id": "ariel",
+      "source": "artistic/ariel-1920.webp",
+      "sourceSha256": "dd127d409c0fb08ef0abf4af161fb77d8c183d0fea94db873836202701dc0b62",
+      "file": "thumbnails/ariel.webp",
+      "bytes": 1764,
+      "width": 192,
+      "height": 96,
+      "sha256": "9f72f08062353352cab4c49e7bd5a7cbf4b8268f9eb995f581b974cb8a5b9d9a"
+    },
+    {
+      "id": "umbriel",
+      "source": "artistic/umbriel-1920.webp",
+      "sourceSha256": "cb8c41e40b76e1cfb517f5f9163194598bd593af91120fdfeaeaaf18f9c6bfce",
+      "file": "thumbnails/umbriel.webp",
+      "bytes": 1946,
+      "width": 192,
+      "height": 96,
+      "sha256": "61c157c72f1277455626bf7e72be8f0f5cf455983c88f827cbab286664a2d719"
+    },
+    {
+      "id": "titania",
+      "source": "artistic/titania-1920.webp",
+      "sourceSha256": "f7c2507f19f0ca4bff39ffc6460fd62b1c1685d6c8b8caf50be3f5f5f2935652",
+      "file": "thumbnails/titania.webp",
+      "bytes": 1362,
+      "width": 192,
+      "height": 96,
+      "sha256": "398391b210acef89c2419e60da774a6e0a8bd54e882f58c5d7fa946a3b3f6ed6"
+    },
+    {
+      "id": "oberon",
+      "source": "artistic/oberon-1920.webp",
+      "sourceSha256": "ac7c59fed36f85d281960db529afa89c24184b9f3445b48250c11fe7b70a92d7",
+      "file": "thumbnails/oberon.webp",
+      "bytes": 1814,
+      "width": 192,
+      "height": 96,
+      "sha256": "f11021fd1917df3d86590899bbed81a453c06d5e1faa01eeb6edc3796f83dea2"
+    },
+    {
+      "id": "nereid",
+      "source": "artistic/nereid-1920.webp",
+      "sourceSha256": "6dbf62647c4b569e62c938bda8eaca61c10ba67f7c4c9187fc1b5de931d29d42",
+      "file": "thumbnails/nereid.webp",
+      "bytes": 2300,
+      "width": 192,
+      "height": 96,
+      "sha256": "fc3ecde0e2d2703b19058c346e5fb2a38a6501c32b40fb1dc2937ca33d32e95d"
+    },
+    {
+      "id": "proteus",
+      "source": "artistic/proteus-1920.webp",
+      "sourceSha256": "975f0e6d048839d7b8836218ad9a67f222c893762e1e6328a1ef0b685fda529b",
+      "file": "thumbnails/proteus.webp",
+      "bytes": 1966,
+      "width": 192,
+      "height": 96,
+      "sha256": "4eb46fc6c673fdccc3ed352163e90201c7d885c61d3fc3a835cd82b524e5f08b"
+    },
+    {
+      "id": "styx",
+      "source": "artistic/styx-1920.webp",
+      "sourceSha256": "a0d15f44f0472a1e0904903de8c9aadd7f67d2a269453bdb95034359f349cddd",
+      "file": "thumbnails/styx.webp",
+      "bytes": 2350,
+      "width": 192,
+      "height": 96,
+      "sha256": "a544faef2d60eeaaf8a4dc2b59dbe3e0cbbbb53c1714228b70b7c6a66006e293"
+    },
+    {
+      "id": "nix",
+      "source": "artistic/nix-1920.webp",
+      "sourceSha256": "e5a32ca5ae4bf526622ab14eced41cc31c85d56d82e92362616d3ed10e3d5154",
+      "file": "thumbnails/nix.webp",
+      "bytes": 1288,
+      "width": 192,
+      "height": 96,
+      "sha256": "c4b722688ea2bf68b7df669794ee508112cee81ddb4b716fb2fac1ef49e361ed"
+    },
+    {
+      "id": "kerberos",
+      "source": "artistic/kerberos-1920.webp",
+      "sourceSha256": "94c60151cafe2c1e74c2458c7485f6fca0311e9544a04805c0972d47d02eb134",
+      "file": "thumbnails/kerberos.webp",
+      "bytes": 1554,
+      "width": 192,
+      "height": 96,
+      "sha256": "d7589a356b825c4d7bdc90390bdfd9b15c06c281f61b9602500f75946788b183"
+    },
+    {
+      "id": "hydra",
+      "source": "artistic/hydra-1920.webp",
+      "sourceSha256": "990be089c7f6280a95ce5615f41accc360b3123155b9b5484685346aa04f7dab",
+      "file": "thumbnails/hydra.webp",
+      "bytes": 2236,
+      "width": 192,
+      "height": 96,
+      "sha256": "dd0ff306386e8639ca673d4d253bc94d9cf41224984f04aae063091f562315e8"
+    },
+    {
+      "id": "hiiaka",
+      "source": "artistic/haumea-1920.webp",
+      "sourceSha256": "49694251157152b6a70f34b31f31768bd616ee1cfa5fc7271044ccc5c89661e0",
+      "file": "thumbnails/hiiaka.webp",
+      "bytes": 2320,
+      "width": 192,
+      "height": 96,
+      "sha256": "8c9743be4ae3dce00c2309e868c61ce05bed4f89895b45da0734acdc34dc3b39"
+    },
+    {
+      "id": "namaka",
+      "source": "artistic/haumea-1920.webp",
+      "sourceSha256": "49694251157152b6a70f34b31f31768bd616ee1cfa5fc7271044ccc5c89661e0",
+      "file": "thumbnails/namaka.webp",
+      "bytes": 2320,
+      "width": 192,
+      "height": 96,
+      "sha256": "8c9743be4ae3dce00c2309e868c61ce05bed4f89895b45da0734acdc34dc3b39"
+    },
+    {
+      "id": "dysnomia",
+      "source": "artistic/umbriel-1920.webp",
+      "sourceSha256": "cb8c41e40b76e1cfb517f5f9163194598bd593af91120fdfeaeaaf18f9c6bfce",
+      "file": "thumbnails/dysnomia.webp",
+      "bytes": 1946,
+      "width": 192,
+      "height": 96,
+      "sha256": "61c157c72f1277455626bf7e72be8f0f5cf455983c88f827cbab286664a2d719"
+    }
+  ],
+  "firstScreenBytes": 214978
+}

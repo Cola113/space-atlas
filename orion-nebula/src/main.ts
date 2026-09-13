@@ -1,5 +1,6 @@
 import './style.css';
-import { NebulaRenderer, type Quality } from './Renderer';
+import { NebulaRenderer } from './Renderer';
+import { isQuality } from './Quality';
 import { NebulaCamera } from './Camera';
 import { Vector3 } from 'three';
 import { NebulaUI } from './Interface';
@@ -9,25 +10,28 @@ const canvas=document.querySelector<HTMLCanvasElement>('#universe')!;
 let pipeline:NebulaRenderer, rig:NebulaCamera, ui:NebulaUI;
 let raf=0, previous=0, ready=false, disposed=false, contextLost=false;
 let detachNavigation=()=>{},detachSession=()=>{};
-let fps=60, uiTime=0;
+let uiTime=0;
 const events=new AbortController();
-const state=()=>({version:4,ready,disposed,mode:'cruise',cruise:rig.cruising,cruiseTime:rig.time,shot:rig.shot,pose:rig.pose(),aspect:rig.camera.aspect,quality:pipeline.quality,currentQuality:pipeline.current,exposure:pipeline.exposure,stars:pipeline.starBrightness,frames:pipeline.frames,fps,errors:pipeline.errors});
-function sync(){if(ready)ui.sync(rig.cruising,rig.shot,pipeline.current,fps);}
-function resize(){if(!rig)return;rig.resize(innerWidth,innerHeight);pipeline.resize(innerWidth,innerHeight);}
+const state=()=>({version:4,ready,disposed,mode:'cruise',cruise:rig.cruising,cruiseTime:rig.time,shot:rig.shot,pose:rig.pose(),aspect:rig.camera.aspect,quality:pipeline.quality,currentQuality:pipeline.current,exposure:pipeline.exposure,stars:pipeline.starBrightness,frames:pipeline.frames,fps:pipeline.adaptive.fps,rendering:pipeline.diagnostics(),errors:pipeline.errors});
+function sync(){if(ready)ui.sync(rig.cruising,rig.shot,pipeline.quality,pipeline.current,pipeline.adaptive.fps);}
+function requestRender(){if(ready&&!disposed&&!document.hidden&&!contextLost&&!raf)raf=requestAnimationFrame(frame);}
+function resize(){if(!rig)return;rig.resize(innerWidth,innerHeight);pipeline.resize(innerWidth,innerHeight);previous=0;requestRender();}
 function frame(now:number){
+ raf=0;
  if(disposed||document.hidden||contextLost)return;
- const elapsed=previous?now-previous:16.7;previous=now;
+ const elapsed=previous?now-previous:0;previous=now;
+ if(rig.cruising&&elapsed>0)pipeline.sample(elapsed,now);
  rig.update(Math.min(.05,elapsed/1000));pipeline.render(rig.camera);
- fps+=(1000/Math.max(1,elapsed)-fps)*.035;pipeline.sample(elapsed,now);
  if(now-uiTime>450){uiTime=now;sync();}
- raf=requestAnimationFrame(frame);
+ if(rig.cruising)requestRender();else previous=0;
 }
-function visibility(){cancelAnimationFrame(raf);previous=0;if(ready&&!disposed&&!document.hidden&&!contextLost)raf=requestAnimationFrame(frame);}
+function visibility(){cancelAnimationFrame(raf);raf=0;previous=0;pipeline.adaptive.exclude(performance.now());requestRender();}
 function dispose(){if(disposed)return;disposed=true;ready=false;cancelAnimationFrame(raf);detachSession();detachNavigation();events.abort();ui?.dispose();pipeline?.dispose();}
 function fail(error:unknown){if(disposed)return;console.error(error);document.getElementById('loading')!.hidden=true;const host=document.getElementById('fatal')!;host.hidden=false;host.textContent='星云未能加载，请检查网络与浏览器硬件加速后刷新。';dispose();}
 
 async function capture() {
  try {
+  pipeline.adaptive.exclude(performance.now());previous=0;
   pipeline.render(rig.camera);
   const output=document.createElement('canvas');output.width=canvas.width;output.height=canvas.height;
   const ctx=output.getContext('2d')!;ctx.drawImage(canvas,0,0);
@@ -48,15 +52,15 @@ async function start(){
  pipeline=new NebulaRenderer(canvas);
  rig=new NebulaCamera();
  ui=new NebulaUI({
-  cruise:()=>{rig.toggleCruise();sync();},capture:()=>{void capture();},
-  quality:value=>{pipeline.setQuality(value);sync();},
-  exposure:value=>{pipeline.exposure=value;},stars:value=>{pipeline.starBrightness=value;},
+  cruise:()=>{rig.toggleCruise();previous=0;pipeline.adaptive.exclude(performance.now());sync();requestRender();},capture:()=>{void capture();},
+  quality:value=>{pipeline.setQuality(value);previous=0;sync();requestRender();},
+  exposure:value=>{pipeline.exposure=value;requestRender();},stars:value=>{pipeline.starBrightness=value;requestRender();},
  });
  detachNavigation=mountNavigation('orion-nebula');resize();
  await pipeline.initialize();if(disposed)return;
  const saved=readSession<Partial<ReturnType<typeof state>>>('orion-nebula');
  if(saved){
-  if(saved.quality&&['auto','low','high'].includes(saved.quality))pipeline.setQuality(saved.quality as Quality);
+  if(isQuality(saved.quality))pipeline.setQuality(saved.quality);
   for(const [key,id,min,max] of [['exposure','exposure',.5,2.2],['starBrightness','stars',0,1.5]] as const){
    const value=id==='stars'?saved.stars:saved.exposure;
    if(typeof value==='number'&&Number.isFinite(value)){
@@ -75,7 +79,7 @@ async function start(){
  window.addEventListener('pageshow',event=>{if(event.persisted&&disposed)location.reload();});
  window.addEventListener('resize',resize,{signal});
  document.addEventListener('visibilitychange',visibility,{signal});
- canvas.addEventListener('webglcontextlost',event=>{event.preventDefault();contextLost=true;cancelAnimationFrame(raf);ui.notice('图形资源暂时中断，正在恢复');},{signal});
+ canvas.addEventListener('webglcontextlost',event=>{event.preventDefault();contextLost=true;cancelAnimationFrame(raf);raf=0;ui.notice('图形资源暂时中断，正在恢复');},{signal});
  canvas.addEventListener('webglcontextrestored',()=>location.reload(),{signal});
  (window as unknown as {orionAtlas:unknown}).orionAtlas={snapshot:state,transmission:(from:number[],to:number[])=>pipeline.transmission(new Vector3().fromArray(from),new Vector3().fromArray(to))};
  sync();pipeline.render(rig.camera);visibility();

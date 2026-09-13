@@ -4,6 +4,7 @@ uniform float uAspect;
 uniform float uFov;
 uniform float uExposure;
 uniform int uSteps;
+uniform bool uSelfShadow;
 varying vec2 vUv;
 // FIELD_FUNCTIONS
 void main(){
@@ -22,16 +23,21 @@ void main(){
    float alpha=1.-exp(-ext*stepSize);
    // A soft emitting stratum preserves the observation without a solid textured surface.
    vec2 uv=referenceUv(p);
-   float detailProfile=exp(-distanceToWall*distanceToWall/1.3)*imageMask(uv);
+   // Broaden the thin emission layer to the sampling footprint while retaining
+   // its integrated energy. Low tiers would otherwise miss the wall between
+   // samples and turn the observation into a diagonal speckle pattern.
+   float profileWidth=max(1.3,stepSize*stepSize*.35);
+   float detailProfile=exp(-distanceToWall*distanceToWall/profileWidth)*sqrt(1.3/profileWidth)*imageMask(uv);
    float facing=smoothstep(.18,.7,abs(dot(ray,wallNormal(p))));
    float nearDetail=smoothstep(3.,20.,length(p-uEye));
    float projection=smoothstep(.55,.94,dot(ray,normalize(p-vec3(0.,0.,44.))));
    float detailLod=mix(5.,0.,facing)+mix(3.,0.,nearDetail)+(1.-projection)*5.;
    vec3 observed=textureLod(uDetail,uv,detailLod).rgb;
-   float grain=texture(uNoise,p*.09).b;
+   float grain=uNoiseLayers>1?texture(uNoise,p*.09).b:.5;
    rgb+=trans*observed*detailProfile*stepSize*.32*(.35+facing*.65)*nearDetail*(.3+projection*.7)*(.65+grain*.7);
    vec3 lightDirection=normalize(vec3(-1.7,1.6,-4.)-p);
-   float shadow=exp(-baseField(p+lightDirection*1.2).r*2.);
+   float shadow=1.;
+   if(uSelfShadow)shadow=exp(-baseField(p+lightDirection*1.2).r*2.);
    float illumination=.1+1.5/(1.+dot(p-vec3(-1.7,1.6,-4.),p-vec3(-1.7,1.6,-4.))*.03);
    vec3 color=cloudColor(cell,p)*cell.r*mix(1.15,.14*illumination,cell.b)/max(ext,.0001)*(.18+.82*shadow);
    rgb+=trans*alpha*color;trans*=1.-alpha;

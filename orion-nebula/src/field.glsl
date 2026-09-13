@@ -2,6 +2,8 @@ precision highp sampler3D;
 uniform sampler3D uField;
 uniform sampler3D uNoise;
 uniform sampler2D uDetail;
+uniform int uNoiseLayers;
+uniform int uStarSteps;
 const vec3 extent=vec3(32.,24.,26.);
 vec2 intersectCloud(vec3 origin,vec3 ray){
  vec3 safeRay=mix(vec3(.000001),ray,step(vec3(.000001),abs(ray)));
@@ -25,10 +27,13 @@ vec4 baseField(vec3 p){return texture(uField,p/(extent*2.)+.5);}
 vec4 field(vec3 p){
  vec4 cell=baseField(p);
  if(cell.r+cell.g<.0005)return cell;
- vec3 warp=(texture(uNoise,p*.013).rgb-.5)*1.6;
- float n=texture(uNoise,(p+warp)*.024).r*.7+texture(uNoise,(p+warp)*.054).g*.3;
+ vec3 warp=vec3(0.);
+ if(uNoiseLayers>=3)warp=(texture(uNoise,p*.013).rgb-.5)*1.6;
+ float n=texture(uNoise,(p+warp)*.024).r;
+ if(uNoiseLayers>=2)n=n*.7+texture(uNoise,(p+warp)*.054).g*.3;
  float fine=pow(max(0.,n-.22)*2.8,2.);
- float pockets=texture(uNoise,(p+warp)*.006).b*.65+texture(uNoise,p*.015).r*.35;
+ float pockets=texture(uNoise,(p+warp)*.006).b;
+ if(uNoiseLayers>=3)pockets=pockets*.65+texture(uNoise,p*.015).r*.35;
  float structure=pow(smoothstep(.25,.72,pockets),2.);
  cell.r*=mix(fine,(.035+structure*2.6)*(.45+fine*.55),cell.b);cell.g*=.65+fine*.35;
  return cell;
@@ -44,7 +49,7 @@ float starTransmission(vec3 eye,vec3 star){
  vec3 offset=star-eye;float distance=length(offset);vec3 ray=offset/max(distance,.0001);
  vec2 range=intersectCloud(eye,ray);range.y=min(range.y,distance);
  if(range.y<=range.x)return 1.;
- float stepSize=(range.y-range.x)/48.,optical=0.;
- for(int i=0;i<48;i++){optical+=extinction(field(eye+ray*(range.x+(float(i)+.5)*stepSize)))*stepSize;}
+ float stepSize=(range.y-range.x)/float(uStarSteps),optical=0.;
+ for(int i=0;i<48;i++){if(i>=uStarSteps)break;optical+=extinction(field(eye+ray*(range.x+(float(i)+.5)*stepSize)))*stepSize;}
  return exp(-optical);
 }

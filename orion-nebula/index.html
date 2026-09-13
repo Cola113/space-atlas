@@ -5,15 +5,15 @@
 <canvas id="universe" aria-label="猎户座星云自动巡游画面"></canvas>
 <div id="interface">
 <header class="topbar"><div id="scene-navigation"></div><div class="top-actions">
-<button id="settings-button" class="icon-button" aria-label="观测设置" data-tip="观测设置" aria-expanded="false"><i data-lucide="sliders-horizontal"></i></button>
-<button id="science-button" class="icon-button" aria-label="影像与资料" data-tip="影像与资料" aria-expanded="false"><i data-lucide="info"></i></button>
-<button id="fullscreen-button" class="icon-button" aria-label="全屏" data-tip="全屏"><i data-lucide="expand"></i></button>
+<button id="settings-button" class="icon-button text-button" aria-label="观测设置" aria-controls="settings-panel" aria-expanded="false"><i data-lucide="sliders-horizontal"></i><span>设置</span></button>
+<button id="science-button" class="icon-button text-button" aria-label="影像与资料" aria-controls="science-panel" aria-expanded="false"><i data-lucide="info"></i><span>资料</span></button>
 </div></header>
 <section class="scene-title"><span>M42 / NGC 1976</span><h1>猎户座星云</h1><p>ORION NEBULA</p></section>
 <div class="view-caption"><span id="view-index">01 / 全景</span><p id="view-description">恒星诞生的云海</p></div>
 <nav class="dock" aria-label="巡游播放控制">
-<button id="cruise-button" class="icon-button" aria-label="暂停巡游" data-tip="暂停巡游"><i data-lucide="pause"></i></button>
-<button id="capture-button" class="icon-button" aria-label="保存画面" data-tip="保存画面"><i data-lucide="camera"></i></button>
+<button id="cruise-button" class="icon-button text-button" aria-label="暂停巡游"><i data-lucide="pause"></i><span>暂停巡游</span></button>
+<button id="capture-button" class="icon-button text-button" aria-label="保存画面"><i data-lucide="camera"></i><span>截图</span></button>
+<button id="quality-button" class="icon-button text-button" aria-controls="settings-panel" aria-expanded="false">画质 · 自动 · 节能</button>
 </nav>
 <footer class="readout"><span>M42 / 三维结构示意</span><span id="live-status">自动巡游中</span></footer>
 <p class="image-credit"><a href="https://esahubble.org/images/heic0601a/" target="_blank" rel="noreferrer">NASA, ESA, M. Robberto (Space Telescope Science Institute/ESA) and the Hubble Space Telescope Orion Treasury Project Team</a></p>
@@ -21,8 +21,9 @@
 <div class="panel-header"><h2 id="settings-title">观测设置</h2><button class="icon-button close-panel" aria-label="关闭设置"><i data-lucide="x"></i></button></div>
 <label class="range-label" for="exposure">曝光 <output id="exposure-value">1.25</output></label><input id="exposure" type="range" min=".5" max="2.2" step=".05" value="1.25">
 <label class="range-label" for="stars">星光 <output id="stars-value">0.70</output></label><input id="stars" type="range" min="0" max="1.5" step=".05" value=".7">
-<label class="select-row" for="quality">画质<select id="quality"><option value="auto">自动适配</option><option value="low">节能</option><option value="high">精细</option></select></label>
+<label class="select-row" for="quality">画质<select id="quality"><option value="auto">自动适配</option><option value="high">精细</option><option value="low">节能</option><option value="smooth">流畅</option><option value="minimal">极简</option></select></label>
 <div class="metrics"><span id="quality-value">精细</span><span><b id="fps-value">0</b> FPS</span></div>
+<button id="fullscreen-button" class="icon-button text-button" aria-label="全屏"><i data-lucide="expand"></i><span>全屏</span></button>
 </aside>
 <aside id="science-panel" class="panel science-panel" aria-labelledby="science-title" hidden>
 <div class="panel-header"><h2 id="science-title">猎户座星云</h2><button class="icon-button close-panel" aria-label="关闭资料"><i data-lucide="x"></i></button></div>
