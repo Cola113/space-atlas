@@ -5,6 +5,7 @@ import { fileURLToPath } from 'node:url';
 import { Quaternion, Vector3 } from 'three';
 import sharp from 'sharp';
 import { configureDeploymentAccess } from './deployment-access.mjs';
+import { aimAtLanding } from './landing-navigation.mjs';
 
 const base = process.env.ATLAS_URL || 'http://127.0.0.1:5191';
 const output = new URL('../test-results/catalog-landmarks/', import.meta.url);
@@ -29,6 +30,8 @@ async function selectFeature(page, id) {
   await page.keyboard.press('Escape');
   await settle(page);
   await page.waitForFunction(id => window.solarAtlas.snapshot().landmarks.active === id, id);
+  await page.waitForFunction(() => !document.querySelector('#landmark-brief')?.hidden);
+  assert.ok((await page.locator('#landmark-brief-text').textContent()).trim().length > 10, `${id}: missing landmark brief`);
 }
 async function capture(page, name) {
   const state = await snapshot(page);
@@ -42,7 +45,7 @@ async function capture(page, name) {
     const reserved = ['#planet-info', '#observation-tools', '.scene-toolbar', '.explorer-bottom']
       .map(selector => document.querySelector(selector)).filter(el => !el.hidden).map(el => el.getBoundingClientRect());
     return { overflow: document.documentElement.scrollWidth > innerWidth,
-      markers: [...document.querySelectorAll('.landmark-marker:not([hidden])')].map(button => {
+      markers: [...document.querySelectorAll('[data-landmark]:not([hidden])')].map(button => {
         const label = button.querySelector('.landmark-name'), r = label.getBoundingClientRect();
         return { id: button.dataset.landmark, x: r.x, y: r.y, right: r.right, bottom: r.bottom,
           inBounds: r.x >= 0 && r.right <= innerWidth && r.y >= 0 && r.bottom <= innerHeight,
@@ -52,6 +55,12 @@ async function capture(page, name) {
   });
   assert.equal(layout.overflow, false);
   for (const marker of layout.markers) assert.ok(marker.inBounds && marker.clickable && !marker.overlaps, JSON.stringify(marker));
+  if (state.landmarks.active) {
+    const brief = page.locator('#landmark-brief');
+    const box = await brief.boundingBox(), vp = page.viewportSize();
+    assert.ok(box && box.x >= 0 && box.y >= 0 && box.x + box.width <= vp.width && box.y + box.height <= vp.height, name + ': brief outside viewport');
+    assert.equal(await brief.evaluate(el => el.scrollWidth > el.clientWidth), false, name + ': brief text overflows');
+  }
   report.push({ name, layout });
 }
 function checkPolarAim(state, id, pole = 1) {
@@ -89,7 +98,11 @@ try {
     await selectFeature(page, 'ring-shadow');
     assert.equal((await snapshot(page)).landmarks.markers.find(m => m.id === 'ring-shadow').visible, true);
     await capture(page, name + '-ring-shadow');
+    await page.locator('#landmark-brief-close').click();
+    assert.equal(await page.locator('#landmark-brief').isVisible(), false);
+    assert.equal((await snapshot(page)).landmarks.active, 'ring-shadow', 'closing information preserves feature tracking');
     await page.locator('[data-landmark="ring-shadow"] .landmark-name').click(); await settle(page);
+    assert.equal(await page.locator('#landmark-brief').isVisible(), true);
     await selectFeature(page, 'hexagon');
     checkPolarAim(await snapshot(page), 'saturn');
     assert.equal((await snapshot(page)).landmarks.markers.find(m => m.id === 'hexagon').visible, true);
@@ -115,6 +128,31 @@ try {
     await selectBody(page, 'venus');
     assert.equal((await snapshot(page)).catalog, 'planets');
     assert.equal((await snapshot(page)).followRotation, false);
+    for (const id of ['moon', 'europa', 'mars', 'io', 'titan', 'enceladus', 'pluto', 'miranda', 'mercury']) {
+      await page.locator('#atlas-tab').click();
+      await page.locator('#atlas-system').selectOption('all');
+      await page.locator('#atlas-search').fill(id);
+      await page.locator(`.atlas-item[data-body="${id}"]`).click();
+      await settle(page);
+      const landing = page.locator(`[data-landing-body="${id}"]`);
+      assert.equal(await landing.count(), 1, `${id}: missing landing coordinate marker`);
+      const initialPin = (await snapshot(page)).landmarks.landing;
+      if (!initialPin.exposed) assert.equal(await landing.isVisible(), false, `${id}: obscured landing point is visible`);
+      if (['moon', 'enceladus'].includes(id)) {
+        await aimAtLanding(page, id, {back:true});
+        assert.equal((await snapshot(page)).landmarks.landing.exposed, false);
+        assert.equal(await landing.isVisible(), false);
+        await aimAtLanding(page, id);
+        assert.equal(await landing.isVisible(), true);
+        const r = await landing.boundingBox(), icon = await landing.locator('svg').boundingBox();
+        assert.ok(r.width >= 44 && r.height >= 44);
+        assert.ok(icon.width <= 14 && icon.height <= 14);
+        await landing.click({trial:true});
+        await capture(page, `${name}-${id}-landing-point`);
+      }
+      assert.equal(await landing.locator('svg').count(), 1);
+    }
+    assert.equal(await page.locator('#landing-button').count(), 0);
     if (name === 'desktop') {
       await selectBody(page, 'saturn');
       for (let i = 0; i < 35 && (await snapshot(page)).catalog.startsWith('system:'); i++) {
@@ -133,6 +171,7 @@ try {
       await page.waitForFunction(() => window.solarAtlas.snapshot().landmarks.markers.find(m => m.id === 'prominence')?.available);
       await selectFeature(page, 'prominence');
       await capture(page, name + '-prominence');
+      await page.locator('#landmark-brief-close').click();
       await page.locator('#play-toggle').click();
       await page.locator('#body-details-button').click();
       await page.locator('#activity-rate').selectOption('4');

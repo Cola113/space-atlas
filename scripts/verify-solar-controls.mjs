@@ -5,7 +5,7 @@ const out='test-results/solar-controls',base=process.env.ATLAS_URL||'http://127.
 const browser=await chromium.launch({channel:'msedge',headless:true}),results=[];let page,name;
 const snap=()=>page.evaluate(()=>window.solarAtlas.snapshot());
 const settle=()=>page.waitForFunction(()=>{const s=window.solarAtlas?.snapshot();return s?.ready&&!s.flight&&!s.ephemeris.blocked;},null,{timeout:60000});
-const direct=['#scene-switcher','#overview-tab','#atlas-tab','#display-settings summary','#rotation-toggle','#observation-settings summary','#back-button','#body-details-button','#surface-button','#landing-button','#zoom-in','#zoom-out','#reset-camera','#play-toggle','#time-settings summary','#catalog-filter','#dock-prev','#dock-next'];
+const direct=['#scene-switcher','#overview-tab','#atlas-tab','#display-settings summary','#rotation-toggle','#observation-settings summary','#back-button','#body-details-button','#surface-button','[data-landing-body]','#zoom-in','#zoom-out','#reset-camera','#play-toggle','#time-settings summary','#catalog-filter','#dock-prev','#dock-next'];
 async function control(sel,{scroll=false}={}){
  const e=page.locator(sel);if(scroll)await e.scrollIntoViewIfNeeded();
  const r=await e.boundingBox(),vp=page.viewportSize();

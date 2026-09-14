@@ -4,6 +4,7 @@ import { mkdir, writeFile } from 'node:fs/promises';
 import sharp from 'sharp';
 import { fileURLToPath } from 'node:url';
 import { configureDeploymentAccess } from './deployment-access.mjs';
+import { revealLanding } from './landing-navigation.mjs';
 
 const base=process.env.ATLAS_URL||'http://127.0.0.1:5192';
 const output=new URL(process.env.ATLAS_OUTPUT||'../test-results/landings/',import.meta.url);
@@ -35,8 +36,9 @@ try{
       await page.locator(`.atlas-item[data-body="${id}"]`).click();
       await page.waitForFunction(id=>window.solarAtlas.snapshot().selected===id&&!window.solarAtlas.snapshot().flight,id,{timeout:30000});
       await page.waitForFunction(()=>!window.solarAtlas.snapshot().ephemeris.blocked);
+      await revealLanding(page,id);
       const orbit=await page.evaluate(()=>window.solarAtlas.snapshot());
-      await page.locator('#landing-button').click();
+      await page.locator(`[data-landing-body="${id}"]`).click();
       try{await page.waitForFunction(()=>document.querySelector('.surface-view')?.dataset.ready==='true',null,{timeout:90000});}
       catch(error){await writeFile(new URL('failure.json',output),JSON.stringify({name,id,errors,snapshot:await page.evaluate(()=>window.solarAtlas.snapshot()),message:await page.locator('.surface-view').textContent()},null,2));await page.screenshot({path:fileURLToPath(new URL('failure.png',output))});throw error;}
       if(!orbit.playing){const arrived=await page.evaluate(()=>window.solarAtlas.snapshot().surface);assert.equal(arrived.date,orbit.date);assert.equal(arrived.playing,false);assert.deepEqual(arrived.centerKm,orbit.bodies.find(b=>b.id===id).physicalPositionKm);}

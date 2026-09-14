@@ -3,6 +3,7 @@ import sharp from 'sharp';
 import assert from 'node:assert/strict';
 import {mkdir,writeFile} from 'node:fs/promises';
 import {landingSites} from '../solar-system/src/surface/geometry.js';
+import {revealLanding} from './landing-navigation.mjs';
 
 const out='test-results/surface-panorama',base=process.env.ATLAS_URL||'http://127.0.0.1:5191';
 await mkdir(out,{recursive:true});
@@ -36,7 +37,8 @@ try{for(const [name,width,height,dpr] of [['desktop',1440,900,1],['phone',390,84
  for(const id of Object.keys(landingSites)){
   await page.locator('#atlas-tab').click();await page.locator('#atlas-search').fill(id);await page.locator(`.atlas-item[data-body="${id}"]`).click();
   await page.waitForFunction(()=>{const s=window.solarAtlas.snapshot();return !s.flight&&!s.ephemeris.blocked;});
-  await page.locator('#landing-button').click();await page.waitForFunction(()=>document.querySelector('.surface-view')?.dataset.ready==='true',null,{timeout:60000});
+  await revealLanding(page,id);
+  await page.locator(`[data-landing-body="${id}"]`).click();await page.waitForFunction(()=>document.querySelector('.surface-view')?.dataset.ready==='true',null,{timeout:60000});
   const before=await page.evaluate(()=>window.solarAtlas.snapshot().surface);
   // Exercise the installed keyboard look handler, without altering physical
   // state, camera internals or textures. Repeated downward input reaches nadir.

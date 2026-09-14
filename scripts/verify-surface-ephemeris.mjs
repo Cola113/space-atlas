@@ -2,6 +2,7 @@ import {chromium} from 'playwright';
 import {mkdir,writeFile} from 'node:fs/promises';
 import {fileURLToPath} from 'node:url';
 import assert from 'node:assert/strict';
+import {revealLanding,landingFocusRestored} from './landing-navigation.mjs';
 
 const base=process.env.ATLAS_URL||'http://127.0.0.1:5191';
 const output=new URL('../test-results/surface-ephemeris/',import.meta.url);
@@ -13,7 +14,7 @@ async function open(context,land=true){
   const errors=[];page.on('pageerror',e=>errors.push(e.message));
   await page.goto(base+'/solar-system/');
   await page.waitForFunction(()=>window.solarAtlas?.snapshot().ready&&!window.solarAtlas.snapshot().flight,null,{timeout:60000});
-  if(land){await page.waitForFunction(()=>!window.solarAtlas.snapshot().ephemeris.blocked&&!window.solarAtlas.snapshot().flight);await page.locator('#landing-button').click();}
+  if(land){await page.waitForFunction(()=>!window.solarAtlas.snapshot().ephemeris.blocked&&!window.solarAtlas.snapshot().flight);await revealLanding(page,'titan');await page.locator('[data-landing-body="titan"]').click();}
   return {page,errors};
 }
 async function seed(context,date){
@@ -29,7 +30,7 @@ try{
   await context.route('**/ephemeris/saturn/1971.bin',route=>{calls++;return fail?route.fulfill({status:503,body:'Unavailable'}):route.continue();});
   const {page,errors}=await open(context,false);
   await page.waitForFunction(()=>window.solarAtlas.snapshot().ephemeris.error);
-  assert.equal(await page.locator('#landing-button').isDisabled(),true);
+  assert.equal(await page.locator('[data-landing-body="titan"]').getAttribute('aria-disabled'),'true');
   assert.equal(await page.evaluate(()=>window.solarAtlas.snapshot().bodies.find(b=>b.id==='titan').visible),false);
   const errorTime=await page.evaluate(()=>window.solarAtlas.snapshot().date);
   assert.equal(errorTime,date);
@@ -40,14 +41,15 @@ try{
   await page.waitForTimeout(1200);assert.equal(calls,1,'no automatic request loop after failure');
   fail=false;await retry.focus();await page.keyboard.press('Enter');
   await page.waitForFunction(()=>!window.solarAtlas.snapshot().ephemeris.blocked&&!window.solarAtlas.snapshot().flight);
-  await page.locator('#landing-button').click();
+  await revealLanding(page,'titan');
+  await page.locator('[data-landing-body="titan"]').click();
   await page.waitForFunction(()=>document.querySelector('.surface-view')?.dataset.ready==='true',null,{timeout:60000});
   assert.equal(await page.evaluate(()=>window.solarAtlas.snapshot().surface.playing),false);
   assert.ok((await page.evaluate(()=>window.solarAtlas.snapshot().surface)).accuracy.includes('JPL SAT441'));
   assert.equal(await page.locator('.surface-ephemeris').isVisible(),false);
   await page.locator('.surface-exit').click();
   await page.waitForFunction(()=>!document.querySelector('.surface-view'));
-  assert.equal(await page.locator('#landing-button').evaluate(b=>document.activeElement===b),true);
+  assert.equal(await landingFocusRestored(page,'titan'),true);
   assert.deepEqual(errors,[]);results.push({case:'initial failure and keyboard retry',calls,passed:true});
   await context.close();
 
