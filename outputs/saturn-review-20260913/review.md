@@ -1,0 +1,34 @@
+# 土星视觉检查 · 2026-09-13
+
+检查对象：[Cola113/space-atlas](https://github.com/Cola113/space-atlas) 的 [线上太阳系页面](https://space-atlas-pi.vercel.app/solar-system/)。使用实际浏览器观察桌面 1280 × 720、手机竖屏 390 × 844；测试选择土星、拖动视角、重置、暂停、环系投影开关，以及土卫二着陆入口。
+
+## 已确认的问题
+
+1. **土星球体过圆，缺少扁率。** 多个侧面角度呈球形。GitHub main 的 `main.js` 创建单位球并等比缩放；`createBodyGeometry` 只在配置了 shape/ridge 时改变形状，而土星没有 shape。应保留赤道鼓起、两极压扁的外形。NASA 给出的赤道直径约 120,536 km、极直径约 108,728 km，对应极轴/赤道轴约 0.902。调整时须同时核对投影模型，现有阴影按单位球计算。
+2. **桌面右侧工具面板挡住星环。** 默认土星近景中，控制区成为约 255 × 215 px 的面板，右半侧大量留白，覆盖星环右端。建议收窄并为土星含环轮廓预留完整可视区域。
+3. **手机工具栏文字排版损坏，且遮住内容。** 390 × 844 下，“动态活动”被挤成逐字竖排；工具栏压住星环右侧并延伸到下方信息卡。应修正窄屏按钮布局与隐藏规则，再复核默认取景。
+
+## 观感改进项
+
+环面的亮点比较密集，高亮期间尤其明显，呈砂粒/闪粉质感。属于视觉风格与真实感的改进项，尚不能据此认定为穿模或纹理丢失。
+
+## 本次未发现与未完成项
+
+- 在已检查的默认、斜侧面及接近侧视角下，未发现明确的环/球体前后遮挡错误或整块纹理缺失。
+- 星环上的黑色区域在关闭“环系投影”后消失，恢复开关后重现，与投影效果一致；这不代表已经完成阴影几何的独立科学校核。
+- 手机首次调整尺寸时有过渡帧裁切；镜头稳定后不能复现整环越出屏幕，因此不将过渡帧认定为持续裁切故障。
+- 土卫二“降落到表面”两次尝试均返回“着陆场景未能加载，请稍后重试。”未完成地面所见土星的视觉检查；没有足够证据区分网络加载问题与代码故障。
+
+## 证据
+
+![桌面土星默认近景](D:/星际图鉴/outputs/saturn-review-20260913/desktop.png)
+
+![手机土星默认近景](D:/星际图鉴/outputs/saturn-review-20260913/mobile.png)
+
+## 代码与科学依据
+
+- [main 球体创建及等比缩放](https://github.com/Cola113/space-atlas/blob/5f140276758179fe292c698ad60028376e80af98/solar-system/src/main.js#L510-L541)
+- [形状处理](https://github.com/Cola113/space-atlas/blob/5f140276758179fe292c698ad60028376e80af98/solar-system/src/body-geometry.js#L3-L5) 与 [形状配置](https://github.com/Cola113/space-atlas/blob/5f140276758179fe292c698ad60028376e80af98/solar-system/src/body-models.js)
+- [NASA / Cassini 土星参数](https://science.nasa.gov/wp-content/uploads/2023/09/cassini.pdf)；[NASA：可见的土星扁率](https://science.nasa.gov/photojournal/squashed-as-it-spins/)
+
+本次只检查与保存证据，未修改应用源码、推送或部署。GitHub main 核对到 `5f14027`；线上画面单独记录，不将 main 提交号当作已验证的线上部署标识。

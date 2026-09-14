@@ -4,7 +4,8 @@ import { DataUtils } from 'three';
 import {
   RING_TABLE, RING_INNER_KM, RING_OUTER_KM, RING_INNER, RING_OUTER,
   SATURN_EQUATORIAL_KM, opticalDepthAt, ringUvAtRatio, ringRadiusUnit,
-  createRingOpticalDepthTexture, albedoAt, RING_PHASE_G,
+  createRingOpticalDepthTexture, albedoAt, surgeAt, RING_PHASE_G,
+  RING_SURGE_HWHM_DEG, RING_SURGE_SCALE_RAD, RING_PARTICLE_COLOR,
 } from '../src/ring-optical-depth.js';
 
 // The PDS vital-statistics table lists a range per feature; the module stores the
@@ -73,7 +74,41 @@ test('ring albedo follows the measured anchors and the particles backscatter', (
   const g2 = RING_PHASE_G ** 2;
   const phase = (cos) => (1 - g2) / (1 + g2 + 2 * RING_PHASE_G * cos) ** 1.5;
   assert.ok(phase(1) > phase(0) && phase(0) > phase(-1), 'phase function must peak at backscatter');
-  assert.ok(phase(1) / phase(-1) > 10, 'the backscatter peak must be strong');
+  // The value has to stay in the visible-light range. The far-ultraviolet |g| of
+  // 0.63-0.78 that this used to carry describes grains at 155-180 nm, and swapping it
+  // back in would push the ratio below this bound.
+  assert.ok(Math.abs(RING_PHASE_G) < .5, 'the asymmetry must be the visible particle value, not the FUV one');
+  assert.ok(phase(1) / phase(-1) > 4, 'the backscatter peak must be clear');
+});
+
+test('the opposition surge is narrow and per-region, and the particle colour is measured', () => {
+  // Half width at half maximum near 0.1 degrees at BVRI wavelengths.
+  assert.equal(RING_SURGE_HWHM_DEG, 0.1);
+  const surge = (alphaDeg, amplitude) => 1 + amplitude * Math.exp(-(alphaDeg * Math.PI / 180) / RING_SURGE_SCALE_RAD);
+  for (const amplitude of [0.4, 0.7]) {
+    // By construction the exponential is at half height at the half width.
+    assert.ok(Math.abs(surge(0.1, amplitude) - (1 + amplitude / 2)) < 1e-12, 'wrong surge half width');
+    // And it must be gone long before the phase angles the scene is normally viewed at.
+    assert.ok(surge(2, amplitude) - 1 < 1e-5, 'the surge should not reach a few degrees');
+    assert.ok(surge(0, amplitude) > surge(0.05, amplitude), 'the surge must fall with phase angle');
+  }
+  // The measured amplitudes: C ring strongest, outer A ring strongest of all per
+  // French et al. 2007, B ring weakest. Interpolated regions stay between the anchors.
+  assert.equal(surgeAt(80000), 0.6, 'C ring');
+  assert.equal(surgeAt(100000), 0.4, 'B ring');
+  assert.equal(surgeAt(128000), 0.4, 'inner A ring');
+  assert.equal(surgeAt(135000), 0.7, 'outer A ring');
+  assert.equal(surgeAt(119000), 0.5, 'Cassini Division sits between its neighbours');
+  assert.equal(surgeAt(RING_INNER_KM - 1), 0, 'outside the ring system');
+  assert.ok(surgeAt(100000) < surgeAt(80000) && surgeAt(80000) < surgeAt(135000),
+    'the measured ordering of the surge amplitudes must survive');
+
+  // Particle colour: red over blue from the measured B-ring geometric albedos
+  // 0.61 and 0.41. Green is an interpolation, so only the endpoints are checked.
+  assert.ok(Math.abs(RING_PARTICLE_COLOR[0] / RING_PARTICLE_COLOR[2] - 0.61 / 0.41) < 1e-12);
+  assert.ok(RING_PARTICLE_COLOR[0] === 1 && RING_PARTICLE_COLOR[2] < 1, 'normalised to the red channel');
+  assert.ok(RING_PARTICLE_COLOR[2] < RING_PARTICLE_COLOR[1] && RING_PARTICLE_COLOR[1] < RING_PARTICLE_COLOR[0],
+    'the particles are redder than they are blue');
 });
 
 test('the generated profile texture matches the table it is built from', () => {
@@ -82,18 +117,21 @@ test('the generated profile texture matches the table it is built from', () => {
   assert.equal(texture.image.height, 1);
   const samples = texture.image.data;
   const span = RING_OUTER_KM - RING_INNER_KM;
-  for (const [name, inner, outer, tau, albedo] of RING_TABLE) {
+  for (const [name, inner, outer, tau, albedo, surge] of RING_TABLE) {
     const middle = (inner + outer) / 2;
-    const index = Math.floor(((middle - RING_INNER_KM) / span) * (samples.length / 2));
-    // Optical depth sits in R and albedo in G; half float carries about three
-    // decimal digits, so the comparison is loose but a wrong region or a shifted
-    // sample would still fail by a wide margin.
-    const decodedTau = DataUtils.fromHalfFloat(samples[index * 2]);
-    const decodedAlbedo = DataUtils.fromHalfFloat(samples[index * 2 + 1]);
+    const index = Math.floor(((middle - RING_INNER_KM) / span) * (samples.length / 4));
+    // Optical depth sits in R, albedo in G and the surge amplitude in B; half float
+    // carries about three decimal digits, so the comparison is loose but a wrong
+    // region or a shifted sample would still fail by a wide margin.
+    const decodedTau = DataUtils.fromHalfFloat(samples[index * 4]);
+    const decodedAlbedo = DataUtils.fromHalfFloat(samples[index * 4 + 1]);
+    const decodedSurge = DataUtils.fromHalfFloat(samples[index * 4 + 2]);
     assert.ok(Math.abs(decodedTau - tau) <= tau * 1e-3,
       `${name}: profile sample ${decodedTau} drifted from ${tau}`);
     assert.ok(Math.abs(decodedAlbedo - albedo) <= albedo * 1e-3,
       `${name}: albedo sample ${decodedAlbedo} drifted from ${albedo}`);
+    assert.ok(Math.abs(decodedSurge - surge) <= surge * 1e-3,
+      `${name}: surge sample ${decodedSurge} drifted from ${surge}`);
   }
   texture.dispose();
 });

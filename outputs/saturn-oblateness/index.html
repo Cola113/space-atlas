@@ -1,0 +1,363 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>土星扁平率对比 · 星际图鉴</title>
+    <link rel="icon" href="data:," />
+    <style>
+      :root { color-scheme: dark; --accent: #6fd7a5; }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0; background: #07090b; color: #dfe6e4;
+        font-family: "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+        font-size: 14px; line-height: 1.5;
+      }
+      header { padding: 18px 24px 14px; border-bottom: 1px solid #1b2226; }
+      h1 { margin: 0 0 6px; font-size: 18px; font-weight: 600; letter-spacing: .02em; }
+      .sub { color: #8b9a97; font-size: 13px; max-width: 1040px; margin: 0; }
+      .sub code { color: #cfe4dd; background: #131a1d; padding: 1px 5px; border-radius: 3px; }
+
+      .stage {
+        display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: #1b2226;
+        height: 620px;
+      }
+      @media (max-width: 900px) { .stage { grid-template-columns: 1fr; height: auto; } }
+
+      .panel { position: relative; background: #05070a; min-height: 260px; }
+      .panel canvas { display: block; width: 100%; height: 100%; }
+      .panel-head {
+        position: absolute; top: 0; left: 0; right: 0; z-index: 2;
+        display: flex; justify-content: space-between; align-items: baseline; gap: 12px;
+        padding: 11px 15px; font-size: 12px; letter-spacing: .04em;
+        background: linear-gradient(#07090bee, #07090b00);
+      }
+      .panel-title { font-weight: 600; color: #e8f0ee; }
+      .panel.after .panel-title { color: var(--accent); }
+      .panel-note { color: #77857f; font-size: 11px; }
+      .readout {
+        position: absolute; left: 0; right: 0; bottom: 0; z-index: 2;
+        display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
+        padding: 14px 15px; font-variant-numeric: tabular-nums;
+        background: linear-gradient(#07090b00, #07090bf2 55%);
+      }
+      .readout b { display: block; font-size: 17px; font-weight: 600; color: #e8f0ee; letter-spacing: .01em; }
+      .readout span { color: #77857f; font-size: 11px; letter-spacing: .03em; }
+      .panel.after .readout b.polar { color: var(--accent); }
+
+      .controls { padding: 18px 24px 32px; display: grid; gap: 15px; max-width: 1080px; }
+      .row { display: grid; grid-template-columns: 150px 1fr 96px; align-items: center; gap: 14px; }
+      .row label { color: #9fb0ac; font-size: 13px; }
+      .row output { font-variant-numeric: tabular-nums; color: #e8f0ee; text-align: right; }
+      input[type="range"] { width: 100%; accent-color: var(--accent); }
+      .toggles { display: flex; gap: 22px; flex-wrap: wrap; padding-top: 2px; }
+      .toggles label { display: flex; align-items: center; gap: 7px; color: #9fb0ac; font-size: 13px; cursor: pointer; }
+      input[type="checkbox"] { accent-color: var(--accent); }
+      .marker { display: inline-block; width: 13px; height: 13px; border-radius: 50%;
+        border: 2px solid var(--accent); }
+      .hint { color: #6d7b77; font-size: 12px; border-left: 2px solid #23303a; padding-left: 12px; margin: 4px 0 0; }
+      .hint b { color: #9fb0ac; font-weight: 600; }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>土星扁平率对比</h1>
+      <p class="sub">
+        左侧为当前实现——<code>body-geometry.js</code> 中土星未配置 <code>shape</code>，回退成单位球；
+        右侧为加入 <code>shape: [1, 0.902, 1]</code> 后的扁球。
+        两侧共用同一相机、光照与真实贴图，所有尺寸数字由渲染结果 alpha 通道实测。
+      </p>
+    </header>
+
+    <div class="stage">
+      <section class="panel before" id="panel-before">
+        <div class="panel-head">
+          <span class="panel-title">现状 · 单位球</span>
+          <span class="panel-note">极轴 / 赤道 = 1.000</span>
+        </div>
+        <div class="readout">
+          <div><span>赤道直径</span><b id="before-eq">–</b></div>
+          <div><span>极直径</span><b id="before-po">–</b></div>
+          <div><span>压扁量</span><b id="before-fl">–</b></div>
+        </div>
+      </section>
+
+      <section class="panel after" id="panel-after">
+        <div class="panel-head">
+          <span class="panel-title">修复后 · 极轴 0.902</span>
+          <span class="panel-note">NASA 实测 120,536 / 108,728 km</span>
+        </div>
+        <div class="readout">
+          <div><span>赤道直径</span><b id="after-eq">–</b></div>
+          <div><span>极直径</span><b class="polar" id="after-po">–</b></div>
+          <div><span>压扁量</span><b id="after-fl">–</b></div>
+        </div>
+      </section>
+    </div>
+
+    <div class="controls">
+      <div class="row">
+        <label for="ring-angle">环面张开角</label>
+        <input id="ring-angle" type="range" min="1" max="90" step="1" value="33" />
+        <output id="ring-angle-out">33°</output>
+      </div>
+      <div class="row">
+        <label for="zoom">视距倍率</label>
+        <input id="zoom" type="range" min="1" max="3" step="0.01" value="1" />
+        <output id="zoom-out">1.00×</output>
+      </div>
+
+      <div class="toggles">
+        <label><input id="ref-circle" type="checkbox" checked /> <span class="marker"></span> 理想球体轮廓参考</label>
+        <label><input id="wide" type="checkbox" /> 收进完整环系</label>
+      </div>
+
+      <p class="hint" id="hint-size">
+        <b>视距倍率 1.00× 即应用默认取景的真实大小</b>——1280×720 视口下球体直径 172 px，
+        此处按同一像素尺寸渲染，便于判断“实际看的时候明不明显”。放大后差别才容易被抓住。
+      </p>
+      <p class="hint">
+        <b>环面张开角</b>是本页唯一左右扁平可见程度的几何量：越接近 0°（环侧视、正对赤道）压扁越明显，
+        接近 90°（正对极轴，看到的是正圆赤道）则完全看不出。应用默认视图实测约 33°，
+        实际数值随土星轨道位置变化。
+      </p>
+    </div>
+
+    <script type="module">
+      import * as THREE from "three";
+
+      const FOV = 42;               // 与应用相机一致
+      const RADIUS = 2.18;          // data.js 中土星的展示半径
+      const POLAR = 0.902;          // 极轴 / 赤道轴，NASA 实测 108,728 / 120,536
+      const RING_INNER = 1.28;
+      const RING_OUTER = 2.35;
+      // 应用默认取景下土星球体的屏幕直径：1280×720 截图实测约 172 px
+      const APP_GLOBE_PX = 172;
+      const GLOBE_FIT = 0.76;       // 球体最多占面板高度的比例
+
+      const state = { ringAngleDeg: 33, zoom: 1, refCircle: true, wide: false };
+
+      const sunDirection = new THREE.Vector3(Math.sin(0.7), Math.sin(0.21), Math.cos(0.7))
+        .normalize().multiplyScalar(60);
+
+      function buildSphere(oblate) {
+        const geometry = new THREE.SphereGeometry(1, 112, 80);
+        if (!oblate) return geometry;
+        const points = geometry.attributes.position;
+        for (let i = 0; i < points.count; i++) points.setY(i, points.getY(i) * POLAR);
+        geometry.computeVertexNormals();
+        geometry.computeBoundingSphere();
+        return geometry;
+      }
+
+      const loader = new THREE.TextureLoader();
+      const surfaceMap = loader.load("/solar-system/textures/2k_saturn.jpg");
+      surfaceMap.colorSpace = THREE.SRGBColorSpace;
+      const ringMap = loader.load("/solar-system/textures/2k_saturn_ring_alpha.png");
+
+      class View {
+        constructor(host, oblate) {
+          this.host = host;
+          this.canvas = document.createElement("canvas");
+          host.prepend(this.canvas);
+
+          this.renderer = new THREE.WebGLRenderer({
+            canvas: this.canvas, antialias: true, alpha: true, preserveDrawingBuffer: true,
+          });
+          this.renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+          this.renderer.setClearAlpha(0);
+
+          this.scene = new THREE.Scene();
+          this.camera = new THREE.PerspectiveCamera(FOV, 1, 0.05, 4000);
+          this.camera.up.set(0, 1, 0);
+
+          this.scene.add(new THREE.AmbientLight("#d2e1df", 0.085));
+          const sun = new THREE.DirectionalLight("#fff6e8", 2.6);
+          sun.position.copy(sunDirection);
+          this.scene.add(sun, sun.target);
+
+          this.mesh = new THREE.Mesh(
+            buildSphere(oblate),
+            new THREE.MeshStandardMaterial({
+              map: surfaceMap, color: "#ffffff", roughness: 1, metalness: 0,
+            }),
+          );
+          this.mesh.scale.setScalar(RADIUS);
+          this.scene.add(this.mesh);
+
+          const ringGeometry = new THREE.RingGeometry(RADIUS * RING_INNER, RADIUS * RING_OUTER, 192, 1);
+          const ringPositions = ringGeometry.attributes.position;
+          const ringUvs = ringGeometry.attributes.uv;
+          const scratch = new THREE.Vector3();
+          for (let i = 0; i < ringPositions.count; i++) {
+            scratch.fromBufferAttribute(ringPositions, i);
+            ringUvs.setXY(i, (scratch.length() - RADIUS * RING_INNER) / (RADIUS * 1.07), 0.5);
+          }
+          this.ring = new THREE.Mesh(
+            ringGeometry,
+            new THREE.MeshStandardMaterial({
+              map: ringMap, transparent: true, side: THREE.DoubleSide, roughness: 1,
+              depthWrite: false, opacity: 0.95,
+            }),
+          );
+          this.ring.rotation.x = -Math.PI / 2;
+          this.scene.add(this.ring);
+
+          // 理想球体轮廓：面向相机、半径等于赤道半径的细环
+          const ref = new THREE.Mesh(
+            new THREE.RingGeometry(RADIUS * 0.995, RADIUS * 1.005, 256),
+            new THREE.MeshBasicMaterial({
+              color: 0x6fd7a5, transparent: true, opacity: 0.8,
+              side: THREE.DoubleSide, depthTest: false, depthWrite: false,
+            }),
+          );
+          ref.renderOrder = 10;
+          this.refCircle = ref;
+          this.scene.add(ref);
+        }
+
+        resize() {
+          const rect = this.host.getBoundingClientRect();
+          const width = Math.max(1, Math.round(rect.width));
+          const height = Math.max(1, Math.round(rect.height));
+          if (width === this.width && height === this.height) return;
+          this.renderer.setSize(width, height, false);
+          this.camera.aspect = width / height;
+          this.camera.updateProjectionMatrix();
+          this.width = width;
+          this.height = height;
+        }
+
+        applyCamera(ringAngleDeg, globeScale) {
+          const beta = THREE.MathUtils.degToRad(Math.max(ringAngleDeg, 0.8));
+          const focal = this.height / (2 * Math.tan(THREE.MathUtils.degToRad(FOV / 2)));
+          // 先算出让球体直径正好等于 APP_GLOBE_PX 的距离，再按倍率拉近
+          const baseDistance = (RADIUS * focal) / (APP_GLOBE_PX / 2);
+          const distance = baseDistance / globeScale;
+          const azimuth = 0.35;
+
+          this.camera.position.set(
+            distance * Math.cos(beta) * Math.sin(azimuth),
+            distance * Math.sin(beta),
+            distance * Math.cos(beta) * Math.cos(azimuth),
+          );
+          this.camera.lookAt(0, 0, 0);
+
+          this.refCircle.position.set(0, 0, 0);
+          this.refCircle.lookAt(this.camera.position);
+          this.refCircle.visible = state.refCircle;
+        }
+
+        measure() {
+          const ringVisible = this.ring.visible;
+          const refVisible = this.refCircle.visible;
+          this.ring.visible = false;
+          this.refCircle.visible = false;
+          this.renderer.render(this.scene, this.camera);
+
+          const gl = this.renderer.getContext();
+          const w = this.renderer.domElement.width;
+          const h = this.renderer.domElement.height;
+          const buffer = new Uint8Array(w * h * 4);
+          gl.readPixels(0, 0, w, h, gl.RGBA, gl.UNSIGNED_BYTE, buffer);
+
+          const ratio = this.renderer.getPixelRatio();
+          const left = Math.round(w * 0.04);
+          const right = Math.round(w * 0.96);
+          let minX = w, maxX = -1, minY = h, maxY = -1;
+          for (let y = 0; y < h; y++) {
+            for (let x = left; x < right; x++) {
+              if (buffer[(y * w + x) * 4 + 3] > 8) {
+                if (x < minX) minX = x;
+                if (x > maxX) maxX = x;
+                if (y < minY) minY = y;
+                if (y > maxY) maxY = y;
+              }
+            }
+          }
+
+          this.ring.visible = ringVisible;
+          this.refCircle.visible = refVisible;
+          if (maxX < 0) return { equator: 0, polar: 0 };
+          return {
+            equator: (maxX - minX + 1) / ratio,
+            polar: (maxY - minY + 1) / ratio,
+          };
+        }
+
+        render() { this.renderer.render(this.scene, this.camera); }
+      }
+
+      const before = new View(document.getElementById("panel-before"), false);
+      const after = new View(document.getElementById("panel-after"), true);
+
+      const els = Object.fromEntries(
+        ["ring-angle", "ring-angle-out", "zoom", "zoom-out", "ref-circle", "wide",
+         "before-eq", "before-po", "before-fl", "after-eq", "after-po", "after-fl", "hint-size"]
+          .map((id) => [id, document.getElementById(id)]),
+      );
+
+      const fmt = (value) => `${Math.round(value)} px`;
+      const pct = (eq, po) => (eq && po ? `${((1 - po / eq) * 100).toFixed(1)}%` : "–");
+
+      function maxZoomFor(view) {
+        const byHeight = (view.height * GLOBE_FIT) / APP_GLOBE_PX;
+        const byWidth = (view.width * 0.9) / APP_GLOBE_PX;
+        return Math.max(1, Math.min(byHeight, byWidth));
+      }
+
+      function update() {
+        state.ringAngleDeg = Number(els["ring-angle"].value);
+        state.refCircle = els["ref-circle"].checked;
+        state.wide = els.wide.checked;
+
+        for (const view of [before, after]) view.resize();
+
+        // 放大上限由面板尺寸决定，避免球体被裁掉导致读数失真
+        const limited = Math.min(maxZoomFor(before), maxZoomFor(after));
+        els.zoom.max = String(limited.toFixed(2));
+        if (state.zoom > limited) state.zoom = limited;
+        state.zoom = Number(els.zoom.value);
+
+        // 收进完整环系时，按环外缘 2.35R 反推可用倍率
+        const wideScale = (before.width * 0.94) / (2 * RING_OUTER * (APP_GLOBE_PX / 2));
+        const globeScale = state.wide ? Math.min(state.zoom, wideScale) : state.zoom;
+
+        els["ring-angle-out"].textContent = `${state.ringAngleDeg}°`;
+        els["zoom-out"].textContent = `${state.zoom.toFixed(2)}×`;
+
+        for (const view of [before, after]) view.applyCamera(state.ringAngleDeg, globeScale);
+
+        const mb = before.measure();
+        const ma = after.measure();
+
+        els["before-eq"].textContent = fmt(mb.equator);
+        els["before-po"].textContent = fmt(mb.polar);
+        els["before-fl"].textContent = pct(mb.equator, mb.polar);
+        els["after-eq"].textContent = fmt(ma.equator);
+        els["after-po"].textContent = fmt(ma.polar);
+        els["after-fl"].textContent = pct(ma.equator, ma.polar);
+
+        const delta = mb.polar && ma.polar ? mb.polar - ma.polar : 0;
+        els["hint-size"].innerHTML =
+          `<b>视距倍率 1.00× 即应用默认取景的真实大小</b>——1280×720 视口下球体直径 172 px，` +
+          `此处按同一像素尺寸渲染，便于判断“实际看的时候明不明显”。` +
+          (state.zoom > 1.02
+            ? `当前放大到 ${state.zoom.toFixed(2)}×，极直径比单位球短 <b>${Math.round(delta)} px</b>。`
+            : `当前是真实大小，极直径比单位球短 <b>${Math.round(delta)} px</b>。`);
+
+        before.render();
+        after.render();
+      }
+
+      for (const el of [els["ring-angle"], els.zoom, els["ref-circle"], els.wide]) {
+        el.addEventListener("input", update);
+        el.addEventListener("change", update);
+      }
+      addEventListener("resize", update);
+
+      update();
+      window.__saturnCompare = { state, update, before, after };
+    </script>
+  </body>
+</html>

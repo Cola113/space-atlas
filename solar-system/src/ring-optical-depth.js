@@ -9,31 +9,62 @@ import * as THREE from 'three';
 // `tau` below is the midpoint of that range, which is an approximation stated per
 // region. Sub-ring optical depths are not measured here — individual density waves
 // and ringlets are finer than this table.
+// Single-scattering albedo and opposition-surge amplitude, column by column.
+//
+// albedo: French et al. 2007 (PASP 119, 623) put the single-scattering albedo at 0.1
+// for the C ring rising to 0.6 for the B ring, but those two numbers are *338 nm*,
+// in the ultraviolet, not visible light; no visible per-ring single-scattering albedo
+// was retrievable, so they are kept with the band stated rather than relabelled. The
+// A ring value of 0.5 is the Bond albedo of the inner and middle A ring from Dones,
+// Cuzzi & Showalter 1993 (Icarus 105, 184), which is not the same quantity as the
+// single-scattering albedo the reflectance formula wants. The tenuous ring and gap
+// values are interpolated between those anchors.
 export const RING_TABLE = [
-  // name,             inner km,  outer km,  tau,   albedo
-  ['D ring',            66900,     74491,   0.0005, 0.1],
-  ['C ring',            74491,     91975,   0.2,    0.1],
-  ['B ring B1',         91975,     99000,   1.3,    0.6],
-  ['B ring B2',         99000,    104000,   2.2,    0.6],
-  ['B ring B3',        104000,    110000,   3.0,    0.6],
-  ['B ring B4',        110000,    116500,   2.5,    0.6],
-  ['B ring B5',        116500,    117500,   2.0,    0.6],
-  ['Cassini Division', 117500,    122050,   0.08,   0.2],
-  ['A ring',           122050,    133423,   0.6,    0.5],
-  ['Encke Gap',        133423,    133745,   0.02,   0.5],
-  ['A ring outer',     133745,    136487,   0.6,    0.5],
-  ['Keeler Gap',       136487,    136522,   0.02,   0.5],
-  ['A ring edge',      136522,    136770,   0.6,    0.5],
-  ['Roche Division',   136770,    139826,   0.002,  0.4],
-  ['F ring',           139826,    140612,   0.1,    0.4],
+  // name,             inner km,  outer km,  tau,   albedo, opposition surge
+  ['D ring',            66900,     74491,   0.0005, 0.1,    0.6],
+  ['C ring',            74491,     91975,   0.2,    0.1,    0.6],
+  ['B ring B1',         91975,     99000,   1.3,    0.6,    0.4],
+  ['B ring B2',         99000,    104000,   2.2,    0.6,    0.4],
+  ['B ring B3',        104000,    110000,   3.0,    0.6,    0.4],
+  ['B ring B4',        110000,    116500,   2.5,    0.6,    0.4],
+  ['B ring B5',        116500,    117500,   2.0,    0.6,    0.4],
+  ['Cassini Division', 117500,    122050,   0.08,   0.2,    0.5],
+  ['A ring',           122050,    133423,   0.6,    0.5,    0.4],
+  ['Encke Gap',        133423,    133745,   0.02,   0.5,    0.4],
+  ['A ring outer',     133745,    136487,   0.6,    0.5,    0.7],
+  ['Keeler Gap',       136487,    136522,   0.02,   0.5,    0.7],
+  ['A ring edge',      136522,    136770,   0.6,    0.5,    0.7],
+  ['Roche Division',   136770,    139826,   0.002,  0.4,    0.7],
+  ['F ring',           139826,    140612,   0.1,    0.4,    0.7],
 ];
 
-// Single-scattering albedo, from French et al. 2007 (PASP 119, 623), who put it at
-// 0.1 for the C ring rising to 0.6 for the B ring, and Doyle et al. 1989 (Icarus 80,
-// 104), who give a Bond albedo near 0.5 for the A ring. Only the C, B and (loosely)
-// A ring values are measured; the tenuous ring and gap values are interpolated
-// between those anchors, and the narrow gaps inherit their surroundings.
-export const RING_PHASE_G = -0.6;
+// Henyey-Greenstein asymmetry of the ring particles, negative because they
+// backscatter. This is the *visible* particle value: Lumme, Irvine & Esposito 1983
+// (Icarus 53, 174) fit g = -0.30 at 620 nm to the B ring as a particle-level
+// asymmetry. The previous -0.6 came from Cassini UVIS, whose |g| = 0.63-0.78 is
+// measured at 155-180 nm (Bradley, Colwell & Esposito 2013, Icarus 225, 726) and
+// describes grains in the far ultraviolet, not particles in visible light.
+export const RING_PHASE_G = -0.3;
+
+// Opposition surge: the real phase curve is a very narrow spike sitting on a broad,
+// slowly falling curve, which one Henyey-Greenstein term cannot produce at any
+// wavelength. French et al. 2007 (PASP 119, 623) fit an exponential plus a linear
+// background to the rings' total I/F and give the exponential's amplitude relative to
+// that background per ring region, and a half width at half maximum near 0.1 degrees
+// at BVRI wavelengths. The per-region amplitudes live in RING_TABLE's last column.
+// The surge is applied to the whole reflectance rather than to one scattering order,
+// because that is what the amplitude was measured against.
+export const RING_SURGE_HWHM_DEG = 0.1;
+// exp(-alpha / scale) falls to one half at alpha = scale * ln 2.
+export const RING_SURGE_SCALE_RAD = (RING_SURGE_HWHM_DEG * Math.PI / 180) / Math.LN2;
+
+// Particle colour, from the measured geometric albedos of the B ring particles at
+// red and blue wavelengths: 0.61 +/- 0.04 and 0.41 +/- 0.03 (Lumme, Irvine &
+// Esposito 1983, Icarus 53, 174). Normalised to the red channel, since the ring's
+// overall level comes from the single-scattering albedo above and not from here. The
+// green channel is not measured and is taken as the mean of the two, which is an
+// interpolation and not a measurement.
+export const RING_PARTICLE_COLOR = [1, (0.61 + 0.41) / 2 / 0.61, 0.41 / 0.61];
 
 export const RING_INNER_KM = RING_TABLE[0][1];
 export const RING_OUTER_KM = RING_TABLE[RING_TABLE.length - 1][2];
@@ -60,6 +91,19 @@ export function albedoAt(radiusKm) {
   return 0;
 }
 
+// Amplitude of the opposition surge relative to the broad phase curve. The C ring,
+// the B ring and the outer A ring carry measured values; the D ring inherits the C
+// ring anchor, the Cassini Division sits between the C and B ring anchors, and the
+// gaps and the tenuous rings outside the A ring inherit their surroundings. Those
+// interpolated entries are marked here rather than being left to look measured.
+export function surgeAt(radiusKm) {
+  if (radiusKm <= RING_INNER_KM || radiusKm >= RING_OUTER_KM) return 0;
+  for (const [, inner, outer, , , surge] of RING_TABLE) {
+    if (radiusKm >= inner && radiusKm < outer) return surge;
+  }
+  return 0;
+}
+
 // Normalised radius across the ring system: 0 at the D ring inner edge, 1 at the F
 // ring outer edge. Both the mesh UVs and the shadow lookup use this one mapping.
 export const ringRadiusUnit = (radiusKm) =>
@@ -75,18 +119,21 @@ export const RING_REGION_SEAMS = RING_TABLE.slice(0, -1).map(([, , outer]) => ri
 
 const SAMPLES = 2048;
 
-// A one-row half-float texture holding normal optical depth in R and single-scattering
-// albedo in G, generated from RING_TABLE rather than shipped as an image so the
-// numbers stay checkable in source. Half float keeps linear filtering available on
-// plain WebGL2.
+// A one-row half-float texture holding normal optical depth in R, single-scattering
+// albedo in G and the opposition-surge amplitude in B, generated from RING_TABLE
+// rather than shipped as an image so the numbers stay checkable in source. Half
+// float keeps linear filtering available on plain WebGL2, and RGBA rather than RGB
+// because three.js dropped the three-channel format.
 export function createRingOpticalDepthTexture() {
-  const data = new Uint16Array(SAMPLES * 2);
+  const data = new Uint16Array(SAMPLES * 4);
   for (let i = 0; i < SAMPLES; i++) {
     const radiusKm = RING_INNER_KM + ((i + 0.5) / SAMPLES) * (RING_OUTER_KM - RING_INNER_KM);
-    data[i * 2] = THREE.DataUtils.toHalfFloat(opticalDepthAt(radiusKm));
-    data[i * 2 + 1] = THREE.DataUtils.toHalfFloat(albedoAt(radiusKm));
+    data[i * 4] = THREE.DataUtils.toHalfFloat(opticalDepthAt(radiusKm));
+    data[i * 4 + 1] = THREE.DataUtils.toHalfFloat(albedoAt(radiusKm));
+    data[i * 4 + 2] = THREE.DataUtils.toHalfFloat(surgeAt(radiusKm));
+    data[i * 4 + 3] = THREE.DataUtils.toHalfFloat(1);
   }
-  const texture = new THREE.DataTexture(data, SAMPLES, 1, THREE.RGFormat, THREE.HalfFloatType);
+  const texture = new THREE.DataTexture(data, SAMPLES, 1, THREE.RGBAFormat, THREE.HalfFloatType);
   texture.magFilter = THREE.LinearFilter;
   // Mipmaps matter here: the profile is flat within a ring and steps at every boundary,
   // so where the ring compresses on screen the un-filtered 2048 samples alias into hard

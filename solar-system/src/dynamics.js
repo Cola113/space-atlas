@@ -2,7 +2,10 @@ import * as THREE from "three";
 import simplexSource from "glsl-noise/simplex/3d.glsl?raw";
 import { additionalBodies } from "./additional-bodies.js";
 import { solarEruptionAxis, volcanicAxis, icePlumeAxis, plumeViewDirection } from './feature-anchors.js';
-import { createRingOpticalDepthTexture, RING_INNER, RING_OUTER, RING_PHASE_G, RING_REGION_SEAMS, RING_TABLE } from './ring-optical-depth.js';
+import {
+  createRingOpticalDepthTexture, RING_INNER, RING_OUTER, RING_PHASE_G, RING_REGION_SEAMS,
+  RING_TABLE, RING_SURGE_SCALE_RAD, RING_PARTICLE_COLOR,
+} from './ring-optical-depth.js';
 import { createRingScatteringTexture } from './ring-multiple-scattering.js';
 
 const simplex = simplexSource.replace("#pragma glslify: export(snoise)", "");
@@ -160,6 +163,8 @@ const common = /* glsl */ `
   uniform vec2 uRingSpan;
   uniform vec3 uRingCamera;
   uniform float uRingPhaseG;
+  uniform float uRingSurgeScale;
+  uniform vec3 uRingParticleColor;
   uniform float uCloudAvailable;
   uniform float uCloudVisible;
   uniform float uNightEnabled;
@@ -443,11 +448,21 @@ function attachEarthSurface(record) {
 const saturnShadowFunctions = /* glsl */ `
   varying mat3 vActivityViewToLocal;
   // Henyey-Greenstein phase function. g < 0 is backscattering, which is what the ring
-  // particles are: Cassini UVIS puts |g| at 0.63-0.78 and Doyle et al. 1989 describe
-  // the A ring particles as more backscattering than satellites of comparable albedo.
+  // particles are. The value is the visible-light particle asymmetry from Lumme,
+  // Irvine & Esposito 1983; the far-ultraviolet |g| this used to carry describes
+  // grains at 155-180 nm and is the wrong band for a visible render.
   float ringPhase(float cosAlpha, float g) {
     float g2 = g * g;
     return (1.0 - g2) / pow(1.0 + g2 + 2.0 * g * cosAlpha, 1.5);
+  }
+  // Narrow opposition spike on top of that broad curve. One Henyey-Greenstein term
+  // cannot make it at any wavelength, and it is the brightest part of the measured
+  // phase curve. French et al. 2007 fit an exponential to the rings' total I/F and
+  // report its amplitude relative to the background per ring region; the amplitude
+  // applies to the whole reflectance because that is what was measured.
+  float ringOppositionSurge(float cosAlpha, float amplitude) {
+    float alpha = acos(clamp(cosAlpha, -1.0, 1.0));
+    return 1.0 + amplitude * exp(-alpha / uRingSurgeScale);
   }
   // Which row of the optical-depth table a fragment sits in. The seams are the
   // shared boundaries in the same normalised radius the profile uses, so the region
@@ -489,6 +504,9 @@ const saturnShadowFunctions = /* glsl */ `
       * (1.0 - smoothstep(1.0-edge, 1.0+edge, radiusUv));
     return textureGrad(uRingOpticalDepth, vec2(clamp(radiusUv,0.0,1.0),.5),
       vec2(footprint,0.0), vec2(0.0)).r * mask;
+  }
+  float ringSurgeAmplitude(float radiusUv) {
+    return texture2D(uRingOpticalDepth, vec2(clamp(radiusUv,0.0,1.0),.5)).b;
   }
   // Transmission through a particle slab: exp(-tau/mu), with mu the cosine between
   // the ray and the ring normal. Grazing rays cross more material, so the ring goes
@@ -557,15 +575,17 @@ function attachRingSurface(record) {
     // sunlight through also lets the background through. The Lambert result is thrown
     // away and replaced by the slab term: a ring particle layer is not an opaque
     // surface, and treating it as one is what forced the old display contrast boost.
+    // The base colour no longer comes from the ring texture: that image's RGB varies
+    // with radius but not with any measured property, so it is not used here.
     map_fragment: /* glsl */ `
-      #include <map_fragment>
       vec3 ringSunLocal = normalize(uRingSun);
       vec3 ringViewLocal = normalize(uRingCamera - vActivityPosition);
       float ringMu0 = clamp(abs(ringSunLocal.z), .001, 1.0);
       float ringMu = clamp(abs(ringViewLocal.z), .001, 1.0);
-      vec2 ringProfile = texture2D(uRingOpticalDepth, vec2(clamp(vActivityUv.x, 0.0, 1.0), .5)).rg;
+      vec3 ringProfile = texture2D(uRingOpticalDepth, vec2(clamp(vActivityUv.x, 0.0, 1.0), .5)).rgb;
       float ringTau = ringProfile.r;
       float ringAlbedoW = ringProfile.g;
+      float ringSurge = ringProfile.b;
       float ringCosAlpha = dot(ringSunLocal, ringViewLocal);
       float ringRegion = ringRegionIndex(vActivityUv.x);
       diffuseColor.a = 1.0 - exp(-ringTau / ringMu);
@@ -575,8 +595,9 @@ function attachRingSurface(record) {
       // Overwrite the Lambert result rather than replacing the lighting chunks: the
       // surrounding chunks declare variables that later stages still read.
       float ringOcclusion = mix(1.0, planetTransmission(vActivityPosition / uBodyRadius, ringSunLocal), uShadowEnabled);
-      float ringRadiance = ringSlabReflectance(ringTau, ringAlbedoW, ringMu, ringMu0, ringCosAlpha, ringRegion) * ringOcclusion;
-      reflectedLight.directDiffuse = diffuseColor.rgb * ringRadiance;
+      float ringRadiance = ringSlabReflectance(ringTau, ringAlbedoW, ringMu, ringMu0, ringCosAlpha, ringRegion)
+        * ringOppositionSurge(ringCosAlpha, ringSurge) * ringOcclusion;
+      reflectedLight.directDiffuse = uRingParticleColor * ringRadiance;
       reflectedLight.directSpecular = vec3(0.0);
       reflectedLight.indirectDiffuse = vec3(0.0);
       reflectedLight.indirectSpecular = vec3(0.0);
@@ -929,6 +950,8 @@ export function createDynamics(objects, { defer = false } = {}) {
         // Henyey-Greenstein asymmetry of the ring particles, negative because they
         // backscatter. See ring-optical-depth.js for the sources.
         uRingPhaseG: { value: RING_PHASE_G },
+        uRingSurgeScale: { value: RING_SURGE_SCALE_RAD },
+        uRingParticleColor: { value: new THREE.Color(...RING_PARTICLE_COLOR) },
         uCloudVisible: { value: 1 },
         uNightEnabled: { value: body.nightMap ? 1 : 0 },
         uShadowEnabled: { value: 1 },
