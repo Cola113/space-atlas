@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import simplexSource from "glsl-noise/simplex/3d.glsl?raw";
 import { additionalBodies } from "./additional-bodies.js";
+import { solarEruptionAxis, volcanicAxis, icePlumeAxis, plumeViewDirection } from './feature-anchors.js';
 
 const simplex = simplexSource.replace("#pragma glslify: export(snoise)", "");
 const TAU = Math.PI * 2;
@@ -353,6 +354,18 @@ function gasMap(id) {
       gasColor.rgb += vec3(${num(settings.cloud)}) * flowAmount * movingCloud
         * (.25 + uActivityEvent * .75) * (.24 + stormMask * .76);
       ${id === "neptune" ? "gasColor.rgb *= 1.0 - stormMask * uActivityEvent * .24;" : ""}
+      ${id === 'saturn' ? `
+        // A sourced polar shape with illustrative cloud detail, not dated imagery.
+        vec3 polar = normalize(vActivityDir);
+        float sector = mod(atan(polar.z, polar.x) + .5235988, 1.0471976) - .5235988;
+        float hexRadius = length(polar.xz) * cos(sector);
+        float north = smoothstep(.96, .975, polar.y);
+        float hexEdge = exp(-pow((hexRadius - .180) / .007, 2.0)) * north;
+        float hexInterior = (1.0 - smoothstep(.168, .184, hexRadius)) * north;
+        gasColor.rgb = mix(gasColor.rgb, gasColor.rgb * vec3(.72, .83, .83), hexInterior * .55);
+        gasColor.rgb *= 1.0 - hexEdge * .28;
+        gasColor.rgb *= 1.0 - exp(-dot(polar.xz, polar.xz) / .00022) * north * .45;
+      ` : ''}
       diffuseColor *= gasColor;
     #endif
   `;
@@ -614,6 +627,7 @@ function createProminences(record) {
       );
     }
     const curve = new THREE.CatmullRomCurve3(points);
+    if (index === 0) record.prominenceAnchor = { point: curve.getPointAt(.5), phase };
     const positions = [],
       tangents = [],
       uvs = [],
@@ -694,7 +708,7 @@ function createParticles(record, kind) {
   } else if (kind === "solar") {
     positionCode = /* glsl */ `
       float progress = clamp(uActivityProgress, 0.0, 1.0);
-      vec3 axis = normalize(vec3(.88,.32,.26));
+      vec3 axis = vec3(${solarEruptionAxis.toArray().join(',')});
       vec3 side = normalize(cross(axis,vec3(0.0,1.0,0.0)));
       vec3 up = cross(axis,side);
       float angle = aSeed.x * 6.2831853 + progress * 1.2;
@@ -709,7 +723,7 @@ function createParticles(record, kind) {
       float age = fract(aSeed.x + uActivityTime * .16);
       float azimuth = aSeed.y * 6.2831853;
       float vent = floor(aSeed.z * 4.0);
-      vec3 axis = ${kind === "ice" ? "normalize(vec3(.10 + vent * .025, -1.0, .06 * sin(vent * 2.0)))" : "normalize(vec3(.07, .19, .98))"};
+      vec3 axis = ${kind === "ice" ? "normalize(vec3(.10 + vent * .025, -1.0, .06 * sin(vent * 2.0)))" : `vec3(${volcanicAxis.toArray().join(',')})`};
       vec3 side = normalize(cross(axis, vec3(1.0, 0.0, 0.0)));
       vec3 up = cross(axis, side);
       float height = ${kind === "ice" ? "age * (.22 + aSeed.w * .42)" : "sin(age * 3.14159265) * (.10 + aSeed.w * .13)"};
@@ -982,6 +996,25 @@ export function createDynamics(objects, { defer = false } = {}) {
 
   return {
     update, activate, refreshTextures,
+    featureAnchor(id, kind) {
+      const record = records.get(id);
+      if (!enabled || focus !== id || !record?.detailReady) return null;
+      const progress = record.uniforms.uActivityProgress.value;
+      const strength = record.uniforms.uActivityEvent.value;
+      let point;
+      if (kind === 'prominence' && record.prominenceAnchor) {
+        const anchor = record.prominenceAnchor;
+        const life = .28 + .72 * THREE.MathUtils.smoothstep(Math.sin(record.time * .14 + anchor.phase), -.8, .85);
+        point = anchor.point.clone().addScaledVector(anchor.point.clone().normalize(), (life - .5) * .045 + strength * .03);
+      } else if (kind === 'solar-eruption' && progress > .03 && progress < .97) {
+        point = solarEruptionAxis.clone().multiplyScalar(1.006 + Math.max(progress - .16, 0) * 2.25);
+      } else if (kind === 'volcanic-plume' && strength > .06) {
+        point = volcanicAxis.clone().multiplyScalar(1.002 + .13 * (.65 + strength * .7));
+      } else if (kind === 'ice-plume') {
+        point = icePlumeAxis.clone().multiplyScalar(1.002 + .24 * (.65 + strength * .7));
+      }
+      return point ? { point, viewDirection: plumeViewDirection(point) } : null;
+    },
     earthCloudTexture: () => records.get("earth").uniforms.uCloudTexture.value,
     setEarthClouds({ enabled, available, previous, next, mix }) {
       const uniforms = records.get("earth").uniforms;
