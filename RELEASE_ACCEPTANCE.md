@@ -1,6 +1,6 @@
 # 2026-09-14 改造验收与发布
 
-本地实现及验收完成。线上部署、域名核验和最终状态另记于[发布记录](https://github.com/Cola113/space-atlas/blob/codex/main-realism-performance-20260914/RELEASE_RECEIPT.md)，本地通过不替代线上结果。范围保持原计划：共享物理、九落点、镜头跟随、分批加载、星云四档与自动挡、全站按钮和发布回退。
+本地实现及验收完成。线上部署、域名核验和最终状态另记于[发布记录](https://github.com/Cola113/space-atlas/blob/main/RELEASE_RECEIPT.md)，本地通过不替代线上结果。范围保持原计划：共享物理、九落点、镜头跟随、分批加载、星云四档与自动挡、全站按钮和发布回退。
 
 实现基线：`main` 的 `8446be90000e776779317c99c2de4eb0c0f3e946`；应用实现提交 `b38275363b7d004fb8bc94aeb1f014d1d67068ef`，工作分支 `codex/main-realism-performance-20260914`。没有读取或参考废弃分支。后续验收文档与发布标记提交不改变此应用实现。
 

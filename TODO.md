@@ -6,7 +6,7 @@
 
 ## 真实性标准的实施
 
-开发依据：[真实性标准](REALISM_STANDARD.md)，2026-09-13 采纳。2026-09-14 改造的本地逐项验收见[完整验收记录](RELEASE_ACCEPTANCE.md)，实际线上版本、域名核验和回退点以[发布记录](https://github.com/Cola113/space-atlas/blob/codex/main-realism-performance-20260914/RELEASE_RECEIPT.md)为准。模型范围见[天体模型](solar-system/BODY_MODELS.md)、[地表校核](solar-system/GROUND_AUDIT.md)，加载与画质证据见[性能验收](PERFORMANCE_VALIDATION.md)。勾选仅表示该项已完成，不表示所有近似已消除；下方未勾选条目为保留的后续改进与扩展。
+开发依据：[真实性标准](REALISM_STANDARD.md)，2026-09-13 采纳。2026-09-14 改造的本地逐项验收见[完整验收记录](RELEASE_ACCEPTANCE.md)，实际线上版本、域名核验和回退点以[发布记录](https://github.com/Cola113/space-atlas/blob/main/RELEASE_RECEIPT.md)为准。模型范围见[天体模型](solar-system/BODY_MODELS.md)、[地表校核](solar-system/GROUND_AUDIT.md)，加载与画质证据见[性能验收](PERFORMANCE_VALIDATION.md)。勾选仅表示该项已完成，不表示所有近似已消除；下方未勾选条目为保留的后续改进与扩展。
 
 - [x] 统一轨道视图与地表观景的物理状态，核对同一日期的位置、自转姿态及降落衔接。
 - [x] 九落点采用独立轨道与姿态，核对有限主星摆动、相位和主要遮挡，记录来源及误差；未建模的物理天平动继续明示。
@@ -45,7 +45,7 @@
 
 ## 太阳系全景
 
-- [x] **土星环影辨识与标注**（2026-09-14 已发布）：已复现用户反馈的“硬质圆环、偏离中心”，通过同视角关闭投影确认是环影；按用户要求加深并增加“土星环投影（阴影）”图例。南北极视角、桌面与手机/短横屏、投影开关和近观切换均已核验。见[发布记录](https://github.com/Cola113/space-atlas/blob/codex/main-realism-performance-20260914/RELEASE_RECEIPT.md)。
+- [x] **土星环影辨识与标注**（2026-09-14 已发布）：已复现用户反馈的“硬质圆环、偏离中心”，通过同视角关闭投影确认是环影；按用户要求加深并增加“土星环投影（阴影）”图例。南北极视角、桌面与手机/短横屏、投影开关和近观切换均已核验。见[发布记录](https://github.com/Cola113/space-atlas/blob/main/RELEASE_RECEIPT.md)。
 - [ ] **土星其余视角专项复核**：保留原待办中的总览、近景与土卫二地表视角检查范围，进一步核对本体比例与贴图、环倾角与透明度、前后遮挡及光照。环影问题的完成不代表这些范围已全部完成专项复核。
 - [ ] 继续完善银河系全景与太阳系之间的缩放过渡和尺度提示。
 - [ ] 评估行星环、云层、阴影和夜光的显示比例，保持科学说明与视觉表现一致。
