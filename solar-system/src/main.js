@@ -32,6 +32,7 @@ import {
 import { bodies, ORBIT_SPACING, SYSTEM_RADIUS } from "./data.js";
 import { createDynamics, activityProfiles } from "./dynamics.js";
 import { createLandmarks, landmarks } from "./landmarks.js";
+import { landingSites } from "./surface/geometry.js";
 import {
   cameraPath,
   occludedByBody,
@@ -521,7 +522,9 @@ function updateResourceStatus() {
   $('ephemeris-retry').hidden = !observationGate?.error;
   $('surface-button').disabled = Boolean(body && !body.physicalAvailable);
   for (const id of ['zoom-in', 'zoom-out']) $(id).disabled = Boolean(body && !body.physicalAvailable);
-  if(body && landableBodyIds.includes(body.id))$('landing-button').disabled=!body.physicalAvailable || Boolean(observationGate?.blocked);
+  if (body && landableBodyIds.includes(body.id)) {
+    landmarkView?.setLandingAvailable(body.physicalAvailable && !observationGate?.blocked);
+  }
   $('resource-retry').hidden = !textureFailures.size;
   $('app').classList.toggle('has-resource-notice', !$('resource-status').hidden);
   if (wasFocused && $('resource-status').hidden)
@@ -1000,11 +1003,16 @@ function systemDescription() {
   return "大小和距离为示意 · 时间倍率与地表同步";
 }
 
+function observationInfoBounds() {
+  const brief = $("landmark-brief");
+  return (!brief.hidden && (mobile || (width >= 560 && height <= 540)) ? brief : $("planet-info")).getBoundingClientRect();
+}
+
 function compactSceneBounds() {
   if (width < 560 || height > 540) return null;
   const tools = $("observation-tools");
   return {
-    left: Math.max(252, $("planet-info").hidden ? 252 : $("planet-info").getBoundingClientRect().right + 16),
+    left: Math.max(252, $("planet-info").hidden ? 252 : observationInfoBounds().right + 16),
     right: width - 180,
     top: state.selected && !tools.hidden ? tools.getBoundingClientRect().bottom + 12 : 76,
     bottom: document.querySelector(".explorer-bottom").getBoundingClientRect().top - 8,
@@ -1022,7 +1030,7 @@ function desiredOffset() {
   if (state.selected) {
     const top = Math.max(mobile ? 128 : 156, $("observation-tools").hidden ? 0 : $("observation-tools").getBoundingClientRect().bottom + 12);
     const bottom = mobile
-      ? $("planet-info").getBoundingClientRect().top - 14
+      ? observationInfoBounds().top - 14
       : height - 232;
     return new THREE.Vector2(
       mobile ? 0 : -width * 0.115,
@@ -1056,7 +1064,7 @@ function overviewPosition() {
 function focusedOffset(body, close = false) {
   const compact = compactSceneBounds();
   const safeHeight = compact ? compact.bottom - compact.top : mobile
-    ? Math.max(40, $("planet-info").getBoundingClientRect().top - 26 - $("observation-tools").getBoundingClientRect().bottom)
+    ? Math.max(40, observationInfoBounds().top - 26 - $("observation-tools").getBoundingClientRect().bottom)
     : height - 388;
   const safeWidth = compact ? compact.right - compact.left : mobile ? width - 80 : width - 460;
   const targetRadius = Math.max(
@@ -1332,6 +1340,7 @@ function setAtlas(open) {
   $("overview-tab").classList.toggle("active", !open);
   $("overview-tab").setAttribute("aria-pressed", String(!open));
   controls.enabled = !open;
+  if (open) closeLandmarkBrief();
   updateObservationTools();
   if (open) $('atlas-search').focus();
   else if (restore) $('atlas-tab').focus();
@@ -1658,7 +1667,7 @@ function triggerActivity() {
 function updateObservationTools() {
   updateCloudUi();
   const id = state.selected;
-  $("landing-button").hidden = state.system || !landableBodyIds.includes(id);
+  landmarkView?.setLandingAvailable(!state.system && landableBodyIds.includes(id) && Boolean(objects.get(id)?.physicalAvailable) && !observationGate?.blocked);
   const family = familyOf(objects.get(id));
   $("observation-settings").hidden = !(family || landmarks[id]?.length || ["earth","saturn"].includes(id));
   if ($('observation-settings').hidden && $('observation-settings').contains(document.activeElement)) $('body-details-button').focus();
@@ -1687,8 +1696,17 @@ function updateObservationTools() {
   $("landmark-clear").hidden = !landmarkView?.active;
 }
 
+function closeLandmarkBrief(restoreFocus = false) {
+  $("landmark-brief").hidden = true;
+  $("app").classList.remove("has-landmark-brief");
+  if (restoreFocus) landmarkView?.focusActive();
+}
+
 function clearLandmark() {
-  if (!landmarkView?.active && landmarkFollow === null) return;
+  closeLandmarkBrief();
+  if (!landmarkView?.active && landmarkFollow === null) {
+    return;
+  }
   landmarkView.select("");
   if (landmarkFollow !== null) state.followRotation = landmarkFollow;
   landmarkFollow = null;
@@ -1733,6 +1751,13 @@ function selectLandmark(id) {
   source.className = "landmark-source";
   source.textContent = "资料来源";
   $("planet-description").append(source);
+  $("landmark-brief-title").textContent = feature.name;
+  $("landmark-brief-text").textContent = feature.text;
+  $("landmark-brief-location").textContent = feature.location;
+  document.querySelector('.landmark-brief-body').scrollTop = 0;
+  $("landmark-brief-source").href = feature.source;
+  $("landmark-brief").hidden = false;
+  $("app").classList.add("has-landmark-brief");
   $("caption-title").textContent = feature.name;
   $("caption-detail").textContent = feature.location;
   $("focus-caption").hidden = false;
@@ -1748,10 +1773,12 @@ function selectLandmark(id) {
   loadHighTexture(body);
 }
 
-async function landOnSurface() {
-  if (!state.ready || landingBusy || surfaceView || !landableBodyIds.includes(state.selected)) return;
-  const id = state.selected;
+async function landOnSurface(bodyId = state.selected) {
+  if (!state.ready || landingBusy || surfaceView || !landableBodyIds.includes(bodyId)) return;
+  const id = bodyId;
+  if (id !== state.selected) return;
   const body = objects.get(id);
+  if (state.system || !body?.physicalAvailable || observationGate?.blocked) return;
   const previousControls = controls.enabled;
   const pose = { position: camera.position.clone(), target: controls.target.clone(),
     quaternion: camera.quaternion.clone(), offset: viewOffset.clone(), width, height };
@@ -1774,7 +1801,7 @@ async function landOnSurface() {
   landingBusy = true;
   controls.enabled = false;
   $("app").inert = true;
-  $("landing-button").disabled = true;
+  landmarkView?.setLandingBusy(true);
   try {
     const { createSurfaceView } = await import("./surface/SurfaceView.js");
     if (disposed) return;
@@ -1810,7 +1837,7 @@ async function landOnSurface() {
         camera.position.add(delta);controls.target.add(delta);
         updateSimulationDate();
         refreshObservationGate();
-        $("landing-button").focus();
+        requestAnimationFrame(() => landmarkView?.focusLanding());
       },
     });
   } catch {
@@ -1818,7 +1845,7 @@ async function landOnSurface() {
     toast("着陆场景未能加载，请稍后重试。");
   } finally {
     landingBusy = false;
-    $("landing-button").disabled = false;
+    landmarkView?.setLandingBusy(false);
   }
 }
 
@@ -1862,7 +1889,7 @@ function bindEvents() {
   });
   $("explore-earth").addEventListener("click", () => selectBody("earth"));
   $("surface-button").addEventListener("click", toggleClose);
-  $("landing-button").addEventListener("click", landOnSurface);
+  $("landmark-brief-close").addEventListener("click", () => closeLandmarkBrief(true));
   $("event-trigger").addEventListener("click", () => {triggerActivity();$("body-details-dialog").close();});
   $("activity-toggle").addEventListener("click", () => {
     state.dynamics = !state.dynamics;
@@ -1997,7 +2024,8 @@ function bindEvents() {
     )
       return;
     if (event.key === "Escape") {
-      if (state.atlas) setAtlas(false);
+      if (!$("landmark-brief").hidden) { closeLandmarkBrief(true); event.preventDefault(); }
+      else if (state.atlas) setAtlas(false);
       else if (state.selected) goOverview();
     }
     if (event.code === "Space" && event.target === document.body) {
@@ -2226,6 +2254,7 @@ function updateLabels() {
   // Read fixed UI bounds once, before changing any of the moving labels.
   const reserved = [
     $(state.selected ? "planet-info" : "intro"),
+    $("landmark-brief"),
     $("observation-tools"),
     document.querySelector(".scene-toolbar"),
   ].filter((element) => element.checkVisibility()).map((element) => {
@@ -2396,6 +2425,7 @@ function animate(now) {
     $("observation-tools"),
     document.querySelector(".scene-toolbar"),
     document.querySelector(".explorer-bottom"),
+    $("landmark-brief"),
   ]
     .filter((element) => !element.hidden)
     .map((element) => element.getBoundingClientRect());
@@ -2489,7 +2519,7 @@ async function init() {
       preparedCount++; preparationProgress();
     }
     textureResources.queue.setConcurrency(2);
-    landmarkView = createLandmarks(objects, camera, selectLandmark, (id, kind) => dynamics.featureAnchor(id, kind));
+    landmarkView = createLandmarks(objects, camera, selectLandmark, (id, kind) => dynamics.featureAnchor(id, kind), { landingSites, onLanding: landOnSurface });
     observedClouds = createObservedClouds({ dynamics, reducedMotion,
       initialEnabled: state.observedEarth, autoStart: !window.__promoOffline, deferStart: true,
       resourceQueue: textureResources.queue,

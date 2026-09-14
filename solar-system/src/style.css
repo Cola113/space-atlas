@@ -1914,6 +1914,11 @@ dialog .dialog-close {
 .landmark-marker:hover .landmark-dot {
   background: #bce8d4;
 }
+.landing-marker { color: #ffe09b; border: 0; border-radius: 50%; background: #161a16d9; cursor: pointer; }
+.landing-marker svg { width: 26px; height: 26px; }
+.landing-marker:hover, .landing-marker:focus-visible { background: #3b4538; color: #fff3ce; }
+.landing-tooltip { position: absolute; top: 48px; width: 260px; padding: 8px 10px; border-radius: 4px; background: #101713f5; color: #e8eee9; font-size: 11px; line-height: 1.6; pointer-events: none; visibility: hidden; }
+.landing-marker:hover .landing-tooltip, .landing-marker:focus-visible .landing-tooltip { visibility: visible; }
 .landmark-name {
   position: absolute;
   left: 33px;
@@ -1936,6 +1941,32 @@ dialog .dialog-close {
   color: #bad6c5;
   text-underline-offset: 3px;
 }
+.landmark-brief {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  z-index: 24;
+  top: calc(var(--safe-top) + var(--header-height) + 176px);
+  left: max(24px, var(--safe-left));
+  width: 284px;
+  max-height: calc(100dvh - var(--header-height) - var(--explorer-height) - 192px);
+  overflow: hidden;
+  padding: 12px 16px;
+  color: #e8f2ec;
+  background: #0b1210ed;
+  border: 1px solid #9fcab255;
+  border-radius: 8px;
+  box-shadow: 0 14px 42px #0009;
+  pointer-events: auto;
+}
+.landmark-brief[hidden] { display: none; }
+.landmark-brief-body { min-height: 0; overflow: auto; overscroll-behavior: contain; }
+.landmark-brief h2 { margin: 2px 36px 12px 0; font-size: 17px; line-height: 24px; font-weight: 500; }
+.landmark-brief p { margin: 0 0 10px; color: #c8d7cd; font-size: 12px; line-height: 1.7; }
+.landmark-brief small { display: block; color: #9dafa5; font-size: 10px; }
+.landmark-brief-source { display: inline-flex; align-items: center; min-height: 44px; color: #b8dfc8; font-size: 11px; }
+.landmark-brief-close { position: absolute; top: 2px; right: 4px; width: 44px; height: 44px; border: 0; color: #c8d7cd; background: transparent; cursor: pointer; }
+.landmark-brief-close svg { width: 18px; height: 18px; }
 @media (max-width: 1050px) and (min-width: 761px) {
   .observation-tools {
     width: 340px;
@@ -2359,8 +2390,6 @@ dialog .dialog-close {
 }
 .atlas-open .explorer-bottom { display: none; }
 .atlas-open .atlas-panel { bottom: 0; }
-.landing-action{display:flex;justify-content:center;align-items:center;gap:10px;width:100%;padding:11px 16px;margin-top:9px;border:1px solid #bea98266;border-radius:6px;background:#b59e7515;color:#dac49e;cursor:pointer;font:inherit;font-size:12px;letter-spacing:1px}.landing-action:hover{background:#b59e7530}.landing-action[hidden]{display:none}.landing-action:disabled{opacity:.6;cursor:wait}
-
 /* Reserve a separate row while a recoverable resource error is visible. */
 .has-resource-notice .observation-tools { top: calc(env(safe-area-inset-top, 0px) + 154px); }
 @media (max-width: 760px) {

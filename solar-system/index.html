@@ -16,6 +16,15 @@
       <div id="universe" aria-label="可交互的三维太阳系"></div>
       <div id="planet-labels"></div>
       <div id="landmark-markers" aria-label="星球地标"></div>
+      <section id="landmark-brief" class="landmark-brief" role="region" aria-labelledby="landmark-brief-title" hidden>
+        <button id="landmark-brief-close" class="landmark-brief-close" type="button" aria-label="关闭地标资料"><i data-lucide="x"></i></button>
+        <h2 id="landmark-brief-title"></h2>
+        <div class="landmark-brief-body">
+          <p id="landmark-brief-text"></p>
+          <small id="landmark-brief-location"></small>
+          <a id="landmark-brief-source" class="landmark-brief-source" target="_blank" rel="noreferrer">资料来源</a>
+        </div>
+      </section>
       <header class="topbar">
         <div id="scene-navigation"></div>
         <nav class="view-switch" aria-label="观测视图">
@@ -112,7 +121,6 @@
         </div>
         <div class="planet-info-actions">
           <button class="primary-action" id="surface-button"><i data-lucide="scan-search"></i><span>近距离观测</span></button>
-          <button class="landing-action" id="landing-button" hidden><i data-lucide="map-pin"></i><span>降落到表面</span></button>
         </div>
       </aside>
       <dialog id="body-details-dialog" aria-labelledby="planet-title">

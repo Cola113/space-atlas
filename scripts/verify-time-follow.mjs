@@ -32,13 +32,20 @@ for(const testCase of [['desktop',1440,900,1],['phone',390,844,3],['tablet',800,
  await page.locator('#rotation-toggle').click();const enabled=await snap();assert.ok(offset(initial).distanceTo(offset(enabled))<1e-8,'enable jump');
  await play(true);const before=await snap(),reversed=await advance();assert.ok(reversed.date<before.date,'reverse is forward');let drift=await followDrift();
  // Real pointer drag must select a new region and then remain attached.
- const target=body(await snap()),x=Math.max(280,Math.min(width-110,target.x)),y=Math.max(170,Math.min(height-160,target.y));
+ const target=body(await snap());
+ const {x,y}=await page.evaluate(({x,y})=>{
+  for(const dy of [0,-40,40,-65,65])for(const dx of [0,-50,50,-85,85]){
+   const px=x+dx,py=y+dy;
+   if(document.elementFromPoint(px,py)?.matches('#universe canvas')&&document.elementFromPoint(px+35,py+16)?.matches('#universe canvas'))return {x:px,y:py};
+  }
+  throw new Error('No unobstructed canvas drag area');
+ },{x:Math.max(280,Math.min(width-110,target.x)),y:Math.max(170,Math.min(height-160,target.y))});
  const beforeDrag=await snap();await page.mouse.move(x,y);await page.mouse.down();await page.mouse.move(x+35,y+16,{steps:8});await page.mouse.up();await page.waitForTimeout(1400);
  assert.ok(local(beforeDrag).distanceTo(local(await snap()))>.02,'drag did not choose a new region');drift=Math.max(drift,await followDrift());
  await play(false);const held=await snap();await page.locator('#rotation-toggle').click();assert.ok(offset(held).distanceTo(offset(await snap()))<1e-8,'disable jump');await page.locator('#rotation-toggle').click();
  await page.locator('#observation-settings summary').click();await page.locator('#family-select').selectOption('system:jupiter');await settle();assert.equal((await snap()).system,true);assert.equal((await snap()).followActive,false);assert.equal((await snap()).followRotation,true);
  await page.locator('#observation-settings summary').click();await page.locator('#family-select').selectOption('europa');await settle();assert.equal((await snap()).followRotation,true);await play(true);drift=Math.max(drift,await followDrift());await play(false);
- const departure=await snap();await page.locator('#landing-button').click();await page.waitForFunction(()=>document.querySelector('.surface-view')?.dataset.ready==='true',null,{timeout:90000});
+ const departure=await snap();await page.locator(`[data-landing-body="europa"]`).click();await page.waitForFunction(()=>document.querySelector('.surface-view')?.dataset.ready==='true',null,{timeout:90000});
  const arrived=(await snap()).surface;assert.equal(arrived.date,departure.date);assert.equal(arrived.playing,false);assert.equal(arrived.direction,-1);assert.equal(arrived.rate,100000);assert.equal((await snap()).followActive,false);
  await page.locator('.surface-time-toggle').click();await page.locator('.surface-direction').scrollIntoViewIfNeeded();await verifyBounds('.surface-direction');
  await page.locator('.surface-direction').click();assert.equal((await snap()).surface.direction,1);assert.equal((await snap()).direction,1);assert.equal((await snap()).surface.date,departure.date);
@@ -50,7 +57,7 @@ for(const testCase of [['desktop',1440,900,1],['phone',390,844,3],['tablet',800,
  const download=page.waitForEvent('download');await page.locator('.surface-photo').click();assert.equal((await download).suggestedFilename(),'space-atlas-europa.png');await page.screenshot({path:`${out}/${name}-surface-8x.png`});
  await page.locator('.surface-exit').click();await page.waitForFunction(()=>!document.querySelector('.surface-view'));await settle();const returned=await snap();
  assert.equal(returned.date,ground.date);assert.equal(returned.direction,-1);assert.equal(returned.speed,100000);assert.equal(returned.playing,false);assert.equal(returned.followRotation,true);
- assert.ok(offset(returned).distanceTo(offset(departure))<1e-7,'return camera jump');assert.equal(await page.locator('#landing-button').evaluate(e=>document.activeElement===e),true);
+ assert.ok(offset(returned).distanceTo(offset(departure))<1e-7,'return camera jump');assert.equal(await page.locator('[data-landing-body="europa"]').evaluate(e=>document.activeElement===e),true);
  await play(true);drift=Math.max(drift,await followDrift());await play(false);const saved=await snap();await page.reload();await settle();const restored=await snap();assert.equal(restored.date,saved.date);assert.equal(restored.direction,-1);assert.equal(restored.speed,100000);assert.equal(restored.followRotation,true);assert.equal(restored.selected,'europa');
  await page.screenshot({path:`${out}/${name}-returned.png`});assert.deepEqual(errors,[]);results.push({name,dpr,drift,initialDate:initial.date,returnedDate:returned.date,passed:true,errors});await context.close();console.log(name,'passed');
 }
