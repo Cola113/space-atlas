@@ -3,9 +3,10 @@ import assert from 'node:assert/strict';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import sharp from 'sharp';
+import { configureDeploymentAccess } from './deployment-access.mjs';
 
 const base = process.env.ATLAS_URL || 'http://127.0.0.1:5190';
-const output = new URL('../test-results/', import.meta.url);
+const output = new URL(process.env.ATLAS_OUTPUT || '../test-results/', import.meta.url);
 await mkdir(output, { recursive: true });
 const browser = await chromium.launch({ channel: 'msedge', headless: true });
 const report = [];
@@ -48,6 +49,7 @@ try {
   const viewports = [['desktop',{width:1440,height:900}],['phone',{width:390,height:844}],['short',{width:800,height:450}],['compact',{width:640,height:360}]];
   for (const [name, viewport] of viewports.filter(([name]) => !process.env.INTEGRATION_VIEWPORT || name === process.env.INTEGRATION_VIEWPORT)) {
     const context = await browser.newContext({ viewport, deviceScaleFactor:name==='phone'?3:name==='desktop'?1:2, isMobile:name==='phone', hasTouch:name==='phone' });
+    await configureDeploymentAccess(context, base);
     const page = await context.newPage();
     const errors = [], requests = [];
     currentPage = page; currentName = name; currentErrors = errors;
@@ -130,6 +132,7 @@ try {
     await context.close();
   }
   const context = await browser.newContext();
+  await configureDeploymentAccess(context, base);
   const page = await context.newPage();
   const requests = [];
   page.on('request', request => requests.push(request.url()));

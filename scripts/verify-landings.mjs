@@ -3,9 +3,10 @@ import assert from 'node:assert/strict';
 import { mkdir, writeFile } from 'node:fs/promises';
 import sharp from 'sharp';
 import { fileURLToPath } from 'node:url';
+import { configureDeploymentAccess } from './deployment-access.mjs';
 
 const base=process.env.ATLAS_URL||'http://127.0.0.1:5192';
-const output=new URL('../test-results/landings/',import.meta.url);
+const output=new URL(process.env.ATLAS_OUTPUT||'../test-results/landings/',import.meta.url);
 await mkdir(output,{recursive:true});
 const browser=await chromium.launch({channel:'msedge',headless:true});
 const report=[];
@@ -20,6 +21,7 @@ async function pixels(page,checkBrightness=true){
 try{
   for(const [name,viewport] of [['desktop',{width:1440,height:900}],['phone',{width:390,height:844}],['tablet',{width:800,height:450}],['short',{width:640,height:360}]]){
     const context=await browser.newContext({viewport,deviceScaleFactor:name==='phone'?3:name==='desktop'?1:2,reducedMotion:'reduce',acceptDownloads:true});
+    await configureDeploymentAccess(context,base);
     const page=await context.newPage();
     const errors=[];
     page.on('pageerror',e=>errors.push(e.message));
