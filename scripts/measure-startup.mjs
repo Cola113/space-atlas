@@ -35,12 +35,16 @@ try {
       await page.screenshot({ path: fileURLToPath(new URL(label + '-failure.png', output)) });
       throw new Error(errors.join('\n') || await page.locator('#error-message').textContent());
     }
-    const result = await page.evaluate(() => ({
+    const result = await page.evaluate(() => {
+      const canvas=document.querySelector('#universe canvas'),gl=canvas.getContext('webgl2'),extension=gl.getExtension('WEBGL_debug_renderer_info');
+      return {
+      renderer:extension?gl.getParameter(extension.UNMASKED_RENDERER_WEBGL):gl.getParameter(gl.RENDERER),
+      drawingBuffer:{width:gl.drawingBufferWidth,height:gl.drawingBufferHeight},
       readyMs: performance.now(),
       observed: window.startupMeasurement,
       snapshot: window.solarAtlas.snapshot(),
       textures: performance.getEntriesByType('resource').filter(r => r.name.includes('/textures/')).map(r => ({ path: new URL(r.name).pathname, bytes: r.encodedBodySize, start: r.startTime, end: r.responseEnd })),
-    }));
+    };});
     if (errors.length) throw new Error(errors.join('\n'));
     results.push(result);
     console.log(JSON.stringify({ run, readyMs: result.readyMs, textures: result.textures.length, bytes: result.textures.reduce((s, r) => s + r.bytes, 0) }));

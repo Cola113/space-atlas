@@ -159,7 +159,15 @@ export function createSurfaceView(id, {renderOrbit,onClosed,initialDate,initialR
     journey.exit();lastFrame=null;invalidate();
   }
   listen($('.surface-exit'),'click',exit);
-  listen(root,'cancel',event=>{event.preventDefault(); if (!$('.surface-details').hidden) info(false); else if(!$('.surface-clock-panel').hidden)setClockPanel(false);else exit();});
+  function dismiss() {
+    if (!$('.surface-details').hidden) info(false);
+    else if(!$('.surface-clock-panel').hidden)setClockPanel(false);
+    else exit();
+  }
+  listen(root,'cancel',event=>{event.preventDefault();dismiss();});
+  // Some native close requests cannot be canceled. Restore the orbit UI even
+  // if the browser closes the dialog before the animated exit can finish.
+  listen(root,'close',()=>{if(!disposed){const finalTime=clock.time;dispose();onClosed(finalTime);}});
   listen($('.surface-info-button'),'click',()=>info($('.surface-details').hidden));
   listen($('.surface-details-close'),'click',()=>info(false));
   listen($('.surface-skip'),'click',()=>{journey.skip();invalidate();});
@@ -328,6 +336,7 @@ export function createSurfaceView(id, {renderOrbit,onClosed,initialDate,initialR
   });
   listen($('.surface-reset'),'click',()=>aim(site.initialHeading,initialPitch()));
   listen(root,'keydown',event=>{
+    if(event.key==='Escape') {event.preventDefault();event.stopPropagation();dismiss();return;}
     if (journey.phase!=='landed'||!$('.surface-details').hidden||/INPUT|TEXTAREA|SELECT/.test(event.target.tagName)) return;
     const moves={ArrowLeft:[-3,0],ArrowRight:[3,0],ArrowUp:[0,3],ArrowDown:[0,-3]};
     if (moves[event.key]) {event.preventDefault();motion=null;heading+=moves[event.key][0]/magnification;pitch+=moves[event.key][1]/magnification;invalidate();}

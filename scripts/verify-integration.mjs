@@ -31,9 +31,10 @@ async function switchScene(page, id) {
 async function checkHeader(page) {
   const bounds = await page.evaluate(() => {
     const rect = element => { const b = element.getBoundingClientRect(); return { x:b.x, y:b.y, right:b.right, bottom:b.bottom }; };
-    return { brand:rect(document.getElementById('scene-switcher')), actions:rect(document.querySelector('.header-actions, .top-actions')), width:innerWidth, height:innerHeight, overflow:document.documentElement.scrollWidth > innerWidth };
+    return { brand:rect(document.getElementById('scene-switcher')), actions:rect(document.querySelector('#display-settings > summary, .top-actions')), width:innerWidth, height:innerHeight, overflow:document.documentElement.scrollWidth > innerWidth };
   });
-  assert.ok(bounds.brand.x >= 0 && bounds.brand.bottom < bounds.height && bounds.brand.right < bounds.actions.x, JSON.stringify(bounds));
+  const {brand,actions}=bounds;
+  assert.ok(brand.x>=0&&brand.bottom<bounds.height&&(brand.right+7.9<=actions.x||brand.bottom+7.9<=actions.y||actions.bottom+7.9<=brand.y),JSON.stringify(bounds));
   assert.equal(bounds.overflow, false);
   await page.locator('#scene-switcher').click();
   const menu = await page.locator('#scene-menu').boundingBox();
@@ -44,9 +45,9 @@ async function checkHeader(page) {
   return bounds;
 }
 try {
-  const viewports = [['desktop',{width:1920,height:1080}],['phone',{width:390,height:844}],['short',{width:800,height:450}],['compact',{width:640,height:360}]];
+  const viewports = [['desktop',{width:1440,height:900}],['phone',{width:390,height:844}],['short',{width:800,height:450}],['compact',{width:640,height:360}]];
   for (const [name, viewport] of viewports.filter(([name]) => !process.env.INTEGRATION_VIEWPORT || name === process.env.INTEGRATION_VIEWPORT)) {
-    const context = await browser.newContext({ viewport, deviceScaleFactor:1, isMobile:name==='phone', hasTouch:name==='phone' });
+    const context = await browser.newContext({ viewport, deviceScaleFactor:name==='phone'?3:name==='desktop'?1:2, isMobile:name==='phone', hasTouch:name==='phone' });
     const page = await context.newPage();
     const errors = [], requests = [];
     currentPage = page; currentName = name; currentErrors = errors;

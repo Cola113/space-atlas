@@ -43,4 +43,4 @@ Web Worker 解码密度参考图，建立 160 × 128 × 144 四通道三维密�
 
 画质入口与暂停、截图放在直接可见的工具栏，设置及资料保留文字；全屏位于设置面板。短横屏面板可滚动，Escape关闭后回到打开面板的按钮。
 
-验证：npm test、npm run build、ATLAS_URL 指向服务后 npm run test:browser。巡游专项为 `node scripts/verify-orion.mjs`，四档/按需绘制/高DPI/安全区/键盘/截图为 `node scripts/verify-orion-quality.mjs`。`node scripts/verify-orion-lifecycle.mjs` 使用受控帧间隔和模拟visibility事件检查降档及生命周期，不替代原生后台核验。`node scripts/measure-orion.mjs` 记录实际渲染设备及WebGL完成栅栏的计时；当前无头SwiftShader的计时仍不足以证明实际性能，不可宣称为用户显卡帧率，见项目实施记录。
+验证：`npm test`、`npm run build`、设置 `ATLAS_URL` 后 `npm run test:browser`。巡游专项为 `scripts/verify-orion.mjs`，四档/按需绘制/高DPI/安全区/键盘/截图为 `scripts/verify-orion-quality.mjs`。`scripts/verify-orion-lifecycle.mjs` 覆盖生产自动降档、恢复、试升失败与冷却；`scripts/verify-orion-native-background.mjs` 使用原生 Edge 标签切换和最小化验证后台行为。`scripts/measure-orion.mjs` 已记录 RTX 2080 Ti 上四档完整绘制与像素回读开销，不将其倒数当作显示帧率。方法、数值与限制见[性能验收](../PERFORMANCE_VALIDATION.md)。

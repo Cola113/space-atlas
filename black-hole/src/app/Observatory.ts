@@ -25,6 +25,7 @@ export class Observatory {
   private ready = false;
   private disposed = false;
   private contextLost = false;
+  private capturing = false;
   private pendingResize = false;
   private detachNavigation?: () => void;
   private detachSession?: () => void;
@@ -139,18 +140,25 @@ export class Observatory {
 
   private syncUI() {
     this.ui?.sync({ paused: this.clock.paused, cruise: this.camera.cruising, speed: this.clock.speed, view: this.camera.view,
-      fps: this.quality.fps, quality: PROFILES[this.quality.current].label, distance: this.camera.camera.position.length(), time: this.clock.time });
+      fps: this.quality.fps, quality: PROFILES[this.quality.current].label, qualityMode: this.quality.mode, distance: this.camera.camera.position.length(), time: this.clock.time });
   }
 
-  private download(specified: boolean) {
+  private async download(specified: boolean) {
+    if (this.capturing) return;
     try {
       const captureScale = Math.min(1,4096/Math.max(this.canvas.width,this.canvas.height));
-      this.capture.download(specified ? { ...this.ui.captureSettings(), quality: 'high', preset: 'overview' } : {
+      const options: CaptureOptions = specified ? { ...this.ui.captureSettings(), quality: 'high', preset: 'overview' } : {
         time: this.clock.time, width: Math.round(this.canvas.width*captureScale), height: Math.round(this.canvas.height*captureScale), camera: this.camera.pose(), quality: this.quality.current,
-      });
+      };
+      this.capturing = true; this.ui.capturing(true); this.ui.notice('正在生成 PNG…');
+      // Let the busy state paint before synchronous GPU readback and encoding.
+      await new Promise<void>(resolve => requestAnimationFrame(() => requestAnimationFrame(() => resolve())));
+      if (this.disposed) return;
+      this.capture.download(options);
       this.clock.resetDelta(); this.quality.resetSampling();
       this.ui.notice('画面已保存为 PNG。');
     } catch(error) { this.ui.notice(error instanceof Error ? error.message : '画面导出失败。'); }
+    finally { this.capturing = false; if (!this.disposed) this.ui.capturing(false); }
   }
 
   private getState() {
@@ -219,7 +227,12 @@ export class Observatory {
     document.getElementById('loading')!.hidden=true;
     const fatal=document.getElementById('fatal')!;
     fatal.hidden=false;
-    fatal.textContent=error instanceof Error ? error.message : '无法启动观测站。请刷新页面重试。';
+    const message = document.createElement('p');
+    message.textContent=error instanceof Error ? error.message : '无法启动观测站。请重新加载页面重试。';
+    const retry = document.createElement('button');
+    retry.className='primary-button'; retry.textContent='重新加载';
+    retry.addEventListener('click', () => location.reload(), { once:true });
+    fatal.replaceChildren(message,retry);
     cancelAnimationFrame(this.raf);
   }
 

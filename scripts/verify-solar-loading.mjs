@@ -1,3 +1,4 @@
+// Run with npx tsx: display definitions reference the shared JSON registry.
 import { chromium } from 'playwright';
 import assert from 'node:assert/strict';
 import { mkdir, writeFile } from 'node:fs/promises';
@@ -65,7 +66,7 @@ try {
       assert.equal(initial.snapshot.starfield.mode, 'bright-stars');
       assert.equal(initial.snapshot.starfield.galaxyReady, false);
       await capture(page, name + '-background-held');
-      const initialIdentity = initial.snapshot.bodies.map(item => [item.id, item.meshId, item.position, item.rotation]);
+      const initialIdentity = initial.snapshot.bodies.map(item => [item.id, item.meshId]);
 
       // A new selection gets priority over the original background sequence;
       // a second target can be selected while that first selection is loading.
@@ -77,7 +78,7 @@ try {
       const targetKey = '/solar-system/textures/' + bodyKey('miranda');
       assert.equal(queued.find(item => item.key === targetKey)?.priority, 90);
       assert.equal(queued.find(item => item.key.endsWith(bodyKey('charon')))?.priority, 0);
-      await page.waitForFunction(() => !window.solarAtlas.snapshot().flight, null, { timeout: 45000 });
+      await page.waitForFunction(() => {const s=window.solarAtlas.snapshot();return !s.flight&&!s.ephemeris.blocked&&s.bodies.find(b=>b.id==='miranda').physicalAvailable;}, null, { timeout: 45000 });
       const stable = await page.evaluate(() => window.solarAtlas.snapshot());
       const body = stable.bodies.find(item => item.id === 'miranda');
       assert.equal(body.textureWidth, 0);
@@ -94,7 +95,15 @@ try {
       assert.equal(loaded.date, stable.date);
       assert.ok(loaded.camera.every((value, i) => Math.abs(value - stable.camera[i]) < 1e-8));
       assert.ok(loaded.target.every((value, i) => Math.abs(value - stable.target[i]) < 1e-8));
-      assert.deepEqual(loaded.bodies.map(item => [item.id, item.meshId, item.position, item.rotation]), initialIdentity);
+      assert.deepEqual(loaded.bodies.map(item => [item.id, item.meshId]), initialIdentity);
+      // A first JPL response legitimately replaces a missing physical state.
+      // Texture replacement must preserve every already available body at the
+      // frozen date, including the selected body whose gate has now resolved.
+      for(const before of stable.bodies.filter(b=>b.physicalAvailable)){
+        const after=loaded.bodies.find(b=>b.id===before.id);
+        assert.deepEqual([after.position,after.rotation,after.physicalPositionKm,after.physicalOrientation],
+          [before.position,before.rotation,before.physicalPositionKm,before.physicalOrientation],before.id+' changed during texture replacement');
+      }
       assert.equal(loaded.loading.queue.concurrency, 2);
       assert.equal(loaded.failedTextures.length, 0);
       const admitted = await page.evaluate(index => window.resourceStarts.slice(index).filter(item => item.url.includes('/textures/') && !item.url.includes('/thumbnails/')), startsBeforeRelease);

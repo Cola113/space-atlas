@@ -15,8 +15,16 @@ const scientificSources = {
       ['solar-system/BODY_MODELS.md', './solar-system/BODY_MODELS.md'],
       ['solar-system/GROUND_AUDIT.md', './solar-system/GROUND_AUDIT.md'],
       ['REALISM_STANDARD.md', './REALISM_STANDARD.md'],
+      ['TODO.md', './TODO.md'],
+      ['PERFORMANCE_VALIDATION.md', './PERFORMANCE_VALIDATION.md'],
       ['solar-system/physical-definitions.json', './solar-system/src/physics/body-definitions.json'],
-    ]) this.emitFile({type:'asset',fileName,source:await readFile(localPath(sourcePath),'utf8')});
+    ]) {
+      let source = await readFile(localPath(sourcePath),'utf8');
+      // Repository Markdown links retain public/; Vite serves that directory
+      // from the site root. Rewrite only these local link prefixes on publish.
+      if (fileName.endsWith('.md')) source = source.replace(/\]\(((?:\.\.\/)*)(?:public\/)/g, ']($1');
+      this.emitFile({type:'asset',fileName,source});
+    }
   },
 };
 

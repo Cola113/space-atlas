@@ -53,8 +53,33 @@ try{
  await page.locator('#fullscreen-button').click();await page.waitForFunction(()=>!document.fullscreenElement&&document.getElementById('fullscreen-button').getAttribute('aria-label')==='全屏');
  assert.equal(await page.locator('#fullscreen-button').getAttribute('aria-label'),'全屏');
  await page.keyboard.press('Escape');
+ // Exercise the production recovery/trial/cooldown path with real one-second
+ // sampling windows. The RAF delay adds load; removing it restores this GPU's
+ // ordinary refresh cadence instead of feeding a fictional FPS into the class.
+ await page.locator('#quality-button').click();await page.locator('#quality').selectOption('auto');await page.keyboard.press('Escape');
+ await page.evaluate(()=>window.testFrameDelay=60);
+ await page.waitForFunction(()=>window.orionAtlas.snapshot().currentQuality==='minimal',null,{timeout:30000});
+ const recoveryStart=await page.evaluate(()=>({now:performance.now(),state:window.orionAtlas.snapshot()}));
+ await page.evaluate(()=>window.testFrameDelay=0);
+ await page.waitForFunction(()=>window.orionAtlas.snapshot().currentQuality==='smooth',null,{timeout:45000});
+ const trial=await page.evaluate(()=>({now:performance.now(),state:window.orionAtlas.snapshot()}));
+ assert.ok(trial.now-recoveryStart.now>=19000,'upgrade did not wait for sustained recovery');
+ console.log('Production auto recovery reached the trial upgrade');
+ await page.evaluate(()=>window.testFrameDelay=35);
+ await page.waitForFunction(()=>window.orionAtlas.snapshot().currentQuality==='minimal',null,{timeout:10000});
+ const rollback=await page.evaluate(()=>({now:performance.now(),state:window.orionAtlas.snapshot()}));
+ assert.ok(rollback.now-trial.now<6000,'failed trial did not promptly roll back after its excluded window');
+ await page.evaluate(()=>window.testFrameDelay=0);
+ await page.waitForTimeout(25000);
+ const cooldown=await page.evaluate(()=>({now:performance.now(),state:window.orionAtlas.snapshot()}));
+ assert.equal(cooldown.state.currentQuality,'minimal','cooldown allowed an early second upgrade');
+ assert.ok(cooldown.state.rendering.sampledWindows>=rollback.state.rendering.sampledWindows+18,'performance did not recover during cooldown');
+ console.log('Production trial rollback and cooldown hold passed');
+ await page.waitForFunction(()=>window.orionAtlas.snapshot().currentQuality==='smooth',null,{timeout:45000});
+ const retrial=await page.evaluate(()=>({now:performance.now(),state:window.orionAtlas.snapshot()}));
+ assert.ok(retrial.now-rollback.now>=58000,'second trial ignored the 60-second cooldown');
  assert.deepEqual(errors,[]);
  await page.screenshot({path:fileURLToPath(new URL('lifecycle.png',output))});
- await writeFile(new URL('lifecycle.json',output),JSON.stringify({controlledFramePacing:true,autoDownshift:true,manualFixed:true,simulatedVisibility:true,nativeVisibilityVerified:false,fullscreenState:true,minimumFps:minimum.fps},null,2));
- console.log('Automatic downshift, manual hold, pause, simulated visibility and fullscreen state passed');
+ await writeFile(new URL('lifecycle.json',output),JSON.stringify({controlledFramePacing:true,autoDownshift:true,manualFixed:true,simulatedVisibility:true,nativeVisibilityReport:'native-background.json',fullscreenState:true,minimumFps:minimum.fps,recovery:{recoveryStart,trial,rollback,cooldown,retrial}},null,2));
+ console.log('Automatic downshift, recovery, failed trial, 60-second cooldown, pause and fullscreen passed');
 }finally{await browser.close();}
