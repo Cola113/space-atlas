@@ -13,6 +13,12 @@ import {
 // against a hand-copied number.
 const PDS_RANGE = {
   'D ring': [1e-5, 1e-3], 'C ring': [0.05, 0.35],
+  // Named ringlets, from the PDS Atmospheres ring table. These are the fine structure
+  // the ring averages hide, so their values must come from that table and not from the
+  // surrounding ring, which the test would otherwise accept.
+  'Titan Ringlet': [3.6, 4.4], 'Maxwell Ringlet': [1, 3], 'Bond Ringlet': [0.9, 1.1],
+  'Dawes Ringlet': [0.2, 1], 'Huygens Ringlet': [1, 2], 'Herschel Ringlet': [0.08, 0.12],
+  'Laplace Ringlet': [0.9, 1.1],
   'B ring B1': [1.1, 1.5], 'B ring B2': [1.5, 5], 'B ring B3': [1, 5],
   'B ring B4': [2, 3], 'B ring B5': [0.5, 5],
   'Cassini Division': [0, 0.2], 'A ring': [0.4, 1], 'A ring outer': [0.4, 1],
@@ -113,7 +119,7 @@ test('the opposition surge is narrow and per-region, and the particle colour is 
 
 test('the generated profile texture matches the table it is built from', () => {
   const texture = createRingOpticalDepthTexture();
-  assert.equal(texture.image.width, 2048);
+  assert.equal(texture.image.width, 8192);
   assert.equal(texture.image.height, 1);
   const samples = texture.image.data;
   const span = RING_OUTER_KM - RING_INNER_KM;

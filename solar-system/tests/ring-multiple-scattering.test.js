@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { DataUtils } from 'three';
-import { RING_TABLE, RING_REGION_SEAMS, ringRadiusUnit, RING_INNER_KM, RING_OUTER_KM } from '../src/ring-optical-depth.js';
+import { RING_TABLE, ringRadiusUnit, RING_INNER_KM, RING_OUTER_KM } from '../src/ring-optical-depth.js';
 import {
   slabReflectance, slabTransmittance, tableAngles, scatteringKernel, rankTwoFactors, ringScatteringFactors, scatteringFactorsFor,
   createRingScatteringTexture, shippedScatteringTable, scatteringRegions,

@@ -3,12 +3,16 @@ import * as THREE from 'three';
 // Normal optical depth of Saturn's rings, kept separate from the display mesh so the
 // same numbers drive both the ring opacity and the ring shadow.
 //
-// Source: NASA PDS Ring-Moon Systems Node, "Vital Statistics for Saturn's Rings",
-// https://pds-rings.seti.org/saturn/saturn_rings_table.html (retrieved 2026-09-15).
-// The table lists a boundary pair and an optical-depth *range* per named feature;
-// `tau` below is the midpoint of that range, which is an approximation stated per
-// region. Sub-ring optical depths are not measured here — individual density waves
-// and ringlets are finer than this table.
+// Sources, both retrieved 2026-09-15:
+//  - NASA PDS Ring-Moon Systems Node, "Vital Statistics for Saturn's Rings",
+//    https://pds-rings.seti.org/saturn/saturn_rings_table.html — the boundary pair and
+//    an optical-depth *range* per named feature; `tau` below is the midpoint of that
+//    range, which is an approximation stated per region.
+//  - NASA PDS Atmospheres Node, "Cassini Rings Science",
+//    https://pds-atmospheres.nmsu.edu/data_and_services/atmospheres_data/Cassini/sci-rings.html
+//    — the named narrow ringlets, each with its own boundary pair and optical depth.
+//    These are the km-scale features the ring table used to average away: the Titan
+//    ringlet is 23 km wide with tau ~ 4 inside a C ring whose average is 0.2.
 // Single-scattering albedo and opposition-surge amplitude, column by column.
 //
 // albedo: French et al. 2007 (PASP 119, 623) put the single-scattering albedo at 0.1
@@ -18,17 +22,33 @@ import * as THREE from 'three';
 // A ring value of 0.5 is the Bond albedo of the inner and middle A ring from Dones,
 // Cuzzi & Showalter 1993 (Icarus 105, 184), which is not the same quantity as the
 // single-scattering albedo the reflectance formula wants. The tenuous ring and gap
-// values are interpolated between those anchors.
+// values are interpolated between those anchors, and the ringlets inherit the albedo
+// and the surge amplitude of the ring they sit inside, because neither is measured
+// per ringlet.
 export const RING_TABLE = [
   // name,             inner km,  outer km,  tau,   albedo, opposition surge
   ['D ring',            66900,     74491,   0.0005, 0.1,    0.6],
-  ['C ring',            74491,     91975,   0.2,    0.1,    0.6],
+  ['C ring',            74491,     77867,   0.2,    0.1,    0.6],
+  ['Titan Ringlet',     77867,     77890,   4.0,    0.1,    0.6],
+  ['C ring',            77890,     87480,   0.2,    0.1,    0.6],
+  ['Maxwell Ringlet',   87480,     87539,   2.0,    0.1,    0.6],
+  ['C ring',            87539,     88702,   0.2,    0.1,    0.6],
+  ['Bond Ringlet',      88702,     88719,   1.0,    0.1,    0.6],
+  ['C ring',            88719,     90138,   0.2,    0.1,    0.6],
+  ['Dawes Ringlet',     90138,     90200,   0.6,    0.1,    0.6],
+  ['C ring',            90200,     91975,   0.2,    0.1,    0.6],
   ['B ring B1',         91975,     99000,   1.3,    0.6,    0.4],
   ['B ring B2',         99000,    104000,   2.2,    0.6,    0.4],
   ['B ring B3',        104000,    110000,   3.0,    0.6,    0.4],
   ['B ring B4',        110000,    116500,   2.5,    0.6,    0.4],
   ['B ring B5',        116500,    117500,   2.0,    0.6,    0.4],
-  ['Cassini Division', 117500,    122050,   0.08,   0.2,    0.5],
+  ['Cassini Division', 117500,    117806,   0.08,   0.2,    0.5],
+  ['Huygens Ringlet',  117806,    117824,   1.5,    0.2,    0.5],
+  ['Cassini Division', 117824,    118234,   0.08,   0.2,    0.5],
+  ['Herschel Ringlet', 118234,    118263,   0.1,    0.2,    0.5],
+  ['Cassini Division', 118263,    120037,   0.08,   0.2,    0.5],
+  ['Laplace Ringlet',  120037,    120078,   1.0,    0.2,    0.5],
+  ['Cassini Division', 120078,    122050,   0.08,   0.2,    0.5],
   ['A ring',           122050,    133423,   0.6,    0.5,    0.4],
   ['Encke Gap',        133423,    133745,   0.02,   0.5,    0.4],
   ['A ring outer',     133745,    136487,   0.6,    0.5,    0.7],
@@ -113,11 +133,11 @@ export const ringRadiusUnit = (radiusKm) =>
 export const ringUvAtRatio = (ratio) =>
   (ratio - RING_INNER) / (RING_OUTER - RING_INNER);
 
-// Normalised radius of every shared boundary between table rows, so a shader can
-// name the region a fragment falls in without a second texture to read.
-export const RING_REGION_SEAMS = RING_TABLE.slice(0, -1).map(([, , outer]) => ringRadiusUnit(outer));
 
-const SAMPLES = 2048;
+// The profile has to keep the 17 km Bond ringlet, so the sample spacing is 9 km across
+// the 74,000 km the table spans. At the old 2048 this would have aliased every ringlet
+// in or out depending on where the sample landed.
+const SAMPLES = 8192;
 
 // A one-row half-float texture holding normal optical depth in R, single-scattering
 // albedo in G and the opposition-surge amplitude in B, generated from RING_TABLE

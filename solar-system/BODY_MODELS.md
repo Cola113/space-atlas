@@ -221,14 +221,30 @@ X 与 Y 本身不写进表里，写入的是 K 的秩二谱分解的两个因子
 和环区序号作为逐顶点属性送进着色器。**用环带而不是径向剖面纹理，是因为天王星最窄的环只有
 1.6 km 宽**：整个环系径向跨度 68,000 km，任何能覆盖全系的剖面都要在 2 km 尺度上取样才留得住它。
 
-土星的 15 个环区沿用 `ring-optical-depth.js` 里原有的表（该表仍驱动土星本体上的环影查找），
-不是两份数据。其余三个系统的来源与检索日期（均为 2026-09-15）：
+土星现有 29 个环区：原有的 15 个分区，加上 **7 条实测命名的窄环**——
+Titan（23 km，τ≈4）、Maxwell、Bond、Dawes 三条在 C 环内，Huygens、Herschel、Laplace 三条在卡西尼环缝内。
+这些环的半径与光学厚度来自
+[PDS 大气节点《卡西尼环系科学》](https://pds-atmospheres.nmsu.edu/data_and_services/atmospheres_data/Cassini/sci-rings.html)（2026-09-15），
+是上一版 15 分区把整条环取平均时抹掉的那一档结构：Titan 环 23 km 宽、τ≈4，而它所在的 C 环平均值只有 0.2。
+环带几何正好适合表达这种结构——每一条环就是一圈按实测宽度绘制的环带，
+径向剖面纹理反而要在 9 km 尺度上取样才留得住 17 km 宽的 Bond 环。
+该纹理的分辨率因此从 2048 提到 8192（跨越 74,000 km，间距约 9 km），它仍然驱动土星本体上的环影查找。
+
+土星的环区列表就是 `ring-optical-depth.js` 里的表，不是两份数据。其余三个系统的来源与检索日期（均为 2026-09-15）：
 
 | 系统 | 半径 | 光学厚度 | 反照率 |
 | --- | --- | --- | --- |
 | 天王星 13 条环 | [PDS 环月系统节点《天王星环系重要参数》](https://pds-rings.seti.org/uranus/uranus_rings_table.html) 逐环列报的中线与宽度（内缘 = 中线 − 宽/2）；ε 环 τ 为范围 0.5–2.3，取中值 1.4 | 同表逐环法向光学厚度 | [NASA 天王星环资料表](https://nssdc.gsfc.nasa.gov/planetary/factsheet/uranringfact.html) 的几何反照率约 0.015，ε 环 0.018；ν、μ 无值，取 0.004 作插值 |
 | 海王星 5 条环 | [PDS 环月系统节点《海王星环系重要参数》](https://pds-rings.seti.org/neptune/neptune_rings_table.html) 的中线与宽度 | 同表：Galle 1e-4、Le Verrier 0.003、Lassell 1e-4、Adams 0.0515 | 同站点资料表的约 0.015 |
 | 木星环 | [PDS 环月系统节点《木星环系重要参数》](https://pds-rings.seti.org/jupiter/jupiter_rings_table.html) 的内、外边界（该表直接给出公里数，无需换算） | 同表：晕环 1e-6、主环 8e-6、两条薄纱环 5e-7 与 1e-7、Thebe 延伸 1e-8 | 资料表只给主环约 0.015，其余空白，取同一值 |
+
+**尚未做到**：完整公里级 τ(r) 剖面。目标是
+[PDS 环月系统节点 COUVIS_8001](https://pds-rings.seti.org/ringocc)（卡西尼 UVIS 恒星掩星，438 MB tar.gz，
+含 1 km 与 10 km 两种分辨率的径向剖面）。**本轮没有取到**：`pds-rings.seti.org` 在本机持续返回
+HTTP 504（`https://pds-rings.seti.org/` 首页即 504，`/volumes/COUVIS_8001.tar.gz` 60 秒无数据），
+同一节点上的《土星环系重要参数》页此前可以取到，说明是节点侧的间歇故障而不是地址写错。
+因此每两条环之间的平区仍是平均值，密度波、自引力尾迹和未命名的小环都没有进去。
+替代做法是上表那 7 条**有名字、有实测半径与 τ** 的环；再细的结构仍在等这份数据。
 
 **残留近似（明确标注）**：
 

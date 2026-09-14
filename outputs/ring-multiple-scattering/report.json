@@ -5,9 +5,9 @@
   "height": 900,
   "litPixels": 880,
   "meanRgb": [
-   60.4,
-   54.8,
-   44.9
+   60.1,
+   54.5,
+   44.6
   ],
   "peakMean": 214,
   "errors": []
@@ -27,10 +27,10 @@
  "short-landscape": {
   "width": 800,
   "height": 450,
-  "litPixels": 624,
+  "litPixels": 625,
   "meanRgb": [
-   21.5,
-   20.4,
+   21.4,
+   20.3,
    17.7
   ],
   "peakMean": 103.3,
