@@ -7,6 +7,15 @@ export function shapeSurfacePoint(body, point) {
   return point.set(point.x * sx, point.y * sy, point.z * sz);
 }
 
+// The outward normal of the ellipsoid, the gradient of x²/sx² + y²/sy² + z²/sz².
+// On a flattened globe this is not the radius vector, and a camera placed along the
+// radius looks at the marker off-axis; the difference reaches several degrees at
+// mid latitudes on Saturn. Mutates `point`: pass a clone when the position is kept.
+export function shapeSurfaceNormal(body, point) {
+  const [sx, sy, sz] = body.shape || [1, 1, 1];
+  return point.set(point.x / (sx * sx), point.y / (sy * sy), point.z / (sz * sz)).normalize();
+}
+
 export function createBodyGeometry(body, sphere) {
   if (!body.shape && !body.ridge) return sphere;
   const geometry = sphere.clone();

@@ -23,6 +23,62 @@ test('ring-shadow anchor traces toward the Sun through the B ring in either seas
   assert.equal(ringShadowAnchor(new Vector3(1, 0, 0)), null);
 });
 
+test('the ring-shadow anchor is the exact ellipsoid intersection, not a rescaled sphere hit', () => {
+  // Saturn's measured silhouette, from PCK00011: polar/equatorial = 54364/60268.
+  const shape = [1, 54364 / 60268, 1];
+  const onEllipsoid = p => (p.x / shape[0]) ** 2 + (p.y / shape[1]) ** 2 + (p.z / shape[2]) ** 2;
+  for (const latitude of [-26, -10, -1, 1, 10, 26, 31]) {
+    const angle = latitude * Math.PI / 180;
+    const sun = new Vector3(Math.cos(angle), Math.sin(angle), 0);
+    const point = ringShadowAnchor(sun, shape);
+    assert.ok(point, `${latitude}: no anchor`);
+    assert.ok(Math.abs(onEllipsoid(point) - 1) < 1e-12, `${latitude}: anchor left the ellipsoid`);
+    // The same ray through the ring plane still leaves the B ring's 1.7 radius.
+    const travel = -point.y / sun.y;
+    assert.ok(travel > 0, `${latitude}: anchor is not sunward of the ring`);
+    const ring = point.clone().addScaledVector(sun, travel);
+    assert.ok(Math.abs(Math.hypot(ring.x, ring.z) - 1.7) < 1e-12, `${latitude}: ring plane drifted`);
+
+    // The superseded method: hit a unit sphere, then scale the hit onto the ellipsoid.
+    const sphereHit = ringShadowAnchor(sun);
+    const rescaled = new Vector3(sphereHit.x * shape[0], sphereHit.y * shape[1], sphereHit.z * shape[2]);
+    assert.ok(onEllipsoid(rescaled) <= 1 + 1e-12, `${latitude}: rescaled hit escaped the ellipsoid`);
+    // It lands inside the surface, so a marker placed there sinks into the cloud tops.
+    assert.ok(point.distanceTo(rescaled) > 1e-3, `${latitude}: the two intersections coincide`);
+  }
+  assert.equal(ringShadowAnchor(new Vector3(1, 0, 0), shape), null);
+  // Beyond 36° the ray from the 1.7-radius ring plane clears the globe, flattened or
+  // not, so the shadow has no surface anchor to point at.
+  const high = 45 * Math.PI / 180;
+  assert.equal(ringShadowAnchor(new Vector3(Math.cos(high), Math.sin(high), 0), shape), null);
+});
+
+test('landmark framing follows the true ellipsoid normal, not the radius vector', () => {
+  const root = new Object3D(), mesh = new Mesh(new SphereGeometry(), new MeshBasicMaterial());
+  root.add(mesh);
+  mesh.scale.setScalar(4);
+  const build = shape => {
+    const data = { id: 'saturn', root, mesh, shape };
+    const frame = landmarkFrame({ uv: [.5, .75] }, data);
+    const local = frame.point.clone().sub(root.position).divideScalar(4);
+    return { frame, local, radiusDirection: frame.point.clone().sub(root.position).normalize() };
+  };
+  // A sphere has one normal and it is the radius vector, so nothing may change.
+  const sphere = build([1, 1, 1]);
+  assert.ok(sphere.frame.direction.distanceTo(sphere.radiusDirection) < 1e-12, 'sphere: normal moved');
+  assert.equal(sphere.frame.extent, 1, 'sphere: framing extent changed');
+
+  const flattening = 54364 / 60268;
+  const oblate = build([1, flattening, 1]);
+  const expected = new Vector3(oblate.local.x, oblate.local.y / flattening ** 2, oblate.local.z).normalize();
+  assert.ok(oblate.frame.direction.distanceTo(expected) < 1e-12, 'flattened: normal is not the ellipsoid gradient');
+  assert.ok(oblate.frame.direction.distanceTo(oblate.radiusDirection) > 1e-3, 'flattened: normal collapsed onto the radius');
+  assert.equal(oblate.frame.extent, 1, 'flattened: framing extent changed');
+  // The marker itself still sits on the flattened surface, lifted by the display offset.
+  assert.ok(Math.abs(Math.hypot(oblate.local.x, oblate.local.y / flattening, oblate.local.z) - 1.017) < 1e-12);
+  mesh.geometry.dispose(); mesh.material.dispose();
+});
+
 test('landmark positions and viewing directions follow the mesh without changing its orientation', () => {
   const root = new Object3D(), mesh = new Mesh(new SphereGeometry(), new MeshBasicMaterial());
   root.position.set(10, 20, 30); root.add(mesh);

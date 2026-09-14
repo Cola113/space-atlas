@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import { createElement, MapPin } from 'lucide';
 import { uvDirection, ringShadowAnchor } from './feature-anchors.js';
-import { shapeSurfacePoint } from './body-geometry.js';
+import { shapeSurfacePoint, shapeSurfaceNormal } from './body-geometry.js';
 
 const geographic = (latitude, longitude) => [
   THREE.MathUtils.euclideanModulo(longitude + 180, 360) / 360,
@@ -116,15 +116,25 @@ export function landmarkFrame(feature, body, dynamicAnchor = () => null, shadows
   let anchor;
   if (feature.dynamic === 'ring-shadow') {
     const sun = body.sunDirection.clone().transformDirection(body.mesh.matrixWorld.clone().invert());
-    const point = shadows && ringShadowAnchor(sun);
-    if (point) anchor = { point: shapeSurfacePoint(body, point).multiplyScalar(1.017) };
+    // The anchor is already the exact ellipsoid intersection, so it must not be
+    // scaled onto the surface a second time.
+    const point = shadows && ringShadowAnchor(sun, body.shape);
+    if (point) anchor = { point: point.multiplyScalar(1.017), extent: 1 };
   } else if (feature.dynamic) anchor = dynamicAnchor(body.id, feature.dynamic);
-  else anchor = { point: shapeSurfacePoint(body, uvDirection(feature.uv)).multiplyScalar(1.017) };
+  else {
+    const local = shapeSurfacePoint(body, uvDirection(feature.uv));
+    // Point the camera along the true surface normal, not the radius vector.
+    anchor = {
+      point: local.clone().multiplyScalar(1.017),
+      viewDirection: shapeSurfaceNormal(body, local.clone()),
+      extent: 1,
+    };
+  }
   if (!anchor) return null;
   return {
     point: anchor.point.clone().applyMatrix4(body.mesh.matrixWorld),
     direction: (anchor.viewDirection || anchor.point).clone().transformDirection(body.mesh.matrixWorld),
-    extent: anchor.viewDirection ? Math.max(1, anchor.point.length()) : 1,
+    extent: anchor.extent ?? (anchor.viewDirection ? Math.max(1, anchor.point.length()) : 1),
   };
 }
 
