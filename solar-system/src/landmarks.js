@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { uvDirection, ringShadowAnchor } from './feature-anchors.js';
 
 const geographic = (latitude, longitude) => [
   THREE.MathUtils.euclideanModulo(longitude + 180, 360) / 360,
@@ -6,6 +7,10 @@ const geographic = (latitude, longitude) => [
 ];
 
 export const landmarks = {
+  sun: [
+    { id: 'prominence', name: '日珥', dynamic: 'prominence', zoom: 1.5, location: '太阳边缘 / 磁场活动示意', text: '等离子体沿磁场形成拱环。标记对应当前模拟日珥，不代表实时太阳活动。', source: 'https://science.nasa.gov/blogs/the-sun-spot/2019/07/03/fridays-solar-prominence/' },
+    { id: 'solar-eruption', name: '物质喷发', dynamic: 'solar-eruption', zoom: 2, location: '活动区域 / 喷发示意', text: '标记随当前模拟喷发出现和消失，位置与演示时间不代表实时观测。', source: 'https://science.nasa.gov/blogs/the-sun-spot/2019/07/03/fridays-solar-prominence/' },
+  ],
   earth: [
     {
       id: "beijing",
@@ -35,6 +40,7 @@ export const landmarks = {
     },
   ],
   mars: [
+    { id: 'north-pole', name: '北极冰冠', uv: geographic(90, 0), location: '90°N / 北极地区', text: '北极高原保存着水冰与尘埃层，周围季节性冰霜随季节变化。此处为固定地图，未模拟极冠季节伸缩。', source: 'https://www.usgs.gov/maps/geologic-map-north-polar-region-mars' },
     {
       id: "olympus",
       name: "奥林帕斯山",
@@ -61,6 +67,17 @@ export const landmarks = {
       text: "长期存在的巨大风暴。这里定位的是当前贴图中的大红斑，位置不代表实时经度。",
       source: "https://science.nasa.gov/jupiter/jupiter-facts/",
     },
+  ],
+  saturn: [
+    { id: 'ring-shadow', name: '土星环阴影', dynamic: 'ring-shadow', location: '云顶 / 环系投影', text: '光环挡住阳光，在云层上形成暗带。标记依据当前日照与环面计算，阴影对比度经过展示增强。', source: 'https://science.nasa.gov/saturn/facts/' },
+    { id: 'hexagon', name: '北极六边形风暴', uv: geographic(90, 0), location: '北极 / 六边形急流示意', text: '北极周围的高速急流形成近六边形边界，中心另有极地涡旋。形状和云纹为程序示意，不代表同期观测。', source: 'https://science.nasa.gov/photojournal/saturns-north-pole-hexagon-and-aurora/' },
+  ],
+  io: [
+    { id: 'volcanic-plume', name: '火山喷发', dynamic: 'volcanic-plume', zoom: 1.3, location: '模拟热点 / 火山喷发', text: '喷发物从当前演示热点拱起并散落。此位置不指代某座已命名火山，强度与时间均为示意。', source: 'https://science.nasa.gov/jupiter/moons/io/' },
+  ],
+  enceladus: [
+    { id: 'south-pole', name: '南极虎纹区', uv: geographic(-90, 0), location: '南极 / 虎纹裂缝区域', text: '南极裂缝向外输送水蒸气和冰粒，标记指向南极区域而非单条裂缝的测量坐标。', source: 'https://science.nasa.gov/mission/cassini/science/enceladus/' },
+    { id: 'ice-plume', name: '南极冰粒喷流', dynamic: 'ice-plume', zoom: 1.4, location: '南极 / 喷流示意', text: '冰粒沿当前动画中的南极喷口向外扩散，亮度与规模为演示效果。', source: 'https://science.nasa.gov/mission/cassini/science/enceladus/' },
   ],
   pluto: [
     {
@@ -92,24 +109,31 @@ export const landmarks = {
   ],
 };
 
-export function landmarkDirection(feature, body) {
-  const [u, v] = feature.uv;
-  const phi = u * Math.PI * 2;
-  const theta = (1 - v) * Math.PI;
+export function landmarkFrame(feature, body, dynamicAnchor = () => null, shadows = true) {
   body.mesh.updateWorldMatrix(true, false);
-  return new THREE.Vector3(
-    -Math.cos(phi) * Math.sin(theta),
-    Math.cos(theta),
-    Math.sin(phi) * Math.sin(theta),
-  ).transformDirection(body.mesh.matrixWorld);
+  let anchor;
+  if (feature.dynamic === 'ring-shadow') {
+    const sun = body.sunDirection.clone().transformDirection(body.mesh.matrixWorld.clone().invert());
+    const point = shadows && ringShadowAnchor(sun);
+    if (point) anchor = { point: point.multiplyScalar(1.017) };
+  } else if (feature.dynamic) anchor = dynamicAnchor(body.id, feature.dynamic);
+  else anchor = { point: uvDirection(feature.uv).multiplyScalar(1.017) };
+  if (!anchor) return null;
+  return {
+    point: anchor.point.clone().applyMatrix4(body.mesh.matrixWorld),
+    direction: (anchor.viewDirection || anchor.point).clone().transformDirection(body.mesh.matrixWorld),
+    extent: anchor.viewDirection ? Math.max(1, anchor.point.length()) : 1,
+  };
 }
 
-export function createLandmarks(objects, camera, onSelect) {
+export function createLandmarks(objects, camera, onSelect, dynamicAnchor) {
   const container = document.getElementById("landmark-markers");
   const picker = document.getElementById("landmark-select");
   let bodyId = null;
   let active = null;
   let markers = [];
+  let shadows = true;
+  const frameFor = feature => objects.has(bodyId) ? landmarkFrame(feature, objects.get(bodyId), dynamicAnchor, shadows) : null;
   picker.addEventListener("change", () => onSelect(picker.value));
 
   return {
@@ -137,12 +161,12 @@ export function createLandmarks(objects, camera, onSelect) {
         button.append(dot, label);
         button.addEventListener("click", () => onSelect(feature.id));
         container.append(button);
-        return { feature, button, x: 0, y: 0, visible: false };
+        return { feature, button, label, option: picker.options[features.indexOf(feature) + 1], available: false, x: 0, y: 0, visible: false };
       });
     },
     select(id) {
-      active =
-        (landmarks[bodyId] || []).find((feature) => feature.id === id) || null;
+      const feature = (landmarks[bodyId] || []).find((feature) => feature.id === id);
+      active = feature && frameFor(feature) ? feature : null;
       picker.value = active?.id || "";
       for (const marker of markers) {
         marker.button.classList.toggle("active", marker.feature === active);
@@ -156,49 +180,51 @@ export function createLandmarks(objects, camera, onSelect) {
     get active() {
       return active;
     },
-    update({ width, height, hidden, reserved }) {
+    get frame() { return active ? frameFor(active) : null; },
+    update({ width, height, hidden, reserved, shadows: showShadows }) {
+      shadows = showShadows;
       const body = objects.get(bodyId);
       const occupied = [];
       for (const marker of [...markers].sort(
         (a, b) => Number(b.feature === active) - Number(a.feature === active),
       )) {
         marker.visible = false;
-        if (!hidden && body) {
-          const normal = landmarkDirection(marker.feature, body);
-          const point = normal
-            .clone()
-            .multiplyScalar(body.radius * 1.017)
-            .add(body.root.position);
+        const frame = frameFor(marker.feature);
+        marker.available = Boolean(frame);
+        marker.option.disabled = !frame;
+        marker.option.hidden = !frame;
+        if (!hidden && body && frame) {
+          const point = frame.point;
+          const normal = point.clone().sub(body.root.position).normalize();
           const towardCamera = camera.position.clone().sub(point);
           const projected = point.clone().project(camera);
           const x = (projected.x * 0.5 + 0.5) * width;
           const y = (-projected.y * 0.5 + 0.5) * height;
-          const bounds = {
-            left: x - 22,
-            right: x + 22,
-            top: y - 22,
-            bottom: y + 22,
-          };
+          // Include the entire label in collision checks, including on touch screens.
+          const labelWidth = marker.label.scrollWidth || marker.feature.name.length * 11 + 12;
+          const leftLabel = x + 11 + labelWidth > width - 16;
+          const bounds = { left: x - (leftLabel ? 11 + labelWidth : 22),
+            right: x + (leftLabel ? 22 : 11 + labelWidth), top: y - 22, bottom: y + 22 };
           const overlaps = (r) =>
             bounds.left < r.right &&
             bounds.right > r.left &&
             bounds.top < r.bottom &&
             bounds.bottom > r.top;
           marker.visible =
-            normal.dot(towardCamera) > 0 &&
+            (normal.dot(towardCamera) > 0 || (marker.feature.dynamic && point.clone().sub(camera.position).normalize().cross(body.root.position.clone().sub(camera.position)).length() > body.radius)) &&
             projected.z > -1 &&
             projected.z < 1 &&
-            x > 24 &&
-            x < width - 24 &&
-            y > 76 &&
-            y < height - 180 &&
+            bounds.left > 12 &&
+            bounds.right < width - 12 &&
+            bounds.top > 12 &&
+            bounds.bottom < height - 12 &&
             !reserved.some(overlaps) &&
             !occupied.some(overlaps);
           marker.x = x;
           marker.y = y;
           if (marker.visible) {
             marker.button.style.transform = `translate(${x.toFixed(1)}px,${y.toFixed(1)}px) translate(-50%,-50%)`;
-            marker.button.classList.toggle("label-left", x > width - 180);
+            marker.button.classList.toggle("label-left", leftLabel);
             occupied.push(bounds);
           }
         }
@@ -209,11 +235,12 @@ export function createLandmarks(objects, camera, onSelect) {
       return {
         body: bodyId,
         active: active?.id || null,
-        markers: markers.map(({ feature, x, y, visible }) => ({
+        markers: markers.map(({ feature, x, y, visible, available }) => ({
           id: feature.id,
           x,
           y,
           visible,
+          available,
         })),
       };
     },

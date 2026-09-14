@@ -1924,7 +1924,7 @@ dialog .dialog-close {
   white-space: nowrap;
   background: #0b1210d9;
   border-radius: 3px;
-  pointer-events: none;
+  pointer-events: auto;
 }
 .landmark-marker.label-left .landmark-name {
   left: auto;
@@ -1964,7 +1964,8 @@ dialog .dialog-close {
     display: none;
   }
   .landmark-name {
-    display: none;
+    display: block;
+    font-size: 9px;
   }
   .landmark-marker.active .landmark-name {
     display: block;

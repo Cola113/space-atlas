@@ -31,7 +31,7 @@ import {
 } from "lucide";
 import { bodies, ORBIT_SPACING, SYSTEM_RADIUS } from "./data.js";
 import { createDynamics, activityProfiles } from "./dynamics.js";
-import { createLandmarks, landmarks, landmarkDirection } from "./landmarks.js";
+import { createLandmarks, landmarks } from "./landmarks.js";
 import {
   cameraPath,
   occludedByBody,
@@ -44,7 +44,7 @@ import { bindPhysicalSun } from './physical-lighting.js';
 import { RotationFollow, restoreFollowRotation } from './camera-follow.js';
 import { physicalData } from "./physical-scale.js";
 import { landableBodyIds } from './surface/sites.js';
-import { catalogSections, dockCatalogs, dockCatalogFor, matchesCatalog, satelliteSystems, systemMembers, systemName } from './catalog.js';
+import { catalogSections, dockCatalogs, dockCatalogFor, matchesCatalog, proximityCatalog, satelliteSystems, systemMembers, systemName } from './catalog.js';
 import { createBodyGeometry, createNarrowRing } from './body-geometry.js';
 import { createObservedClouds } from "./observed-clouds.js";
 import { physicalSubsolarPoint } from './earth-observation.js';
@@ -101,6 +101,7 @@ const state = {
   nightView: false,
   system: false,
   catalog: "planets",
+  mainCatalog: "planets",
   observedEarth: false,
 };
 const objects = new Map();
@@ -154,15 +155,19 @@ const epochDate = new Date(state.date);
 let disposed = false;
 let surfaceView = null;
 let landingBusy = false;
+let landmarkFollow = null;
+let landmarkTrackingDirection = null;
+let landmarkTrackingExtent = 1;
+let manualCatalogZone = null;
 let surfaceOrbitPose = null;
 
 function saveObservation() {
   const body = objects.get(state.selected);
   const center = body?.root.position || new THREE.Vector3();
   return {
-    selected: state.selected, system: state.system, close: state.close, catalog: state.catalog,
+    selected: state.selected, system: state.system, close: state.close, catalog: state.catalog, mainCatalog: state.mainCatalog,
     playing: state.playing, speed: state.speed, direction: state.direction, speedUnit: "realtime", orbits: state.orbits, labels: state.labels,
-    dynamics: state.dynamics, followRotation: state.followRotation, activityRate: state.activityRate,
+    dynamics: state.dynamics, followRotation: landmarkFollow ?? state.followRotation, activityRate: state.activityRate,
     nightLights: state.nightLights, shadows: state.shadows, nightView: state.nightView,
     observedEarth: state.observedEarth, date: state.date, timelineEpoch: defaultSimulationDate,
     offset: (flight?.endOffset || surfaceOrbitPose?.offsetFromBody || camera.position.clone().sub(center)).toArray(),
@@ -196,6 +201,7 @@ function restoreObservation() {
     }
   }
   if (dockCatalogs.some(catalog => catalog.id === saved.catalog)) setCatalog(saved.catalog);
+  if (dockCatalogs.some(catalog => catalog.id === saved.mainCatalog && !catalog.id.startsWith('system:'))) state.mainCatalog = saved.mainCatalog;
   if (isEarthObservation()) syncObservedEarth();
   if (Array.isArray(saved.offset) && saved.offset.length === 3 && saved.offset.every(n => Number.isFinite(n) && Math.abs(n) < 1e5)) {
     const offset = new THREE.Vector3().fromArray(saved.offset);
@@ -256,6 +262,11 @@ function thumb(body) {
   return `<span class="planet-thumb ${body.id}" data-thumbnail="${body.id}" style="--body-color:${body.color}" aria-hidden="true"></span>`;
 }
 
+function landingBadge(body) {
+  return landableBodyIds.includes(body.id)
+    ? '<span class="landing-badge" title="可降落" aria-hidden="true"><i data-lucide="map-pin"></i></span>' : '';
+}
+
 function startThumbnails() {
   thumbnailObserver = new IntersectionObserver(entries => {
     for (const entry of entries) {
@@ -277,14 +288,14 @@ function makeNavigation() {
   $("planet-dock").innerHTML = bodies
     .map(
       (body) =>
-        `<button class="planet-choice" data-body="${body.id}" aria-label="探索${body.name}" aria-pressed="false">${thumb(body)}<span class="choice-name">${body.name}</span><span class="choice-en">${body.english}</span></button>`,
+        `<button class="planet-choice" data-body="${body.id}" aria-label="探索${body.name}${landableBodyIds.includes(body.id) ? '，可降落' : ''}" aria-pressed="false">${thumb(body)}${landingBadge(body)}<span class="choice-name">${body.name}</span><span class="choice-en">${body.english}</span></button>`,
     )
     .join("");
   $("atlas-grid").innerHTML = catalogSections.map(section =>
     `<section class="atlas-section" data-section="${section.id}" aria-labelledby="section-${section.id}">
       <div class="atlas-section-heading"><h2 id="section-${section.id}">${section.title}</h2><span class="section-count"></span><small>${section.order}</small></div>
       <div class="atlas-section-items">${section.items.map(body =>
-        `<button class="atlas-item" data-body="${body.id}" aria-label="近距离探索${body.name}" aria-pressed="false">${thumb(body)}<div><small>${body.english}</small><h3>${body.name}</h3><p>${body.category}</p></div></button>`).join('')}</div>
+        `<button class="atlas-item" data-body="${body.id}" aria-label="近距离探索${body.name}${landableBodyIds.includes(body.id) ? '，可降落' : ''}" aria-pressed="false">${thumb(body)}<div><small>${body.english}</small><h3>${body.name}${landingBadge(body)}</h3><p>${body.category}</p></div></button>`).join('')}</div>
     </section>`).join('');
   document
     .querySelectorAll("[data-body]")
@@ -335,6 +346,31 @@ function revealDockSelection() {
   const target = button.getBoundingClientRect(), bounds = dock.getBoundingClientRect();
   dock.scrollTo({left: dock.scrollLeft + target.left - bounds.left - (dock.clientWidth - button.clientWidth) / 2,
     behavior: reducedMotion ? 'instant' : 'smooth'});
+}
+
+function catalogProximity() {
+  const family = familyOf(objects.get(state.selected));
+  return satelliteSystems.map(parent => {
+    const body = objects.get(parent.id);
+    const enter = focusedOffset(body).length() * 1.5;
+    const extent = Math.max(...systemMembers(body.id).map(member => objects.get(member.id)).filter(member => member.parent).map(member => member.orbit + member.radius));
+    const exit = Math.max(enter * 2.2, focusedOffset({ ...body, id: 'system', radius: extent, rings: null }).length() * 1.4);
+    return { id: body.id, enter, exit, distance: camera.position.distanceTo(body.root.position),
+      eligible: body.physicalAvailable && (family?.id === body.id || (!state.selected && controls.target.distanceTo(body.root.position) < enter * .5)) };
+  });
+}
+
+function catalogZone(candidates) {
+  return candidates.filter(item => item.eligible).map(item => `${item.id}:${item.distance < item.enter}:${item.distance < item.exit}`).join('|');
+}
+
+function updateCatalogProximity() {
+  if (!state.ready || flight || state.atlas || infoDialogOpen()) return;
+  const candidates = catalogProximity();
+  if (manualCatalogZone === catalogZone(candidates)) return;
+  manualCatalogZone = null;
+  const catalog = proximityCatalog(state.catalog, candidates, state.mainCatalog);
+  if (catalog !== state.catalog) setCatalog(catalog);
 }
 
 function updateDockScroll() {
@@ -1089,10 +1125,11 @@ function currentFocusOffset(body) {
       .multiplyScalar(distance);
   }
   const offset = focusedOffset(body, state.close);
-  if (landmarkView?.active)
-    return landmarkDirection(landmarkView.active, body).multiplyScalar(
-      offset.length(),
-    );
+  const frame = landmarkView?.frame;
+  if (frame) {
+    const zoom = frame.extent > 1 ? Math.max(2, landmarkView.active.zoom || 1) : (landmarkView.active.zoom || 1);
+    return frame.direction.multiplyScalar(offset.length() * zoom * frame.extent);
+  }
   if (state.nightView && body.id === "earth")
     return body.root.position
       .clone()
@@ -1418,7 +1455,11 @@ function selectBody(id) {
     updatePositions();
     syncObservedEarth();
   }
-  setCatalog(dockCatalogFor(body, state.catalog));
+  manualCatalogZone = null;
+  const nextCatalog = dockCatalogFor(body);
+  if (!state.catalog.startsWith('system:')) state.mainCatalog = state.catalog;
+  if (!nextCatalog.startsWith('system:')) state.mainCatalog = nextCatalog;
+  setCatalog(nextCatalog);
   state.nightView = false;
   $("app").classList.add("focused");
   $("intro").hidden = true;
@@ -1482,6 +1523,8 @@ function goOverview() {
   $("observation-settings").open=false;
   rotationFollow.reset(); pendingArrival = null; refreshObservationGate();
   setCatalog('planets');
+  state.mainCatalog = 'planets';
+  manualCatalogZone = null;
   state.close = false;
   state.system = false;
   $("app").classList.remove("system-view");
@@ -1636,7 +1679,6 @@ function updateObservationTools() {
   $("shadow-control").title = id === "saturn" ? "土星环投影" : "云层投影";
   $("shadow-label").textContent = $("shadow-control").title;
   $("shadow-toggle").setAttribute("aria-label", $("shadow-control").title);
-  $("ring-shadow-legend").hidden = !visible || state.system || id !== "saturn" || !state.shadows;
   const label = state.nightView ? "观测昼侧" : "观测夜侧";
   $("night-view").setAttribute("aria-label", label);
   $("night-view").querySelector("span").textContent=label;
@@ -1646,14 +1688,20 @@ function updateObservationTools() {
 }
 
 function clearLandmark() {
-  if (!landmarkView?.active) return;
+  if (!landmarkView?.active && landmarkFollow === null) return;
   landmarkView.select("");
+  if (landmarkFollow !== null) state.followRotation = landmarkFollow;
+  landmarkFollow = null;
+  landmarkTrackingDirection = null;
+  landmarkTrackingExtent = 1;
+  rotationFollow.reset();
   $("app").classList.remove("has-landmark");
   const body = objects.get(state.selected);
   if (body) {
     $("planet-description").textContent = body.description;
     $("caption-title").textContent = body.caption;
     $("caption-detail").textContent = body.detail;
+    $("view-status").textContent = `${body.name} / ${state.close ? '细节观测' : '近轨道观测'}`;
   }
   updateObservationTools();
   updateActivityUi();
@@ -1668,7 +1716,12 @@ function selectLandmark(id) {
     return;
   }
   const feature = landmarkView.select(id);
-  if (!feature) return;
+  if (!feature) { clearLandmark(); return; }
+  if (landmarkFollow === null) landmarkFollow = state.followRotation;
+  state.followRotation = true;
+  landmarkTrackingDirection = null;
+  landmarkTrackingExtent = landmarkView.frame.extent;
+  rotationFollow.reset();
   state.close = true;
   state.nightView = false;
   $("app").classList.add("has-landmark");
@@ -1690,6 +1743,7 @@ function selectLandmark(id) {
   updateActivityUi();
   updateObservationTools();
   flyTo(body.root.position, currentFocusOffset(body), 1100);
+  flight.landmark = feature.id;
   prioritizeObservation(body);
   loadHighTexture(body);
 }
@@ -1781,9 +1835,11 @@ function bindEvents() {
     const dock = $("planet-dock");
     dock.scrollBy({left: direction * dock.clientWidth * .8, behavior: reducedMotion ? 'instant' : 'smooth'});
   });
-  $("catalog-filter").addEventListener("change", (event) =>
-    setCatalog(event.target.value),
-  );
+  $("catalog-filter").addEventListener("change", (event) => {
+    setCatalog(event.target.value);
+    if (!state.catalog.startsWith('system:')) state.mainCatalog = state.catalog;
+    manualCatalogZone = catalogZone(catalogProximity());
+  });
   $("atlas-filter").addEventListener("change", filterAtlas);
   $("atlas-system").addEventListener("change", filterAtlas);
   $("atlas-search").addEventListener("input", filterAtlas);
@@ -1818,6 +1874,7 @@ function bindEvents() {
   });
   $("rotation-toggle").addEventListener("click", () => {
     state.followRotation = !state.followRotation;
+    if (landmarkFollow !== null) landmarkFollow = state.followRotation;
     rotationFollow.reset();
     updateActivityUi();
   });
@@ -2274,6 +2331,8 @@ function animate(now) {
       target,
       smoothProgress(Math.min(t * 1.5, 1)),
     );
+    if (flight.landmark && landmarkView.frame && focused)
+      camera.position.addScaledVector(currentFocusOffset(focused).sub(flight.endOffset), eased);
     viewOffset.lerpVectors(flight.startOffset, flight.endViewOffset, eased);
     applyViewOffset();
     camera.lookAt(controls.target);
@@ -2282,7 +2341,20 @@ function animate(now) {
       applyDistanceLimits();
     }
   }
-  rotationFollow.update(focused,camera,controls.target,state.followRotation && !state.system && !state.atlas && !flight && !infoDialogOpen());
+  const trackingShadow = landmarkView.active?.id === 'ring-shadow';
+  const following = state.followRotation && !state.system && !state.atlas && !flight && !infoDialogOpen();
+  rotationFollow.update(focused,camera,controls.target,following && !trackingShadow);
+  const landmarkFrame = landmarkView.frame;
+  if (trackingShadow && landmarkFrame && following && landmarkTrackingDirection) {
+    const turn = new THREE.Quaternion().setFromUnitVectors(landmarkTrackingDirection, landmarkFrame.direction);
+    camera.position.sub(controls.target).applyQuaternion(turn).add(controls.target);
+    camera.lookAt(controls.target);
+  }
+  // Preserve the user's zoom factor while a selected plume expands away from the limb.
+  if (landmarkFrame && following && !trackingShadow)
+    camera.position.sub(controls.target).multiplyScalar(landmarkFrame.extent / landmarkTrackingExtent).add(controls.target);
+  landmarkTrackingDirection = landmarkFrame?.direction.clone() || null;
+  landmarkTrackingExtent = landmarkFrame?.extent || 1;
   if (!flight) controls.update(dt);
   for (const body of objects.values()) {
     if(!body.physicalAvailable)continue;
@@ -2319,6 +2391,7 @@ function animate(now) {
   } else if (renderedFrames === 3) startBackgroundResources();
   updateLabels();
   const reserved = [
+    document.querySelector('.topbar'),
     $("planet-info"),
     $("observation-tools"),
     document.querySelector(".scene-toolbar"),
@@ -2335,8 +2408,11 @@ function animate(now) {
       state.atlas ||
       infoDialogOpen(),
     reserved,
+    shadows: state.shadows,
   });
+  if (landmarkView.active && !landmarkView.frame) clearLandmark();
   if (now - lastActivityUi > 160) {
+    updateCatalogProximity();
     updateActivityUi();
     updateSimulationDate();
     lastActivityUi = now;
@@ -2413,7 +2489,7 @@ async function init() {
       preparedCount++; preparationProgress();
     }
     textureResources.queue.setConcurrency(2);
-    landmarkView = createLandmarks(objects, camera, selectLandmark);
+    landmarkView = createLandmarks(objects, camera, selectLandmark, (id, kind) => dynamics.featureAnchor(id, kind));
     observedClouds = createObservedClouds({ dynamics, reducedMotion,
       initialEnabled: state.observedEarth, autoStart: !window.__promoOffline, deferStart: true,
       resourceQueue: textureResources.queue,
@@ -2454,6 +2530,7 @@ async function init() {
         close: state.close,
         system: state.system,
         catalog: state.catalog,
+        mainCatalog: state.mainCatalog,
         scale: "display",
         playing: state.playing,
         speed: state.speed,

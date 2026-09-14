@@ -22,7 +22,7 @@ async function toggle(page, enabled) {
   await page.keyboard.press('Escape');
   await page.waitForFunction(enabled => window.solarAtlas.snapshot().shadows === enabled, enabled);
   await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
-  assert.equal(await page.locator('#ring-shadow-legend').isVisible(), enabled);
+  assert.equal((await page.evaluate(() => window.solarAtlas.snapshot())).landmarks.markers.find(m => m.id === 'ring-shadow').available, enabled);
 }
 try {
   const probe = await browser.newContext({ viewport: { width: 1000, height: 1000 }, reducedMotion: 'reduce' });
@@ -54,17 +54,16 @@ try {
     await settle(page);
     await page.waitForTimeout(700);
     const state = await page.evaluate(() => window.solarAtlas.snapshot());
-    assert.equal(await page.locator('#ring-shadow-legend').isVisible(), true);
+    assert.equal(await page.locator('#ring-shadow-legend').count(), 0);
+    assert.equal(state.landmarks.markers.find(m => m.id === 'ring-shadow').available, true);
     assert.equal(await page.locator('#shadow-toggle').getAttribute('aria-label'), '土星环投影');
     const layout = await page.evaluate(() => {
       const box = selector => { const r = document.querySelector(selector).getBoundingClientRect(); return { x: r.x, y: r.y, right: r.right, bottom: r.bottom }; };
-      const legend = document.getElementById('ring-shadow-legend'), r = legend.getBoundingClientRect();
-      return { legend: box('#ring-shadow-legend'), info: box('#planet-info'), footer: box('.explorer-bottom'),
-        hit: legend.contains(document.elementFromPoint(r.x + 12, r.y + r.height / 2)),
+      return { info: box('#planet-info'), footer: box('.explorer-bottom'),
         overflow: document.documentElement.scrollWidth > innerWidth };
     });
-    assert.ok(layout.hit && !layout.overflow && layout.legend.x >= 0 && layout.legend.right <= width);
-    assert.ok(layout.info.bottom <= layout.footer.y - 7.9, `${name}: legend crowds footer`);
+    assert.ok(!layout.overflow);
+    assert.ok(layout.info.bottom <= layout.footer.y - 7.9, `${name}: controls crowd footer`);
     const before = await page.screenshot({ path: fileURLToPath(new URL(name + '.png', output)) });
     const body = state.bodies.find(b => b.id === 'saturn');
     const crop = { left: Math.max(0, Math.min(width - 620, Math.round(body.x - 310))),
@@ -77,20 +76,20 @@ try {
     assert.deepEqual(unchanged.camera, state.camera);
     assert.equal(unchanged.date, state.date);
     if (!pole) {
-      // Reopening settings and switching bodies must keep the text and legend in sync.
+      // Reopening settings and switching bodies must keep the marker and toggle in sync.
       await toggle(page, true);
       await page.locator('#surface-button').click(); await settle(page);
-      assert.equal(await page.locator('#ring-shadow-legend').isVisible(), true);
+      assert.equal((await page.evaluate(() => window.solarAtlas.snapshot())).landmarks.markers.find(m => m.id === 'ring-shadow').available, true);
       await page.locator('#back-button').click(); await settle(page);
-      assert.equal(await page.locator('#ring-shadow-legend').isVisible(), false);
+      assert.equal(await page.locator('[data-landmark="ring-shadow"]').count(), 0);
       await page.locator('#explore-earth').click(); await settle(page);
-      assert.equal(await page.locator('#ring-shadow-legend').isVisible(), false);
+      assert.equal(await page.locator('[data-landmark="ring-shadow"]').count(), 0);
       assert.equal(await page.locator('#shadow-toggle').getAttribute('aria-label'), '云层投影');
     }
     assert.deepEqual(errors, []);
     report.push({ name, date: state.date, camera: state.camera, target: state.target,
       orientation: body.orientation, sunDirection: body.sunDirection, layout, errors, passed: true });
-    console.log(`${name}: ring shadow rendering, legend and toggle passed`);
+    console.log(`${name}: ring shadow rendering, scene marker and toggle passed`);
     await context.close();
   }
   await writeFile(new URL('report.json', output), JSON.stringify(report, null, 2));
