@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { access } from 'node:fs/promises';
 import * as THREE from 'three';
 import { bodies } from '../src/data.js';
+import { physicalDefinitions, sourceFor } from '../src/physics/definitions.js';
 import { physicalData } from '../src/physical-scale.js';
 import { createBodyGeometry, createNarrowRing } from '../src/body-geometry.js';
 import { landmarks, landmarkFrame } from '../src/landmarks.js';
@@ -120,9 +121,13 @@ test('names, round major moons, equatorial ridges and the Haumea system are dist
   assert.deepEqual(['nix','hydra','kerberos','styx'].map(id => byId[id].name), ['冥卫二','冥卫三','冥卫四','冥卫五']);
   const sphere = new THREE.SphereGeometry(1,112,80);
   for (const id of ['ariel','umbriel','titania','oberon']) {
-    const g = createBodyGeometry(byId[id],sphere); g.computeBoundingBox();
+    const b = byId[id], g = createBodyGeometry(b,sphere); g.computeBoundingBox();
     const size = g.boundingBox.getSize(new THREE.Vector3());
-    assert.ok(Math.abs(size.x-size.y) < 1e-5 && Math.abs(size.x-size.z) < 1e-5);
+    // PCK00011 gives Ariel 581.1 x 577.9 x 577.7 km, so it is measurably, if barely,
+    // non-spherical; the other three are adopted as spheres by the same source.
+    assert.ok(Math.abs(size.y/size.x - b.shape[1]) < 1e-3, `${id}: polar ratio`);
+    assert.ok(Math.abs(size.z/size.x - b.shape[2]) < 1e-3, `${id}: equatorial ratio`);
+    assert.ok(Math.abs(size.y/size.x - 1) < .01, `${id}: not a near-sphere`);
   }
   for (const id of ['atlas','pan']) {
     const b = byId[id], g = createBodyGeometry(b,sphere), p = g.attributes.position;
@@ -138,6 +143,84 @@ test('names, round major moons, equatorial ridges and the Haumea system are dist
   const ring = createNarrowRing(byId.haumea);
   assert.ok(ring.geometry.parameters.innerRadius > byId.haumea.radius);
   assert.ok(ring.geometry.parameters.outerRadius > ring.geometry.parameters.innerRadius);
+});
+
+test('every display silhouette is taken from a sourced set of semi-axes', () => {
+  const byId = Object.fromEntries(bodies.map(b => [b.id, b]));
+  const sphere = new THREE.SphereGeometry(1, 112, 80);
+  let shaped = 0;
+  for (const [id, definition] of Object.entries(physicalDefinitions.bodies)) {
+    const { semiAxesKm, semiAxesSource } = definition.radius;
+    if (!semiAxesKm) continue;
+    shaped++;
+    const [a, b, c] = semiAxesKm;
+    assert.ok(a >= b && b >= c, `${id}: semi-axes must be ordered a >= b >= c`);
+
+    // A silhouette without a retrievable source is what this whole table exists to stop.
+    const source = sourceFor(semiAxesSource);
+    assert.ok(source?.url, `${id}: semi-axes cite the missing source "${semiAxesSource}"`);
+    assert.ok(source.retrieved, `${id}: source "${semiAxesSource}" carries no retrieval date`);
+    assert.ok(definition.radius.semiAxesNote, `${id}: semi-axes carry no stated definition`);
+
+    const display = byId[id];
+    assert.ok(display, `${id}: absent from the catalogue`);
+    assert.deepEqual(display.shape, [1, c / a, b / a], `${id}: display shape drifted from the recorded semi-axes`);
+    // Three's +Y axis is the spin axis, so a flattened body must be shortest along Y.
+    assert.ok(display.shape[1] <= display.shape[2] + 1e-12, `${id}: shortest semi-axis is not the spin axis`);
+
+    if (display.ridge) continue; // The equatorial ridge adds a separate display bulge.
+    const geometry = createBodyGeometry(display, sphere);
+    geometry.computeBoundingBox();
+    const size = geometry.boundingBox.getSize(new THREE.Vector3());
+    assert.ok(Math.abs(size.y / size.x - display.shape[1]) < 1e-3, `${id}: mesh polar ratio`);
+    assert.ok(Math.abs(size.z / size.x - display.shape[2]) < 1e-3, `${id}: mesh equatorial ratio`);
+    geometry.dispose();
+  }
+  // Guards against a future edit quietly dropping most of the table back to spheres.
+  assert.ok(shaped >= 50, `only ${shaped} bodies carry semi-axes`);
+  assert.equal(bodies.filter(b => b.shapeEstimated).map(b => b.id).join(','), 'namaka');
+  sphere.dispose();
+});
+
+test('every static landmark sits on the measured ellipsoid, not on a unit sphere', () => {
+  const sphere = new THREE.SphereGeometry(1, 112, 80);
+  let checked = 0;
+  let flattened = 0;
+  for (const [id, features] of Object.entries(landmarks)) {
+    const data = bodies.find(body => body.id === id);
+    const staticFeatures = features.filter(feature => feature.uv && !feature.dynamic);
+    if (!data?.shape || staticFeatures.length === 0) continue;
+    const root = new THREE.Object3D(), mesh = new THREE.Mesh(sphere, new THREE.MeshBasicMaterial());
+    root.add(mesh);
+    mesh.scale.setScalar(data.radius);
+    const body = { ...data, root, mesh };
+    // The 1.017 lift keeps a marker just above the surface; on a flattened globe it
+    // has to be measured against the flattened radius, not the equatorial one.
+    const surfaceRadius = uv => Math.hypot(
+      ...uvDirection(uv).toArray().map((value, axis) => value * data.shape[axis]),
+    );
+    for (const feature of staticFeatures) {
+      const frame = landmarkFrame(feature, body);
+      assert.ok(frame, `${id}/${feature.id}: landmark frame missing`);
+      const anchorRadius = frame.point.clone().sub(root.position).length() / data.radius;
+      assert.ok(Math.abs(anchorRadius - surfaceRadius(feature.uv) * 1.017) < 1e-6,
+        `${id}/${feature.id}: marker left the measured silhouette`);
+      checked++;
+    }
+    if (data.shape[1] < .999) {
+      flattened++;
+      const pole = landmarkFrame({ uv: [.5, 1] }, body);
+      const equator = landmarkFrame({ uv: [.5, .5] }, body);
+      const poleRadius = pole.point.clone().sub(root.position).length() / data.radius;
+      const equatorRadius = equator.point.clone().sub(root.position).length() / data.radius;
+      assert.ok(poleRadius < equatorRadius - 1e-4, `${id}: flattening did not reach the marker`);
+      assert.ok(Math.abs(equatorRadius - 1.017) < 1e-6, `${id}: equatorial marker lost the equatorial radius`);
+    }
+    mesh.geometry = sphere;
+  }
+  assert.ok(checked >= 8, `only ${checked} landmarks checked`);
+  assert.ok(flattened >= 5, `only ${flattened} flattened globes carried landmarks`);
+  sphere.dispose();
 });
 
 test('Saturn keeps its measured oblateness and its markers on the flattened globe', () => {

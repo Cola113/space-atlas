@@ -34,7 +34,10 @@
     "pck": {
       "url": "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/pck00011.tpc",
       "sha256": "3dff7b1dbeceaa01f25467767d3fa25816051c85d162d1edf04acb310ee28bb1",
-      "version": "PCK00011; IAU WGCCRE 2015 and published corrections"
+      "bytes": 131226,
+      "retrieved": "2026-09-15",
+      "version": "PCK00011; IAU WGCCRE 2015 and published corrections",
+      "reference": "BODYnnn_RADII 三轴半径按体固坐标 X、Y、Z 排列，Z 为自转轴；三个半径相等表示该报告按球面采用。"
     },
     "astronomy-engine": {
       "url": "https://github.com/cosinekitty/astronomy",
@@ -46,7 +49,8 @@
     },
     "haumea-shape": {
       "url": "https://arxiv.org/abs/2006.03113",
-      "reference": "Ortiz et al. (2017), Nature 550, 219–223, doi:10.1038/nature24051"
+      "reference": "Ortiz et al. (2017), Nature 550, 219–223, doi:10.1038/nature24051",
+      "retrieved": "2026-09-15"
     },
     "haumea-moons": {
       "url": "https://arxiv.org/html/0903.4213v1",
@@ -55,7 +59,8 @@
     "hiiaka-occultation": {
       "url": "https://www.nature.com/articles/s41467-025-65749-1",
       "reference": "Fernández-Valenzuela et al. (2025), Nature Communications 16, 10926",
-      "fullText": "https://orbi.uliege.be/bitstream/2268/339261/1/41467.pdf"
+      "fullText": "https://orbi.uliege.be/bitstream/2268/339261/1/41467.pdf",
+      "retrieved": "2026-09-15"
     },
     "makemake-spin": {
       "url": "https://arxiv.org/abs/1904.03679",
@@ -80,6 +85,11 @@
     "nereid-spin": {
       "url": "https://arxiv.org/abs/1601.02395",
       "reference": "Kiss et al. (2016), 11.594 h rotation"
+    },
+    "pluto-small-shape": {
+      "url": "https://arxiv.org/abs/1604.05366",
+      "reference": "Weaver et al. (2016), Science 351, aae0030, Table 2 ellipsoidal sizes",
+      "retrieved": "2026-09-15"
     },
     "pluto-small-spin": {
       "url": "https://ntrs.nasa.gov/citations/20170002512",
@@ -208,7 +218,10 @@
         "validity": "固定形状摘要；以球面近似计算角直径与观察位置，不代表局部地形高度。",
         "source": "planet-parameters",
         "reference": "2439.4 [D] ±0.1",
-        "uncertainty": 0.1
+        "uncertainty": 0.1,
+        "semiAxesKm": [2440.53, 2440.53, 2438.26],
+        "semiAxesSource": "pck",
+        "semiAxesNote": "PCK00011 的三轴半径按体固坐标 X、Y、Z 排列，Z 为自转轴；此处按 a、b、c 顺序记录。"
       },
       "orbit": {
         "provider": "astronomy-engine",
@@ -250,7 +263,10 @@
         "validity": "固定形状摘要；以球面近似计算角直径与观察位置，不代表局部地形高度。",
         "source": "planet-parameters",
         "reference": "6051.8 [D] ±1.0",
-        "uncertainty": 1.0
+        "uncertainty": 1.0,
+        "semiAxesKm": [6051.8, 6051.8, 6051.8],
+        "semiAxesSource": "pck",
+        "semiAxesNote": "PCK00011 对该天体只给三个相等的半径，即按球面采用；没有可用的三轴测量，不得据此外推扁率。"
       },
       "orbit": {
         "provider": "astronomy-engine",
@@ -293,7 +309,10 @@
         "source": "planet-parameters",
         "reference": "6371.0084 [D] ±0.0001",
         "uncertainty": 0.0001,
-        "note": "JPL Mean Radius 列采用值；与 PCK 的 (2a+c)/3 一致。该数值不是严格的体积等效半径。"
+        "note": "JPL Mean Radius 列采用值；与 PCK 的 (2a+c)/3 一致。该数值不是严格的体积等效半径。",
+        "semiAxesKm": [6378.14, 6378.14, 6356.75],
+        "semiAxesSource": "pck",
+        "semiAxesNote": "PCK00011 的三轴半径按体固坐标 X、Y、Z 排列，Z 为自转轴；此处按 a、b、c 顺序记录。"
       },
       "orbit": {
         "provider": "astronomy-engine",
@@ -335,7 +354,10 @@
         "validity": "固定形状摘要；以球面近似计算角直径与观察位置，不代表局部地形高度。",
         "source": "planet-parameters",
         "reference": "3389.50 [D] ±0.2",
-        "uncertainty": 0.2
+        "uncertainty": 0.2,
+        "semiAxesKm": [3396.19, 3396.19, 3376.2],
+        "semiAxesSource": "pck",
+        "semiAxesNote": "PCK00011 的三轴半径按体固坐标 X、Y、Z 排列，Z 为自转轴；此处按 a、b、c 顺序记录。"
       },
       "orbit": {
         "provider": "astronomy-engine",
@@ -377,7 +399,10 @@
         "validity": "固定形状摘要；以球面近似计算角直径与观察位置，不代表局部地形高度。",
         "source": "planet-parameters",
         "reference": "69911 [D] ±6",
-        "uncertainty": 6.0
+        "uncertainty": 6.0,
+        "semiAxesKm": [71492, 71492, 66854],
+        "semiAxesSource": "pck",
+        "semiAxesNote": "PCK00011 的三轴半径按体固坐标 X、Y、Z 排列，Z 为自转轴；此处按 a、b、c 顺序记录。"
       },
       "orbit": {
         "provider": "astronomy-engine",
@@ -421,6 +446,8 @@
         "reference": "58232 [D] ±6",
         "uncertainty": 6.0,
         "semiAxesKm": [60268, 60268, 54364],
+        "semiAxesSource": "pck",
+        "semiAxesNote": "PCK00011 的 BODY699_RADII 与 NASA 的 120,536 / 108,728 千米直径一致。",
         "semiAxesUncertaintyKm": [4, 4, 10],
         "note": "赤道与极半径取 JPL 行星物理参数表 1 bar 层数值；极轴/赤道轴 = 54364/60268 = 0.9020。体积等效半径与半轴不是同一物理量，不得互相换算。"
       },
@@ -464,7 +491,10 @@
         "validity": "固定形状摘要；以球面近似计算角直径与观察位置，不代表局部地形高度。",
         "source": "planet-parameters",
         "reference": "25362 [D] ±7",
-        "uncertainty": 7.0
+        "uncertainty": 7.0,
+        "semiAxesKm": [25559, 25559, 24973],
+        "semiAxesSource": "pck",
+        "semiAxesNote": "PCK00011 的三轴半径按体固坐标 X、Y、Z 排列，Z 为自转轴；此处按 a、b、c 顺序记录。"
       },
       "orbit": {
         "provider": "astronomy-engine",
@@ -506,7 +536,10 @@
         "validity": "固定形状摘要；以球面近似计算角直径与观察位置，不代表局部地形高度。",
         "source": "planet-parameters",
         "reference": "24622 [D] ±19",
-        "uncertainty": 19.0
+        "uncertainty": 19.0,
+        "semiAxesKm": [24764, 24764, 24341],
+        "semiAxesSource": "pck",
+        "semiAxesNote": "PCK00011 的三轴半径按体固坐标 X、Y、Z 排列，Z 为自转轴；此处按 a、b、c 顺序记录。"
       },
       "orbit": {
         "provider": "astronomy-engine",
@@ -548,7 +581,10 @@
         "validity": "固定形状摘要；以球面近似计算角直径与观察位置，不代表局部地形高度。",
         "source": "planet-parameters",
         "reference": "1188.3 [D] ±1.6",
-        "uncertainty": 1.6
+        "uncertainty": 1.6,
+        "semiAxesKm": [1188.3, 1188.3, 1188.3],
+        "semiAxesSource": "pck",
+        "semiAxesNote": "PCK00011 对该天体只给三个相等的半径，即按球面采用；没有可用的三轴测量，不得据此外推扁率。"
       },
       "orbit": {
         "provider": "jpl-year",
@@ -589,7 +625,10 @@
         "epoch": null,
         "validity": "固定形状摘要；以球面近似计算角直径与观察位置，不代表局部地形高度。",
         "source": "planet-parameters",
-        "reference": "469.7 [O]"
+        "reference": "469.7 [O]",
+        "semiAxesKm": [487.3, 487.3, 446],
+        "semiAxesSource": "pck",
+        "semiAxesNote": "PCK00011 的三轴半径按体固坐标 X、Y、Z 排列，Z 为自转轴；此处按 a、b、c 顺序记录。"
       },
       "orbit": {
         "provider": "mean-kepler",
@@ -697,7 +736,9 @@
           4,
           16
         ],
-        "note": "由论文三轴半径的几何平均得到；形状依赖光变和极轴假设。"
+        "note": "由论文三轴半径的几何平均得到；形状依赖光变和极轴假设。",
+        "semiAxesSource": "haumea-shape",
+        "semiAxesNote": "Ortiz 等 2017 的掩星与光变联合三轴拟合，半轴 1161、852、513 千米；形状依赖极轴假设。"
       },
       "orbit": {
         "provider": "mean-kepler",
@@ -806,7 +847,9 @@
           284.62,
           277.24,
           226.33
-        ]
+        ],
+        "semiAxesSource": "vesta-sbdb",
+        "semiAxesNote": "Park 等 2025 的有效直径经 SBDB 获取；三轴尺寸为同一来源的形状归一化，不是三条独立测量。"
       },
       "orbit": {
         "provider": "mean-kepler",
@@ -851,7 +894,10 @@
         "validity": "固定形状摘要；以球面近似计算角直径与观察位置，不代表局部地形高度。",
         "uncertainty": 0.1,
         "source": "satellite-radii",
-        "reference": "Archinal et al. (2018), WGCCRE 2015"
+        "reference": "Archinal et al. (2018), WGCCRE 2015",
+        "semiAxesKm": [1737.4, 1737.4, 1737.4],
+        "semiAxesSource": "pck",
+        "semiAxesNote": "PCK00011 对该天体只给三个相等的半径，即按球面采用；没有可用的三轴测量，不得据此外推扁率。"
       },
       "orbit": {
         "provider": "astronomy-engine",
@@ -896,7 +942,10 @@
         "validity": "固定形状摘要；以球面近似计算角直径与观察位置，不代表局部地形高度。",
         "uncertainty": 0.04,
         "source": "satellite-radii",
-        "reference": "Archinal et al. (2018), WGCCRE 2015"
+        "reference": "Archinal et al. (2018), WGCCRE 2015",
+        "semiAxesKm": [13, 11.4, 9.1],
+        "semiAxesSource": "pck",
+        "semiAxesNote": "PCK00011 的三轴半径按体固坐标 X、Y、Z 排列，Z 为自转轴；此处按 a、b、c 顺序记录。"
       },
       "orbit": {
         "provider": "mean-kepler",
@@ -946,7 +995,10 @@
         "validity": "固定形状摘要；以球面近似计算角直径与观察位置，不代表局部地形高度。",
         "uncertainty": 0.5,
         "source": "satellite-radii",
-        "reference": "Archinal et al. (2018), WGCCRE 2015"
+        "reference": "Archinal et al. (2018), WGCCRE 2015",
+        "semiAxesKm": [1829.4, 1819.4, 1815.7],
+        "semiAxesSource": "pck",
+        "semiAxesNote": "PCK00011 的三轴半径按体固坐标 X、Y、Z 排列，Z 为自转轴；此处按 a、b、c 顺序记录。"
       },
       "orbit": {
         "provider": "astronomy-engine",
@@ -997,7 +1049,10 @@
         "validity": "固定形状摘要；以球面近似计算角直径与观察位置，不代表局部地形高度。",
         "uncertainty": 0.3,
         "source": "satellite-radii",
-        "reference": "Archinal et al. (2018), WGCCRE 2015"
+        "reference": "Archinal et al. (2018), WGCCRE 2015",
+        "semiAxesKm": [1562.6, 1560.3, 1559.5],
+        "semiAxesSource": "pck",
+        "semiAxesNote": "PCK00011 的三轴半径按体固坐标 X、Y、Z 排列，Z 为自转轴；此处按 a、b、c 顺序记录。"
       },
       "orbit": {
         "provider": "astronomy-engine",
@@ -1048,7 +1103,10 @@
         "validity": "固定形状摘要；以球面近似计算角直径与观察位置，不代表局部地形高度。",
         "uncertainty": 1.7,
         "source": "satellite-radii",
-        "reference": "Archinal et al. (2018), WGCCRE 2015"
+        "reference": "Archinal et al. (2018), WGCCRE 2015",
+        "semiAxesKm": [2631.2, 2631.2, 2631.2],
+        "semiAxesSource": "pck",
+        "semiAxesNote": "PCK00011 对该天体只给三个相等的半径，即按球面采用；没有可用的三轴测量，不得据此外推扁率。"
       },
       "orbit": {
         "provider": "astronomy-engine",
@@ -1099,7 +1157,10 @@
         "validity": "固定形状摘要；以球面近似计算角直径与观察位置，不代表局部地形高度。",
         "uncertainty": 1.5,
         "source": "satellite-radii",
-        "reference": "Archinal et al. (2018), WGCCRE 2015"
+        "reference": "Archinal et al. (2018), WGCCRE 2015",
+        "semiAxesKm": [2410.3, 2410.3, 2410.3],
+        "semiAxesSource": "pck",
+        "semiAxesNote": "PCK00011 对该天体只给三个相等的半径，即按球面采用；没有可用的三轴测量，不得据此外推扁率。"
       },
       "orbit": {
         "provider": "astronomy-engine",
@@ -1150,7 +1211,10 @@
         "validity": "固定形状摘要；以球面近似计算角直径与观察位置，不代表局部地形高度。",
         "uncertainty": 0.2,
         "source": "satellite-radii",
-        "reference": "Archinal et al. (2018), WGCCRE 2015"
+        "reference": "Archinal et al. (2018), WGCCRE 2015",
+        "semiAxesKm": [256.6, 251.4, 248.3],
+        "semiAxesSource": "pck",
+        "semiAxesNote": "PCK00011 的三轴半径按体固坐标 X、Y、Z 排列，Z 为自转轴；此处按 a、b、c 顺序记录。"
       },
       "orbit": {
         "provider": "jpl-year",
@@ -1201,7 +1265,10 @@
         "validity": "固定形状摘要；以球面近似计算角直径与观察位置，不代表局部地形高度。",
         "uncertainty": 0.02,
         "source": "satellite-radii",
-        "reference": "Archinal et al. (2018), WGCCRE 2015"
+        "reference": "Archinal et al. (2018), WGCCRE 2015",
+        "semiAxesKm": [2575.15, 2574.78, 2574.47],
+        "semiAxesSource": "pck",
+        "semiAxesNote": "PCK00011 的三轴半径按体固坐标 X、Y、Z 排列，Z 为自转轴；此处按 a、b、c 顺序记录。"
       },
       "orbit": {
         "provider": "jpl-year",
@@ -1252,7 +1319,10 @@
         "validity": "固定形状摘要；以球面近似计算角直径与观察位置，不代表局部地形高度。",
         "uncertainty": 2.4,
         "source": "satellite-radii",
-        "reference": "Archinal et al. (2018), WGCCRE 2015"
+        "reference": "Archinal et al. (2018), WGCCRE 2015",
+        "semiAxesKm": [1352.6, 1352.6, 1352.6],
+        "semiAxesSource": "pck",
+        "semiAxesNote": "PCK00011 对该天体只给三个相等的半径，即按球面采用；没有可用的三轴测量，不得据此外推扁率。"
       },
       "orbit": {
         "provider": "mean-kepler",
@@ -1302,7 +1372,10 @@
         "validity": "固定形状摘要；以球面近似计算角直径与观察位置，不代表局部地形高度。",
         "uncertainty": 0.5,
         "source": "satellite-radii",
-        "reference": "Nimmo et al. (2017), Icarus 287, 12–29"
+        "reference": "Nimmo et al. (2017), Icarus 287, 12–29",
+        "semiAxesKm": [606, 606, 606],
+        "semiAxesSource": "pck",
+        "semiAxesNote": "PCK00011 对该天体只给三个相等的半径，即按球面采用；没有可用的三轴测量，不得据此外推扁率。"
       },
       "orbit": {
         "provider": "jpl-year",
@@ -1348,7 +1421,10 @@
         "validity": "固定形状摘要；以球面近似计算角直径与观察位置，不代表局部地形高度。",
         "uncertainty": 0.7,
         "source": "satellite-radii",
-        "reference": "Archinal et al. (2018), WGCCRE 2015"
+        "reference": "Archinal et al. (2018), WGCCRE 2015",
+        "semiAxesKm": [240.4, 234.2, 232.9],
+        "semiAxesSource": "pck",
+        "semiAxesNote": "PCK00011 的三轴半径按体固坐标 X、Y、Z 排列，Z 为自转轴；此处按 a、b、c 顺序记录。"
       },
       "orbit": {
         "provider": "jpl-year",
@@ -1394,7 +1470,10 @@
         "validity": "固定形状摘要；以球面近似计算角直径与观察位置，不代表局部地形高度。",
         "uncertainty": 0.24,
         "source": "satellite-radii",
-        "reference": "Archinal et al. (2018), WGCCRE 2015"
+        "reference": "Archinal et al. (2018), WGCCRE 2015",
+        "semiAxesKm": [7.8, 6, 5.1],
+        "semiAxesSource": "pck",
+        "semiAxesNote": "PCK00011 的三轴半径按体固坐标 X、Y、Z 排列，Z 为自转轴；此处按 a、b、c 顺序记录。"
       },
       "orbit": {
         "provider": "mean-kepler",
@@ -1444,7 +1523,10 @@
         "validity": "固定形状摘要；以球面近似计算角直径与观察位置，不代表局部地形高度。",
         "uncertainty": 3.0,
         "source": "satellite-radii",
-        "reference": "Archinal et al. (2018), WGCCRE 2015"
+        "reference": "Archinal et al. (2018), WGCCRE 2015",
+        "semiAxesKm": [125, 73, 64],
+        "semiAxesSource": "pck",
+        "semiAxesNote": "PCK00011 的三轴半径按体固坐标 X、Y、Z 排列，Z 为自转轴；此处按 a、b、c 顺序记录。"
       },
       "orbit": {
         "provider": "mean-kepler",
@@ -1494,7 +1576,10 @@
         "validity": "固定形状摘要；以球面近似计算角直径与观察位置，不代表局部地形高度。",
         "uncertainty": 4.0,
         "source": "satellite-radii",
-        "reference": "Archinal et al. (2018), WGCCRE 2015"
+        "reference": "Archinal et al. (2018), WGCCRE 2015",
+        "semiAxesKm": [58, 49, 42],
+        "semiAxesSource": "pck",
+        "semiAxesNote": "PCK00011 的三轴半径按体固坐标 X、Y、Z 排列，Z 为自转轴；此处按 a、b、c 顺序记录。"
       },
       "orbit": {
         "provider": "mean-kepler",
@@ -1544,7 +1629,10 @@
         "validity": "固定形状摘要；以球面近似计算角直径与观察位置，不代表局部地形高度。",
         "uncertainty": 4.0,
         "source": "satellite-radii",
-        "reference": "Archinal et al. (2018), WGCCRE 2015"
+        "reference": "Archinal et al. (2018), WGCCRE 2015",
+        "semiAxesKm": [10, 8, 7],
+        "semiAxesSource": "pck",
+        "semiAxesNote": "PCK00011 的三轴半径按体固坐标 X、Y、Z 排列，Z 为自转轴；此处按 a、b、c 顺序记录。"
       },
       "orbit": {
         "provider": "mean-kepler",
@@ -1594,7 +1682,10 @@
         "validity": "固定形状摘要；以球面近似计算角直径与观察位置，不代表局部地形高度。",
         "uncertainty": 4.0,
         "source": "satellite-radii",
-        "reference": "Archinal et al. (2018), WGCCRE 2015"
+        "reference": "Archinal et al. (2018), WGCCRE 2015",
+        "semiAxesKm": [30, 20, 17],
+        "semiAxesSource": "pck",
+        "semiAxesNote": "PCK00011 的三轴半径按体固坐标 X、Y、Z 排列，Z 为自转轴；此处按 a、b、c 顺序记录。"
       },
       "orbit": {
         "provider": "mean-kepler",
@@ -1644,7 +1735,10 @@
         "validity": "固定形状摘要；以球面近似计算角直径与观察位置，不代表局部地形高度。",
         "uncertainty": 10.0,
         "source": "satellite-radii",
-        "reference": "Archinal et al. (2018), WGCCRE 2015"
+        "reference": "Archinal et al. (2018), WGCCRE 2015",
+        "semiAxesKm": [85, 85, 85],
+        "semiAxesSource": "pck",
+        "semiAxesNote": "PCK00011 对该天体只给三个相等的半径，即按球面采用；没有可用的三轴测量，不得据此外推扁率。"
       },
       "orbit": {
         "provider": "mean-kepler",
@@ -1695,7 +1789,10 @@
         "validity": "固定形状摘要；以球面近似计算角直径与观察位置，不代表局部地形高度。",
         "uncertainty": 0.4,
         "source": "satellite-radii",
-        "reference": "Archinal et al. (2018), WGCCRE 2015"
+        "reference": "Archinal et al. (2018), WGCCRE 2015",
+        "semiAxesKm": [207.8, 196.7, 190.6],
+        "semiAxesSource": "pck",
+        "semiAxesNote": "PCK00011 的三轴半径按体固坐标 X、Y、Z 排列，Z 为自转轴；此处按 a、b、c 顺序记录。"
       },
       "orbit": {
         "provider": "mean-kepler",
@@ -1745,7 +1842,10 @@
         "validity": "固定形状摘要；以球面近似计算角直径与观察位置，不代表局部地形高度。",
         "uncertainty": 0.6,
         "source": "satellite-radii",
-        "reference": "Archinal et al. (2018), WGCCRE 2015"
+        "reference": "Archinal et al. (2018), WGCCRE 2015",
+        "semiAxesKm": [538.4, 528.3, 526.3],
+        "semiAxesSource": "pck",
+        "semiAxesNote": "PCK00011 的三轴半径按体固坐标 X、Y、Z 排列，Z 为自转轴；此处按 a、b、c 顺序记录。"
       },
       "orbit": {
         "provider": "mean-kepler",
@@ -1795,7 +1895,10 @@
         "validity": "固定形状摘要；以球面近似计算角直径与观察位置，不代表局部地形高度。",
         "uncertainty": 0.4,
         "source": "satellite-radii",
-        "reference": "Archinal et al. (2018), WGCCRE 2015"
+        "reference": "Archinal et al. (2018), WGCCRE 2015",
+        "semiAxesKm": [563.4, 561.3, 559.6],
+        "semiAxesSource": "pck",
+        "semiAxesNote": "PCK00011 的三轴半径按体固坐标 X、Y、Z 排列，Z 为自转轴；此处按 a、b、c 顺序记录。"
       },
       "orbit": {
         "provider": "mean-kepler",
@@ -1845,7 +1948,10 @@
         "validity": "固定形状摘要；以球面近似计算角直径与观察位置，不代表局部地形高度。",
         "uncertainty": 0.6,
         "source": "satellite-radii",
-        "reference": "Archinal et al. (2018), WGCCRE 2015"
+        "reference": "Archinal et al. (2018), WGCCRE 2015",
+        "semiAxesKm": [765, 763.1, 762.4],
+        "semiAxesSource": "pck",
+        "semiAxesNote": "PCK00011 的三轴半径按体固坐标 X、Y、Z 排列，Z 为自转轴；此处按 a、b、c 顺序记录。"
       },
       "orbit": {
         "provider": "mean-kepler",
@@ -1895,7 +2001,10 @@
         "validity": "固定形状摘要；以球面近似计算角直径与观察位置，不代表局部地形高度。",
         "uncertainty": 2.8,
         "source": "satellite-radii",
-        "reference": "Archinal et al. (2018), WGCCRE 2015"
+        "reference": "Archinal et al. (2018), WGCCRE 2015",
+        "semiAxesKm": [745.7, 745.7, 712.1],
+        "semiAxesSource": "pck",
+        "semiAxesNote": "PCK00011 的三轴半径按体固坐标 X、Y、Z 排列，Z 为自转轴；此处按 a、b、c 顺序记录。"
       },
       "orbit": {
         "provider": "mean-kepler",
@@ -1945,7 +2054,10 @@
         "validity": "固定形状摘要；以球面近似计算角直径与观察位置，不代表局部地形高度。",
         "uncertainty": 0.7,
         "source": "satellite-radii",
-        "reference": "Archinal et al. (2018), WGCCRE 2015"
+        "reference": "Archinal et al. (2018), WGCCRE 2015",
+        "semiAxesKm": [109.4, 108.5, 101.8],
+        "semiAxesSource": "pck",
+        "semiAxesNote": "PCK00011 的三轴半径按体固坐标 X、Y、Z 排列，Z 为自转轴；此处按 a、b、c 顺序记录。"
       },
       "orbit": {
         "provider": "mean-kepler",
@@ -1995,7 +2107,10 @@
         "validity": "固定形状摘要；以球面近似计算角直径与观察位置，不代表局部地形高度。",
         "uncertainty": 4.0,
         "source": "satellite-radii",
-        "reference": "Archinal et al. (2018), WGCCRE 2015"
+        "reference": "Archinal et al. (2018), WGCCRE 2015",
+        "semiAxesKm": [180.1, 133, 102.7],
+        "semiAxesSource": "pck",
+        "semiAxesNote": "PCK00011 的三轴半径按体固坐标 X、Y、Z 排列，Z 为自转轴；此处按 a、b、c 顺序记录。"
       },
       "orbit": {
         "provider": "mean-kepler",
@@ -2051,7 +2166,10 @@
         "validity": "固定形状摘要；以球面近似计算角直径与观察位置，不代表局部地形高度。",
         "uncertainty": 0.8,
         "source": "satellite-radii",
-        "reference": "Archinal et al. (2018), WGCCRE 2015"
+        "reference": "Archinal et al. (2018), WGCCRE 2015",
+        "semiAxesKm": [101.7, 93, 76.3],
+        "semiAxesSource": "pck",
+        "semiAxesNote": "PCK00011 的三轴半径按体固坐标 X、Y、Z 排列，Z 为自转轴；此处按 a、b、c 顺序记录。"
       },
       "orbit": {
         "provider": "mean-kepler",
@@ -2101,7 +2219,10 @@
         "validity": "固定形状摘要；以球面近似计算角直径与观察位置，不代表局部地形高度。",
         "uncertainty": 1.2,
         "source": "satellite-radii",
-        "reference": "Archinal et al. (2018), WGCCRE 2015"
+        "reference": "Archinal et al. (2018), WGCCRE 2015",
+        "semiAxesKm": [64.9, 57.3, 53],
+        "semiAxesSource": "pck",
+        "semiAxesNote": "PCK00011 的三轴半径按体固坐标 X、Y、Z 排列，Z 为自转轴；此处按 a、b、c 顺序记录。"
       },
       "orbit": {
         "provider": "mean-kepler",
@@ -2152,7 +2273,10 @@
         "validity": "固定形状摘要；以球面近似计算角直径与观察位置，不代表局部地形高度。",
         "uncertainty": 1.2,
         "source": "satellite-radii",
-        "reference": "Archinal et al. (2018), WGCCRE 2015"
+        "reference": "Archinal et al. (2018), WGCCRE 2015",
+        "semiAxesKm": [68.2, 41.6, 28.2],
+        "semiAxesSource": "pck",
+        "semiAxesNote": "PCK00011 的三轴半径按体固坐标 X、Y、Z 排列，Z 为自转轴；此处按 a、b、c 顺序记录。"
       },
       "orbit": {
         "provider": "mean-kepler",
@@ -2202,7 +2326,10 @@
         "validity": "固定形状摘要；以球面近似计算角直径与观察位置，不代表局部地形高度。",
         "uncertainty": 1.5,
         "source": "satellite-radii",
-        "reference": "Archinal et al. (2018), WGCCRE 2015"
+        "reference": "Archinal et al. (2018), WGCCRE 2015",
+        "semiAxesKm": [52.2, 40.8, 31.5],
+        "semiAxesSource": "pck",
+        "semiAxesNote": "PCK00011 的三轴半径按体固坐标 X、Y、Z 排列，Z 为自转轴；此处按 a、b、c 顺序记录。"
       },
       "orbit": {
         "provider": "mean-kepler",
@@ -2252,7 +2379,10 @@
         "validity": "固定形状摘要；以球面近似计算角直径与观察位置，不代表局部地形高度。",
         "uncertainty": 0.8,
         "source": "satellite-radii",
-        "reference": "Archinal et al. (2018), WGCCRE 2015"
+        "reference": "Archinal et al. (2018), WGCCRE 2015",
+        "semiAxesKm": [20.5, 17.8, 9.4],
+        "semiAxesSource": "pck",
+        "semiAxesNote": "PCK00011 的三轴半径按体固坐标 X、Y、Z 排列，Z 为自转轴；此处按 a、b、c 顺序记录。"
       },
       "orbit": {
         "provider": "mean-kepler",
@@ -2302,7 +2432,10 @@
         "validity": "固定形状摘要；以球面近似计算角直径与观察位置，不代表局部地形高度。",
         "uncertainty": 1.2,
         "source": "satellite-radii",
-        "reference": "Archinal et al. (2018), WGCCRE 2015"
+        "reference": "Archinal et al. (2018), WGCCRE 2015",
+        "semiAxesKm": [17.2, 15.4, 10.4],
+        "semiAxesSource": "pck",
+        "semiAxesNote": "PCK00011 的三轴半径按体固坐标 X、Y、Z 排列，Z 为自转轴；此处按 a、b、c 顺序记录。"
       },
       "orbit": {
         "provider": "mean-kepler",
@@ -2352,7 +2485,10 @@
         "validity": "固定形状摘要；以球面近似计算角直径与观察位置，不代表局部地形高度。",
         "uncertainty": 0.6,
         "source": "satellite-radii",
-        "reference": "Archinal et al. (2018), WGCCRE 2015"
+        "reference": "Archinal et al. (2018), WGCCRE 2015",
+        "semiAxesKm": [581.1, 577.9, 577.7],
+        "semiAxesSource": "pck",
+        "semiAxesNote": "PCK00011 的三轴半径按体固坐标 X、Y、Z 排列，Z 为自转轴；此处按 a、b、c 顺序记录。"
       },
       "orbit": {
         "provider": "mean-kepler",
@@ -2397,7 +2533,10 @@
         "validity": "固定形状摘要；以球面近似计算角直径与观察位置，不代表局部地形高度。",
         "uncertainty": 2.8,
         "source": "satellite-radii",
-        "reference": "Archinal et al. (2018), WGCCRE 2015"
+        "reference": "Archinal et al. (2018), WGCCRE 2015",
+        "semiAxesKm": [584.7, 584.7, 584.7],
+        "semiAxesSource": "pck",
+        "semiAxesNote": "PCK00011 对该天体只给三个相等的半径，即按球面采用；没有可用的三轴测量，不得据此外推扁率。"
       },
       "orbit": {
         "provider": "mean-kepler",
@@ -2442,7 +2581,10 @@
         "validity": "固定形状摘要；以球面近似计算角直径与观察位置，不代表局部地形高度。",
         "uncertainty": 1.8,
         "source": "satellite-radii",
-        "reference": "Archinal et al. (2018), WGCCRE 2015"
+        "reference": "Archinal et al. (2018), WGCCRE 2015",
+        "semiAxesKm": [788.9, 788.9, 788.9],
+        "semiAxesSource": "pck",
+        "semiAxesNote": "PCK00011 对该天体只给三个相等的半径，即按球面采用；没有可用的三轴测量，不得据此外推扁率。"
       },
       "orbit": {
         "provider": "mean-kepler",
@@ -2487,7 +2629,10 @@
         "validity": "固定形状摘要；以球面近似计算角直径与观察位置，不代表局部地形高度。",
         "uncertainty": 2.6,
         "source": "satellite-radii",
-        "reference": "Archinal et al. (2018), WGCCRE 2015"
+        "reference": "Archinal et al. (2018), WGCCRE 2015",
+        "semiAxesKm": [761.4, 761.4, 761.4],
+        "semiAxesSource": "pck",
+        "semiAxesNote": "PCK00011 对该天体只给三个相等的半径，即按球面采用；没有可用的三轴测量，不得据此外推扁率。"
       },
       "orbit": {
         "provider": "mean-kepler",
@@ -2532,7 +2677,10 @@
         "validity": "固定形状摘要；以球面近似计算角直径与观察位置，不代表局部地形高度。",
         "uncertainty": 25.0,
         "source": "satellite-radii",
-        "reference": "Archinal et al. (2018), WGCCRE 2015"
+        "reference": "Archinal et al. (2018), WGCCRE 2015",
+        "semiAxesKm": [170, 170, 170],
+        "semiAxesSource": "pck",
+        "semiAxesNote": "PCK00011 对该天体只给三个相等的半径，即按球面采用；没有可用的三轴测量，不得据此外推扁率。"
       },
       "orbit": {
         "provider": "mean-kepler",
@@ -2583,7 +2731,10 @@
         "validity": "固定形状摘要；以球面近似计算角直径与观察位置，不代表局部地形高度。",
         "uncertainty": 8.0,
         "source": "satellite-radii",
-        "reference": "Archinal et al. (2018), WGCCRE 2015"
+        "reference": "Archinal et al. (2018), WGCCRE 2015",
+        "semiAxesKm": [218, 208, 201],
+        "semiAxesSource": "pck",
+        "semiAxesNote": "PCK00011 的三轴半径按体固坐标 X、Y、Z 排列，Z 为自转轴；此处按 a、b、c 顺序记录。"
       },
       "orbit": {
         "provider": "mean-kepler",
@@ -2633,7 +2784,10 @@
         "validity": "固定形状摘要；以球面近似计算角直径与观察位置，不代表局部地形高度。",
         "uncertainty": 1.0,
         "source": "satellite-radii",
-        "reference": "Stern et al. (2018), ARA&A 56, 357–392"
+        "reference": "Stern et al. (2018), ARA&A 56, 357–392",
+        "semiAxesKm": [8, 4.5, 4],
+        "semiAxesSource": "pluto-small-shape",
+        "semiAxesNote": "Weaver 等 2016 表 2 给的是三维椭球直径，此处取直径之半为半轴，顺序与体固坐标一致；冥卫四为双瓣形状，椭球拟合本身不完整。"
       },
       "orbit": {
         "provider": "mean-kepler",
@@ -2684,7 +2838,10 @@
         "validity": "固定形状摘要；以球面近似计算角直径与观察位置，不代表局部地形高度。",
         "uncertainty": 1.0,
         "source": "satellite-radii",
-        "reference": "Stern et al. (2018), ARA&A 56, 357–392"
+        "reference": "Stern et al. (2018), ARA&A 56, 357–392",
+        "semiAxesKm": [25, 17.5, 16.5],
+        "semiAxesSource": "pluto-small-shape",
+        "semiAxesNote": "Weaver 等 2016 表 2 给的是三维椭球直径，此处取直径之半为半轴，顺序与体固坐标一致；冥卫四为双瓣形状，椭球拟合本身不完整。"
       },
       "orbit": {
         "provider": "mean-kepler",
@@ -2735,7 +2892,10 @@
         "validity": "固定形状摘要；以球面近似计算角直径与观察位置，不代表局部地形高度。",
         "uncertainty": 1.0,
         "source": "satellite-radii",
-        "reference": "Stern et al. (2018), ARA&A 56, 357–392"
+        "reference": "Stern et al. (2018), ARA&A 56, 357–392",
+        "semiAxesKm": [9.5, 5, 4.5],
+        "semiAxesSource": "pluto-small-shape",
+        "semiAxesNote": "Weaver 等 2016 表 2 给的是三维椭球直径，此处取直径之半为半轴，顺序与体固坐标一致；冥卫四为双瓣形状，椭球拟合本身不完整。"
       },
       "orbit": {
         "provider": "mean-kepler",
@@ -2786,7 +2946,10 @@
         "validity": "固定形状摘要；以球面近似计算角直径与观察位置，不代表局部地形高度。",
         "uncertainty": 1.0,
         "source": "satellite-radii",
-        "reference": "Stern et al. (2018), ARA&A 56, 357–392"
+        "reference": "Stern et al. (2018), ARA&A 56, 357–392",
+        "semiAxesKm": [32.5, 22.5, 12.5],
+        "semiAxesSource": "pluto-small-shape",
+        "semiAxesNote": "Weaver 等 2016 表 2 给的是三维椭球直径，此处取直径之半为半轴，顺序与体固坐标一致；冥卫四为双瓣形状，椭球拟合本身不完整。"
       },
       "orbit": {
         "provider": "mean-kepler",
@@ -2848,7 +3011,9 @@
           30,
           7
         ],
-        "note": "370±20 km 体积等效直径的一半；三轴数值为模型统计摘要，不能用其乘积替代论文给出的等效直径。"
+        "note": "370±20 km 体积等效直径的一半；三轴数值为模型统计摘要，不能用其乘积替代论文给出的等效直径。",
+        "semiAxesSource": "hiiaka-occultation",
+        "semiAxesNote": "Fernández-Valenzuela 等 2025 的掩星三轴椭球拟合，半轴 240±40、180±30、143±7 千米。"
       },
       "orbit": {
         "provider": "mean-kepler",
