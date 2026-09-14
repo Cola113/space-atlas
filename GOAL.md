@@ -7,7 +7,8 @@
 > **2026-09-15 本轮完成情况**：五节 16 项全部完成。逐项来源、检索日期与残留近似见[天体模型](solar-system/BODY_MODELS.md)，
 > 审计结论见[来源审计](solar-system/SOURCE_AUDIT.md)，长期记录已并入 [TODO.md](TODO.md)。
 > 判定标准里的「来源含检索日期」也已补齐：31 个来源条目全部带 `retrieved`，其中 13 个是本轮重新取数后补的。
-> 本文件按自身约定在执行完毕后删除，长期记录以 TODO.md 与 BODY_MODELS.md 为准。
+> 本文件按自身约定在执行完毕后可删除；内容已并入 [TODO.md](TODO.md) 与[天体模型](solar-system/BODY_MODELS.md)，
+> 引用它的文档已改指那两处，删除不会留下断链。
 
 ## 目标
 
