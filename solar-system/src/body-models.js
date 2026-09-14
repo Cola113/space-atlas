@@ -7,6 +7,9 @@ function measuredAxes(id) {
   return [1,c/a,b/a]; // Three's +Y axis is the spin axis.
 }
 export const bodyModels = {
+  // Saturn carries the largest oblateness of the planets; flattening it is what
+  // gives the globe its familiar squashed silhouette rather than a generic ball.
+  saturn: { shape: measuredAxes('saturn') },
   makemake: { spinNote: '自转约 22.8 小时（采用双峰解）' },
   haumea: { shape: measuredAxes('haumea'), rings: {inner: 1.94, outer: 2.08}, spinNote: '自转约 3.92 小时；极轴采用掩星环平面的优选解，经线零点未校准' },
   vesta: { shape: measuredAxes('vesta') },

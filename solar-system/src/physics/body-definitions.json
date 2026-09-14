@@ -419,7 +419,10 @@
         "validity": "固定形状摘要；以球面近似计算角直径与观察位置，不代表局部地形高度。",
         "source": "planet-parameters",
         "reference": "58232 [D] ±6",
-        "uncertainty": 6.0
+        "uncertainty": 6.0,
+        "semiAxesKm": [60268, 60268, 54364],
+        "semiAxesUncertaintyKm": [4, 4, 10],
+        "note": "赤道与极半径取 JPL 行星物理参数表 1 bar 层数值；极轴/赤道轴 = 54364/60268 = 0.9020。体积等效半径与半轴不是同一物理量，不得互相换算。"
       },
       "orbit": {
         "provider": "astronomy-engine",

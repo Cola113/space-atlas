@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import { createElement, MapPin } from 'lucide';
 import { uvDirection, ringShadowAnchor } from './feature-anchors.js';
+import { shapeSurfacePoint } from './body-geometry.js';
 
 const geographic = (latitude, longitude) => [
   THREE.MathUtils.euclideanModulo(longitude + 180, 360) / 360,
@@ -116,9 +117,9 @@ export function landmarkFrame(feature, body, dynamicAnchor = () => null, shadows
   if (feature.dynamic === 'ring-shadow') {
     const sun = body.sunDirection.clone().transformDirection(body.mesh.matrixWorld.clone().invert());
     const point = shadows && ringShadowAnchor(sun);
-    if (point) anchor = { point: point.multiplyScalar(1.017) };
+    if (point) anchor = { point: shapeSurfacePoint(body, point).multiplyScalar(1.017) };
   } else if (feature.dynamic) anchor = dynamicAnchor(body.id, feature.dynamic);
-  else anchor = { point: uvDirection(feature.uv).multiplyScalar(1.017) };
+  else anchor = { point: shapeSurfacePoint(body, uvDirection(feature.uv)).multiplyScalar(1.017) };
   if (!anchor) return null;
   return {
     point: anchor.point.clone().applyMatrix4(body.mesh.matrixWorld),
@@ -129,7 +130,7 @@ export function landmarkFrame(feature, body, dynamicAnchor = () => null, shadows
 
 export function landingFrame(site, body) {
   body.mesh.updateWorldMatrix(true, false);
-  const local = uvDirection(geographic(site.latitude, site.longitude));
+  const local = shapeSurfacePoint(body, uvDirection(geographic(site.latitude, site.longitude)));
   return {
     point: local.clone().applyMatrix4(body.mesh.matrixWorld),
     direction: local.clone().applyMatrix3(new THREE.Matrix3().getNormalMatrix(body.mesh.matrixWorld)).normalize(),

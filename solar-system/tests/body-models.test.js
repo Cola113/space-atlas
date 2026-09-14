@@ -5,6 +5,8 @@ import * as THREE from 'three';
 import { bodies } from '../src/data.js';
 import { physicalData } from '../src/physical-scale.js';
 import { createBodyGeometry, createNarrowRing } from '../src/body-geometry.js';
+import { landmarks, landmarkFrame } from '../src/landmarks.js';
+import { uvDirection } from '../src/feature-anchors.js';
 import { updateDisplayState } from '../src/orbits.js';
 import { meanElements } from '../src/physics/mean-motion.js';
 import { physicalTime } from '../src/physics/time.js';
@@ -136,4 +138,40 @@ test('names, round major moons, equatorial ridges and the Haumea system are dist
   const ring = createNarrowRing(byId.haumea);
   assert.ok(ring.geometry.parameters.innerRadius > byId.haumea.radius);
   assert.ok(ring.geometry.parameters.outerRadius > ring.geometry.parameters.innerRadius);
+});
+
+test('Saturn keeps its measured oblateness and its markers on the flattened globe', () => {
+  const saturn = bodies.find(b => b.id === 'saturn');
+  assert.ok(saturn.shape, 'Saturn: display shape missing');
+  // 54364 / 60268 semi-axes and the NASA 108,728 / 120,536 km diameters agree.
+  assert.ok(Math.abs(saturn.shape[1] - 108728 / 120536) < 1e-4, 'Saturn: polar ratio disagrees with the measured diameters');
+  assert.deepEqual([saturn.shape[0], saturn.shape[2]], [1, 1], 'Saturn: only the polar axis may be shortened');
+
+  const sphere = new THREE.SphereGeometry(1,112,80);
+  const geometry = createBodyGeometry(saturn,sphere);
+  geometry.computeBoundingBox();
+  const size = geometry.boundingBox.getSize(new THREE.Vector3());
+  assert.ok(size.y < size.x, 'Saturn: still renders as a unit sphere');
+  assert.ok(Math.abs(size.y/size.x - saturn.shape[1]) < 1e-3, 'Saturn: flattening does not match the shape ratio');
+
+  const root = new THREE.Object3D(), mesh = new THREE.Mesh(geometry,new THREE.MeshBasicMaterial());
+  root.add(mesh); mesh.scale.setScalar(saturn.radius);
+  const body = {...saturn, root, mesh};
+  // The 1.017 lift is what keeps a marker just above the surface; it must be measured
+  // against the flattened radius, or an equator-anchored pin floats at the poles.
+  const surfaceRadius = uv => Math.hypot(
+    ...uvDirection(uv).toArray().map((value,axis) => value * saturn.shape[axis]),
+  );
+  const anchorRadius = frame => frame.point.clone().sub(root.position).length() / saturn.radius;
+
+  const hexagon = landmarks.saturn.find(feature => feature.id === 'hexagon');
+  assert.deepEqual(hexagon.uv, [.5,1], 'north-pole hexagon must anchor at 90°N');
+  const pole = landmarkFrame(hexagon,body);
+  assert.ok(Math.abs(anchorRadius(pole) - surfaceRadius(hexagon.uv)*1.017) < 1e-6, 'polar marker floats off the flattened cloud tops');
+  assert.ok(Math.abs(anchorRadius(pole) - 1.017) > 1e-3, 'polar marker ignored the flattening');
+
+  const equator = landmarkFrame({uv:[.5,.5]},body);
+  assert.ok(Math.abs(anchorRadius(equator) - 1.017) < 1e-6, 'equatorial marker must keep the equatorial radius');
+
+  mesh.geometry.dispose(); mesh.material.dispose(); sphere.dispose();
 });

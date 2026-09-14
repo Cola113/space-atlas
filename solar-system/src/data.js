@@ -1,5 +1,6 @@
 import { resolvePhysicalFacts } from './catalog-facts.js';
 import { additionalBodies } from "./additional-bodies.js";
+import { bodyModels } from './body-models.js';
 
 export const ORBIT_SPACING = 2;
 
@@ -245,7 +246,7 @@ export const bodies = [
     source: "neptune",
   },
   ...additionalBodies,
-].map((body) => ({ ...body,
+].map((body) => ({ ...body, ...bodyModels[body.id],
   facts: resolvePhysicalFacts(body), orbit: body.orbit * ORBIT_SPACING }));
 
 // Reserve the full moon system, so neighbouring systems cannot intersect at conjunction.

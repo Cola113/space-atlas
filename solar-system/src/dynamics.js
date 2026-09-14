@@ -158,6 +158,7 @@ const common = /* glsl */ `
   uniform float uNightEnabled;
   uniform float uShadowEnabled;
   uniform float uBodyRadius;
+  uniform float uBodyPolarRatio;
   uniform float uSunAngularRadius;
   varying vec3 vActivityDir;
   varying vec2 vActivityUv;
@@ -474,8 +475,13 @@ const saturnShadowFunctions = /* glsl */ `
     return mix(1.0, pow(max(transmission, 0.0), 1.5), uShadowEnabled);
   }
   float planetTransmission(vec3 p, vec3 lightDirection) {
-    float along = dot(p,lightDirection);
-    float closest = length(cross(p,lightDirection));
+    // A flattened globe shadows the rings as an ellipsoid. Measuring against a unit
+    // sphere would leave the shadow too wide, so compare in the space where the
+    // polar semi-axis is 1; the ratio is 1 for every round body.
+    vec3 light = vec3(lightDirection.x, lightDirection.y / uBodyPolarRatio, lightDirection.z);
+    float lightLength = length(light);
+    float along = dot(p,light) / lightLength;
+    float closest = length(cross(p,light)) / lightLength;
     float feather = max(fwidth(closest) * 1.5,
       .001 + max(-along,0.0) * tan(uSunAngularRadius));
     float visibility = along < 0.0 ? smoothstep(1.0-feather,1.0+feather,closest) : 1.0;
@@ -842,6 +848,7 @@ export function createDynamics(objects, { defer = false } = {}) {
         uNightEnabled: { value: body.nightMap ? 1 : 0 },
         uShadowEnabled: { value: 1 },
         uBodyRadius: { value: body.radius },
+        uBodyPolarRatio: { value: body.shape?.[1] || 1 },
         uSunAngularRadius: { value: 0.0005 },
       },
     };
@@ -883,7 +890,9 @@ export function createDynamics(objects, { defer = false } = {}) {
         map_fragment: gasMap(body.id),
         ...(body.id === "saturn"
           ? { lights_fragment_begin: saturnDirectLighting(
-              "ringTransmission(normalize(vActivityDir),normalize(vActivityViewToLocal * directLight.direction))",
+              // Origin the shadow ray at the real surface point. Re-normalising it would
+              // lift the ray off a flattened globe and slide the band in latitude.
+              "ringTransmission(vActivityPosition,normalize(vActivityViewToLocal * directLight.direction))",
             ) }
           : {}),
       });

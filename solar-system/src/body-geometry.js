@@ -1,5 +1,12 @@
 import * as THREE from 'three';
 
+// Surface features must be placed with the same per-axis scaling the mesh uses,
+// or markers sit above the surface wherever `shape` pulls it inward.
+export function shapeSurfacePoint(body, point) {
+  const [sx, sy, sz] = body.shape || [1, 1, 1];
+  return point.set(point.x * sx, point.y * sy, point.z * sz);
+}
+
 export function createBodyGeometry(body, sphere) {
   if (!body.shape && !body.ridge) return sphere;
   const geometry = sphere.clone();
