@@ -1,5 +1,6 @@
 import * as THREE from 'three';
-import { RING_TABLE, SATURN_EQUATORIAL_KM, RING_PARTICLE_COLOR, RING_PHASE_G } from './ring-optical-depth.js';
+import { RING_TABLE, SATURN_EQUATORIAL_KM, RING_COLOUR_RATIO, RING_PHASE_G } from './ring-optical-depth.js';
+import measuredRegions from './ring-regions.json';
 
 // Declared ring systems, one entry per body, in the same shape Saturn's optical-depth
 // table already had: named regions with an inner and outer radius in kilometres, a
@@ -7,10 +8,12 @@ import { RING_TABLE, SATURN_EQUATORIAL_KM, RING_PARTICLE_COLOR, RING_PHASE_G } f
 // amplitude relative to the broad phase curve. Any body may be given one; the mesh,
 // the reflectance and the scattering table all read this list and nothing else.
 //
-// Columns are [name, inner km, outer km, tau, albedo, surge amplitude]. The Saturn
-// row set is re-used from ring-optical-depth.js so the drawn rings, the profile the
-// planet's ring shadow samples and the reflectance cannot disagree about where a ring
-// sits or how opaque it is.
+// Columns are [name, inner km, outer km, tau, albedo, surge amplitude, red/blue colour
+// ratio]. Saturn's row
+// set is generated from the measured kilometre-scale optical depth profile by
+// scripts/build-ring-tau-profile.mjs, one row per region of near-uniform optical depth,
+// so the drawn rings, the profile the planet's ring shadow samples and the reflectance
+// cannot disagree about where a ring sits or how opaque it is.
 
 // Uranus, 13 named rings. Radii are the PDS Ring-Moon Systems Node table's middle
 // boundary and width, published as mid +- width/2 at the 1987-01-01 ring-fit epoch;
@@ -74,8 +77,9 @@ const JUPITER = [
 export const ringSystems = {
   saturn: {
     equatorialKm: SATURN_EQUATORIAL_KM,
-    regions: RING_TABLE.map(([name, inner, outer, tau, albedo, surge]) => [name, inner, outer, tau, albedo, surge]),
-    particleColor: RING_PARTICLE_COLOR,
+    // 401 regions from the measured profile; the named anchors in RING_TABLE supply
+    // each region's albedo and surge amplitude.
+    regions: measuredRegions.regions,
     phaseG: RING_PHASE_G,
     // The ring shadow is solved from the optical-depth profile, so only the system the
     // planet shader knows how to shadow carries this flag.
@@ -92,7 +96,7 @@ export const ringSystems = {
 // darkest and reddest in the solar system. Using Saturn's measured values everywhere
 // is an assumption, not a measurement, and BODY_MODELS.md says so.
 const DEFAULT_PHASE_G = RING_PHASE_G;
-const DEFAULT_COLOR = RING_PARTICLE_COLOR;
+const DEFAULT_COLOUR_RATIO = 1;
 
 export function ringSystemFor(id) {
   const system = ringSystems[id];
@@ -100,7 +104,6 @@ export function ringSystemFor(id) {
   return {
     ...system,
     phaseG: system.phaseG ?? DEFAULT_PHASE_G,
-    particleColor: system.particleColor ?? DEFAULT_COLOR,
   };
 }
 
@@ -120,7 +123,7 @@ export function ringSpan(system) {
 // extent finely enough to keep them, and would lose them.
 export function createRingSystemGeometry(system, segments = 256) {
   const positions = [], profiles = [], regions = [], uvs = [], indices = [];
-  system.regions.forEach(([, innerKm, outerKm, tau, albedo, surge], index) => {
+  system.regions.forEach(([, innerKm, outerKm, tau, albedo, surge, colour], index) => {
     const inner = innerKm / system.equatorialKm, outer = outerKm / system.equatorialKm;
     const base = positions.length / 3;
     for (const radius of [inner, outer])
@@ -130,7 +133,7 @@ export function createRingSystemGeometry(system, segments = 256) {
         // is then tipped into the equatorial plane exactly as the Saturn-only path
         // used to be.
         positions.push(Math.cos(angle) * radius, Math.sin(angle) * radius, 0);
-        profiles.push(tau, albedo, surge);
+        profiles.push(tau, albedo, surge, colour ?? DEFAULT_COLOUR_RATIO);
         regions.push(index);
         uvs.push(radius, 0.5);
       }
@@ -142,7 +145,7 @@ export function createRingSystemGeometry(system, segments = 256) {
   });
   const geometry = new THREE.BufferGeometry();
   geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
-  geometry.setAttribute('aRingProfile', new THREE.Float32BufferAttribute(profiles, 3));
+  geometry.setAttribute('aRingProfile', new THREE.Float32BufferAttribute(profiles, 4));
   geometry.setAttribute('aRingRegion', new THREE.Float32BufferAttribute(regions, 1));
   geometry.setAttribute('uv', new THREE.Float32BufferAttribute(uvs, 2));
   geometry.setIndex(indices);

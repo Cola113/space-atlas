@@ -1,11 +1,13 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { DataUtils } from 'three';
+import { readFileSync } from 'node:fs';
 import {
   RING_TABLE, RING_INNER_KM, RING_OUTER_KM, RING_INNER, RING_OUTER,
   SATURN_EQUATORIAL_KM, opticalDepthAt, ringUvAtRatio, ringRadiusUnit,
   createRingOpticalDepthTexture, albedoAt, surgeAt, RING_PHASE_G,
-  RING_SURGE_HWHM_DEG, RING_SURGE_SCALE_RAD, RING_PARTICLE_COLOR,
+  RING_SURGE_HWHM_DEG, RING_SURGE_SCALE_RAD, RING_COLOUR_RATIO, particleColour,
+  RING_TAU_PROFILE, MEASURED_FROM_KM,
 } from '../src/ring-optical-depth.js';
 
 // The PDS vital-statistics table lists a range per feature; the module stores the
@@ -39,15 +41,54 @@ test('the ring table is ordered, contiguous and inside the published ranges', ()
   }
 });
 
-test('optical depth is read by radius and is zero outside the ring system', () => {
+test('optical depth is read from the measured profile and is zero outside the ring system', () => {
   assert.equal(opticalDepthAt(RING_INNER_KM - 1), 0);
   assert.equal(opticalDepthAt(RING_OUTER_KM + 1), 0);
-  assert.equal(opticalDepthAt(100000), 2.2, 'mid B ring');
-  assert.equal(opticalDepthAt(119000), 0.08, 'Cassini Division');
-  assert.equal(opticalDepthAt(133500), 0.02, 'Encke gap');
-  // The gaps must read far below their neighbours or the shadow loses its banding.
-  assert.ok(opticalDepthAt(133500) < opticalDepthAt(130000) / 10);
-  assert.ok(opticalDepthAt(119000) < opticalDepthAt(125000) / 5);
+  // Every radius inside the measured span must come back as the profile sample for that
+  // kilometre, not as a region average; that is the whole point of the profile.
+  const sample = km => RING_TAU_PROFILE.tau[Math.round(km - MEASURED_FROM_KM)] / RING_TAU_PROFILE.scale;
+  for (const km of [80000, 100000, 110000, 119000, 133500, 140000]) {
+    assert.equal(opticalDepthAt(km), sample(km), `${km} km did not read the profile`);
+    assert.equal(opticalDepthAt(km + 0.4), sample(km), `${km + 0.4} km did not round to its kilometre`);
+  }
+  // The D ring keeps its published anchor: no full-coverage occultation resolves it.
+  assert.equal(opticalDepthAt(70000), RING_TABLE[0][3], 'the D ring must keep its published value');
+  assert.equal(RING_TABLE[0][0], 'D ring');
+  // The named gaps must still read far below their neighbours or the shadow loses its
+  // banding, and the profile has to agree with the published structure.
+  assert.ok(opticalDepthAt(133500) < opticalDepthAt(130000) / 10, 'the Encke gap is not a gap in the profile');
+  assert.ok(opticalDepthAt(136500) < opticalDepthAt(135000) / 5, 'the Keeler gap is not a gap in the profile');
+  assert.ok(opticalDepthAt(119000) < opticalDepthAt(125000) / 3, 'the Cassini Division is not a gap in the profile');
+  // Named ringlets have to stand out from the ring they sit in, or the kilometre-scale
+  // profile is not resolving them.
+  for (const [name, inner, outer, surrounding] of [
+    ['Titan Ringlet', 77869, 77894, 77500],
+    ['Maxwell Ringlet', 87499, 87519, 87348],
+    ['Huygens Ringlet', 117790, 117820, 117541],
+    ['Laplace Ringlet', 120050, 120070, 119900],
+  ]) {
+    const peak = Math.max(...Array.from({ length: outer - inner + 1 }, (_, i) => opticalDepthAt(inner + i)));
+    assert.ok(peak > opticalDepthAt(surrounding) * 3,
+      `${name}: peak ${peak.toFixed(3)} against ${opticalDepthAt(surrounding).toFixed(3)} in the surrounding ring`);
+  }
+});
+
+test('the shipped profile is the occultation it claims to be', () => {
+  const source = RING_TAU_PROFILE.source;
+  assert.ok(source.url.includes('COUVIS_8001'), 'the profile must name its data set');
+  assert.equal(source.retrieved, '2026-09-15');
+  assert.equal(source.product, RING_TAU_PROFILE.source.product);
+  assert.ok(source.url.endsWith(source.product), 'the product name and the URL must agree');
+  assert.equal(source.radialResolutionKm, 1, 'the source is a 1 km profile');
+  assert.ok(source.ringEventElevationDeg > 60, 'the profile must be the steepest available, see the build script');
+  assert.equal(RING_TAU_PROFILE.stepKm, 1);
+  assert.equal(RING_TAU_PROFILE.samples, RING_OUTER_KM - RING_INNER_KM + 1 - (MEASURED_FROM_KM - RING_INNER_KM));
+  // Undefined samples are interpolated, so the count is recorded rather than hidden.
+  assert.ok(RING_TAU_PROFILE.interpolatedSamples > 0);
+  assert.ok(RING_TAU_PROFILE.interpolatedSamples < RING_TAU_PROFILE.samples * .05,
+    `${RING_TAU_PROFILE.interpolatedSamples} of ${RING_TAU_PROFILE.samples} samples are interpolated`);
+  const tau = RING_TAU_PROFILE.tau;
+  assert.ok(tau.every(value => value >= 0 && value < 20000), 'the profile carries an impossible optical depth');
 });
 
 test('ring radii and the shadow lookup share one normalised coordinate', () => {
@@ -109,35 +150,67 @@ test('the opposition surge is narrow and per-region, and the particle colour is 
   assert.ok(surgeAt(100000) < surgeAt(80000) && surgeAt(80000) < surgeAt(135000),
     'the measured ordering of the surge amplitudes must survive');
 
-  // Particle colour: red over blue from the measured B-ring geometric albedos
-  // 0.61 and 0.41. Green is an interpolation, so only the endpoints are checked.
-  assert.ok(Math.abs(RING_PARTICLE_COLOR[0] / RING_PARTICLE_COLOR[2] - 0.61 / 0.41) < 1e-12);
-  assert.ok(RING_PARTICLE_COLOR[0] === 1 && RING_PARTICLE_COLOR[2] < 1, 'normalised to the red channel');
-  assert.ok(RING_PARTICLE_COLOR[2] < RING_PARTICLE_COLOR[1] && RING_PARTICLE_COLOR[1] < RING_PARTICLE_COLOR[0],
-    'the particles are redder than they are blue');
+  // Particle colour is a measured red-to-blue ratio per ring region, not a flat tint.
+  // Lumme, Irvine & Esposito 1983 give the B ring particles' geometric albedo at red and
+  // blue wavelengths as 0.61 and 0.41, a ratio of 1.49.
+  assert.ok(Math.abs(RING_COLOUR_RATIO - 0.61 / 0.41) < 1e-12);
+  const colour = particleColour(RING_COLOUR_RATIO);
+  assert.equal(colour[0], 1, 'normalised to the red channel');
+  assert.ok(colour[2] < colour[1] && colour[1] < colour[0], 'redder than blue');
+  assert.ok(Math.abs(colour[0] / colour[2] - RING_COLOUR_RATIO) < 1e-12, 'the ratio must survive the construction');
+  assert.deepEqual(particleColour(1), [1, 1, 1], 'a neutral ratio must give a neutral colour');
 });
 
-test('the generated profile texture matches the table it is built from', () => {
+test('the colour ratio follows the measured ordering of the rings', () => {
+  // Measured: the B ring anchors the value, the A ring is at least as red, and the C
+  // ring and Cassini Division are the least red (Estrada & Cuzzi 1996, restated in the
+  // 2002 erratum). The table has to keep that ordering or the render is not using it.
+  const ratio = (km) => {
+    const row = RING_TABLE.find(([, inner, outer]) => km >= inner && km < outer);
+    return row?.[6];
+  };
+  assert.equal(ratio(100000), 1.49, 'B ring');
+  assert.equal(ratio(76000), 1.0, 'C ring');
+  assert.equal(ratio(128000), 1.49, 'A ring');
+  assert.equal(ratio(119000), 1.0, 'Cassini Division');
+  assert.ok(ratio(100000) > ratio(76000), 'the B ring must be redder than the C ring');
+  assert.ok(ratio(128000) >= ratio(100000), 'the A ring must not be less red than the B ring');
+  for (const [, inner, outer, , , , value] of RING_TABLE) {
+    assert.ok(inner < outer && value >= 1 && value <= 2, 'colour ratio out of range');
+  }
+  // The generated kilometre-scale regions inherit it from the anchor they fall inside.
+  const regions = JSON.parse(readFileSync(new URL('../src/ring-regions.json', import.meta.url), 'utf8')).regions;
+  const regionRatio = (km) => regions.find(([, inner, outer]) => km >= inner && km < outer)?.[6];
+  assert.equal(regionRatio(100000), 1.49, 'a measured B-ring region must keep the ratio');
+  assert.equal(regionRatio(80000), 1.0, 'a C-ring region must keep the ratio');
+  assert.equal(regionRatio(128000), 1.49, 'an A-ring region must keep the ratio');
+  assert.equal(regions[0][6], 1.0, 'the D ring takes the C ring value');
+});
+
+test('the generated profile texture matches the profile it is built from', () => {
   const texture = createRingOpticalDepthTexture();
-  assert.equal(texture.image.width, 8192);
+  assert.equal(texture.image.width, 16384);
   assert.equal(texture.image.height, 1);
   const samples = texture.image.data;
   const span = RING_OUTER_KM - RING_INNER_KM;
-  for (const [name, inner, outer, tau, albedo, surge] of RING_TABLE) {
-    const middle = (inner + outer) / 2;
-    const index = Math.floor(((middle - RING_INNER_KM) / span) * (samples.length / 4));
-    // Optical depth sits in R, albedo in G and the surge amplitude in B; half float
-    // carries about three decimal digits, so the comparison is loose but a wrong
-    // region or a shifted sample would still fail by a wide margin.
-    const decodedTau = DataUtils.fromHalfFloat(samples[index * 4]);
-    const decodedAlbedo = DataUtils.fromHalfFloat(samples[index * 4 + 1]);
-    const decodedSurge = DataUtils.fromHalfFloat(samples[index * 4 + 2]);
-    assert.ok(Math.abs(decodedTau - tau) <= tau * 1e-3,
-      `${name}: profile sample ${decodedTau} drifted from ${tau}`);
-    assert.ok(Math.abs(decodedAlbedo - albedo) <= albedo * 1e-3,
-      `${name}: albedo sample ${decodedAlbedo} drifted from ${albedo}`);
-    assert.ok(Math.abs(decodedSurge - surge) <= surge * 1e-3,
-      `${name}: surge sample ${decodedSurge} drifted from ${surge}`);
+  // A texel samples the profile at its own centre, so the comparison has to use that
+  // radius rather than the row midpoint: at 4.5 km per texel the difference matters
+  // inside a ringlet that is only twenty kilometres wide.
+  const step = span / (samples.length / 4);
+  const texel = (km) => {
+    const index = Math.min(samples.length / 4 - 1, Math.max(0, Math.floor((km - RING_INNER_KM) / step)));
+    return { value: DataUtils.fromHalfFloat(samples[index * 4]), radiusKm: RING_INNER_KM + (index + 0.5) * step };
+  };
+  for (const [name, inner, outer, tau] of RING_TABLE) {
+    const { value, radiusKm } = texel((inner + outer) / 2);
+    const expected = MEASURED_FROM_KM <= radiusKm ? opticalDepthAt(radiusKm) : tau;
+    assert.ok(Math.abs(value - expected) <= Math.max(expected * .05, .002),
+      `${name}: texel ${value} at ${radiusKm.toFixed(1)} km drifted from ${expected}`);
   }
+  const ringlet = Math.max(...Array.from({ length: 25 }, (_, i) => texel(77870 + i).value));
+  assert.ok(ringlet > 1, `the Titan ringlet came through the texture at only ${ringlet}`);
+  // The C ring and the B ring have to stay distinguishable: a profile that flattened
+  // everywhere would pass every check above.
+  assert.ok(texel(105000).value > texel(85000).value * 10, 'the B ring is not denser than the C ring');
   texture.dispose();
 });

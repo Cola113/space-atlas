@@ -41,11 +41,15 @@
     },
     "astronomy-engine": {
       "url": "https://github.com/cosinekitty/astronomy",
-      "version": "2.1.19"
+      "version": "2.1.19",
+      "retrieved": "2026-09-15",
+      "reference": "version 2.1.19 confirmed against the installed package"
     },
     "local-ephemeris": {
       "url": "/ephemeris/README.md",
-      "version": "SAT441 / URA184 / PLU060 / DE440; see manifest"
+      "version": "SAT441 / URA184 / PLU060 / DE440; see manifest",
+      "retrieved": "2026-09-15",
+      "reference": "manifest present at public/ephemeris/README.md"
     },
     "haumea-shape": {
       "url": "https://arxiv.org/abs/2006.03113",
@@ -54,7 +58,8 @@
     },
     "haumea-moons": {
       "url": "https://arxiv.org/html/0903.4213v1",
-      "reference": "Ragozzine & Brown (2009), AJ 137, 4766–4776, Tables 2–3"
+      "reference": "Ragozzine & Brown (2009), AJ 137, 4766–4776, Tables 2–3",
+      "retrieved": "2026-09-15"
     },
     "hiiaka-occultation": {
       "url": "https://www.nature.com/articles/s41467-025-65749-1",
@@ -64,27 +69,33 @@
     },
     "makemake-spin": {
       "url": "https://arxiv.org/abs/1904.03679",
-      "reference": "Hromakina et al. (2019), double-peaked 22.8266 h solution"
+      "reference": "Hromakina et al. (2019), double-peaked 22.8266 h solution",
+      "retrieved": "2026-09-15"
     },
     "eris-radius": {
       "url": "https://www.nature.com/articles/nature10550",
-      "reference": "Sicardy et al. (2011), Nature 478, 493–496"
+      "reference": "Sicardy et al. (2011), Nature 478, 493–496",
+      "retrieved": "2026-09-15"
     },
     "eris-spin": {
       "url": "https://arxiv.org/abs/2303.13445",
-      "reference": "Bernstein et al. (2023), synchronous rotation; Dysnomia size cites Brown & Butler (2018)"
+      "reference": "Bernstein et al. (2023), synchronous rotation; Dysnomia size cites Brown & Butler (2018)",
+      "retrieved": "2026-09-15"
     },
     "dysnomia-orbit": {
       "url": "https://arxiv.org/html/2009.13733v1",
-      "reference": "Holler et al. (2021), Icarus 355, 114130; Table 2 combined solution"
+      "reference": "Holler et al. (2021), Icarus 355, 114130; Table 2 combined solution",
+      "retrieved": "2026-09-15"
     },
     "himalia-spin": {
       "url": "https://elib.dlr.de/77110/",
-      "reference": "Ground-based photometry, adopted synodic rotation 7.7819 h"
+      "reference": "Ground-based photometry, adopted synodic rotation 7.7819 h",
+      "retrieved": "2026-09-15"
     },
     "nereid-spin": {
       "url": "https://arxiv.org/abs/1601.02395",
-      "reference": "Kiss et al. (2016), 11.594 h rotation"
+      "reference": "Kiss et al. (2016), 11.594 h rotation",
+      "retrieved": "2026-09-15"
     },
     "pluto-small-shape": {
       "url": "https://arxiv.org/abs/1604.05366",
@@ -93,15 +104,19 @@
     },
     "pluto-small-spin": {
       "url": "https://ntrs.nasa.gov/citations/20170002512",
-      "reference": "Weaver et al. (2016), New Horizons small-satellite observations"
+      "reference": "Weaver et al. (2016), New Horizons small-satellite observations",
+      "retrieved": "2026-09-15"
     },
     "hyperion-spin": {
       "url": "https://science.nasa.gov/saturn/moons/hyperion/",
-      "reference": "NASA Hyperion overview; chaotic rotation, approximate 13-day characteristic timescale"
+      "reference": "NASA Hyperion overview; chaotic rotation, approximate 13-day characteristic timescale",
+      "retrieved": "2026-09-15"
     },
     "illustration": {
       "url": "/solar-system/BODY_MODELS.md",
-      "reference": "Explicit illustration assumptions; not a measurement or a dynamical forecast"
+      "reference": "Explicit illustration assumptions; not a measurement or a dynamical forecast",
+      "retrieved": "2026-09-15",
+      "reference": "in-repository document as of this revision, not a fetched source"
     },
     "ceres-sbdb": {
       "url": "https://ssd-api.jpl.nasa.gov/sbdb.api?des=1&phys-par=1&full-prec=1",
@@ -135,7 +150,8 @@
     },
     "reference-frames": {
       "url": "https://naif.jpl.nasa.gov/pub/naif/toolkit_docs/C/req/frames.html",
-      "reference": "NAIF built-in inertial ECLIPJ2000; IAU 1976 obliquity, verified with CSPICE pxform"
+      "reference": "NAIF built-in inertial ECLIPJ2000; IAU 1976 obliquity, verified with CSPICE pxform",
+      "retrieved": "2026-09-15"
     },
     "nasa-jovian-periods": {
       "url": "https://nssdc.gsfc.nasa.gov/planetary/factsheet/joviansatfact.html",

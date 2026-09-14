@@ -163,7 +163,12 @@ const common = /* glsl */ `
   uniform vec3 uRingCamera;
   uniform float uRingPhaseG;
   uniform float uRingSurgeScale;
-  uniform vec3 uRingParticleColor;
+  // The particle colour is built per fragment from the region's measured red/blue
+  // ratio, so a ring that is measured to be less red renders less red.
+  vec3 ringParticleColour(float ratio) {
+    float blue = 1.0 / max(ratio, 0.1);
+    return vec3(1.0, (1.0 + blue) * 0.5, blue);
+  }
   uniform float uCloudAvailable;
   uniform float uCloudVisible;
   uniform float uNightEnabled;
@@ -262,7 +267,7 @@ function patchMaterial(material, key, uniforms, snippets) {
         "#include <common>",
         "#include <common>\nvarying vec3 vActivityDir; varying vec2 vActivityUv; varying vec3 vActivityPosition;" +
           (saturnShadow ? "\nvarying mat3 vActivityViewToLocal;" : "") +
-          (ringSurface ? "\nattribute vec3 aRingProfile; attribute float aRingRegion;\nvarying vec3 vRingProfile; varying float vRingRegion;" : ""),
+          (ringSurface ? "\nattribute vec4 aRingProfile; attribute float aRingRegion;\nvarying vec4 vRingProfile; varying float vRingRegion;" : ""),
       )
       .replace(
         "#include <begin_vertex>",
@@ -557,7 +562,7 @@ const saturnShadowFunctions = /* glsl */ `
 // the ring surface material, because a fragment varying with no matching vertex
 // declaration fails program validation on every other material that shares `common`.
 const ringSurfaceVaryings = /* glsl */ `
-  varying vec3 vRingProfile;
+  varying vec4 vRingProfile;
   varying float vRingRegion;
 `;
 
@@ -588,6 +593,7 @@ function attachRingSurface(record) {
       float ringTau = vRingProfile.r;
       float ringAlbedoW = vRingProfile.g;
       float ringSurge = vRingProfile.b;
+      vec3 ringColour = ringParticleColour(vRingProfile.a);
       float ringCosAlpha = dot(ringSunLocal, ringViewLocal);
       diffuseColor.a = 1.0 - exp(-ringTau / ringMu);
     `,
@@ -598,7 +604,7 @@ function attachRingSurface(record) {
       float ringRadiance = ringSlabReflectance(
         ringTau, ringAlbedoW, ringMu, ringMu0, ringCosAlpha, vRingRegion, uRingPhaseG);
       ringRadiance *= ringOppositionSurge(ringCosAlpha, ringSurge);
-      reflectedLight.directDiffuse = uRingParticleColor * ringRadiance;
+      reflectedLight.directDiffuse = ringColour * ringRadiance;
       reflectedLight.directSpecular = vec3(0.0);
       reflectedLight.indirectDiffuse = vec3(0.0);
       reflectedLight.indirectSpecular = vec3(0.0);
@@ -957,7 +963,6 @@ export function createDynamics(objects, { defer = false } = {}) {
         // to it, which BODY_MODELS.md states as an assumption.
         uRingPhaseG: { value: ringSystemFor(body.id)?.phaseG ?? 0 },
         uRingSurgeScale: { value: RING_SURGE_SCALE_RAD },
-        uRingParticleColor: { value: new THREE.Color(...(ringSystemFor(body.id)?.particleColor ?? [1, 1, 1])) },
         uCloudVisible: { value: 1 },
         uNightEnabled: { value: body.nightMap ? 1 : 0 },
         uShadowEnabled: { value: 1 },

@@ -3,11 +3,11 @@
  "wide-rings-desktop": {
   "width": 1440,
   "height": 900,
-  "litPixels": 880,
+  "litPixels": 884,
   "meanRgb": [
-   60.1,
-   54.5,
-   44.6
+   62.3,
+   56.7,
+   46.8
   ],
   "peakMean": 214,
   "errors": []
@@ -17,11 +17,11 @@
   "height": 844,
   "litPixels": 160,
   "meanRgb": [
-   79.2,
-   70.7,
-   61
+   79.6,
+   70.8,
+   61.1
   ],
-  "peakMean": 128.3,
+  "peakMean": 130.7,
   "errors": []
  },
  "short-landscape": {
@@ -29,9 +29,9 @@
   "height": 450,
   "litPixels": 625,
   "meanRgb": [
-   21.4,
-   20.3,
-   17.7
+   22,
+   20.8,
+   18.2
   ],
   "peakMean": 103.3,
   "errors": []
@@ -39,10 +39,10 @@
  "north-pole": {
   "width": 1000,
   "height": 1000,
-  "litPixels": 220,
+  "litPixels": 219,
   "meanRgb": [
    8.8,
-   9.9,
+   10,
    10.6
   ],
   "peakMean": 11.3,
