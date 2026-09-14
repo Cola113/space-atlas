@@ -1,8 +1,21 @@
 # 发布记录
 
+## 最新追加：土星环影标注
+
+2026-09-14 按用户要求加深土星云层上的环影，并增加“土星环投影（阴影）”常驻图例；关闭投影、返回总览或切换其它天体时隐藏图例。观测设置同步显示“土星环投影”。亮度属于展示增强，限制记录在[天体模型](solar-system/BODY_MODELS.md)。
+
+- 正式站与备用域名均已切换至 `dpl_AjzUA2T4XBLhzCaqkeMY3cijnpgR`，部署来源 `67aca0b820b6c1d532f32696be9db0b8dd2a0d3a`，应用实现 `bc8c4077ebca5d4253000ff00611bb3c8f519f9d`。
+- TypeScript/Vite 构建通过。`scripts/verify-saturn-shadows.mjs` 在本地、候选部署及未登录正式站均通过：南北极两个视角，以及桌面、手机、800×450、640×360 四屏的图例、开关、近观与天体切换，无页面或着色器错误。
+- 固定北极视角的 36757 个环影像素，平均显示亮度由 50.14 降至 35.97，降低约 28.3%；关闭环影后的同视角截图与修改前逐像素一致。这是该截图的显示亮度比较，不是通用测光结论。证据 `test-results/saturn-shadows/contrast.json`。
+- 候选部署 655 个文件与本地构建哈希一致，18 条资料链接、4 条入口通过；正式站和备用域名的版本标记、三个场景入口及所引用 JS/CSS 均匹配。报告在 `test-results/release/saturn-candidate-http/`、`saturn-candidate-saturn/`、`saturn-production/` 与 `saturn-production-http.json`。
+- 候选访问凭据的边缘生效有延迟；等待生效后完整重跑通过，临时凭据已撤销。未更改部署保护配置。
+- 工作仍在 `codex/main-realism-performance-20260914`；`main` 仍为 `8446be90000e776779317c99c2de4eb0c0f3e946`，未读取废弃分支。上一生产部署 `dpl_4PuFneawMUpLNJwNGCqecDoi49Hq` 已确认 READY 并保留，需要撤销本次环影调整时可回退至该部署。
+
+以下为本次环影调整前的基础发布记录，保留原始验收证据与更早回退点。
+
 2026-09-14 发布完成。共享物理与九落点天空、跟随自转、太阳系分批加载、星云四档与自动挡、全站按钮布局均已实施，并完成数值、构建、浏览器及线上验收。逐项范围与精度边界见 [验收矩阵](RELEASE_ACCEPTANCE.md)。
 
-## 线上版本
+## 基础版本
 
 - 正式站：[space.colafun.xyz](https://space.colafun.xyz/)。备用：[space-atlas-pi.vercel.app](https://space-atlas-pi.vercel.app/)。
 - 生产部署：`dpl_4PuFneawMUpLNJwNGCqecDoi49Hq`，READY；[Vercel部署记录](https://vercel.com/z347365990gmailcoms-projects/space-atlas/4PuFneawMUpLNJwNGCqecDoi49Hq)。
@@ -10,7 +23,7 @@
 - 工作分支：`codex/main-realism-performance-20260914`，从 `main` 的 `8446be90000e776779317c99c2de4eb0c0f3e946` 创建。没有合并或推送改动到 `main`，没有读取或参考废弃分支。
 - [公开版本标记](https://space.colafun.xyz/release.json)记录应用实现提交；它不冒充后续发布记录的文档提交。
 
-## 实际核验
+## 基础版本实际核验
 
 全部报告、截图和下载保留在工作区 `test-results/`，发布专项在 `test-results/release/`；不包含凭据。以下均为实际运行结果。
 
@@ -30,7 +43,7 @@
 
 手机、平板、安全区均为桌面Edge视口模拟；原生后台验证为Windows Edge，计算可访问名称不代表运行了第三方屏幕阅读器。1 km要求针对JPL数据编码，不能作为全部天体、姿态、落点或食相精度保证。地形艺术补绘、固定阴影和平均模型的限制继续公开保留。
 
-## 回退
+## 基础版本的更早回退点
 
 上一生产部署 `dpl_2EHajH5Yann9H8gxQtrjn4JTCq2R` 已保留，来源为 `main` 的 `8446be90000e776779317c99c2de4eb0c0f3e946`；新版切换后再由API确认READY。
 
