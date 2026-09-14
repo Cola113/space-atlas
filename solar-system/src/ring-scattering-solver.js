@@ -302,14 +302,21 @@ export function scatteringKernel(tau, albedo, angles = tableAngles()) {
   return symmetric;
 }
 
-export function ringScatteringFactors() {
+// Spectral factors for one ring system's region list. `regions` is the same
+// [name, inner km, outer km, tau, albedo, ...] shape the ring systems declare, so the
+// solver does not care which body it is solving.
+export function scatteringFactorsFor(regions) {
   const angles = tableAngles();
   const rows = [];
   let worst = 0;
-  for (const [, , , tau, albedo] of RING_TABLE) {
+  for (const [name, , , tau, albedo] of regions) {
     const factors = rankTwoFactors(scatteringKernel(tau, albedo, angles), angles.length);
     worst = Math.max(worst, factors.residual);
-    rows.push({ tau, albedo, ...factors });
+    rows.push({ name, tau, albedo, ...factors });
   }
   return { angles, rows, worstResidual: worst };
+}
+
+export function ringScatteringFactors() {
+  return scatteringFactorsFor(RING_TABLE);
 }

@@ -4,9 +4,11 @@ import { readFile } from 'node:fs/promises';
 import { DataUtils } from 'three';
 import { RING_TABLE, RING_REGION_SEAMS, ringRadiusUnit, RING_INNER_KM, RING_OUTER_KM } from '../src/ring-optical-depth.js';
 import {
-  slabReflectance, slabTransmittance, tableAngles, scatteringKernel, rankTwoFactors, ringScatteringFactors,
-  createRingScatteringTexture, shippedScatteringTable, SCATTERING_REGIONS, ANGLES,
+  slabReflectance, slabTransmittance, tableAngles, scatteringKernel, rankTwoFactors, ringScatteringFactors, scatteringFactorsFor,
+  createRingScatteringTexture, shippedScatteringTable, scatteringRegions,
+  SCATTERING_ROW_BASE, ANGLES,
 } from '../src/ring-multiple-scattering.js';
+import { ringSystems, ringSpan } from '../src/ring-systems.js';
 
 // Gauss-Legendre nodes and weights on [0, 1], for the angular integrals the energy
 // budget needs. Nothing here shares code with the discrete-ordinates solver.
@@ -108,26 +110,31 @@ test('a thick conservative slab reflects all of the light and then no more', () 
   }
 });
 
-test('the shipped table is the solve of the current ring table', async () => {
+test('the shipped table is the solve of the current ring region lists', () => {
   const table = shippedScatteringTable();
-  assert.equal(table.regions.length, RING_TABLE.length);
+  assert.deepEqual(Object.keys(table.systems), Object.keys(ringSystems));
   assert.equal(table.grid.angles, ANGLES);
-  // Re-solving at the shipped grid is the only check that ties the numbers back to
-  // RING_TABLE; a stale file or an edited optical depth would fail here.
-  const fresh = ringScatteringFactors();
-  for (const [index, region] of table.regions.entries()) {
-    const [name, , , tau, albedo] = RING_TABLE[index];
-    assert.equal(region.name, name, `${name}: region order drifted`);
-    assert.equal(region.tau, tau, `${name}: optical depth drifted`);
-    assert.equal(region.albedo, albedo, `${name}: albedo drifted`);
-    const solved = fresh.rows[index];
-    for (let angle = 0; angle < ANGLES; angle++)
-      for (const key of ['x', 'y']) {
-        const stored = region[key][angle], recomputed = solved[key][angle];
-        const scale = Math.max(Math.abs(recomputed), 1e-6);
-        assert.ok(Math.abs(stored - recomputed) / scale < 1e-4,
-          `${name} ${key}[${angle}]: shipped ${stored} against solved ${recomputed}`);
-      }
+  // Re-solving at the shipped grid is the only check that ties the numbers back to the
+  // declared regions; a stale file or an edited optical depth would fail here.
+  const fresh = {};
+  for (const [id, system] of Object.entries(ringSystems)) fresh[id] = scatteringFactorsFor(system.regions);
+  for (const [id, shipped] of Object.entries(table.systems)) {
+    const regions = ringSystems[id].regions;
+    assert.equal(shipped.regions.length, regions.length, `${id}: region count drifted`);
+    for (const [index, region] of shipped.regions.entries()) {
+      const [name, , , tau, albedo] = regions[index];
+      assert.equal(region.name, name, `${id}/${name}: region order drifted`);
+      assert.equal(region.tau, tau, `${id}/${name}: optical depth drifted`);
+      assert.equal(region.albedo, albedo, `${id}/${name}: albedo drifted`);
+      const solved = fresh[id].rows[index];
+      for (let angle = 0; angle < ANGLES; angle++)
+        for (const key of ['x', 'y']) {
+          const stored = region[key][angle], recomputed = solved[key][angle];
+          const scale = Math.max(Math.abs(recomputed), 1e-6);
+          assert.ok(Math.abs(stored - recomputed) / scale < 1e-4,
+            `${id} ${name} ${key}[${angle}]: shipped ${stored} against solved ${recomputed}`);
+        }
+    }
   }
 });
 
@@ -160,32 +167,58 @@ test('multiple scattering lifts the optically thick rings well above single scat
   assert.ok(thin / thinSingle < 1.1, `C ring gained ${(thin / thinSingle - 1).toFixed(3)} from multiple scattering`);
 });
 
-test('the scattering texture carries the table, one row pair per region', () => {
+test('the scattering texture carries every system, one row pair per region', () => {
   const { texture, table } = createRingScatteringTexture();
+  const rowCount = Object.values(table.systems).reduce((total, system) => total + 2 * system.regions.length, 0);
   assert.equal(texture.image.width, ANGLES);
-  assert.equal(texture.image.height, 2 * SCATTERING_REGIONS);
+  assert.equal(texture.image.height, rowCount);
   const data = texture.image.data;
-  for (let region = 0; region < SCATTERING_REGIONS; region++)
-    for (let angle = 0; angle < ANGLES; angle += 3) {
-      const base = ((region * 2) * ANGLES + angle) * 2;
-      assert.ok(Math.abs(DataUtils.fromHalfFloat(data[base]) - table.regions[region].x[angle]) <= Math.abs(table.regions[region].x[angle]) * 1e-3,
-        `region ${region} angle ${angle}: X drifted through the texture`);
-      assert.ok(Math.abs(DataUtils.fromHalfFloat(data[base + 1]) - table.regions[region].y[angle]) <= Math.max(Math.abs(table.regions[region].y[angle]), 1e-3) * 2e-2,
-        `region ${region} angle ${angle}: Y drifted through the texture`);
-    }
+  for (const [id, system] of Object.entries(table.systems)) {
+    const base = SCATTERING_ROW_BASE[id];
+    for (let region = 0; region < system.regions.length; region++)
+      for (let angle = 0; angle < ANGLES; angle += 3) {
+        // The texture is a stack, so a base row that drifted would silently give one
+        // system another system's reflectance.
+        const offset = ((base + region * 2) * ANGLES + angle) * 2;
+        const expected = system.regions[region];
+        // The half-float floor matters for the Jovian rings: their bracket is around
+        // 1e-10 and underflows to zero, which is 1% of a ring already at optical depth
+        // 1e-8. The absolute bound states that rather than hiding it behind a loose
+        // relative one.
+        const close = (stored, expected) => Math.abs(stored - expected) <= Math.max(Math.abs(expected) * 1e-3, 1e-5);
+        assert.ok(close(DataUtils.fromHalfFloat(data[offset]), expected.x[angle]),
+          `${id} region ${region} angle ${angle}: X drifted through the texture`);
+        assert.ok(close(DataUtils.fromHalfFloat(data[offset + 1]), expected.y[angle]),
+          `${id} region ${region} angle ${angle}: Y drifted through the texture`);
+      }
+    assert.equal(scatteringRegions(id), system.regions.length);
+  }
   texture.dispose();
 });
 
-test('every region seam falls inside the ring system and is ordered', () => {
-  assert.equal(RING_REGION_SEAMS.length, RING_TABLE.length - 1);
-  for (const [index, seam] of RING_REGION_SEAMS.entries()) {
-    // The seam is the shared boundary of two rows: if the table ever gains a gap or
-    // an overlap, the shader's region index would silently pick the wrong row.
-    assert.equal(RING_TABLE[index][2], RING_TABLE[index + 1][1], `seam ${index} is not shared`);
-    assert.ok(seam > 0 && seam < 1, `seam ${index} left the ring system`);
-    if (index > 0) assert.ok(seam > RING_REGION_SEAMS[index - 1], `seam ${index} is out of order`);
-    assert.ok(Math.abs(seam - ringRadiusUnit(RING_TABLE[index][2])) < 1e-12);
+test('every declared ring system is ordered, self-consistent and inside its planet', () => {
+  for (const [id, system] of Object.entries(ringSystems)) {
+    assert.ok(system.equatorialKm > 0, `${id}: no equatorial radius`);
+    let previousOuter = null;
+    for (const [name, inner, outer, tau, albedo, surge] of system.regions) {
+      assert.ok(inner < outer, `${id}/${name}: inverted bounds`);
+      assert.ok(tau > 0 && Number.isFinite(tau), `${id}/${name}: bad optical depth`);
+      assert.ok(albedo > 0 && albedo <= 1, `${id}/${name}: bad albedo`);
+      assert.ok(surge >= 0 && surge <= 1, `${id}/${name}: bad surge amplitude`);
+      // Rings that overlap or leave a gap would be drawn on top of each other or as a
+      // hole that no source describes.
+      if (previousOuter !== null) assert.ok(inner >= previousOuter, `${id}/${name}: overlaps the previous region`);
+      previousOuter = outer;
+    }
+    const span = ringSpan(system);
+    assert.ok(span.inner > 1, `${id}: rings must start outside the planet`);
+    // Uranus's narrow rings are genuinely a few kilometres wide; the mesh has to be
+    // able to draw them, which is why regions are separate annuli.
+    const narrowest = Math.min(...system.regions.map(([, inner, outer]) => outer - inner));
+    assert.ok(narrowest < system.regions[0][1] * 0.001 || system.regions.length > 3,
+      `${id}: no narrow rings found, the region list looks wrong`);
   }
-  assert.equal(ringRadiusUnit(RING_INNER_KM), 0);
-  assert.equal(ringRadiusUnit(RING_OUTER_KM), 1);
+  assert.ok(ringSystems.uranus.regions.length === 13, 'the Uranian ring system has 13 named rings');
+  assert.ok(ringSystems.neptune.regions.length >= 5, 'the Neptunian ring system has at least five rings');
+  assert.ok(ringSystems.jupiter.regions.length >= 3, 'the Jovian ring system has at least three components');
 });

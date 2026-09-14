@@ -48,6 +48,7 @@ import { physicalData } from "./physical-scale.js";
 import { landableBodyIds } from './surface/sites.js';
 import { catalogSections, dockCatalogs, dockCatalogFor, matchesCatalog, proximityCatalog, satelliteSystems, systemMembers, systemName } from './catalog.js';
 import { createBodyGeometry, createNarrowRing } from './body-geometry.js';
+import { createRingSystemGeometry, ringSystemFor, ringSpan } from './ring-systems.js';
 import { createObservedClouds } from "./observed-clouds.js";
 import { physicalSubsolarPoint } from './earth-observation.js';
 import { createStarfield } from "./starfield.js";
@@ -577,9 +578,8 @@ function applyTexture(key, texture) {
     if (key === '2k_titan-haze.png' && body.clouds) {
       body.clouds.material.map = texture; body.clouds.material.needsUpdate = true;
     }
-    if (key === '2k_saturn_ring_alpha.png' && body.ring) {
-      body.ring.material.map = texture; body.ring.material.needsUpdate = true;
-    }
+    // The ring no longer samples a colour map: the particles' colour is measured, and
+    // that image's radial RGB variation does not follow any measured property.
     dynamics?.refreshTextures(body.id);
   }
   updateResourceStatus();
@@ -850,25 +850,16 @@ function attachBodyDetails(body, textures) {
   }
   if (["venus", "uranus", "neptune", "titan"].includes(body.id))
     addAtmosphere(tilted, body.radius, body.color, 0.23, body.sunDirection);
-  if (body.id === "saturn") {
-    // Radii and UVs come from the measured optical-depth table, so the drawn rings and
-    // the shadow they cast agree on where each ring and gap sits.
-    const geometry = new THREE.RingGeometry(
-      body.radius * RING_INNER,
-      body.radius * RING_OUTER,
-      256,
-      1,
-    );
-    const positions = geometry.attributes.position;
-    const uv = geometry.attributes.uv;
-    for (let index = 0; index < positions.count; index++) {
-      scratch.fromBufferAttribute(positions, index);
-      uv.setXY(index, ringUvAtRatio(scratch.length() / body.radius), 0.5);
-    }
+  const ringSystem = ringSystemFor(body.id);
+  if (ringSystem) {
+    // Every declared ring system is drawn the same way: one annulus per region at its
+    // measured inner and outer radius, carrying its own optical depth, albedo and
+    // opposition-surge amplitude in per-vertex attributes. Nothing here is specific to
+    // Saturn any more.
     ring = new THREE.Mesh(
-      geometry,
+      createRingSystemGeometry(ringSystem),
       new THREE.MeshStandardMaterial({
-        color: "#8c8279",
+        color: "#ffffff",
         transparent: true,
         side: THREE.DoubleSide,
         roughness: 1,
@@ -876,6 +867,7 @@ function attachBodyDetails(body, textures) {
         opacity: 1,
       }),
     );
+    ring.scale.setScalar(body.radius);
     ring.rotation.x = -Math.PI / 2;
     ring.userData.bodyId = body.id;
     tilted.add(ring);
