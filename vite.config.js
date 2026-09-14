@@ -17,6 +17,7 @@ const scientificSources = {
       ['REALISM_STANDARD.md', './REALISM_STANDARD.md'],
       ['TODO.md', './TODO.md'],
       ['PERFORMANCE_VALIDATION.md', './PERFORMANCE_VALIDATION.md'],
+      ['RELEASE_ACCEPTANCE.md', './RELEASE_ACCEPTANCE.md'],
       ['solar-system/physical-definitions.json', './solar-system/src/physics/body-definitions.json'],
     ]) {
       let source = await readFile(localPath(sourcePath),'utf8');
