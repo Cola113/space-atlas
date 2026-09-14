@@ -153,9 +153,10 @@ const common = /* glsl */ `
   uniform float uObservedCloudAvailable;
   uniform float uObservedCloudBlend;
   uniform sampler2D uNightTexture;
-  uniform sampler2D uRingTexture;
   uniform sampler2D uRingOpticalDepth;
   uniform vec2 uRingSpan;
+  uniform vec3 uRingCamera;
+  uniform float uRingReflectance;
   uniform float uCloudAvailable;
   uniform float uCloudVisible;
   uniform float uNightEnabled;
@@ -438,8 +439,16 @@ function attachEarthSurface(record) {
 
 const saturnShadowFunctions = /* glsl */ `
   varying mat3 vActivityViewToLocal;
-  // Normal optical depth, sampled at the radius where a ray crosses the ring plane.
-  // uRingSpan is (inner, outer) in body radii, from the same table as the texture.
+  // Single scattering through a plane-parallel particle slab:
+  //   I/F = (w/4) * mu0/(mu+mu0) * P(alpha) * (1 - exp(-tau * (1/mu + 1/mu0)))
+  // P(alpha) is folded into uRingReflectance, so the phase-angle dependence of the
+  // particles is not modelled; the angles and the optical depth are. Brightness falls
+  // out of the geometry on its own: near a ring-plane crossing mu0 goes to zero and
+  // the rings fade instead of staying at their face-on brightness.
+  float ringSlabReflectance(float tau, float mu, float mu0) {
+    float slab = 1.0 - exp(-tau * (1.0 / mu + 1.0 / mu0));
+    return uRingReflectance * (mu0 / (mu + mu0)) * slab;
+  }
   float ringOpticalDepth(float radiusUv, float footprint) {
     float edge = max(footprint, .001);
     float mask = smoothstep(-edge, edge, radiusUv)
@@ -510,14 +519,28 @@ function saturnDirectLighting(transmission, scatter = false) {
 
 function attachRingSurface(record) {
   patchMaterial(record.body.ring.material, "saturn-rings", record.uniforms, {
-    lights_fragment_begin: saturnDirectLighting(
-      "planetTransmission(vActivityPosition / uBodyRadius,normalize(vActivityViewToLocal * directLight.direction))",
-      true,
-    ),
+    // Opacity and reflectance both read the optical-depth profile, so a gap that lets
+    // sunlight through also lets the background through. The Lambert result is thrown
+    // away and replaced by the slab term: a ring particle layer is not an opaque
+    // surface, and treating it as one is what forced the old display contrast boost.
+    map_fragment: /* glsl */ `
+      #include <map_fragment>
+      vec3 ringSunLocal = normalize(uRingSun);
+      vec3 ringViewLocal = normalize(uRingCamera - vActivityPosition);
+      float ringMu0 = clamp(abs(ringSunLocal.z), .001, 1.0);
+      float ringMu = clamp(abs(ringViewLocal.z), .001, 1.0);
+      float ringTau = texture2D(uRingOpticalDepth, vec2(clamp(vActivityUv.x, 0.0, 1.0), .5)).r;
+      diffuseColor.a = 1.0 - exp(-ringTau / ringMu);
+    `,
     lights_fragment_end: /* glsl */ `
       #include <lights_fragment_end>
-      // Ring particles scatter sunlight above; broad fill remains outside the solar shadow.
-      reflectedLight.indirectDiffuse += diffuseColor.rgb * .025;
+      // Overwrite the Lambert result rather than replacing the lighting chunks: the
+      // surrounding chunks declare variables that later stages still read.
+      float ringOcclusion = mix(1.0, planetTransmission(vActivityPosition / uBodyRadius, ringSunLocal), uShadowEnabled);
+      reflectedLight.directDiffuse = diffuseColor.rgb * ringSlabReflectance(ringTau, ringMu, ringMu0) * ringOcclusion;
+      reflectedLight.directSpecular = vec3(0.0);
+      reflectedLight.indirectDiffuse = vec3(0.0);
+      reflectedLight.indirectSpecular = vec3(0.0);
     `,
   });
 }
@@ -826,6 +849,8 @@ export function createDynamics(objects, { defer = false } = {}) {
   const rotationMatrix = new THREE.Matrix4();
   // Shared optical-depth profile for the ring shadow lookups.
   const ringOpticalDepth = createRingOpticalDepthTexture();
+  const ringCamera = new THREE.Vector3();
+  const inverseRingMatrix = new THREE.Matrix4();
   for (const body of objects.values()) {
     const record = {
       body,
@@ -855,9 +880,14 @@ export function createDynamics(objects, { defer = false } = {}) {
         uObservedCloudBlend: { value: 1 },
         uCloudAvailable: { value: body.clouds?.material.alphaMap ? 1 : 0 },
         uNightTexture: { value: body.nightMap || null },
-        uRingTexture: { value: body.ring?.material.map || null },
         uRingOpticalDepth: { value: ringOpticalDepth },
         uRingSpan: { value: new THREE.Vector2(RING_INNER, RING_OUTER) },
+        uRingCamera: { value: new THREE.Vector3(0, 0, 1) },
+        // Overall reflectance level of the ring particles. A display constant: the
+        // geometry, optical depth and slab terms below are physical, but the phase
+        // function is not modelled, so its magnitude is set to match the observed
+        // brightness of the rings at low phase angle. See BODY_MODELS.md.
+        uRingReflectance: { value: 2.4 },
         uCloudVisible: { value: 1 },
         uNightEnabled: { value: body.nightMap ? 1 : 0 },
         uShadowEnabled: { value: 1 },
@@ -923,7 +953,6 @@ export function createDynamics(objects, { defer = false } = {}) {
     uniforms.uCloudTexture.value = clouds;
     uniforms.uCloudAvailable.value = clouds ? 1 : 0;
     uniforms.uNightTexture.value = body.nightMap || null;
-    uniforms.uRingTexture.value = body.ring?.material.map || null;
   }
 
   function ensureDetail(record) {
@@ -1047,7 +1076,7 @@ export function createDynamics(objects, { defer = false } = {}) {
       uniforms.uObservedCloudNext.value = next;
       uniforms.uObservedCloudBlend.value = mix;
     },
-    updateLighting({ nightLights, shadows }) {
+    updateLighting({ nightLights, shadows }, cameraWorld = null) {
       for (const id of ["earth", "saturn"]) {
         const record = records.get(id);
         const body = record.body;
@@ -1075,6 +1104,14 @@ export function createDynamics(objects, { defer = false } = {}) {
           record.uniforms.uRingSun.value
             .copy(sun)
             .applyQuaternion(cloudRotation);
+          if (cameraWorld) {
+            // Camera in the ring's own frame, for the view angle through the slab.
+            body.ring.updateWorldMatrix(true, false);
+            ringCamera
+              .copy(cameraWorld)
+              .applyMatrix4(inverseRingMatrix.copy(body.ring.matrixWorld).invert());
+            record.uniforms.uRingCamera.value.copy(ringCamera);
+          }
         }
       }
     },

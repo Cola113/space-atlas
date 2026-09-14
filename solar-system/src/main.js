@@ -39,6 +39,7 @@ import {
   smoothProgress,
 } from "./camera-navigation.js";
 import { updateDisplayState } from './orbits.js';
+import { RING_INNER, RING_OUTER, ringUvAtRatio } from './ring-optical-depth.js';
 import { physicalState } from './physics/state.js';
 import { ObservationGate } from './physics/observation-gate.js';
 import { bindPhysicalSun } from './physical-lighting.js';
@@ -850,31 +851,29 @@ function attachBodyDetails(body, textures) {
   if (["venus", "uranus", "neptune", "titan"].includes(body.id))
     addAtmosphere(tilted, body.radius, body.color, 0.23, body.sunDirection);
   if (body.id === "saturn") {
+    // Radii and UVs come from the measured optical-depth table, so the drawn rings and
+    // the shadow they cast agree on where each ring and gap sits.
     const geometry = new THREE.RingGeometry(
-      body.radius * 1.28,
-      body.radius * 2.35,
-      192,
+      body.radius * RING_INNER,
+      body.radius * RING_OUTER,
+      256,
       1,
     );
     const positions = geometry.attributes.position;
     const uv = geometry.attributes.uv;
     for (let index = 0; index < positions.count; index++) {
       scratch.fromBufferAttribute(positions, index);
-      uv.setXY(
-        index,
-        (scratch.length() - body.radius * 1.28) / (body.radius * 1.07),
-        0.5,
-      );
+      uv.setXY(index, ringUvAtRatio(scratch.length() / body.radius), 0.5);
     }
     ring = new THREE.Mesh(
       geometry,
       new THREE.MeshStandardMaterial({
-        map: textures.get("2k_saturn_ring_alpha.png"),
+        color: "#8c8279",
         transparent: true,
         side: THREE.DoubleSide,
         roughness: 1,
         depthWrite: false,
-        opacity: 0.95,
+        opacity: 1,
       }),
     );
     ring.rotation.x = -Math.PI / 2;
@@ -2410,7 +2409,7 @@ function animate(now) {
     pixelScale: height * renderer.getPixelRatio(),
   });
   objects.get("sun").root.getWorldPosition(sunLight.position);
-  dynamics.updateLighting(state);
+  dynamics.updateLighting(state, camera.position);
   camera.updateMatrixWorld();
   starfield.update({ camera, date: state.date, physicalTime: sharedFrame.time, dt, brightOccupancy: brightSkyOccupancy() });
   frameWork.drainOne();
