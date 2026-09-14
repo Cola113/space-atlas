@@ -2,7 +2,8 @@ import * as THREE from "three";
 import simplexSource from "glsl-noise/simplex/3d.glsl?raw";
 import { additionalBodies } from "./additional-bodies.js";
 import { solarEruptionAxis, volcanicAxis, icePlumeAxis, plumeViewDirection } from './feature-anchors.js';
-import { createRingOpticalDepthTexture, RING_INNER, RING_OUTER, RING_PHASE_G } from './ring-optical-depth.js';
+import { createRingOpticalDepthTexture, RING_INNER, RING_OUTER, RING_PHASE_G, RING_REGION_SEAMS, RING_TABLE } from './ring-optical-depth.js';
+import { createRingScatteringTexture } from './ring-multiple-scattering.js';
 
 const simplex = simplexSource.replace("#pragma glslify: export(snoise)", "");
 const TAU = Math.PI * 2;
@@ -154,10 +155,11 @@ const common = /* glsl */ `
   uniform float uObservedCloudBlend;
   uniform sampler2D uNightTexture;
   uniform sampler2D uRingOpticalDepth;
+  uniform sampler2D uRingScattering;
+  uniform float uRingRegionSeams[${RING_REGION_SEAMS.length}];
   uniform vec2 uRingSpan;
   uniform vec3 uRingCamera;
   uniform float uRingPhaseG;
-  uniform float uRingExposure;
   uniform float uCloudAvailable;
   uniform float uCloudVisible;
   uniform float uNightEnabled;
@@ -447,14 +449,39 @@ const saturnShadowFunctions = /* glsl */ `
     float g2 = g * g;
     return (1.0 - g2) / pow(1.0 + g2 + 2.0 * g * cosAlpha, 1.5);
   }
-  // Single scattering through a plane-parallel particle slab:
-  //   I/F = (w/4) * mu0/(mu+mu0) * P(alpha) * (1 - exp(-tau * (1/mu + 1/mu0)))
-  // The angles and the optical depth are physical. Brightness falls out of the
-  // geometry on its own: near a ring-plane crossing mu0 goes to zero and the rings
-  // fade instead of keeping their face-on brightness.
-  float ringSlabReflectance(float tau, float albedo, float mu, float mu0, float cosAlpha) {
+  // Which row of the optical-depth table a fragment sits in. The seams are the
+  // shared boundaries in the same normalised radius the profile uses, so the region
+  // index cannot drift away from the tau and albedo read a few lines away.
+  float ringRegionIndex(float radiusUv) {
+    float region = 0.0;
+    for (int i = 0; i < ${RING_REGION_SEAMS.length}; i++)
+      region += step(uRingRegionSeams[i], radiusUv);
+    return region;
+  }
+  // The bracket X(mu)X(mu0) - Y(mu)Y(mu0) of Chandrasekhar's finite-atmosphere
+  // solution, stored per ring region as its two spectral factors. Region r occupies
+  // texel rows 2r and 2r+1 and is sampled at the exact texel centre, so the filtered
+  // read never mixes two regions or the two factors.
+  float ringScatteringBracket(float mu, float mu0, float region) {
+    float rows = float(${2 * RING_TABLE.length});
+    vec2 x = texture2D(uRingScattering, vec2(mu, (2.0 * region + 0.5) / rows)).rg;
+    vec2 x0 = texture2D(uRingScattering, vec2(mu0, (2.0 * region + 1.5) / rows)).rg;
+    return x.x * x0.x - x.y * x0.y;
+  }
+  // Reflectance of a plane-parallel particle slab, in two parts that add up to
+  // Chandrasekhar's exact solution for a finite atmosphere:
+  //   I/F = mu0/(mu+mu0) * [ K + (w/4) * S * (P(alpha) - 1) ]
+  // with S = 1 - exp(-tau (1/mu + 1/mu0)) the first-order saturation and K the
+  // isotropic bracket above. The first order keeps the real Henyey-Greenstein phase
+  // function; everything below it is the isotropic multiple-scattering term, which
+  // is what makes the optically thick B ring stop being an order of magnitude dim.
+  // No display factor is applied anywhere: the brightness is the optical depth, the
+  // albedo and the angles.
+  float ringSlabReflectance(float tau, float albedo, float mu, float mu0, float cosAlpha, float region) {
     float slab = 1.0 - exp(-tau * (1.0 / mu + 1.0 / mu0));
-    return uRingExposure * 0.25 * albedo * (mu0 / (mu + mu0)) * ringPhase(cosAlpha, uRingPhaseG) * slab;
+    float single = 0.25 * albedo * slab;
+    return mu0 / (mu + mu0)
+      * (ringScatteringBracket(mu, mu0, region) + single * (ringPhase(cosAlpha, uRingPhaseG) - 1.0));
   }
   float ringOpticalDepth(float radiusUv, float footprint) {
     float edge = max(footprint, .001);
@@ -540,6 +567,7 @@ function attachRingSurface(record) {
       float ringTau = ringProfile.r;
       float ringAlbedoW = ringProfile.g;
       float ringCosAlpha = dot(ringSunLocal, ringViewLocal);
+      float ringRegion = ringRegionIndex(vActivityUv.x);
       diffuseColor.a = 1.0 - exp(-ringTau / ringMu);
     `,
     lights_fragment_end: /* glsl */ `
@@ -547,7 +575,7 @@ function attachRingSurface(record) {
       // Overwrite the Lambert result rather than replacing the lighting chunks: the
       // surrounding chunks declare variables that later stages still read.
       float ringOcclusion = mix(1.0, planetTransmission(vActivityPosition / uBodyRadius, ringSunLocal), uShadowEnabled);
-      float ringRadiance = ringSlabReflectance(ringTau, ringAlbedoW, ringMu, ringMu0, ringCosAlpha) * ringOcclusion;
+      float ringRadiance = ringSlabReflectance(ringTau, ringAlbedoW, ringMu, ringMu0, ringCosAlpha, ringRegion) * ringOcclusion;
       reflectedLight.directDiffuse = diffuseColor.rgb * ringRadiance;
       reflectedLight.directSpecular = vec3(0.0);
       reflectedLight.indirectDiffuse = vec3(0.0);
@@ -858,8 +886,10 @@ export function createDynamics(objects, { defer = false } = {}) {
   const surfaceRotation = new THREE.Quaternion();
   const cloudRotation = new THREE.Quaternion();
   const rotationMatrix = new THREE.Matrix4();
-  // Shared optical-depth profile for the ring shadow lookups.
+  // Shared optical-depth profile for the ring shadow lookups, and the solved
+  // multiple-scattering table the ring surface reads.
   const ringOpticalDepth = createRingOpticalDepthTexture();
+  const ringScattering = createRingScatteringTexture();
   const ringCamera = new THREE.Vector3();
   const inverseRingMatrix = new THREE.Matrix4();
   for (const body of objects.values()) {
@@ -892,19 +922,13 @@ export function createDynamics(objects, { defer = false } = {}) {
         uCloudAvailable: { value: body.clouds?.material.alphaMap ? 1 : 0 },
         uNightTexture: { value: body.nightMap || null },
         uRingOpticalDepth: { value: ringOpticalDepth },
+        uRingScattering: { value: ringScattering.texture },
+        uRingRegionSeams: { value: new Float32Array(RING_REGION_SEAMS) },
         uRingSpan: { value: new THREE.Vector2(RING_INNER, RING_OUTER) },
         uRingCamera: { value: new THREE.Vector3(0, 0, 1) },
         // Henyey-Greenstein asymmetry of the ring particles, negative because they
         // backscatter. See ring-optical-depth.js for the sources.
         uRingPhaseG: { value: RING_PHASE_G },
-        // Display calibration, not photometry. The model below is single scattering,
-        // which under-predicts the optically thick B ring: at the tau ~2 of the B ring
-        // most of the emerging light has scattered more than once, and at the app's
-        // default 52 degree phase angle that shortfall is about an order of magnitude.
-        // This factor restores the ring brightness that was reviewed and accepted
-        // before the model was made physical; it does not change the angular behaviour,
-        // which is what carries the ring-plane-crossing fade.
-        uRingExposure: { value: 10 },
         uCloudVisible: { value: 1 },
         uNightEnabled: { value: body.nightMap ? 1 : 0 },
         uShadowEnabled: { value: 1 },

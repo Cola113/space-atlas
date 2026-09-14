@@ -69,6 +69,10 @@ export const ringRadiusUnit = (radiusKm) =>
 export const ringUvAtRatio = (ratio) =>
   (ratio - RING_INNER) / (RING_OUTER - RING_INNER);
 
+// Normalised radius of every shared boundary between table rows, so a shader can
+// name the region a fragment falls in without a second texture to read.
+export const RING_REGION_SEAMS = RING_TABLE.slice(0, -1).map(([, , outer]) => ringRadiusUnit(outer));
+
 const SAMPLES = 2048;
 
 // A one-row half-float texture holding normal optical depth in R and single-scattering
