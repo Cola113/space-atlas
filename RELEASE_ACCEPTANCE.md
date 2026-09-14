@@ -63,7 +63,7 @@
 | 布局与实际渲染 | `verify-catalog-landmarks.mjs` 在 1440×900、390×844、800×450、640×360 检查选中标签可见、整段文字点击、控件避让及非空画布；桌面另检正常动画转场。`verify-saturn-shadows.mjs` 覆盖南北极及四种屏幕布局 |
 | 数值与构建 | `npm test` 92 项通过；`npm run build` 通过，现有 Three.js 分包体积提示保留 |
 
-截图保存在本机 `test-results/catalog-landmarks/` 与 `test-results/saturn-shadows/`，不进入发布包。约定已补充至 [AGENTS.md](AGENTS.md#目录地标与镜头交互) 和[真实性标准](REALISM_STANDARD.md#目录与特征定位)；上述通过范围不消除程序活动、固定贴图及平均模型的精度限制。
+截图保存在本机 `test-results/catalog-landmarks/` 与 `test-results/saturn-shadows/`，不进入发布包。约定已补充至 [AGENTS.md](https://github.com/Cola113/space-atlas/blob/main/AGENTS.md) 和[真实性标准](REALISM_STANDARD.md#目录与特征定位)；上述通过范围不消除程序活动、固定贴图及平均模型的精度限制。
 
 ## 精度与平台边界
 
