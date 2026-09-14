@@ -2,6 +2,7 @@ import * as THREE from "three";
 import simplexSource from "glsl-noise/simplex/3d.glsl?raw";
 import { additionalBodies } from "./additional-bodies.js";
 import { solarEruptionAxis, volcanicAxis, icePlumeAxis, plumeViewDirection } from './feature-anchors.js';
+import { createRingOpticalDepthTexture, RING_INNER, RING_OUTER } from './ring-optical-depth.js';
 
 const simplex = simplexSource.replace("#pragma glslify: export(snoise)", "");
 const TAU = Math.PI * 2;
@@ -153,6 +154,8 @@ const common = /* glsl */ `
   uniform float uObservedCloudBlend;
   uniform sampler2D uNightTexture;
   uniform sampler2D uRingTexture;
+  uniform sampler2D uRingOpticalDepth;
+  uniform vec2 uRingSpan;
   uniform float uCloudAvailable;
   uniform float uCloudVisible;
   uniform float uNightEnabled;
@@ -435,44 +438,51 @@ function attachEarthSurface(record) {
 
 const saturnShadowFunctions = /* glsl */ `
   varying mat3 vActivityViewToLocal;
-  float ringOpacity(float radiusUv, float footprint) {
+  // Normal optical depth, sampled at the radius where a ray crosses the ring plane.
+  // uRingSpan is (inner, outer) in body radii, from the same table as the texture.
+  float ringOpticalDepth(float radiusUv, float footprint) {
     float edge = max(footprint, .001);
     float mask = smoothstep(-edge, edge, radiusUv)
       * (1.0 - smoothstep(1.0-edge, 1.0+edge, radiusUv));
-    return textureGrad(uRingTexture, vec2(clamp(radiusUv,0.0,1.0),.5),
-      vec2(footprint,0.0), vec2(0.0)).a * mask;
+    return textureGrad(uRingOpticalDepth, vec2(clamp(radiusUv,0.0,1.0),.5),
+      vec2(footprint,0.0), vec2(0.0)).r * mask;
   }
-  float ringRayOpacity(vec3 p, vec3 lightDirection, float angularWidth) {
+  // Transmission through a particle slab: exp(-tau/mu), with mu the cosine between
+  // the ray and the ring normal. Grazing rays cross more material, so the ring goes
+  // opaque near the ring-plane crossings instead of keeping its face-on opacity.
+  float ringRayTransmission(vec3 p, vec3 lightDirection, float angularWidth) {
     float safeY = (lightDirection.y < 0.0 ? -1.0 : 1.0) * max(abs(lightDirection.y),.0001);
     float travel = -p.y / safeY;
     vec2 intersection = (p + lightDirection * travel).xz;
     float ringRadius = length(intersection);
-    float ringUv = (ringRadius - 1.28) / 1.07;
+    float span = max(uRingSpan.y - uRingSpan.x, .0001);
+    float ringUv = (ringRadius - uRingSpan.x) / span;
     float radialDerivative = abs(dot(intersection, lightDirection.xz))
       / max(ringRadius * length(lightDirection.xz), .0001);
-    float sourceFootprint = abs(p.y) * radialDerivative * angularWidth / (safeY * safeY * 1.07);
+    float sourceFootprint = abs(p.y) * radialDerivative * angularWidth / (safeY * safeY * span);
     float footprint = clamp(max(fwidth(ringUv), sourceFootprint), .001, .5);
-    float opacity = ringOpacity(ringUv, footprint);
-    return travel > .0001 ? opacity : 0.0;
+    float tau = ringOpticalDepth(ringUv, footprint);
+    // |lightDirection.y| is the cosine between the ray and the ring normal.
+    float mu = clamp(abs(lightDirection.y), .001, 1.0);
+    return travel > .0001 ? exp(-tau / mu) : 1.0;
   }
   float ringTransmission(vec3 p, vec3 lightDirection) {
     if (uShadowEnabled < .5) return 1.0;
     // Integrate strips of the solar disk, including rays crossing either side of the ring plane.
     vec3 horizontal = normalize(vec3(lightDirection.x, 0.0, lightDirection.z) + vec3(.000001,0.0,0.0));
     float elevation = asin(clamp(lightDirection.y, -1.0, 1.0));
-    float opacity = 0.0, totalWeight = 0.0;
+    // Average the transmission over the solar disk. Averaging opacity instead would
+    // need a different curve for every geometry, since exp is not linear.
+    float transmission = 0.0, totalWeight = 0.0;
     for (int i = 0; i < 9; i++) {
       float offset = (float(i) - 4.0) / 4.5;
       float weight = sqrt(1.0 - offset * offset);
       float angle = elevation + offset * uSunAngularRadius;
       vec3 direction = horizontal * cos(angle) + vec3(0.0, sin(angle), 0.0);
-      opacity += ringRayOpacity(p, direction, uSunAngularRadius / 4.5) * weight;
+      transmission += ringRayTransmission(p, direction, uSunAngularRadius / 4.5) * weight;
       totalWeight += weight;
     }
-    // Display contrast: deepen ring shadows while retaining gaps and solar-disk penumbrae.
-    // The ring texture is illustrative; this is not calibrated optical-depth photometry.
-    float transmission = 1.0 - opacity / totalWeight * .92;
-    return mix(1.0, pow(max(transmission, 0.0), 1.5), uShadowEnabled);
+    return transmission / totalWeight;
   }
   float planetTransmission(vec3 p, vec3 lightDirection) {
     // A flattened globe shadows the rings as an ellipsoid. Measuring against a unit
@@ -814,6 +824,8 @@ export function createDynamics(objects, { defer = false } = {}) {
   const surfaceRotation = new THREE.Quaternion();
   const cloudRotation = new THREE.Quaternion();
   const rotationMatrix = new THREE.Matrix4();
+  // Shared optical-depth profile for the ring shadow lookups.
+  const ringOpticalDepth = createRingOpticalDepthTexture();
   for (const body of objects.values()) {
     const record = {
       body,
@@ -844,6 +856,8 @@ export function createDynamics(objects, { defer = false } = {}) {
         uCloudAvailable: { value: body.clouds?.material.alphaMap ? 1 : 0 },
         uNightTexture: { value: body.nightMap || null },
         uRingTexture: { value: body.ring?.material.map || null },
+        uRingOpticalDepth: { value: ringOpticalDepth },
+        uRingSpan: { value: new THREE.Vector2(RING_INNER, RING_OUTER) },
         uCloudVisible: { value: 1 },
         uNightEnabled: { value: body.nightMap ? 1 : 0 },
         uShadowEnabled: { value: 1 },
