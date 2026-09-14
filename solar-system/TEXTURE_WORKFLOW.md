@@ -6,6 +6,15 @@
 
 本项目当前采用艺术完成度优先的地表方案，缺失地貌可以整体重绘；这不表示新增观测，也不应成为其它项目的默认。已交付记录见 [贴图导入记录](TEXTURE_IMPORTS.md)、[艺术地表说明](../public/solar-system/textures/artistic/README.md)。
 
+## 分辨率与请求参数
+
+用户于 2026-09-15 指定：后续星球球面贴图、着陆区地形贴图及全景均优先使用原生 4K 素材。此项目偏好优先于通用生图 skill 的 2K 默认值；用户在具体任务中另行指定的尺寸仍优先。本次六颗卫星的已完成修复作为历史例外保留，不据此重新生成或放大现有资产。
+
+- 文生图、图生图和多图参考都优先传明确的像素尺寸，在实际 API 参数中设置 `size`，提示词同步写明宽高；不能只在提示词中写“4K”，也不只传 `resolution: "4K"` 或宽高比。
+- 2:1 星球全球贴图和完整 360 × 180 着陆全景优先请求 `4096x2048`；结合接口支持的尺寸，也可明确请求 `3840x1920` 的 4K 等级素材。其它投影或局部地形参考按实际宽高比选择 4K 等级并传具体尺寸，不为凑尺寸破坏投影。
+- 使用现成探测影像时优先选择合适的高清原始来源；实际观测分辨率不足应如实标注。概览、缩略图和受限设备可以从高清原稿派生较小版本，原稿与近景素材仍按 4K 优先准备。
+- 请求尺寸不等于实际返回尺寸。验收分别记录请求尺寸、原生返回尺寸和交付尺寸；若服务返回较低分辨率或错误比例，要明确说明并检查适配，不能默认视作满足 4K，也不能用插值放大冒充原生细节。是否再次生成仍遵守任务的调用与重试授权范围。
+
 ## 先确认图片承担什么作用
 
 先读项目实际使用的贴图路径、映射方式和材质代码，查看现有图片与尺寸。区分真实缺测、低分辨率、程序化占位、正常暗色地表和场景夜侧；不要把正确的夜半球当作空白贴图。
@@ -27,15 +36,15 @@
 照明：均匀漫射的表面颜色，不烘焙全球定向光、反光、晨昏线或投影。
 细节：大尺度地貌、区域变化与细微纹理都完整，避免重复克隆、过锐噪点和矩形拼块。
 避免：球体渲染图、地平线、宇宙背景、星环、边框、标签、网格、水印、黑色缺测块。
-尺寸：3840 × 1920（按任务要求调整；实际返回尺寸必须检查）。
+尺寸：4096 × 2048（2:1，4K 优先；按接口支持和任务要求调整，实际返回尺寸必须检查）。
 ```
 
 2026-09-12 使用八方 `gpt-image-2` 请求 `3840x1920`，成功结果返回同尺寸。服务商文档仍说自定义尺寸可能对齐档位，此处是项目实测，不能保证后续请求都一样。八方 CLI 的 `--aspect-ratio` 没有 `2:1`，需传自定义 `--size`，例如：
 
 ```powershell
 # $imageCli 指向已安装的 bafang-imagegen/scripts/image_gen.py。
-python $imageCli generate --prompt-file work/imagegen/terrain.txt --size 3840x1920 --out outputs/terrain.png --dry-run
-python $imageCli edit --image source-map.png --prompt-file work/imagegen/repaint.txt --size 3840x1920 --out outputs/repainted-map.png --dry-run
+python $imageCli generate --prompt-file work/imagegen/terrain.txt --size 4096x2048 --out outputs/terrain.png --dry-run
+python $imageCli edit --image source-map.png --prompt-file work/imagegen/repaint.txt --size 4096x2048 --out outputs/repainted-map.png --dry-run
 ```
 
 按用户已授权的生成范围执行时去掉 `--dry-run`。若实际宽高改变，先检查并处理适配，不能将宽屏图直接拉伸成经纬图或为凑“4096”擅自放大。

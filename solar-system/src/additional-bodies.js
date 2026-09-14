@@ -296,8 +296,8 @@ export const additionalBodies = [
     parent: "jupiter",
     color: "#9e978e",
     texture: "callisto",
-    baseTexture: "completed/callisto-1920.webp",
-    high: "completed/callisto-3840.webp",
+    baseTexture: "repaired/callisto-1920.webp",
+    high: "repaired/callisto-3840.webp",
     radius: 0.53,
     orbit: 10,
     description:
@@ -312,7 +312,7 @@ export const additionalBodies = [
     featureText:
       "瓦尔哈拉盆地周围的同心环结构源自巨大撞击，冰壳保存了漫长的撞击记录。",
     caption: "木卫四古老表面",
-    detail: "探测影像 / AI 细节补绘",
+    detail: "盆地影像局部保留 / AI 修复拼接区",
     source: "jupiter/moons/callisto/",
   },
   {
@@ -380,8 +380,8 @@ export const additionalBodies = [
     parent: "neptune",
     color: "#c9c5bc",
     texture: "triton",
-    baseTexture: "completed/triton-1920.webp",
-    high: "completed/triton-3840.webp",
+    baseTexture: "repaired/triton-1920.webp",
+    high: "repaired/triton-3840.webp",
     radius: 0.38,
     orbit: 4.4,
     viewUv: [0.49, 0.72],
@@ -397,7 +397,7 @@ export const additionalBodies = [
     featureText:
       "旅行者 2 号曾观测到喷流。这里保留部分探测影像，缺测区域用 AI 示意补全。",
     caption: "海卫一冰冻表面",
-    detail: "旅行者 2 号影像 / AI 补全缺测区",
+    detail: "旅行者影像局部保留 / AI 补绘与边界修复",
     source: "neptune/moons/triton/",
   },
   {
@@ -409,8 +409,8 @@ export const additionalBodies = [
     parent: "pluto",
     color: "#b9b0aa",
     texture: "charon",
-    baseTexture: "completed/charon-1920.webp",
-    high: "completed/charon-3840.webp",
+    baseTexture: "repaired/charon-1920.webp",
+    high: "repaired/charon-3840.webp",
     radius: 0.36,
     orbit: 2.7,
     viewUv: [0.48, 0.67],
@@ -426,7 +426,7 @@ export const additionalBodies = [
     featureText:
       "北极的深色物质与赤道附近的峡谷系统，记录了冰质表面复杂的演化历史。",
     caption: "冥卫一地表",
-    detail: "观测地貌保留 / AI 补绘",
+    detail: "中央地貌保留 / AI 补绘与极区修复",
     source: "dwarf-planets/pluto/moons/charon/",
   },
   catalogSatellite({
@@ -478,9 +478,9 @@ export const additionalBodies = [
     caption: "木卫六外侧轨道", detail: "地基观测 / 程序化补全", source: "jupiter/moons/himalia/"
   }),
   catalogSatellite({
-    id: "mimas", name: "土卫一", english: "MIMAS", category: "土星 / 冰质卫星", parent: "saturn", color: "#bfc5c8", texture: "mimas", baseTexture: "2k_mimas.jpg", high: "4k_mimas.jpg",
+    id: "mimas", name: "土卫一", english: "MIMAS", category: "土星 / 冰质卫星", parent: "saturn", color: "#bfc5c8", texture: "mimas", baseTexture: "repaired/mimas-1024.webp", high: "repaired/mimas-2048.webp",
     radius: 0.115, orbit: 3.45, description: "一颗布满撞击坑的冰质小卫星，赫歇尔撞击坑几乎占据了半球。",
-    facts: [["physical:radius"], ["physical:orbit", "小时"], ["所属天体", "土星", ""], ["表面成分", "水冰", ""]], feature: "赫歇尔撞击坑", featureText: "巨大的赫歇尔撞击坑让土卫一拥有类似科幻飞船的外观，坑壁高度可达数公里。", caption: "土卫一地表", detail: "卡西尼号地图 / 真实贴图", source: "saturn/moons/mimas/"
+    facts: [["physical:radius"], ["physical:orbit", "小时"], ["所属天体", "土星", ""], ["表面成分", "水冰", ""]], feature: "赫歇尔撞击坑", featureText: "巨大的赫歇尔撞击坑让土卫一拥有类似科幻飞船的外观，坑壁高度可达数公里。", caption: "土卫一地表", detail: "卡西尼地图参考 / AI 艺术修复", source: "saturn/moons/mimas/"
   }),
   catalogSatellite({
     id: "tethys", name: "土卫三", english: "TETHYS", category: "土星 / 冰质卫星", parent: "saturn", color: "#d1d3d1", texture: "tethys", baseTexture: "2k_tethys.jpg", high: "4k_tethys.jpg",
@@ -493,14 +493,14 @@ export const additionalBodies = [
     facts: [["physical:radius"], ["physical:orbit", "小时"], ["所属天体", "土星", ""], ["卫星类型", "冰岩混合", ""]], feature: "亮纹与撞击坑", featureText: "土卫四背向土星的一面有大量明亮条纹，可能来自构造断裂和冰质喷出物。", caption: "土卫四地表", detail: "卡西尼号地图 / 真实贴图", source: "saturn/moons/dione/"
   }),
   catalogSatellite({
-    id: "rhea", name: "土卫五", english: "RHEA", category: "土星 / 冰质卫星", parent: "saturn", color: "#c6c6bf", texture: "rhea", baseTexture: "2k_rhea.jpg", high: "4k_rhea.jpg",
+    id: "rhea", name: "土卫五", english: "RHEA", category: "土星 / 冰质卫星", parent: "saturn", color: "#c6c6bf", texture: "rhea", baseTexture: "repaired/rhea-1024.webp", high: "repaired/rhea-2048.webp",
     radius: 0.27, orbit: 7.3, description: "土星第二大卫星，冰质表面布满撞击坑和稀疏的亮色条纹。",
-    facts: [["physical:radius"], ["physical:orbit", "小时"], ["所属天体", "土星", ""], ["表面成分", "水冰与岩石", ""]], feature: "撞击坑与亮色条纹", featureText: "土卫五的古老表面保存着密集撞击坑，背土半球可见细弱的亮色构造。", caption: "土卫五地表", detail: "卡西尼号地图 / 真实贴图", source: "saturn/moons/rhea/"
+    facts: [["physical:radius"], ["physical:orbit", "小时"], ["所属天体", "土星", ""], ["表面成分", "水冰与岩石", ""]], feature: "撞击坑与亮色条纹", featureText: "土卫五的古老表面保存着密集撞击坑，背土半球可见细弱的亮色构造。", caption: "土卫五地表", detail: "卡西尼地图参考 / AI 艺术修复", source: "saturn/moons/rhea/"
   }),
   catalogSatellite({
-    id: "iapetus", name: "土卫八", english: "IAPETUS", category: "土星 / 双色卫星", parent: "saturn", color: "#8d8175", texture: "iapetus", baseTexture: "2k_iapetus.jpg", high: "4k_iapetus.jpg",
+    id: "iapetus", name: "土卫八", english: "IAPETUS", category: "土星 / 双色卫星", parent: "saturn", color: "#8d8175", texture: "iapetus", baseTexture: "repaired/iapetus-1024.webp", high: "repaired/iapetus-2048.webp",
     radius: 0.26, orbit: 18.3, description: "远离土星运行的双面卫星，前进半球深暗，背土半球明亮，赤道还有显著山脊。",
-    facts: [["physical:radius"], ["physical:orbit", "天"], ["所属天体", "土星", ""], ["physical:inclination"]], feature: "卡西尼区域与赤道山脊", featureText: "深暗的卡西尼区域与明亮冰质半球形成强烈双色对比，赤道山脊延伸数百公里。", caption: "土卫八双色地表", detail: "卡西尼号全球地图 / 真实贴图", source: "saturn/moons/iapetus/"
+    facts: [["physical:radius"], ["physical:orbit", "天"], ["所属天体", "土星", ""], ["physical:inclination"]], feature: "卡西尼区域与赤道山脊", featureText: "深暗的卡西尼区域与明亮冰质半球形成强烈双色对比，赤道山脊延伸数百公里。", caption: "土卫八双色地表", detail: "卡西尼地图参考 / AI 艺术修复", source: "saturn/moons/iapetus/"
   }),
   catalogSatellite({
     id: "phoebe", name: "土卫九", english: "PHOEBE", category: "土星 / 逆行卫星", parent: "saturn", color: "#8d8981", texture: "phoebe", baseTexture: "2k_phoebe.jpg", radius: 0.075, orbit: 22.6,

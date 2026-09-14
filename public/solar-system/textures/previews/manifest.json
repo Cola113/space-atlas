@@ -327,13 +327,13 @@
     },
     {
       "id": "callisto",
-      "source": "completed/callisto-1920.webp",
-      "sourceSha256": "77dfa53b257162a522d3566b194b19b866f21cea0b9e6162e72d65a82b43d240",
+      "source": "repaired/callisto-1920.webp",
+      "sourceSha256": "3f1afa5a91ab950e7b92dc908566114ff55ec8837faef099c5368561b9055753",
       "file": "thumbnails/callisto.webp",
-      "bytes": 3036,
+      "bytes": 3898,
       "width": 192,
       "height": 96,
-      "sha256": "428a717a7c99f2a8e6efc4a5e06be7b77ce719c97580d1560b5d04106762f296"
+      "sha256": "3c24f3fadd2e1bdc3f0c579353db5f341ae47bf647f45283b4d441239bea82b9"
     },
     {
       "id": "enceladus",
@@ -357,23 +357,23 @@
     },
     {
       "id": "triton",
-      "source": "completed/triton-1920.webp",
-      "sourceSha256": "b6ec0b7ad3b2146f291ec21e6f140f224f06e6df5da49a8c2299067854d2a6ea",
+      "source": "repaired/triton-1920.webp",
+      "sourceSha256": "0e8cc2cb6f314dfa52f82d88d439abba7c087cbddf4fd593aa2957863fcfaff8",
       "file": "thumbnails/triton.webp",
-      "bytes": 1206,
+      "bytes": 1650,
       "width": 192,
       "height": 96,
-      "sha256": "fe8e4c1c2516dd5c0a4cd812ecd261bc4b56e93842a2055e53fbb4641ca7473a"
+      "sha256": "ab19162ed8aa97cc0fb5c67d336c13207a6cb4c3ee330377b1b9faab1dd3aa11"
     },
     {
       "id": "charon",
-      "source": "completed/charon-1920.webp",
-      "sourceSha256": "318e779348866c92ab656e836aaf9aa8a9d4b360a0a05e40a2c5a28a17f4db36",
+      "source": "repaired/charon-1920.webp",
+      "sourceSha256": "b99a0333d0af0b7d17d77c4760f0dce57526200ba28bbde25ba5969ed97af1d1",
       "file": "thumbnails/charon.webp",
-      "bytes": 930,
+      "bytes": 1054,
       "width": 192,
       "height": 96,
-      "sha256": "4987766282e18b540b390c966c505db87e827341e4984f699dd6b2e32c180825"
+      "sha256": "79d45334ec54e3519bbd60552d56134d1099f938b797e31c8c2f3b38e421e387"
     },
     {
       "id": "miranda",
@@ -447,13 +447,13 @@
     },
     {
       "id": "mimas",
-      "source": "2k_mimas.jpg",
-      "sourceSha256": "48aee6c97ab46bea428b2bffc1fcb7ec12edda72f55ba19763e08f7f4fef490c",
+      "source": "repaired/mimas-1024.webp",
+      "sourceSha256": "7231720c582a0d7b32c2628a1b26b5f2265038b7795ff4c1944416e67cf9c89c",
       "file": "thumbnails/mimas.webp",
-      "bytes": 4602,
+      "bytes": 5014,
       "width": 192,
       "height": 96,
-      "sha256": "936adbef31934b89dbeed69dd42a652174a6ead63fd1b94e7cf766997b5aea8b"
+      "sha256": "e238fd82383b2b0f238f03085ba05df7dbed7b28e1fe1b9c498f22148fc61d80"
     },
     {
       "id": "tethys",
@@ -477,23 +477,23 @@
     },
     {
       "id": "rhea",
-      "source": "2k_rhea.jpg",
-      "sourceSha256": "31c4c1ae108dbfb543c9f109c694240f5d528bfcaac8aa103a1fc9e26730dd5d",
+      "source": "repaired/rhea-1024.webp",
+      "sourceSha256": "2da6e7a34bb7b6d180707034e72825efa26eccdd4a69f418161451509aca9a9b",
       "file": "thumbnails/rhea.webp",
-      "bytes": 2326,
+      "bytes": 3114,
       "width": 192,
       "height": 96,
-      "sha256": "3a5b036979aa014a95393fc59a147d64fef4e118c55d5d0cba8de0322f59be27"
+      "sha256": "d38a99ef8d456bb9294fb24252959818fcb49a7cbc47ed400c9ea400e93f78fd"
     },
     {
       "id": "iapetus",
-      "source": "2k_iapetus.jpg",
-      "sourceSha256": "39fc4e9370c29cd7a6db2aa9c1206bae94c1e4901502eadc9faccb234072f7c1",
+      "source": "repaired/iapetus-1024.webp",
+      "sourceSha256": "1f8f8389dd89e7233c86e716813948a6354c1a1c32245b8961359fec92a91e15",
       "file": "thumbnails/iapetus.webp",
-      "bytes": 1992,
+      "bytes": 3266,
       "width": 192,
       "height": 96,
-      "sha256": "4f5c883fda552fbd010441769343aeb5db7a7531ae9dd8764061738bb9e77325"
+      "sha256": "1d2c6b29c4bc5d3d4906c5b83a68bbd5bf8940e26e86026bab72b494ab7bd20d"
     },
     {
       "id": "phoebe",
