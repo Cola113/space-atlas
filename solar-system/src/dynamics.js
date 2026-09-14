@@ -455,7 +455,10 @@ const saturnShadowFunctions = /* glsl */ `
       opacity += ringRayOpacity(p, direction, uSunAngularRadius / 4.5) * weight;
       totalWeight += weight;
     }
-    return 1.0 - opacity / totalWeight * .92 * uShadowEnabled;
+    // Display contrast: deepen ring shadows while retaining gaps and solar-disk penumbrae.
+    // The ring texture is illustrative; this is not calibrated optical-depth photometry.
+    float transmission = 1.0 - opacity / totalWeight * .92;
+    return mix(1.0, pow(max(transmission, 0.0), 1.5), uShadowEnabled);
   }
   float planetTransmission(vec3 p, vec3 lightDirection) {
     float along = dot(p,lightDirection);

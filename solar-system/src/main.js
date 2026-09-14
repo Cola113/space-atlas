@@ -1633,8 +1633,10 @@ function updateObservationTools() {
   $("night-toggle").disabled = !objects.get("earth")?.nightMap;
   $("night-toggle").checked = state.nightLights;
   $("shadow-toggle").checked = state.shadows;
-  $("shadow-control").title = id === "saturn" ? "环系投影" : "云层投影";
+  $("shadow-control").title = id === "saturn" ? "土星环投影" : "云层投影";
+  $("shadow-label").textContent = $("shadow-control").title;
   $("shadow-toggle").setAttribute("aria-label", $("shadow-control").title);
+  $("ring-shadow-legend").hidden = !visible || state.system || id !== "saturn" || !state.shadows;
   const label = state.nightView ? "观测昼侧" : "观测夜侧";
   $("night-view").setAttribute("aria-label", label);
   $("night-view").querySelector("span").textContent=label;
@@ -1832,6 +1834,7 @@ function bindEvents() {
   });
   $("shadow-toggle").addEventListener("change", (event) => {
     state.shadows = event.target.checked;
+    updateObservationTools();
   });
   $("night-view").addEventListener("click", () => {
     const body = objects.get(state.selected);
