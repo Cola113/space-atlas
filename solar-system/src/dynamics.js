@@ -2,7 +2,7 @@ import * as THREE from "three";
 import simplexSource from "glsl-noise/simplex/3d.glsl?raw";
 import { additionalBodies } from "./additional-bodies.js";
 import { solarEruptionAxis, volcanicAxis, icePlumeAxis, plumeViewDirection } from './feature-anchors.js';
-import { createRingOpticalDepthTexture, RING_INNER, RING_OUTER } from './ring-optical-depth.js';
+import { createRingOpticalDepthTexture, RING_INNER, RING_OUTER, RING_PHASE_G } from './ring-optical-depth.js';
 
 const simplex = simplexSource.replace("#pragma glslify: export(snoise)", "");
 const TAU = Math.PI * 2;
@@ -156,7 +156,8 @@ const common = /* glsl */ `
   uniform sampler2D uRingOpticalDepth;
   uniform vec2 uRingSpan;
   uniform vec3 uRingCamera;
-  uniform float uRingReflectance;
+  uniform float uRingPhaseG;
+  uniform float uRingExposure;
   uniform float uCloudAvailable;
   uniform float uCloudVisible;
   uniform float uNightEnabled;
@@ -439,15 +440,21 @@ function attachEarthSurface(record) {
 
 const saturnShadowFunctions = /* glsl */ `
   varying mat3 vActivityViewToLocal;
+  // Henyey-Greenstein phase function. g < 0 is backscattering, which is what the ring
+  // particles are: Cassini UVIS puts |g| at 0.63-0.78 and Doyle et al. 1989 describe
+  // the A ring particles as more backscattering than satellites of comparable albedo.
+  float ringPhase(float cosAlpha, float g) {
+    float g2 = g * g;
+    return (1.0 - g2) / pow(1.0 + g2 + 2.0 * g * cosAlpha, 1.5);
+  }
   // Single scattering through a plane-parallel particle slab:
   //   I/F = (w/4) * mu0/(mu+mu0) * P(alpha) * (1 - exp(-tau * (1/mu + 1/mu0)))
-  // P(alpha) is folded into uRingReflectance, so the phase-angle dependence of the
-  // particles is not modelled; the angles and the optical depth are. Brightness falls
-  // out of the geometry on its own: near a ring-plane crossing mu0 goes to zero and
-  // the rings fade instead of staying at their face-on brightness.
-  float ringSlabReflectance(float tau, float mu, float mu0) {
+  // The angles and the optical depth are physical. Brightness falls out of the
+  // geometry on its own: near a ring-plane crossing mu0 goes to zero and the rings
+  // fade instead of keeping their face-on brightness.
+  float ringSlabReflectance(float tau, float albedo, float mu, float mu0, float cosAlpha) {
     float slab = 1.0 - exp(-tau * (1.0 / mu + 1.0 / mu0));
-    return uRingReflectance * (mu0 / (mu + mu0)) * slab;
+    return uRingExposure * 0.25 * albedo * (mu0 / (mu + mu0)) * ringPhase(cosAlpha, uRingPhaseG) * slab;
   }
   float ringOpticalDepth(float radiusUv, float footprint) {
     float edge = max(footprint, .001);
@@ -529,7 +536,10 @@ function attachRingSurface(record) {
       vec3 ringViewLocal = normalize(uRingCamera - vActivityPosition);
       float ringMu0 = clamp(abs(ringSunLocal.z), .001, 1.0);
       float ringMu = clamp(abs(ringViewLocal.z), .001, 1.0);
-      float ringTau = texture2D(uRingOpticalDepth, vec2(clamp(vActivityUv.x, 0.0, 1.0), .5)).r;
+      vec2 ringProfile = texture2D(uRingOpticalDepth, vec2(clamp(vActivityUv.x, 0.0, 1.0), .5)).rg;
+      float ringTau = ringProfile.r;
+      float ringAlbedoW = ringProfile.g;
+      float ringCosAlpha = dot(ringSunLocal, ringViewLocal);
       diffuseColor.a = 1.0 - exp(-ringTau / ringMu);
     `,
     lights_fragment_end: /* glsl */ `
@@ -537,7 +547,8 @@ function attachRingSurface(record) {
       // Overwrite the Lambert result rather than replacing the lighting chunks: the
       // surrounding chunks declare variables that later stages still read.
       float ringOcclusion = mix(1.0, planetTransmission(vActivityPosition / uBodyRadius, ringSunLocal), uShadowEnabled);
-      reflectedLight.directDiffuse = diffuseColor.rgb * ringSlabReflectance(ringTau, ringMu, ringMu0) * ringOcclusion;
+      float ringRadiance = ringSlabReflectance(ringTau, ringAlbedoW, ringMu, ringMu0, ringCosAlpha) * ringOcclusion;
+      reflectedLight.directDiffuse = diffuseColor.rgb * ringRadiance;
       reflectedLight.directSpecular = vec3(0.0);
       reflectedLight.indirectDiffuse = vec3(0.0);
       reflectedLight.indirectSpecular = vec3(0.0);
@@ -883,11 +894,17 @@ export function createDynamics(objects, { defer = false } = {}) {
         uRingOpticalDepth: { value: ringOpticalDepth },
         uRingSpan: { value: new THREE.Vector2(RING_INNER, RING_OUTER) },
         uRingCamera: { value: new THREE.Vector3(0, 0, 1) },
-        // Overall reflectance level of the ring particles. A display constant: the
-        // geometry, optical depth and slab terms below are physical, but the phase
-        // function is not modelled, so its magnitude is set to match the observed
-        // brightness of the rings at low phase angle. See BODY_MODELS.md.
-        uRingReflectance: { value: 2.4 },
+        // Henyey-Greenstein asymmetry of the ring particles, negative because they
+        // backscatter. See ring-optical-depth.js for the sources.
+        uRingPhaseG: { value: RING_PHASE_G },
+        // Display calibration, not photometry. The model below is single scattering,
+        // which under-predicts the optically thick B ring: at the tau ~2 of the B ring
+        // most of the emerging light has scattered more than once, and at the app's
+        // default 52 degree phase angle that shortfall is about an order of magnitude.
+        // This factor restores the ring brightness that was reviewed and accepted
+        // before the model was made physical; it does not change the angular behaviour,
+        // which is what carries the ring-plane-crossing fade.
+        uRingExposure: { value: 10 },
         uCloudVisible: { value: 1 },
         uNightEnabled: { value: body.nightMap ? 1 : 0 },
         uShadowEnabled: { value: 1 },

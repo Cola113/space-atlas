@@ -4,7 +4,7 @@ import { DataUtils } from 'three';
 import {
   RING_TABLE, RING_INNER_KM, RING_OUTER_KM, RING_INNER, RING_OUTER,
   SATURN_EQUATORIAL_KM, opticalDepthAt, ringUvAtRatio, ringRadiusUnit,
-  createRingOpticalDepthTexture,
+  createRingOpticalDepthTexture, albedoAt, RING_PHASE_G,
 } from '../src/ring-optical-depth.js';
 
 // The PDS vital-statistics table lists a range per feature; the module stores the
@@ -57,20 +57,43 @@ test('ring radii and the shadow lookup share one normalised coordinate', () => {
   }
 });
 
+test('ring albedo follows the measured anchors and the particles backscatter', () => {
+  // French et al. 2007 (PASP 119, 623) put the single-scattering albedo at 0.1 for the
+  // C ring rising to 0.6 for the B ring; Doyle et al. 1989 (Icarus 80, 104) give a
+  // Bond albedo near 0.5 for the A ring, which should land between the two anchors.
+  assert.equal(albedoAt(80000), 0.1, 'C ring albedo');
+  assert.equal(albedoAt(100000), 0.6, 'B ring albedo');
+  assert.ok(albedoAt(128000) > albedoAt(80000) && albedoAt(128000) < albedoAt(100000),
+    'A ring albedo must sit between the C and B ring anchors');
+  assert.equal(albedoAt(RING_INNER_KM - 1), 0, 'outside the ring system');
+
+  // Backscattering means g < 0, so the phase function peaks where the observer looks
+  // along the incoming sunlight rather than away from it.
+  assert.ok(RING_PHASE_G < 0, 'ring particles must backscatter');
+  const g2 = RING_PHASE_G ** 2;
+  const phase = (cos) => (1 - g2) / (1 + g2 + 2 * RING_PHASE_G * cos) ** 1.5;
+  assert.ok(phase(1) > phase(0) && phase(0) > phase(-1), 'phase function must peak at backscatter');
+  assert.ok(phase(1) / phase(-1) > 10, 'the backscatter peak must be strong');
+});
+
 test('the generated profile texture matches the table it is built from', () => {
   const texture = createRingOpticalDepthTexture();
   assert.equal(texture.image.width, 2048);
   assert.equal(texture.image.height, 1);
   const samples = texture.image.data;
   const span = RING_OUTER_KM - RING_INNER_KM;
-  for (const [name, inner, outer, tau] of RING_TABLE) {
+  for (const [name, inner, outer, tau, albedo] of RING_TABLE) {
     const middle = (inner + outer) / 2;
-    const index = Math.floor(((middle - RING_INNER_KM) / span) * samples.length);
-    const decoded = DataUtils.fromHalfFloat(samples[index]);
-    // Half float carries about three decimal digits; the profile is compared loosely
-    // but a wrong region or a shifted sample would still fail by a wide margin.
-    assert.ok(Math.abs(decoded - tau) <= tau * 1e-3,
-      `${name}: profile sample ${decoded} drifted from ${tau}`);
+    const index = Math.floor(((middle - RING_INNER_KM) / span) * (samples.length / 2));
+    // Optical depth sits in R and albedo in G; half float carries about three
+    // decimal digits, so the comparison is loose but a wrong region or a shifted
+    // sample would still fail by a wide margin.
+    const decodedTau = DataUtils.fromHalfFloat(samples[index * 2]);
+    const decodedAlbedo = DataUtils.fromHalfFloat(samples[index * 2 + 1]);
+    assert.ok(Math.abs(decodedTau - tau) <= tau * 1e-3,
+      `${name}: profile sample ${decodedTau} drifted from ${tau}`);
+    assert.ok(Math.abs(decodedAlbedo - albedo) <= albedo * 1e-3,
+      `${name}: albedo sample ${decodedAlbedo} drifted from ${albedo}`);
   }
   texture.dispose();
 });
