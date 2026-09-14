@@ -127,6 +127,29 @@ export function landmarkFrame(feature, body, dynamicAnchor = () => null, shadows
   };
 }
 
+export function landingFrame(site, body) {
+  body.mesh.updateWorldMatrix(true, false);
+  const local = uvDirection(geographic(site.latitude, site.longitude));
+  return {
+    point: local.clone().applyMatrix4(body.mesh.matrixWorld),
+    direction: local.clone().applyMatrix3(new THREE.Matrix3().getNormalMatrix(body.mesh.matrixWorld)).normalize(),
+    extent: 1,
+  };
+}
+
+export function landingPointVisible(frame, body, observer, bodies) {
+  const towardCamera = observer.clone().sub(frame.point);
+  if (frame.direction.dot(towardCamera) <= 1e-8 * towardCamera.length()) return false;
+  const sightline = new THREE.Raycaster(observer, towardCamera.negate().normalize(), 0, observer.distanceTo(frame.point));
+  const occluders = [];
+  for (const other of bodies) {
+    if (other.id === body.id || other.physicalAvailable === false || !other.root.visible) continue;
+    other.mesh.updateWorldMatrix(true, false);
+    occluders.push(other.mesh);
+  }
+  return sightline.intersectObjects(occluders, false).length === 0;
+}
+
 export function createLandmarks(objects, camera, onSelect, dynamicAnchor, { landingSites = {}, onLanding = () => {} } = {}) {
   const container = document.getElementById("landmark-markers");
   const picker = document.getElementById("landmark-select");
@@ -173,17 +196,15 @@ export function createLandmarks(objects, camera, onSelect, dynamicAnchor, { land
         button.setAttribute("aria-label", `降落到${site.name}表面 · ${site.title}`);
         button.dataset.landingBody = id;
         button.hidden = true;
-        const pin = createElement(MapPin, { 'aria-hidden': 'true', width: 26, height: 26 });
+        const pin = createElement(MapPin, { 'aria-hidden': 'true', width: 13, height: 13 });
         const label = document.createElement("span");
-        label.className = "landing-tooltip";
-        label.setAttribute('role', 'tooltip');
-        label.id = 'landing-tooltip';
-        label.textContent = `降落 · ${site.title} · ${Math.abs(site.latitude)}°${site.latitude < 0 ? 'S' : 'N'} / ${site.longitude}°E`;
-        button.setAttribute('aria-describedby', label.id);
+        label.className = "landmark-name";
+        label.textContent = `降落 · ${site.title}`;
+        button.title = `${label.textContent} · ${Math.abs(site.latitude)}°${site.latitude < 0 ? 'S' : 'N'} / ${site.longitude}°E`;
         button.append(pin, label);
-        button.addEventListener("click", () => { if (landingMarker?.enabled && !button.disabled) onLanding(id); });
+        button.addEventListener("click", () => { if (landingMarker?.enabled && landingMarker.visible && !button.disabled) onLanding(id); });
         container.append(button);
-        landingMarker = { site, button, label, x: 0, y: 0, visible: false, enabled: false };
+        landingMarker = { site, button, label, x: 0, y: 0, visible: false, exposed: false, enabled: false };
       }
     },
     select(id) {
@@ -210,7 +231,10 @@ export function createLandmarks(objects, camera, onSelect, dynamicAnchor, { land
     },
     focusLanding() {
       if (landingMarker?.enabled && landingMarker.visible) landingMarker.button.focus({ preventScroll: true });
-      else document.getElementById('body-details-button').focus({ preventScroll: true });
+      else {
+        const info = document.getElementById('body-details-button');
+        (info.checkVisibility() ? info : document.getElementById('landmark-brief-close')).focus({ preventScroll: true });
+      }
     },
     focusActive() {
       const marker = markers.find(marker => marker.feature === active && marker.visible);
@@ -225,15 +249,17 @@ export function createLandmarks(objects, camera, onSelect, dynamicAnchor, { land
       shadows = showShadows;
       const body = objects.get(bodyId);
       const occupied = [];
-      for (const marker of [...markers].sort(
-        (a, b) => Number(b.feature === active) - Number(a.feature === active),
-      )) {
+      const priority = marker => marker.feature === active ? 2 : marker.site ? 1 : 0;
+      for (const marker of [...markers, ...(landingMarker ? [landingMarker] : [])].sort((a, b) => priority(b) - priority(a))) {
         marker.visible = false;
-        const frame = frameFor(marker.feature);
+        const frame = marker.site ? body && landingFrame(marker.site, body) : frameFor(marker.feature);
         marker.available = Boolean(frame);
-        marker.option.disabled = !frame;
-        marker.option.hidden = !frame;
-        if (!hidden && body && frame) {
+        if (marker.option) {
+          marker.option.disabled = !frame;
+          marker.option.hidden = !frame;
+        }
+        if (marker.site) marker.exposed = Boolean(frame && body.physicalAvailable && landingPointVisible(frame, body, camera.position, objects.values()));
+        if (!hidden && body && frame && (!marker.site || (marker.enabled && marker.exposed))) {
           const point = frame.point;
           const normal = point.clone().sub(body.root.position).normalize();
           const towardCamera = camera.position.clone().sub(point);
@@ -241,7 +267,8 @@ export function createLandmarks(objects, camera, onSelect, dynamicAnchor, { land
           const x = (projected.x * 0.5 + 0.5) * width;
           const y = (-projected.y * 0.5 + 0.5) * height;
           // Include the entire label in collision checks, including on touch screens.
-          const labelWidth = marker.label.scrollWidth || marker.feature.name.length * 11 + 12;
+          marker.button.hidden = false;
+          const labelWidth = marker.label.scrollWidth || marker.label.textContent.length * 11 + 12;
           const leftLabel = x + 11 + labelWidth > width - 16;
           const bounds = { left: x - (leftLabel ? 11 + labelWidth : 22),
             right: x + (leftLabel ? 22 : 11 + labelWidth), top: y - 22, bottom: y + 22 };
@@ -251,7 +278,7 @@ export function createLandmarks(objects, camera, onSelect, dynamicAnchor, { land
             bounds.top < r.bottom &&
             bounds.bottom > r.top;
           marker.visible =
-            (normal.dot(towardCamera) > 0 || (marker.feature.dynamic && point.clone().sub(camera.position).normalize().cross(body.root.position.clone().sub(camera.position)).length() > body.radius)) &&
+            (normal.dot(towardCamera) > 0 || (marker.feature?.dynamic && point.clone().sub(camera.position).normalize().cross(body.root.position.clone().sub(camera.position)).length() > body.radius)) &&
             projected.z > -1 &&
             projected.z < 1 &&
             bounds.left > 12 &&
@@ -265,34 +292,7 @@ export function createLandmarks(objects, camera, onSelect, dynamicAnchor, { land
           if (marker.visible) {
             marker.button.style.transform = `translate(${x.toFixed(1)}px,${y.toFixed(1)}px) translate(-50%,-50%)`;
             marker.button.classList.toggle("label-left", leftLabel);
-            occupied.push({ ...bounds, marker });
-          }
-        }
-        marker.button.hidden = !marker.visible;
-      }
-      if (landingMarker) {
-        const marker = landingMarker;
-        marker.visible = false;
-        if (!hidden && marker.enabled && body?.physicalAvailable) {
-          // A body-level entry on the visible disk, not a geodetic surface feature.
-          const normal = camera.position.clone().sub(body.root.position).normalize();
-          const right = new THREE.Vector3(1, 0, 0).applyQuaternion(camera.quaternion);
-          const up = new THREE.Vector3(0, 1, 0).applyQuaternion(camera.quaternion);
-          for (const keepLabels of [true, false]) {
-            if (marker.visible) break;
-            for (const [dx, dy] of [[-.4, .35], [.4, .35], [-.4, -.35], [.4, -.35], [0, -.9], [0, .9], [-.8, 0], [.8, 0], [-.65, -.75], [.65, -.75], [-.65, .75], [.65, .75], [0, 0]]) {
-              const point = normal.clone().addScaledVector(right, dx).addScaledVector(up, dy).normalize()
-                .multiplyScalar(body.radius).add(body.root.position).project(camera);
-              const x = (point.x * .5 + .5) * width, y = (-point.y * .5 + .5) * height;
-              const bounds = { left: x - 30, right: x + 30, top: y - 30, bottom: y + 30 };
-              const overlaps = r => bounds.left < r.right && bounds.right > r.left && bounds.top < r.bottom && bounds.bottom > r.top;
-              if (point.z < -1 || point.z > 1 || bounds.left < 12 || bounds.right > width - 12 || bounds.top < 12 || bounds.bottom > height - 12 || reserved.some(overlaps) || occupied.some(r => (keepLabels || r.marker.feature === active) && overlaps(r))) continue;
-              for (const r of occupied) if (overlaps(r)) { r.marker.visible = false; r.marker.button.hidden = true; }
-              marker.x = x; marker.y = y; marker.visible = true;
-              marker.button.style.transform = `translate(${x.toFixed(1)}px,${y.toFixed(1)}px) translate(-50%,-50%)`;
-              marker.label.style.left = `${THREE.MathUtils.clamp(-108, 12 - x + 22, width - x - 250)}px`;
-              break;
-            }
+            occupied.push(bounds);
           }
         }
         marker.button.hidden = !marker.visible;
@@ -309,7 +309,7 @@ export function createLandmarks(objects, camera, onSelect, dynamicAnchor, { land
           visible,
           available,
         })),
-        landing: landingMarker ? { body: bodyId, visible: landingMarker.visible, enabled: landingMarker.enabled, x: landingMarker.x, y: landingMarker.y } : null,
+        landing: landingMarker ? { body: bodyId, latitude: landingMarker.site.latitude, longitude: landingMarker.site.longitude, visible: landingMarker.visible, exposed: landingMarker.exposed, enabled: landingMarker.enabled, x: landingMarker.x, y: landingMarker.y } : null,
       };
     },
   };

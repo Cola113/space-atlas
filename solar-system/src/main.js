@@ -1782,6 +1782,12 @@ async function landOnSurface(bodyId = state.selected) {
   const previousControls = controls.enabled;
   const pose = { position: camera.position.clone(), target: controls.target.clone(),
     quaternion: camera.quaternion.clone(), offset: viewOffset.clone(), width, height };
+  // Orbiting to a landing site must not carry residual drag into the return view.
+  controls.enableDamping = false;
+  controls.update();
+  controls.enableDamping = true;
+  camera.position.copy(pose.position); camera.quaternion.copy(pose.quaternion);
+  controls.target.copy(pose.target);
   const center = body.root.position.clone();
   surfaceOrbitPose = {offsetFromBody:pose.position.clone().sub(center)};
   const bearing = pose.position.clone().sub(center).normalize();

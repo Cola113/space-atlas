@@ -2,6 +2,7 @@ import {chromium} from 'playwright';
 import assert from 'node:assert/strict';
 import {mkdir,writeFile} from 'node:fs/promises';
 import {Vector3,Quaternion} from 'three';
+import {revealLanding,landingFocusRestored} from './landing-navigation.mjs';
 const base=process.env.ATLAS_URL||'http://127.0.0.1:5191',out='test-results/time-follow';await mkdir(out,{recursive:true});
 const browser=await chromium.launch({channel:'msedge',headless:true}),results=[];
 const vec=a=>new Vector3().fromArray(a),quat=a=>new Quaternion().fromArray(a);
@@ -18,7 +19,7 @@ async function followDrift(){await page.waitForTimeout(600);const start=await sn
 async function timeMenu(){await page.locator('#time-settings-toggle').click();assert.equal(await page.locator('#time-settings').getAttribute('open'),'');}
 async function verifyBounds(selector){const r=await page.locator(selector).boundingBox();const vp=page.viewportSize();assert.ok(r&&r.x>=-.1&&r.y>=-.1&&r.x+r.width<=vp.width+.1&&r.y+r.height<=vp.height+.1,`${selector} ${JSON.stringify(r)}`);return r;}
 try{
-for(const testCase of [['desktop',1440,900,1],['phone',390,844,3],['tablet',800,450,2],['short',640,360,2]]){
+for(const testCase of [['desktop',1440,900,1],['phone',390,844,3],['tablet',800,450,2],['short',640,360,2]].filter(([name])=>!process.env.ATLAS_VIEWPORT||name===process.env.ATLAS_VIEWPORT)){
  [name]=testCase;const [,width,height,dpr]=testCase;
  const context=await browser.newContext({viewport:{width,height},deviceScaleFactor:dpr,reducedMotion:'reduce',acceptDownloads:true});
  page=await context.newPage();const errors=[];page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error'&&/shader|program|GL_INVALID/.test(m.text()))errors.push(m.text());});
@@ -45,6 +46,7 @@ for(const testCase of [['desktop',1440,900,1],['phone',390,844,3],['tablet',800,
  await play(false);const held=await snap();await page.locator('#rotation-toggle').click();assert.ok(offset(held).distanceTo(offset(await snap()))<1e-8,'disable jump');await page.locator('#rotation-toggle').click();
  await page.locator('#observation-settings summary').click();await page.locator('#family-select').selectOption('system:jupiter');await settle();assert.equal((await snap()).system,true);assert.equal((await snap()).followActive,false);assert.equal((await snap()).followRotation,true);
  await page.locator('#observation-settings summary').click();await page.locator('#family-select').selectOption('europa');await settle();assert.equal((await snap()).followRotation,true);await play(true);drift=Math.max(drift,await followDrift());await play(false);
+ await revealLanding(page,'europa');
  const departure=await snap();await page.locator(`[data-landing-body="europa"]`).click();await page.waitForFunction(()=>document.querySelector('.surface-view')?.dataset.ready==='true',null,{timeout:90000});
  const arrived=(await snap()).surface;assert.equal(arrived.date,departure.date);assert.equal(arrived.playing,false);assert.equal(arrived.direction,-1);assert.equal(arrived.rate,100000);assert.equal((await snap()).followActive,false);
  await page.locator('.surface-time-toggle').click();await page.locator('.surface-direction').scrollIntoViewIfNeeded();await verifyBounds('.surface-direction');
@@ -57,7 +59,7 @@ for(const testCase of [['desktop',1440,900,1],['phone',390,844,3],['tablet',800,
  const download=page.waitForEvent('download');await page.locator('.surface-photo').click();assert.equal((await download).suggestedFilename(),'space-atlas-europa.png');await page.screenshot({path:`${out}/${name}-surface-8x.png`});
  await page.locator('.surface-exit').click();await page.waitForFunction(()=>!document.querySelector('.surface-view'));await settle();const returned=await snap();
  assert.equal(returned.date,ground.date);assert.equal(returned.direction,-1);assert.equal(returned.speed,100000);assert.equal(returned.playing,false);assert.equal(returned.followRotation,true);
- assert.ok(offset(returned).distanceTo(offset(departure))<1e-7,'return camera jump');assert.equal(await page.locator('[data-landing-body="europa"]').evaluate(e=>document.activeElement===e),true);
+ assert.ok(offset(returned).distanceTo(offset(departure))<1e-7,'return camera jump');assert.equal(await landingFocusRestored(page,'europa'),true);
  await play(true);drift=Math.max(drift,await followDrift());await play(false);const saved=await snap();await page.reload();await settle();const restored=await snap();assert.equal(restored.date,saved.date);assert.equal(restored.direction,-1);assert.equal(restored.speed,100000);assert.equal(restored.followRotation,true);assert.equal(restored.selected,'europa');
  await page.screenshot({path:`${out}/${name}-returned.png`});assert.deepEqual(errors,[]);results.push({name,dpr,drift,initialDate:initial.date,returnedDate:returned.date,passed:true,errors});await context.close();console.log(name,'passed');
 }

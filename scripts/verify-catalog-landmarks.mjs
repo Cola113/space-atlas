@@ -5,6 +5,7 @@ import { fileURLToPath } from 'node:url';
 import { Quaternion, Vector3 } from 'three';
 import sharp from 'sharp';
 import { configureDeploymentAccess } from './deployment-access.mjs';
+import { aimAtLanding } from './landing-navigation.mjs';
 
 const base = process.env.ATLAS_URL || 'http://127.0.0.1:5191';
 const output = new URL('../test-results/catalog-landmarks/', import.meta.url);
@@ -135,12 +136,21 @@ try {
       await settle(page);
       const landing = page.locator(`[data-landing-body="${id}"]`);
       assert.equal(await landing.count(), 1, `${id}: missing landing coordinate marker`);
-      assert.equal(await landing.isVisible(), true, `${id}: landing coordinate marker hidden`);
-      const r = await landing.boundingBox();
-      assert.ok(r.width >= 44 && r.height >= 44);
-      await landing.click({trial:true});
+      const initialPin = (await snapshot(page)).landmarks.landing;
+      if (!initialPin.exposed) assert.equal(await landing.isVisible(), false, `${id}: obscured landing point is visible`);
+      if (['moon', 'enceladus'].includes(id)) {
+        await aimAtLanding(page, id, {back:true});
+        assert.equal((await snapshot(page)).landmarks.landing.exposed, false);
+        assert.equal(await landing.isVisible(), false);
+        await aimAtLanding(page, id);
+        assert.equal(await landing.isVisible(), true);
+        const r = await landing.boundingBox(), icon = await landing.locator('svg').boundingBox();
+        assert.ok(r.width >= 44 && r.height >= 44);
+        assert.ok(icon.width <= 14 && icon.height <= 14);
+        await landing.click({trial:true});
+        await capture(page, `${name}-${id}-landing-point`);
+      }
       assert.equal(await landing.locator('svg').count(), 1);
-      if (id === 'moon') await page.screenshot({path: fileURLToPath(new URL(`${name}-landing-pin.png`, output))});
     }
     assert.equal(await page.locator('#landing-button').count(), 0);
     if (name === 'desktop') {

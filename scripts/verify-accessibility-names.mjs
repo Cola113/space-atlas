@@ -1,6 +1,7 @@
 import {chromium} from 'playwright';
 import assert from 'node:assert/strict';
 import {mkdir,writeFile} from 'node:fs/promises';
+import {revealLanding} from './landing-navigation.mjs';
 
 const base=process.env.ATLAS_URL||'http://127.0.0.1:5191',out='test-results/accessibility';
 await mkdir(out,{recursive:true});
@@ -37,6 +38,7 @@ try{for(const [screen,width,height,dpr] of [['desktop',1440,900,1],['phone',390,
  for(const id of ['mercury','mars','io','titan','enceladus','pluto','miranda','moon','europa']){
   if(!await page.locator('#atlas-search').isVisible())await page.locator('#atlas-tab').click();
   await page.locator('#atlas-search').fill(id);await page.locator(`.atlas-item[data-body="${id}"]`).click();await settleSolar();
+  await revealLanding(page,id);
   await page.locator(`[data-landing-body="${id}"]`).click();await page.waitForFunction(()=>document.querySelector('.surface-view')?.dataset.ready==='true',null,{timeout:60000});
   await audit('surface-'+id);await openAndAudit('.surface-info-button','surface-'+id+'-details');
   assert.equal(await page.locator('.surface-view').evaluate(e=>e.open),true,'closing details also closed the surface dialog');
@@ -48,6 +50,7 @@ try{for(const [screen,width,height,dpr] of [['desktop',1440,900,1],['phone',390,
  }
  // Native dialog close is also a public browser path (for example a close
  // request the browser does not allow canceling). It must release orbit UI.
+ await revealLanding(page,'europa');
  await page.locator('[data-landing-body="europa"]').click();await page.waitForFunction(()=>document.querySelector('.surface-view')?.dataset.ready==='true');
  await page.evaluate(()=>document.querySelector('.surface-view').close());
  await page.waitForFunction(()=>!document.querySelector('.surface-view'));
