@@ -1,0 +1,35 @@
+{
+ "2002-solstice-north": {
+  "date": 1033430400000,
+  "ringVisible": true,
+  "ringOuterRadius": 5.0861843764518495,
+  "errors": [],
+  "litBounds": {
+   "width": 1415,
+   "height": 876,
+   "ratio": 0.6191
+  }
+ },
+ "2017-solstice-south": {
+  "date": 1493596800000,
+  "ringVisible": true,
+  "ringOuterRadius": 5.0861843764518495,
+  "errors": [],
+  "litBounds": {
+   "width": 1410,
+   "height": 876,
+   "ratio": 0.6213
+  }
+ },
+ "2025-equinox-edge": {
+  "date": 1742688000000,
+  "ringVisible": true,
+  "ringOuterRadius": 5.0861843764518495,
+  "errors": [],
+  "litBounds": {
+   "width": 1401,
+   "height": 876,
+   "ratio": 0.6253
+  }
+ }
+}
