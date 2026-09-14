@@ -2,6 +2,8 @@
 
 后续生成、重绘、修缝及接入验收遵循本项目的 [贴图工作流程](TEXTURE_WORKFLOW.md)。通用生图 skill 只维护接口使用，不存储项目贴图规范。
 
+2026-09-15：海卫一、土卫八、冥卫一、土卫五、土卫一、木卫四经原图与无光照球面对比，确认存在旧影像边界、暗区细节、极区黑带或经度拼接缺陷。六张均通过八方 `gpt-image-2.5-sunburst` 参考图编辑，再配准、局部合成和修缝。当前加载 `repaired/` 版本；原导入图及旧补绘版本保留。土卫一、土卫五、土卫八改标“卡西尼地图参考 / AI 艺术修复”。实际生成尺寸、逐项范围、提示词和限制见 [修复记录](../public/solar-system/textures/repaired/README.md)。以下为原导入历史。
+
 本次从 `C:\Users\买辣条送的电脑\.zcode\workspace\default\iapetus-miranda-preview\assets` 导入并处理了以下公开探测贴图：
 
 - 土卫一 Mimas、土卫三 Tethys、土卫四 Dione、土卫五 Rhea、土卫八 Iapetus：保留 4K 版本，运行默认加载 2K JPEG。

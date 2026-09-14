@@ -1,0 +1,570 @@
+{
+  "version": 1,
+  "date": "2026-09-15",
+  "provider": "Bafang API",
+  "model": "gpt-image-2.5-sunburst",
+  "requestedQuality": "high",
+  "qualityExecutionVerified": false,
+  "policy": "AI repair for visualization, not new measured terrain. Preservation counts refer to the previous published map, which itself contains observed and AI-completed terrain. Masks are visual editing choices, not certified observation coverage.",
+  "processing": "Terrain-based affine registration; Triton footprint low-frequency boundary retouch; generated terrain locally composited with published reference using saved masks; 0.8% longitude edge blend and 1.5% polar convergence. High tier lossless WebP, overview WebP quality 86. Larger composite dimensions preserve old-map sampling and do not imply increased native generated detail.",
+  "textures": [
+    {
+      "id": "triton",
+      "reference": "completed/triton-3840.webp",
+      "referenceSha256": "014690a8ec50b97e37723f88cbe7d733be0e53bd678f629672c7f9de255bf2ba",
+      "originalObservationReference": "2k_triton.jpg",
+      "mode": "reference image edit with local preservation",
+      "requestedDimensions": [
+        2048,
+        1024
+      ],
+      "generatedDimensions": [
+        2048,
+        1152
+      ],
+      "deliveredDimensions": [
+        3840,
+        1920
+      ],
+      "generationResampledForComposite": true,
+      "base": "triton-1920.webp",
+      "high": "triton-3840.webp",
+      "baseSha256": "0e8cc2cb6f314dfa52f82d88d439abba7c087cbddf4fd593aa2957863fcfaff8",
+      "highSha256": "be06d125eb456288a94b26e5bc851519a4eb43c5644357147e292ca08e0c194a",
+      "generatedSha256": "8b188936d1b13aed57079956cbea8a29b7590d3ac2bb788c55cf0f556d6c0b1f",
+      "registration": {
+        "method": "SIFT terrain correspondence / RANSAC affine registration to previous equirectangular map",
+        "referenceToGeneratedMatrix": [
+          [
+            1.0012267039298415,
+            0.005399932607050933,
+            -4.571914403242225
+          ],
+          [
+            -0.00018770335948057758,
+            0.9709929396479905,
+            26.790264216361994
+          ]
+        ],
+        "matchedFeatures": 833,
+        "inliers": 480,
+        "referenceCoverageSpan": [
+          0.958642840385437,
+          0.6136175394058228
+        ],
+        "medianResidualPixels": 2.0483791544227623,
+        "registeredDimensions": [
+          2048,
+          1024
+        ]
+      },
+      "preservedPreviousMapPixels": 928589,
+      "preservedMaxChannelDifference": 0,
+      "before": {
+        "dimensions": [
+          3840,
+          1920
+        ],
+        "edgeMeanDifference": 0.9157986044883728,
+        "edgeMaxDifference": 6.0,
+        "typicalColumnDifference": 3.8965277671813965,
+        "darkPixelFractionBelow8": 0.001258273654513889,
+        "darkPixelFractionBelow24": 0.006181504991319444,
+        "northRowMean": 59.33332443237305,
+        "lowestTileMean": 39.33686447143555
+      },
+      "after": {
+        "dimensions": [
+          3840,
+          1920
+        ],
+        "edgeMeanDifference": 0.0,
+        "edgeMaxDifference": 0.0,
+        "typicalColumnDifference": 3.707118034362793,
+        "darkPixelFractionBelow8": 0.00011284722222222222,
+        "darkPixelFractionBelow24": 0.0013711208767361112,
+        "northRowMean": 75.0,
+        "lowestTileMean": 64.12100219726562
+      },
+      "baseEncoding": "WebP quality 86",
+      "baseAfter": {
+        "dimensions": [
+          1920,
+          960
+        ],
+        "edgeMeanDifference": 1.8510416746139526,
+        "edgeMaxDifference": 12.0,
+        "typicalColumnDifference": 6.873263835906982,
+        "darkPixelFractionBelow8": 0.00014811197916666667,
+        "darkPixelFractionBelow24": 0.0014366319444444444,
+        "northRowMean": 73.11424255371094,
+        "lowestTileMean": 64.13172149658203
+      }
+    },
+    {
+      "id": "iapetus",
+      "reference": "4k_iapetus.jpg",
+      "referenceSha256": "6e17ea086e08f9adf5784faf8350aa107716a3499541bda3c922b3cfd6b18666",
+      "originalObservationReference": "4k_iapetus.jpg",
+      "mode": "whole-map reference repaint",
+      "requestedDimensions": [
+        2048,
+        1024
+      ],
+      "generatedDimensions": [
+        2048,
+        1152
+      ],
+      "deliveredDimensions": [
+        2048,
+        1024
+      ],
+      "generationResampledForComposite": true,
+      "base": "iapetus-1024.webp",
+      "high": "iapetus-2048.webp",
+      "baseSha256": "1f8f8389dd89e7233c86e716813948a6354c1a1c32245b8961359fec92a91e15",
+      "highSha256": "cbe74d2c19b7ef8f56a39b361551c2a0f2c789df1b76b55e2d019dcacce9e79f",
+      "generatedSha256": "ff2cac25825d9fc9c3eef6c67e429af6f3149eeb7404cd9f0070443051e03ed9",
+      "registration": {
+        "method": "SIFT terrain correspondence / RANSAC affine registration to previous equirectangular map",
+        "referenceToGeneratedMatrix": [
+          [
+            1.0096738897441948,
+            -0.0019160231801189469,
+            -3.9514575699828125
+          ],
+          [
+            -0.0019045705458067214,
+            1.0895629417349662,
+            -7.678916558388051
+          ]
+        ],
+        "matchedFeatures": 826,
+        "inliers": 661,
+        "referenceCoverageSpan": [
+          0.47959643602371216,
+          0.7274048924446106
+        ],
+        "medianResidualPixels": 1.725061209583057,
+        "registeredDimensions": [
+          2048,
+          1024
+        ]
+      },
+      "preservedPreviousMapPixels": 0,
+      "preservedMaxChannelDifference": null,
+      "before": {
+        "dimensions": [
+          2048,
+          1024
+        ],
+        "edgeMeanDifference": 3.5504558086395264,
+        "edgeMaxDifference": 33.0,
+        "typicalColumnDifference": 3.7119140625,
+        "darkPixelFractionBelow8": 0.0012459754943847656,
+        "darkPixelFractionBelow24": 0.0549473762512207,
+        "northRowMean": 130.14535522460938,
+        "lowestTileMean": 23.438663482666016
+      },
+      "after": {
+        "dimensions": [
+          2048,
+          1024
+        ],
+        "edgeMeanDifference": 0.0,
+        "edgeMaxDifference": 0.0,
+        "typicalColumnDifference": 13.424479484558105,
+        "darkPixelFractionBelow8": 0.002696990966796875,
+        "darkPixelFractionBelow24": 0.03762674331665039,
+        "northRowMean": 144.66665649414062,
+        "lowestTileMean": 29.021224975585938
+      },
+      "baseEncoding": "WebP quality 86",
+      "baseAfter": {
+        "dimensions": [
+          1024,
+          512
+        ],
+        "edgeMeanDifference": 2.9088542461395264,
+        "edgeMaxDifference": 12.0,
+        "typicalColumnDifference": 17.34895896911621,
+        "darkPixelFractionBelow8": 0.00241851806640625,
+        "darkPixelFractionBelow24": 0.030763626098632812,
+        "northRowMean": 141.9938201904297,
+        "lowestTileMean": 28.843299865722656
+      }
+    },
+    {
+      "id": "charon",
+      "reference": "completed/charon-3840.webp",
+      "referenceSha256": "0f276175fc978d31d356b989433e1dbffe4fe761b73a4c77d318fe1808c97110",
+      "originalObservationReference": "2k_charon.jpg",
+      "mode": "reference image edit with local preservation",
+      "requestedDimensions": [
+        2048,
+        1024
+      ],
+      "generatedDimensions": [
+        2048,
+        1152
+      ],
+      "deliveredDimensions": [
+        3840,
+        1920
+      ],
+      "generationResampledForComposite": true,
+      "base": "charon-1920.webp",
+      "high": "charon-3840.webp",
+      "baseSha256": "b99a0333d0af0b7d17d77c4760f0dce57526200ba28bbde25ba5969ed97af1d1",
+      "highSha256": "28eda0b930dd97aa466f2e35825ea223d872394ad56855f31ae1bd4414734a26",
+      "generatedSha256": "09c816ef85da91997607305af290f4dc02982be73f704a5ab393c58aee88a5c8",
+      "registration": {
+        "method": "SIFT terrain correspondence / RANSAC affine registration to previous equirectangular map",
+        "referenceToGeneratedMatrix": [
+          [
+            1.0005311988197911,
+            0.0012079771664113223,
+            0.883682096000757
+          ],
+          [
+            0.0010507229796036313,
+            1.03103377171717,
+            32.88033687619758
+          ]
+        ],
+        "matchedFeatures": 1061,
+        "inliers": 906,
+        "referenceCoverageSpan": [
+          0.9932703971862793,
+          0.8116483688354492
+        ],
+        "medianResidualPixels": 1.4873233900426555,
+        "registeredDimensions": [
+          2048,
+          1024
+        ]
+      },
+      "preservedPreviousMapPixels": 5395904,
+      "preservedMaxChannelDifference": 0,
+      "before": {
+        "dimensions": [
+          3840,
+          1920
+        ],
+        "edgeMeanDifference": 1.041319489479065,
+        "edgeMaxDifference": 7.0,
+        "typicalColumnDifference": 3.523784637451172,
+        "darkPixelFractionBelow8": 0.015222574869791667,
+        "darkPixelFractionBelow24": 0.07997111002604167,
+        "northRowMean": 19.33333396911621,
+        "lowestTileMean": 10.897043228149414
+      },
+      "after": {
+        "dimensions": [
+          3840,
+          1920
+        ],
+        "edgeMeanDifference": 0.0,
+        "edgeMaxDifference": 0.0,
+        "typicalColumnDifference": 3.5559027194976807,
+        "darkPixelFractionBelow8": 0.00035712348090277777,
+        "darkPixelFractionBelow24": 0.015614691840277778,
+        "northRowMean": 34.0,
+        "lowestTileMean": 29.415937423706055
+      },
+      "baseEncoding": "WebP quality 86",
+      "baseAfter": {
+        "dimensions": [
+          1920,
+          960
+        ],
+        "edgeMeanDifference": 2.012152671813965,
+        "edgeMaxDifference": 12.0,
+        "typicalColumnDifference": 4.778819561004639,
+        "darkPixelFractionBelow8": 0.0003933376736111111,
+        "darkPixelFractionBelow24": 0.015236545138888889,
+        "northRowMean": 34.20833206176758,
+        "lowestTileMean": 29.434741973876953
+      }
+    },
+    {
+      "id": "rhea",
+      "reference": "4k_rhea.jpg",
+      "referenceSha256": "17c67da8ed1342a3da712c8bd08a0c6db802ef30f93e9c1680e63d878832bfb5",
+      "originalObservationReference": "4k_rhea.jpg",
+      "mode": "whole-map reference repaint",
+      "requestedDimensions": [
+        2048,
+        1024
+      ],
+      "generatedDimensions": [
+        2048,
+        1152
+      ],
+      "deliveredDimensions": [
+        2048,
+        1024
+      ],
+      "generationResampledForComposite": true,
+      "base": "rhea-1024.webp",
+      "high": "rhea-2048.webp",
+      "baseSha256": "2da6e7a34bb7b6d180707034e72825efa26eccdd4a69f418161451509aca9a9b",
+      "highSha256": "3a0b1f147654686cf5d1af33bf2d403259bab9c6f59191cb312488dcd9d9b15d",
+      "generatedSha256": "17650f9110f0510cfc57715122249f4a2b2feb3a450a8b8e57a653a0609e8843",
+      "registration": {
+        "method": "SIFT terrain correspondence / RANSAC affine registration to previous equirectangular map",
+        "referenceToGeneratedMatrix": [
+          [
+            0.998189131720951,
+            -0.0004707850212494265,
+            4.473386253190957
+          ],
+          [
+            -0.003845755431514145,
+            1.0363232997155798,
+            25.057560150916828
+          ]
+        ],
+        "matchedFeatures": 185,
+        "inliers": 74,
+        "referenceCoverageSpan": [
+          0.7240316271781921,
+          0.7054986953735352
+        ],
+        "medianResidualPixels": 2.396550324919895,
+        "registeredDimensions": [
+          2048,
+          1024
+        ]
+      },
+      "preservedPreviousMapPixels": 0,
+      "preservedMaxChannelDifference": null,
+      "before": {
+        "dimensions": [
+          2048,
+          1024
+        ],
+        "edgeMeanDifference": 44.71516799926758,
+        "edgeMaxDifference": 160.0,
+        "typicalColumnDifference": 15.4697265625,
+        "darkPixelFractionBelow8": 0.0010581016540527344,
+        "darkPixelFractionBelow24": 0.0047245025634765625,
+        "northRowMean": 138.8961639404297,
+        "lowestTileMean": 68.75390625
+      },
+      "after": {
+        "dimensions": [
+          2048,
+          1024
+        ],
+        "edgeMeanDifference": 0.0,
+        "edgeMaxDifference": 0.0,
+        "typicalColumnDifference": 17.34635353088379,
+        "darkPixelFractionBelow8": 0.0003724098205566406,
+        "darkPixelFractionBelow24": 0.0025720596313476562,
+        "northRowMean": 141.33334350585938,
+        "lowestTileMean": 113.98307037353516
+      },
+      "baseEncoding": "WebP quality 86",
+      "baseAfter": {
+        "dimensions": [
+          1024,
+          512
+        ],
+        "edgeMeanDifference": 2.837890625,
+        "edgeMaxDifference": 16.0,
+        "typicalColumnDifference": 21.22721290588379,
+        "darkPixelFractionBelow8": 0.0002918243408203125,
+        "darkPixelFractionBelow24": 0.001422882080078125,
+        "northRowMean": 140.71157836914062,
+        "lowestTileMean": 114.14314270019531
+      }
+    },
+    {
+      "id": "mimas",
+      "reference": "4k_mimas.jpg",
+      "referenceSha256": "dc881d478934962254631b5e68cdb94dd9a5b55f212a668f29ec1adfccf6c3d8",
+      "originalObservationReference": "4k_mimas.jpg",
+      "mode": "whole-map reference repaint",
+      "requestedDimensions": [
+        2048,
+        1024
+      ],
+      "generatedDimensions": [
+        2048,
+        1152
+      ],
+      "deliveredDimensions": [
+        2048,
+        1024
+      ],
+      "generationResampledForComposite": true,
+      "base": "mimas-1024.webp",
+      "high": "mimas-2048.webp",
+      "baseSha256": "7231720c582a0d7b32c2628a1b26b5f2265038b7795ff4c1944416e67cf9c89c",
+      "highSha256": "a08790647f1578c4af42e898686f25640ef1d4705749b700c67e41cce5f6307b",
+      "generatedSha256": "c62756ba0736282867a887cbe66ab745be6a307a08dc9906f17159c4d7d0a282",
+      "registration": {
+        "method": "SIFT terrain correspondence / RANSAC affine registration to previous equirectangular map",
+        "referenceToGeneratedMatrix": [
+          [
+            1.000911396520186,
+            0.0035395033995004686,
+            -1.2199637561287222
+          ],
+          [
+            0.0023456402242432598,
+            0.9957343474844556,
+            20.77267084130822
+          ]
+        ],
+        "matchedFeatures": 1334,
+        "inliers": 1063,
+        "referenceCoverageSpan": [
+          0.9852072596549988,
+          0.7111414074897766
+        ],
+        "medianResidualPixels": 1.54733636489009,
+        "registeredDimensions": [
+          2048,
+          1024
+        ]
+      },
+      "preservedPreviousMapPixels": 0,
+      "preservedMaxChannelDifference": null,
+      "before": {
+        "dimensions": [
+          2048,
+          1024
+        ],
+        "edgeMeanDifference": 73.5869140625,
+        "edgeMaxDifference": 161.0,
+        "typicalColumnDifference": 6.6337890625,
+        "darkPixelFractionBelow8": 0.003211498260498047,
+        "darkPixelFractionBelow24": 0.006701469421386719,
+        "northRowMean": 98.98177337646484,
+        "lowestTileMean": 95.02943420410156
+      },
+      "after": {
+        "dimensions": [
+          2048,
+          1024
+        ],
+        "edgeMeanDifference": 0.0,
+        "edgeMaxDifference": 0.0,
+        "typicalColumnDifference": 13.422200202941895,
+        "darkPixelFractionBelow8": 0.00011301040649414062,
+        "darkPixelFractionBelow24": 0.002223968505859375,
+        "northRowMean": 132.0,
+        "lowestTileMean": 126.33991241455078
+      },
+      "baseEncoding": "WebP quality 86",
+      "baseAfter": {
+        "dimensions": [
+          1024,
+          512
+        ],
+        "edgeMeanDifference": 2.70703125,
+        "edgeMaxDifference": 12.0,
+        "typicalColumnDifference": 20.3125,
+        "darkPixelFractionBelow8": 0.0002841949462890625,
+        "darkPixelFractionBelow24": 0.002399444580078125,
+        "northRowMean": 129.0400390625,
+        "lowestTileMean": 126.2163314819336
+      }
+    },
+    {
+      "id": "callisto",
+      "reference": "completed/callisto-3840.webp",
+      "referenceSha256": "139c27bc92e2c2af2ad8b74ba1b25c976d8188fc060ccce522d4c39f455848ef",
+      "originalObservationReference": "2k_callisto.jpg",
+      "mode": "reference image edit with local preservation",
+      "requestedDimensions": [
+        2048,
+        1024
+      ],
+      "generatedDimensions": [
+        2048,
+        1152
+      ],
+      "deliveredDimensions": [
+        3840,
+        1920
+      ],
+      "generationResampledForComposite": true,
+      "base": "callisto-1920.webp",
+      "high": "callisto-3840.webp",
+      "baseSha256": "3f1afa5a91ab950e7b92dc908566114ff55ec8837faef099c5368561b9055753",
+      "highSha256": "8b86260d8af41773a0a0db73bdb56f896d1af2a302f779b8f3020b09379b43ce",
+      "generatedSha256": "64eb4cd34227a0283d7a9e4035964074bf80f6ce78ff299e34f140d91b0bcfc5",
+      "registration": {
+        "method": "SIFT terrain correspondence / RANSAC affine registration to previous equirectangular map",
+        "referenceToGeneratedMatrix": [
+          [
+            1.0018861485461972,
+            0.005863474837275055,
+            1.835117567145623
+          ],
+          [
+            0.00217056824526419,
+            1.053139749848317,
+            15.435004699387436
+          ]
+        ],
+        "matchedFeatures": 880,
+        "inliers": 529,
+        "referenceCoverageSpan": [
+          0.9838608503341675,
+          0.7553518414497375
+        ],
+        "medianResidualPixels": 2.3686752560203406,
+        "registeredDimensions": [
+          2048,
+          1024
+        ]
+      },
+      "preservedPreviousMapPixels": 271634,
+      "preservedMaxChannelDifference": 0,
+      "before": {
+        "dimensions": [
+          3840,
+          1920
+        ],
+        "edgeMeanDifference": 2.024305582046509,
+        "edgeMaxDifference": 13.0,
+        "typicalColumnDifference": 6.21006965637207,
+        "darkPixelFractionBelow8": 9.087456597222222e-05,
+        "darkPixelFractionBelow24": 0.0006648763020833333,
+        "northRowMean": 127.0,
+        "lowestTileMean": 74.70732116699219
+      },
+      "after": {
+        "dimensions": [
+          3840,
+          1920
+        ],
+        "edgeMeanDifference": 0.0,
+        "edgeMaxDifference": 0.0,
+        "typicalColumnDifference": 6.746354103088379,
+        "darkPixelFractionBelow8": 5.696614583333334e-06,
+        "darkPixelFractionBelow24": 0.00027357313368055555,
+        "northRowMean": 92.0,
+        "lowestTileMean": 78.70539093017578
+      },
+      "baseEncoding": "WebP quality 86",
+      "baseAfter": {
+        "dimensions": [
+          1920,
+          960
+        ],
+        "edgeMeanDifference": 2.484722137451172,
+        "edgeMaxDifference": 14.0,
+        "typicalColumnDifference": 12.66319465637207,
+        "darkPixelFractionBelow8": 7.595486111111111e-06,
+        "darkPixelFractionBelow24": 0.00035536024305555554,
+        "northRowMean": 92.25312805175781,
+        "lowestTileMean": 78.72796630859375
+      }
+    }
+  ]
+}
