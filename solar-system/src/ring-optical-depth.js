@@ -84,7 +84,12 @@ export function createRingOpticalDepthTexture() {
   }
   const texture = new THREE.DataTexture(data, SAMPLES, 1, THREE.RGFormat, THREE.HalfFloatType);
   texture.magFilter = THREE.LinearFilter;
-  texture.minFilter = THREE.LinearFilter;
+  // Mipmaps matter here: the profile is flat within a ring and steps at every boundary,
+  // so where the ring compresses on screen the un-filtered 2048 samples alias into hard
+  // stair-stepped edges. They also make the explicit textureGrad footprints used by the
+  // shadow lookup actually blur, which a base-level-only sampler silently ignores.
+  texture.minFilter = THREE.LinearMipmapLinearFilter;
+  texture.generateMipmaps = true;
   texture.wrapS = THREE.ClampToEdgeWrapping;
   texture.wrapT = THREE.ClampToEdgeWrapping;
   texture.needsUpdate = true;
