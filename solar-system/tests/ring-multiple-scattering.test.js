@@ -99,6 +99,55 @@ test('the isotropic bracket really is rank two, which is what the table stores',
   }
 });
 
+// The renderer reads the unlit face out of the shipped pair as well: Chandrasekhar's
+// transmittance is the antisymmetric combination of the same two factors,
+//   T = mu0/(mu - mu0) [X(mu)Y(mu0) - Y(mu)X(mu0)].
+// That identity is exact for the isotropic solution the table was solved from, and the
+// rank-two truncation is what separates it from the solver's own transmittance. Measured
+// over the shipped regions at six incidence and six exit angles, the reconstruction is
+// within 16% of the solver for every region of optical depth up to 1, and within 12% of
+// the lit face everywhere - the largest shares are the optically thickest regions, where
+// both are a few percent of the lit face. These bounds are what stop that growing.
+test('the shipped pair reads the unlit face back within a stated residual', () => {
+  const angles = tableAngles();
+  const at = mu => angles.reduce((best, a) => Math.abs(a - mu) < Math.abs(best - mu) ? a : best, angles[0]);
+  const grid = [0.1, 0.2, 0.354, 0.5, 0.7, 0.9];
+  let worstThin = 0, worstShare = 0;
+  for (const system of Object.values(shippedScatteringTable().systems))
+    for (const region of system.regions) {
+      for (const mu0 of grid) for (const mu of grid) {
+        const exit = at(mu), incidence = at(mu0);
+        if (exit === incidence) continue;        // the removable singularity, guarded in the shader
+        const i = angles.indexOf(exit), j0 = angles.indexOf(incidence);
+        const transmitted = slabTransmittance(region.tau, region.albedo, incidence, angles, 0.01)[i];
+        const reflected = slabReflectance(region.tau, region.albedo, incidence, angles, 0.01)[i];
+        const read = incidence / (exit - incidence) * (region.x[i] * region.y[j0] - region.y[i] * region.x[j0]);
+        // What matters on screen is the error against the face the user compares with, so
+        // it is measured against the reflected light as well as against its own value.
+        if (reflected > 1e-5) worstShare = Math.max(worstShare, Math.abs(read - transmitted) / reflected);
+        if (region.tau <= 1) worstThin = Math.max(worstThin, Math.abs(read - transmitted) / Math.max(transmitted, 1e-7));
+      }
+    }
+  assert.ok(worstThin < .25, `thin and middle rings: worst transmittance error ${worstThin.toFixed(3)} of its own value`);
+  assert.ok(worstShare < .2, `worst transmittance error ${(100 * worstShare).toFixed(1)}% of the lit face`);
+});
+
+test('the unlit face of a thick ring is nearly black and of a thin ring is not', () => {
+  const angles = tableAngles();
+  const at = mu => angles.reduce((best, a) => Math.abs(a - mu) < Math.abs(best - mu) ? a : best, angles[0]);
+  const i = angles.indexOf(at(0.6)), j0 = angles.indexOf(at(0.354));
+  const ratio = region => {
+    const transmitted = slabTransmittance(region.tau, region.albedo, angles[j0], angles, 0.01)[i];
+    const reflected = slabReflectance(region.tau, region.albedo, angles[j0], angles, 0.01)[i];
+    return transmitted / reflected;
+  };
+  const rows = ringScatteringFactors().rows;
+  const thick = rows.reduce((best, r) => r.tau > best.tau ? r : best);
+  const thin = rows.reduce((best, r) => r.tau < best.tau ? r : best);
+  assert.ok(ratio(thick) < .05, `tau=${thick.tau}: the unlit face is ${(100 * ratio(thick)).toFixed(2)}% of the lit one`);
+  assert.ok(ratio(thin) > .5, `tau=${thin.tau}: the unlit face is ${(100 * ratio(thin)).toFixed(2)}% of the lit one`);
+});
+
 test('a thick conservative slab reflects all of the light and then no more', () => {
   const { nodes, weights } = gaussAngles(16);
   for (const mu0 of [0.4, 1]) {

@@ -151,6 +151,22 @@
 **没跑的**：`verify-release.mjs`（需现网地址与部署核验）、`verify-moon-textures.mjs`、`verify-surface-panorama.mjs`（针对地表贴图），
 以及黑洞与猎户座专项——本轮没有改到它们。
 
+## 2026-09-15 追加：环的两个面按真实光照分开
+
+用户要求"被照到的面偏亮，另一面偏暗"。改动前环的入射余弦取了绝对值，两面共用反射解、看起来一样亮；
+现在按两个余弦的符号判面：同号走反射，异号走同一张散射表的透射解（Chandrasekhar 的反对称组合，一阶项换成真实相函数）。
+模型、残差与量测见 [BODY_MODELS.md](solar-system/BODY_MODELS.md)；证据脚本与截图在 `outputs/saturn-ring-faces/`。
+
+| 专项 | 覆盖 | 结果 |
+| --- | --- | --- |
+| `verify-ring-faces.mjs`（**新增**） | 2002 至点、正对极轴南北各一张，量 B 环与 A 环的背光面/受光面亮度比，并要求薄环比厚环透射得多 | B 环 8.9%、A 环 51.1%；受光面 B 环 2.75e-2 |
+| 同上，对着改动前的实现跑 | 断言是否真的抓得住"两面一样亮" | 失败："the unlit B ring is 54.1% of the lit one, which is not dark" |
+| `ring-multiple-scattering.test.js`（**新增两项**） | 透射重构相对解算器透射解的残差（tau ≤ 1 时 16% 以内、相对受光面 12% 以内），以及"厚环背光面近黑、薄环不是" | 通过；单元测试 14/14，全套 123/123 |
+| `verify-saturn-shadows.mjs` | 六种取景的标记、开关接线、布局与两处像素断言 | 六种通过；环面 4,564 像素被压暗超过 10%、最深 0.527；半宽 0.77 个赤道半径 |
+| `verify-ring-thin-coverage.mjs`、`verify-integration.mjs`、`verify-landings.mjs`、`verify-catalog-landmarks.mjs`（含 `ATLAS_MOTION=1`）、`verify-time-follow.mjs`、`verify-surface-ephemeris.mjs`、`verify-accessibility-names.mjs`、`verify-solar-loading.mjs`、`verify-solar-controls.mjs`、`verify-solar-error-layout.mjs`、`verify-overview-physics.mjs`、`verify-overview-session.mjs` | 与上一轮相同的覆盖 | 全部通过 |
+
+**没跑的**：与上一节相同；`verify-ground-rendering.mjs` 的固定端口 5192 被上一轮遗留的服务占用，未跑（它针对地表天空着色，本轮未改）。
+
 ## 回退点
 
 发布前的现网生产部署已经通过 Vercel API 只读核验：

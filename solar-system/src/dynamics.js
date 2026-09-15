@@ -515,6 +515,32 @@ const saturnShadowFunctions = /* glsl */ `
     return mu0 / (mu + mu0)
       * (ringScatteringBracket(mu, mu0, region) + single * (ringPhase(cosAlpha, g) - 1.0));
   }
+  // The other face of the same slab: light enters through the sunlit side, crosses the
+  // ring and leaves through the side the camera is on. Chandrasekhar's solution gives it
+  // from the same pair of spectral factors, with the antisymmetric combination,
+  //   T(mu, mu0) = mu0/(mu - mu0) * [X(mu)Y(mu0) - Y(mu)X(mu0)],
+  // so the shipped table needs no second set of rows. The first order is replaced by the
+  // real phase function exactly as in reflection; the same phase argument serves both,
+  // because the scattering angle is the supplement of the angle between the sun
+  // direction and the view direction either way. What separates the two orders is the
+  // saturation: light leaving the far face has crossed the whole slab, so it is
+  // exp(-tau/mu) - exp(-tau/mu0) rather than 1 - exp(-tau(1/mu + 1/mu0)).
+  float ringTransmittedBracket(float mu, float mu0, float region) {
+    float row = uRingScatteringRow + 2.0 * region;
+    vec2 x = texture2D(uRingScattering, vec2(mu, (row + 0.5) / uRingScatteringRows)).rg;
+    vec2 x0 = texture2D(uRingScattering, vec2(mu0, (row + 1.5) / uRingScatteringRows)).rg;
+    return x.x * x0.y - x.y * x0.x;
+  }
+  float ringSlabTransmittance(float tau, float albedo, float mu, float mu0, float cosAlpha, float region, float g) {
+    // mu = mu0 is a removable singularity: the bracket vanishes with the denominator. Step
+    // a thousandth off it on whichever side the fragment is on, so the ratio stays finite
+    // and stays continuous through the crossing.
+    float step = (mu >= mu0 ? 1.0 : -1.0) * max(abs(mu - mu0), .001);
+    float exitMu = mu0 + step;
+    float single = 0.25 * albedo * (exp(-tau / exitMu) - exp(-tau / mu0));
+    return mu0 / step
+      * (ringTransmittedBracket(exitMu, mu0, region) + single * (ringPhase(cosAlpha, g) - 1.0));
+  }
   float ringOpticalDepth(float radiusUv, float footprint) {
     float edge = max(footprint, .001);
     float mask = smoothstep(-edge, edge, radiusUv)
@@ -654,9 +680,20 @@ function attachRingSurface(record) {
       // anti-sunward half of the ring system.
       float ringOcclusion = mix(
         1.0, planetTransmission(vActivityPosition, ringSunLocal), uShadowEnabled);
-      float ringRadiance = ringSlabReflectance(
-        ringTau, ringAlbedoW, ringMu, ringMu0, ringCosAlpha, vRingRegion, uRingPhaseG)
-        * ringOppositionSurge(ringCosAlpha, ringSurge) * ringOcclusion;
+      // The two faces of the ring are not the same surface. The side the sun is on
+      // reflects sunlight off its particles; the other side is only lit by what crossed
+      // the slab, which is why the unlit face of an optically thick ring reads as nearly
+      // black while the thin C ring stays legible through it. Which face the camera is on
+      // is the product of the two cosines from the ring normal: positive means the sun and
+      // the camera are on the same side.
+      float ringFacing = ringSunLocal.z * ringViewLocal.z;
+      float ringRadiance = ringFacing > 0.0
+        ? ringSlabReflectance(ringTau, ringAlbedoW, ringMu, ringMu0, ringCosAlpha, vRingRegion, uRingPhaseG)
+          // The opposition surge was fitted to the ring's reflected I/F; there is no
+          // measured surge in transmission, and the coherent forward peak is not modelled.
+          * ringOppositionSurge(ringCosAlpha, ringSurge)
+        : ringSlabTransmittance(ringTau, ringAlbedoW, ringMu, ringMu0, ringCosAlpha, vRingRegion, uRingPhaseG);
+      ringRadiance *= ringOcclusion;
       reflectedLight.directDiffuse = ringColour * ringRadiance;
       reflectedLight.directSpecular = vec3(0.0);
       reflectedLight.indirectDiffuse = vec3(0.0);
