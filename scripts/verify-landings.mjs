@@ -11,10 +11,14 @@ const output=new URL(process.env.ATLAS_OUTPUT||'../test-results/landings/',impor
 await mkdir(output,{recursive:true});
 const browser=await chromium.launch({channel:'msedge',headless:true});
 const report=[];
-const ids=(process.env.ATLAS_LANDING_IDS||'mercury,mars,io,titan,enceladus,pluto,miranda,moon,europa').split(',');
+const ids=(process.env.ATLAS_LANDING_IDS||'moon,moon-farside,europa,europa-subjovian,mars,mars-phoenix,io,io-subjovian,titan,enceladus,pluto,pluto-charonface,miranda,mercury,mercury-pole,charon').split(',');
+// Sites whose parent cannot be looked at: haze hides it, or it never rises here.
+const parentNotice={titan:/雾霾/,pluto:/地平线下/,'moon-farside':/地平线下/};
 async function pixels(page,checkBrightness=true){
   const buffer=await page.locator('.surface-canvas canvas').screenshot();
-  const {data,info}=await sharp(buffer).resize(120,80).removeAlpha().raw().toBuffer({resolveWithObject:true});
+  // fit:'fill' keeps the whole frame; the default 'cover' crops a portrait phone to
+  // its middle band, which is sky, and reports a lit surface as blank.
+  const {data,info}=await sharp(buffer).resize(120,80,{fit:'fill'}).removeAlpha().raw().toBuffer({resolveWithObject:true});
   const lit=[...data].filter(v=>v>20).length;
   if(checkBrightness)assert.ok(lit>100,`Blank surface: ${lit}`);
   return {data,lit,channels:info.channels};
@@ -31,17 +35,21 @@ try{
     await page.goto(base+'/solar-system/',{waitUntil:'domcontentloaded'});
     await page.waitForFunction(()=>window.solarAtlas?.snapshot().ready&&document.getElementById('loading-screen').hidden,null,{timeout:90000});
     for(const id of ids){
-      await page.locator('#atlas-tab').click();
-      await page.locator('#atlas-search').fill(id);
-      await page.locator(`.atlas-item[data-body="${id}"]`).click();
-      await page.waitForFunction(id=>window.solarAtlas.snapshot().selected===id&&!window.solarAtlas.snapshot().flight,id,{timeout:30000});
+      // The catalogue item is keyed by body, while a body may carry several sites,
+      // so resolve the site id the app publishes before selecting anything.
+      const {body}=await page.evaluate(id=>window.solarAtlas.snapshot().landing.find(site=>site.siteId===id),id);
+      // The dock tab is a toggle, and the previous site may have left the drawer open.
+      if(!await page.locator('#atlas-search').isVisible())await page.locator('#atlas-tab').click();
+      await page.locator('#atlas-search').fill(body);
+      await page.locator(`.atlas-item[data-body="${body}"]`).click();
+      await page.waitForFunction(body=>window.solarAtlas.snapshot().selected===body&&!window.solarAtlas.snapshot().flight,body,{timeout:30000});
       await page.waitForFunction(()=>!window.solarAtlas.snapshot().ephemeris.blocked);
       await revealLanding(page,id);
       const orbit=await page.evaluate(()=>window.solarAtlas.snapshot());
-      await page.locator(`[data-landing-body="${id}"]`).click();
+      await page.locator(`[data-landing-site="${id}"]`).click();
       try{await page.waitForFunction(()=>document.querySelector('.surface-view')?.dataset.ready==='true',null,{timeout:90000});}
       catch(error){await writeFile(new URL('failure.json',output),JSON.stringify({name,id,errors,snapshot:await page.evaluate(()=>window.solarAtlas.snapshot()),message:await page.locator('.surface-view').textContent()},null,2));await page.screenshot({path:fileURLToPath(new URL('failure.png',output))});throw error;}
-      if(!orbit.playing){const arrived=await page.evaluate(()=>window.solarAtlas.snapshot().surface);assert.equal(arrived.date,orbit.date);assert.equal(arrived.playing,false);assert.deepEqual(arrived.centerKm,orbit.bodies.find(b=>b.id===id).physicalPositionKm);}
+      if(!orbit.playing){const arrived=await page.evaluate(()=>window.solarAtlas.snapshot().surface);assert.equal(arrived.date,orbit.date);assert.equal(arrived.playing,false);assert.deepEqual(arrived.centerKm,orbit.bodies.find(b=>b.id===body).physicalPositionKm);}
       await page.locator('.surface-time-toggle').click();
       if(await page.evaluate(()=>window.solarAtlas.snapshot().surface.playing))await page.locator('.surface-pause').click();
       await page.locator('.surface-clock-close').click();
@@ -85,17 +93,14 @@ try{
       const after=await pixels(page,false);
       assert.ok(after.data.some((v,i)=>Math.abs(v-initial.data[i])>8),'View does not move');
       await page.locator('.surface-reset').click();
-      if(!['titan','pluto'].includes(id)){
-        await page.locator('.surface-parent').click();
+      await page.locator('.surface-parent').click();
+      if(parentNotice[id]){
+        await page.waitForFunction(()=>!document.querySelector('.surface-message').hidden);
+        assert.match(await page.locator('.surface-message').textContent(),parentNotice[id]);
+      }else{
         await page.waitForTimeout(100);
         await page.screenshot({path:fileURLToPath(new URL(`${name}-${id}-sky.png`,output)),animations:'disabled'});
         await page.locator('.surface-reset').click();
-      }
-      if(id==='titan'||id==='pluto'){
-        await page.locator('.surface-parent').click();
-        await page.waitForFunction(()=>!document.querySelector('.surface-message').hidden);
-        const notice=await page.locator('.surface-message').textContent();
-        assert.match(notice,id==='titan'?/雾霾/:/地平线下/);
       }
       await page.locator('.surface-info-button').click();
       assert.ok((await page.locator('.surface-details').textContent()).includes(id==='mars'?'341':id==='mercury'?'176':'地表'));
@@ -109,7 +114,7 @@ try{
       }
       await page.locator('.surface-exit').click();
       await page.waitForFunction(()=>!document.querySelector('.surface-view'),null,{timeout:10000});
-      assert.equal(await page.evaluate(()=>window.solarAtlas.snapshot().selected),id);
+      assert.equal(await page.evaluate(()=>window.solarAtlas.snapshot().selected),body);
       report.push({viewport:name,id,litChannels:initial.lit,physicalDate:physical.date,controls:controls.length,zoom:[1,2,4,8],passed:true});
       console.log(`${name}/${id}: passed`);
     }

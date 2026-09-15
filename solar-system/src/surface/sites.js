@@ -8,6 +8,9 @@ const common = {
   coordinateNote: '拟定观景坐标；地貌与全景朝向为示意，不能用于测量。',
 };
 
+// Every entry is one landing site. The key is the site id, `id` is the body it
+// stands on, so a body may carry several sites as long as each key is unique.
+// A body's default site is the one whose key equals its body id.
 export const additionalLandingSites = Object.freeze({
   mars: {
     ...common, id:'mars', body:'Mars', name:'火星', title:'盖迪兹谷 · 夏普山麓', english:'GEDIZ VALLIS',
@@ -20,6 +23,18 @@ export const additionalLandingSites = Object.freeze({
     notes:'原图由 2024 年 9 月 21–22 日的 341 张照片拼接，色彩经地球白平衡调整。上方已观测地形由原片合成保留；未拍到的脚下及车体区域，经实拍与全景构图双图参考生成补绘。天空替换为散射示意。坐标只定位盖迪兹谷附近，非精确车位；投影与朝向近似。火卫一、火卫二采用有来源的平均轨道，显示运动与凌日不用于真实日期预报。',
     atmosphere:'mars', solarDay:1.02749, initialHeading:100, panoramaCenter:180,
   },
+  'mars-phoenix': {
+    ...common, id:'mars', body:'Mars', name:'火星', title:'凤凰号着陆区 · 北极平原', english:'PHOENIX · VASTITAS BOREALIS',
+    radiusKm:physicalData.mars.radiusKm, latitude:68.2188, longitude:234.2477,
+    parent:'Sun', parentName:'太阳', parentRadiusKm:physicalData.sun.radiusKm, parentTexture:null,
+    texture:'/surface/mars-phoenix.webp',
+    provenance:'凤凰号实拍参考 · AI 重绘', credit:'NASA / JPL-Caltech / University of Arizona · PIA13804 · 地表重绘 gpt-image-2.5-sunburst',
+    source:'https://www.jpl.nasa.gov/images/pia13804-mars-panorama-of-phoenix-landing-site-and-lander-deck',
+    date:'2008-05-25T23:53:00Z',
+    description:'多边形冻土在脚下铺开，浅槽里积着霜，远处是几乎完全平坦的北极平原。',
+    notes:'地面多边形与浅槽形态依据凤凰号 2008 年实拍全景（PIA13804）参考重绘，整幅为新画面，未逐像素保留原片；着陆器本体、太阳板、气象桅杆与机械臂挖掘的沟槽没有重建。高纬地区日照特殊：该历元一个火星日内太阳高度角只在 2.7°–46.3° 之间，接近极昼，太阳不落。稀薄大气与天空由应用单独渲染，未烘焙进全景。',
+    atmosphere:'mars', solarDay:1.02749, initialHeading:180, panoramaCenter:180, referenceSolarAltitude:25,
+  },
   io: {
     ...common, id:'io', body:'Io', name:'木卫一', title:'朝木星侧 · 火山平原', english:'IO VOLCANIC PLAIN',
     radiusKm:physicalData.io.radiusKm, latitude:0, longitude:55,
@@ -27,8 +42,19 @@ export const additionalLandingSites = Object.freeze({
     parentTexture:'/solar-system/textures/2k_jupiter.jpg', texture:'/surface/io.webp',
     source:'https://science.nasa.gov/jupiter/jupiter-moons/io/facts/',
     description:'硫质沉积覆盖的平原与深色熔岩流交错，木星悬在朝向主星的一侧。',
-    notes:'依据探测影像中的火山、硫质沉积与熔岩地貌重建。没有真实着陆照片，熔岩裂隙位置与亮度变化是艺术示意，不对应特定正在喷发的火山。使用 IAU 东经坐标，轨道与姿态独立计算，未额外加入非刚体物理天平动。',
+    notes:'依据探测影像中的火山、硫质沉积与熔岩地貌重建。没有真实着陆照片，熔岩裂隙位置与亮度变化是艺术示意，不对应特定正在喷发的火山。使用 IAU 东经坐标，轨道与姿态独立计算，未额外加入非刚体物理天平动。落点在距次木星点约 55° 处，木星高度角约 34°，不在天顶。',
     solarDay:1.77, activity:'lava', initialHeading:235, panoramaCenter:180,
+  },
+  'io-subjovian': {
+    ...common, id:'io', body:'Io', name:'木卫一', title:'次木星点 · 火山口边缘', english:'SUB-JOVIAN PATERA RIM',
+    radiusKm:physicalData.io.radiusKm, latitude:0, longitude:0,
+    parent:'Jupiter', parentName:'木星', parentRadiusKm:physicalData.jupiter.radiusKm,
+    parentTexture:'/solar-system/textures/2k_jupiter.jpg', texture:'/surface/io-subjovian.webp',
+    provenance:'次木星点 · AI 艺术重建', credit:'地表艺术重建 · gpt-image-2.5-sunburst · 材质参考同天体现有落点',
+    source:'https://science.nasa.gov/jupiter/jupiter-moons/io/facts/',
+    description:'浅碗状火山口的边缘，硫质地面泛着黄与灰绿，木星几乎就在天顶。',
+    notes:'落点取在次木星点：木星高度角 89.1°–90.0°、视直径 19.1°–19.3°，在一个自转周期内几乎不动，与 55°E 落点的 34.0° 互为对照。**站在次木星点上，太阳每个公转周期都会从木星背后经过，形成一次周期性日食**，此时地表明显变暗；「寻找日照」会跳过这些时刻，不会把日食当成日照。落点不指代某座已命名火山，碗状凹陷与熔岩裂隙位置为艺术示意。硫质沉积与玄武岩的色调参考同天体现有落点素材，地形为新画面。',
+    date:'2026-09-13T20:48:57Z', solarDay:1.77, activity:'lava', initialHeading:180, panoramaCenter:180, initialPitch:10,
   },
   titan: {
     ...common, id:'titan', body:'Titan', name:'土卫六', title:'惠更斯着陆区', english:'HUYGENS LANDING REGION',
@@ -60,6 +86,17 @@ export const additionalLandingSites = Object.freeze({
     notes:'依据新视野号地貌资料重建，没有真实着陆照片或逐像素高程还原。这里在背向冥卫一的一侧，冥卫一位于地平线下。太阳按实际视大小显示，曝光为展示调整；稀薄大气的微弱近地霾层为示意。1900—2100 年的冥王星与冥卫一位置采用 JPL PLU060；自转独立计算，未额外模拟物理天平动。',
     atmosphere:'pluto', solarDay:6.388, referenceSolarAltitude:20,
   },
+  'pluto-charonface': {
+    ...common, id:'pluto', body:'Pluto', name:'冥王星', title:'朝冥卫一高地', english:'CHARON-FACING TERRAIN',
+    radiusKm:physicalData.pluto.radiusKm, latitude:12, longitude:0,
+    parent:'Charon', parentName:'冥卫一', parentRadiusKm:physicalData.charon.radiusKm,
+    parentTexture:'/solar-system/textures/2k_charon.jpg', texture:'/surface/pluto-charonface.webp',
+    provenance:'朝冥卫一 · AI 艺术重建', credit:'地表艺术重建 · gpt-image-2.5-sunburst · 材质参考同天体现有落点',
+    source:'https://www.nasa.gov/missions/new-horizons/plutos-big-moon-charon-reveals-a-colorful-and-violent-history/',
+    description:'更古老、更粗糙的冰质高地，冥卫一几乎固定在头顶。',
+    notes:'冥王星与冥卫一互相潮汐锁定。此落点在朝冥卫一的半球：冥卫一高度角约 78°、视直径约 3.8°，一个自转周期内几乎不动；现有 178°E 落点位于背侧，冥卫一高度角 −72.7°，永不升起。两点互为对照。近地地貌为艺术重建，冰质色调参考同天体现有落点素材。1900—2100 年位置采用 JPL PLU060。',
+    atmosphere:'pluto', solarDay:6.388, initialPitch:10, referenceSolarAltitude:20,
+  },
   miranda: {
     ...common, id:'miranda', body:'Miranda', name:'天卫五', title:'维罗纳断崖附近', english:'VERONA RUPES REGION',
     radiusKm:physicalData.miranda.radiusKm, latitude:-18, longitude:316,
@@ -80,6 +117,55 @@ export const additionalLandingSites = Object.freeze({
     notes:'信使号等轨道影像提供地貌依据，落地全景为艺术重建。水星只有极稀薄的外逸层，没有蓝天、云雾或风沙。自转约 58.65 地球日，太阳日约 176 地球日；太阳视大小随椭圆轨道变化。表面不模拟成熔岩海。',
     solarDay:176, referenceSolarAltitude:20,
   },
+  'mercury-pole': {
+    ...common, id:'mercury', body:'Mercury', name:'水星', title:'北极 · 永久阴影区边缘', english:'NORTH POLAR TERRAIN',
+    radiusKm:physicalData.mercury.radiusKm, latitude:88, longitude:0,
+    parent:'Sun', parentName:'太阳', parentRadiusKm:physicalData.sun.radiusKm, parentTexture:null,
+    texture:'/surface/mercury-pole.webp',
+    provenance:'北极 · AI 艺术重建', credit:'地表艺术重建 · gpt-image-2.5-sunburst · 材质参考同天体现有落点',
+    source:'https://science.nasa.gov/mercury/facts/',
+    description:'太阳贴着地平线缓慢移动，近处的浅坑内终年不见日光。',
+    notes:'高纬度日照极特殊：按本项目星历复算，太阳高度角在整个约 176 地球日的太阳日内都只在 −2.0° 至 +2.0° 之间，太阳视直径同时由 1.72° 缩到 1.14°，一年绕地平线一圈而不是升起落下。雷达探测到的水冰沉积埋藏在永久阴影坑内，不显示为地表霜层，全景中也没有冰面反光。近地地貌为艺术重建，灰褐色调参考同天体现有落点素材。',
+    solarDay:176, referenceSolarAltitude:1, daylightAltitude:1.2, initialHeading:180, panoramaCenter:180,
+  },
+  'moon-farside': {
+    ...common, id:'moon', body:'Moon', name:'月球', title:'天河基地 · 冯·卡门坑', english:'STATIO TIANHE · VON KÁRMÁN',
+    radiusKm:physicalData.moon.radiusKm, latitude:-45.4446, longitude:177.5991,
+    parent:'Earth', parentName:'地球', parentRadiusKm:physicalData.earth.radiusKm,
+    parentTexture:'/solar-system/textures/2k_earth_daymap.jpg', texture:'/surface/moon-farside.webp',
+    date:'2019-01-03T02:26:00Z',
+    provenance:'背面平原 · AI 艺术重建', credit:'地貌依据 CNSA 嫦娥四号 / 玉兔二号公开影像描述 · 着陆点定位论文 · 地表艺术重建 gpt-image-2.5-sunburst',
+    source:'https://pmc.ncbi.nlm.nih.gov/articles/PMC6760200',
+    description:'南极-艾特肯盆地内的玄武岩平原，环顾四周看不到地球。',
+    notes:'嫦娥四号于 2019-01-03 02:26 UTC 着陆在冯·卡门坑底，是人类第一次在月球背面着陆。落点坐标 177.5991°E / 45.4446°S 出自着陆点定位论文，非推测位置。地球在这里整月不升起：按本项目星历与 IAU 姿态复算，地球高度角在一个朔望月内只在 −51.3° 至 −37.2° 之间，永远在地平线下；近侧哈德利-亚平宁落点的地球高度角是 +68.3°。近地地貌为艺术重建，依据冯·卡门坑玄武岩平原的资料描述，没有逐像素沿用玉兔二号影像。',
+    solarDay:29.53, initialHeading:180, panoramaCenter:180,
+  },
+  'europa-subjovian': {
+    ...common, id:'europa', body:'Europa', name:'木卫二', title:'次木星点 · 双脊冰原', english:'SUB-JOVIAN DOUBLE RIDGES',
+    radiusKm:physicalData.europa.radiusKm, latitude:0, longitude:0,
+    parent:'Jupiter', parentName:'木星', parentRadiusKm:physicalData.jupiter.radiusKm,
+    parentTexture:'/solar-system/textures/2k_jupiter.jpg', texture:'/surface/europa-subjovian.webp',
+    provenance:'次木星点 · AI 艺术重建', credit:'地表艺术重建 · gpt-image-2.5-sunburst · 材质参考同天体现有落点',
+    source:'https://www.jpl.nasa.gov/missions/europa-lander/',
+    description:'笔直的双脊横过冰面，木星几乎就在天顶。',
+    notes:'落点取在次木星点：木星高度角 87.3°–89.4°、视直径 11.9°–12.1°，一个自转周期内几乎不动；现有 62°E 落点的木星高度角只有 27.0°，两点互为对照。**站在次木星点上，太阳每个公转周期都会从木星背后经过，形成一次周期性日食**，此时地表明显变暗；「寻找日照」会跳过这些时刻，不会把日食当成日照。双脊与暗色纹路的位置为艺术示意，非实测裂隙图。使用 IAU 东经坐标，轨道与自转独立计算，未额外建模非刚体物理天平动。',
+    solarDay:3.55, initialHeading:180, panoramaCenter:180, initialPitch:10,
+  },
+  charon: {
+    ...common, id:'charon', body:'Charon', name:'冥卫一', title:'赤道峡谷带 · 朝冥王星侧', english:'EQUATORIAL CANYON BELT',
+    radiusKm:physicalData.charon.radiusKm, latitude:2, longitude:0,
+    parent:'Pluto', parentName:'冥王星', parentRadiusKm:physicalData.pluto.radiusKm,
+    parentTexture:'/solar-system/textures/2k_pluto.jpg', texture:'/surface/charon.webp',
+    date:'2026-09-19T22:49:00Z',
+    provenance:'赤道峡谷带 · AI 艺术重建', credit:'地貌依据 NASA 新视野号影像描述 · 地表艺术重建 gpt-image-2.5-sunburst',
+    source:'https://www.nasa.gov/missions/new-horizons/plutos-big-moon-charon-reveals-a-colorful-and-violent-history/',
+    description:'断裂的冰质峡谷从脚下延伸，冥王星几乎固定在头顶。',
+    notes:'落点在朝冥王星的一侧：冥王星高度角 88.4°、视直径 7.2°，一个自转周期内几乎不动（互相潮汐锁定）。赤道峡谷带依据新视野号影像的地貌描述重建，崖高、走向与宽度不是测量值。冥卫一北半球的暗红色极冠（Mordor Macula）不在本落点视野内。1900—2100 年位置采用 JPL PLU060。',
+    atmosphere:'pluto', solarDay:6.388, initialPitch:10, referenceSolarAltitude:20,
+  },
 });
 
-export const landableBodyIds = Object.freeze(['moon','europa',...Object.keys(additionalLandingSites)]);
+// A body is landable when it owns at least one site; several sites may share one.
+export const landableBodyIds = Object.freeze([
+  ...new Set(['moon', 'europa', ...Object.values(additionalLandingSites).map(site => site.id)]),
+]);
