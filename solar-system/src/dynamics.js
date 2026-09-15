@@ -173,7 +173,9 @@ const common = /* glsl */ `
   uniform float uCloudVisible;
   uniform float uNightEnabled;
   uniform float uShadowEnabled;
-  uniform float uBodyRadius;
+  // Polar/equatorial semi-axis ratio, 1 for a round body. Shadows and occlusions here
+  // are measured in units of the equatorial radius, which is the unit the globe and the
+  // ring geometry are both built in, so the scene's own radius scale never enters.
   uniform float uBodyPolarRatio;
   uniform float uSunAngularRadius;
   varying vec3 vActivityDir;
@@ -560,14 +562,19 @@ const saturnShadowFunctions = /* glsl */ `
     }
     return transmission / totalWeight;
   }
+  // p and lightDirection are both in the ring mesh's own frame, in units of the
+  // equatorial radius, where the ring plane is z = 0 and the polar axis is +Z. Dividing
+  // the polar component by the polar ratio takes that frame to the one where the
+  // ellipsoid is a unit sphere: the ring plane is unchanged, and a ray stays a ray
+  // because the map is linear. Measuring against a unit sphere without it leaves the
+  // shadow too wide; the ratio is 1 for every round body, and the caller must scale the
+  // point and the light the same way or they end up in different spaces.
   float planetTransmission(vec3 p, vec3 lightDirection) {
-    // A flattened globe shadows the rings as an ellipsoid. Measuring against a unit
-    // sphere would leave the shadow too wide, so compare in the space where the
-    // polar semi-axis is 1; the ratio is 1 for every round body.
-    vec3 light = vec3(lightDirection.x, lightDirection.y / uBodyPolarRatio, lightDirection.z);
+    vec3 light = vec3(lightDirection.x, lightDirection.y, lightDirection.z / uBodyPolarRatio);
+    vec3 point = vec3(p.x, p.y, p.z / uBodyPolarRatio);
     float lightLength = length(light);
-    float along = dot(p,light) / lightLength;
-    float closest = length(cross(p,light)) / lightLength;
+    float along = dot(point,light) / lightLength;
+    float closest = length(cross(point,light)) / lightLength;
     float feather = max(fwidth(closest) * 1.5,
       .001 + max(-along,0.0) * tan(uSunAngularRadius));
     float visibility = along < 0.0 ? smoothstep(1.0-feather,1.0+feather,closest) : 1.0;
@@ -640,9 +647,13 @@ function attachRingSurface(record) {
       // surrounding chunks declare variables that later stages still read.
       // The planet's shadow on the rings. vActivityPosition is the annulus's true
       // position, not the widened one the rasteriser was given, so the shadow edge stays
-      // on the measured radius.
+      // on the measured radius. It is already in units of the equatorial radius, which is
+      // how the ring geometry is built and how the planet's own shader hands its surface
+      // point to ringTransmission, so dividing it by uBodyRadius was shrinking every ring
+      // point to a fraction of the planet and growing the shadow into the whole
+      // anti-sunward half of the ring system.
       float ringOcclusion = mix(
-        1.0, planetTransmission(vActivityPosition / uBodyRadius, ringSunLocal), uShadowEnabled);
+        1.0, planetTransmission(vActivityPosition, ringSunLocal), uShadowEnabled);
       float ringRadiance = ringSlabReflectance(
         ringTau, ringAlbedoW, ringMu, ringMu0, ringCosAlpha, vRingRegion, uRingPhaseG)
         * ringOppositionSurge(ringCosAlpha, ringSurge) * ringOcclusion;
@@ -1011,7 +1022,6 @@ export function createDynamics(objects, { defer = false } = {}) {
         uCloudVisible: { value: 1 },
         uNightEnabled: { value: body.nightMap ? 1 : 0 },
         uShadowEnabled: { value: 1 },
-        uBodyRadius: { value: body.radius },
         uBodyPolarRatio: { value: body.shape?.[1] || 1 },
         uSunAngularRadius: { value: 0.0005 },
       },

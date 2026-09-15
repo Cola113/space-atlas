@@ -98,7 +98,7 @@ try {
   // follows the projection toggle, but only by scaling its own alpha, and in these
   // framings it leaves a few hundred changed pixels that swamp the surface's shadow when
   // both are counted together. With the layers off the two states are unambiguous - a
-  // working shadow darkens about 55,000 pixels of the ring annulus by more than 10%, and
+  // working shadow darkens thousands of pixels of the ring annulus by more than 10%, and
   // a shadow that never reaches the ring surface darkens none. That is the regression
   // that shipped between 2026-09-15's ring generalisation and this check, and it was
   // found by eye rather than by any of the checks above.
@@ -143,6 +143,80 @@ try {
     report.push({ name: 'ring-plane-shadow', annulus, strongPixels: strong, deepestDarkening: Number(deepest.toFixed(3)) });
     assert.ok(deepest > .2, `the projection barely darkens the ring surface: deepest ${deepest.toFixed(3)}`);
     assert.ok(strong > 2000, `the projection darkens too little of the ring plane: ${strong} px of ${annulus}`);
+  }
+  // The shape of that shadow, not just that it lands somewhere. Measuring it in the wrong
+  // units still darkens pixels - dividing the ring point by the body radius shrinks every
+  // ring position to a fraction of the planet, so the shadow test degenerates into "is
+  // this on the far side of the planet" and paints the whole anti-sunward half of the ring
+  // plane. Seen down the polar axis the ring plane is square to the camera and the planet's
+  // own disc is the ruler: the true shadow is a tongue that spans one equatorial radius
+  // either side of the sun axis at the planet and tapers anti-sunward, and the sunward half
+  // stays lit; the broken one spreads to every radius. Both are measured below, and the
+  // check fails on either.
+  {
+    const shots = {};
+    for (const shadows of [true, false]) {
+      const context = await browser.newContext({ viewport: { width: 1000, height: 1000 }, reducedMotion: 'reduce' });
+      const pole = new Vector3(0, 1, 0).applyQuaternion(new Quaternion().fromArray(saturn.orientation)).normalize();
+      const offset = pole.multiplyScalar(saturn.radius * 11).toArray();
+      await context.addInitScript(({ offset, shadows }) => sessionStorage.setItem('space-atlas:scene:solar-system', JSON.stringify({
+        version: 1, value: { selected: 'saturn', playing: false, shadows, dynamics: false,
+          followRotation: false, date: Date.UTC(2002, 9, 1), speed: 1000, speedUnit: 'realtime', direction: 1, offset, portrait: false },
+      })), { offset, shadows });
+      const page = await context.newPage();
+      await page.goto(base + '/solar-system/');
+      await settle(page);
+      await page.waitForTimeout(900);
+      const state = await page.evaluate(() => window.solarAtlas.snapshot());
+      const body = state.bodies.find(b => b.id === 'saturn');
+      const buffer = await page.screenshot();
+      if (shadows) await writeFile(new URL('ring-plane-face-on.png', output), buffer);
+      else await writeFile(new URL('ring-plane-face-on-off.png', output), buffer);
+      shots[shadows ? 'on' : 'off'] = { buffer, body, state };
+    }
+    const read = async entry => {
+      const { data, info } = await sharp(entry.buffer).removeAlpha().raw().toBuffer({ resolveWithObject: true });
+      return { data, info, lum: i => (data[i] + data[i + 1] + data[i + 2]) / 3 / 255 };
+    };
+    const on = await read(shots.on), off = await read(shots.off);
+    const { body, state } = shots.on;
+    // Screen direction of the sun's in-plane part. The camera sits on the polar axis, so
+    // that direction lies in the image plane and needs no ring-frame reconstruction.
+    const eye = new Vector3().fromArray(state.camera), look = new Vector3().fromArray(state.target);
+    const forward = look.clone().sub(eye).normalize();
+    const right = new Vector3().crossVectors(forward, new Vector3(0, 1, 0)).normalize();
+    const up = new Vector3().crossVectors(right, forward).normalize();
+    const north = new Vector3(0, 1, 0).applyQuaternion(new Quaternion().fromArray(body.orientation)).normalize();
+    const sun = new Vector3().fromArray(body.sunDirection);
+    const inPlane = sun.clone().addScaledVector(north, -sun.dot(north)).normalize();
+    const axis = { x: inPlane.dot(right), y: -inPlane.dot(up) };
+    assert.ok(Math.abs(axis.x) + Math.abs(axis.y) > .5, 'the sun does not project into the ring plane in this framing');
+    let ringPixels = 0, darkened = 0, sunward = 0, widest = 0, farthest = 0;
+    for (let y = 0; y < off.info.height; y++) for (let x = 0; x < off.info.width; x++) {
+      const i = (y * off.info.width + x) * off.info.channels;
+      const lit = off.lum(i);
+      if (lit < .01) continue;                       // no ring drawn here, or it is unlit
+      const dx = x + .5 - body.x, dy = y + .5 - body.y;
+      const distance = Math.hypot(dx, dy) / body.radiusPx;
+      if (distance < 1.05 || distance > 2.4) continue;
+      ringPixels++;
+      if ((lit - on.lum(i)) / lit <= .1) continue;
+      darkened++;
+      const across = Math.abs(-dx * axis.y + dy * axis.x) / body.radiusPx;
+      const along = (dx * axis.x + dy * axis.y) / body.radiusPx;
+      if (across > widest) widest = across;
+      if (along > farthest) farthest = along;
+      if (along > 0.15) sunward++;
+    }
+    console.log(`ring-plane shadow face on: ${darkened} px of ${ringPixels} darkened, ${widest.toFixed(2)} radii across the sun axis,` +
+      ` reaching ${farthest.toFixed(2)} radii sunward, ${sunward} of them on the sunward side`);
+    report.push({ name: 'ring-plane-shadow-shape', ringPixels, darkened, widestAcross: Number(widest.toFixed(2)),
+      farthestSunward: Number(farthest.toFixed(2)), sunwardPixels: sunward });
+    // The un-flattened silhouette is a full equatorial radius either side of the axis, and
+    // the penumbra and the antialiasing of the ring surface's own edge add a little.
+    assert.ok(widest < 1.2, `the shadow is far wider than the planet: ${widest.toFixed(2)} radii across`);
+    assert.ok(darkened > 500, `the shadow barely lands on the ring plane: ${darkened} px of ${ringPixels}`);
+    assert.ok(sunward < darkened * .02, `${sunward} of ${darkened} shadowed pixels are on the sunward side`);
   }
   await writeFile(new URL('report.json', output), JSON.stringify(report, null, 2));
 } finally { await browser.close(); }

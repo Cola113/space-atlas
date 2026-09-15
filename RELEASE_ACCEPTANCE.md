@@ -122,6 +122,34 @@
 另外 `verify-physical-definitions.mjs` 等读取构建产物的专项**必须指向生产构建**：指向开发服务器时该路径会落到 SPA 回退页，
 表现为「是 HTML 回退」的断言失败，那是取错地址而不是回归。
 
+## 2026-09-15 追加：行星投在环上的影的量纲修正
+
+用户再次看图指出环上的黑色区域过大，"应该只投在"靠背阳侧的一块。查下来不是影消失，而是**影的尺度错**：
+恢复那行影时沿用了环网格还在场景单位时代的 `vActivityPosition / uBodyRadius`，
+而网格改成按赤道半径归一化之后，这句把每个环面点缩到天体半径以内，本影判据退化成"这个点在不在背阳侧"，
+整片环系的背阳半边一起变黑。同一函数还把扁平率加在 `lightDirection.y` 上，而环网格的局部 +Z 才是极轴。
+两处一起修，细节与量测记在 [BODY_MODELS.md](solar-system/BODY_MODELS.md)。
+
+改动是一个着色器函数与一个 uniform，浏览器专项在生产构建（`npm run build` 后 `vite preview`，`127.0.0.1:5291`）上重跑：
+
+| 专项 | 覆盖 | 结果 |
+| --- | --- | --- |
+| `verify-saturn-shadows.mjs` | 六种取景的标记、开关接线与布局；环面像素断言；**新增**正对极轴取景下的影形状断言（横向半宽、背阳一侧） | 六种通过；环面 4,564 像素被压暗超过 10%、最深 0.527；半宽 0.77 个赤道半径、背阳侧之外 0 个暗像素 |
+| 同上，对着未修的实现跑 | 新的形状断言是否真的抓得住这次的错误 | 失败，读数 2.18 个赤道半径（正是被多除的天体半径倍数）；环面暗像素 56,405 对 7,715 |
+| `verify-ring-thin-coverage.mjs` | 天王星环面近侧视，亚像素环是否仍连成线 | 斑点指数 1.29、35% 行无凹陷，通过（与上一轮同值） |
+| `verify-integration.mjs` | 四屏综合：58 个天体、无浏览器错误、黑洞场景可进入 | 四屏通过 |
+| `verify-catalog-landmarks.mjs`（含 `ATLAS_MOTION=1`） | 四屏标签、降落图标、地标导航与布局 | 各四屏通过 |
+| `verify-landings.mjs` | 九处落点 × 四屏共 36 次图标点击、进入与返回、移动视角、变焦、时间继承、地表控件 | 36/36 通过 |
+| `verify-time-follow.mjs`、`verify-surface-ephemeris.mjs`、`verify-accessibility-names.mjs`、`verify-solar-loading.mjs`、`verify-solar-controls.mjs`、`verify-solar-error-layout.mjs`、`verify-overview-physics.mjs`、`verify-overview-session.mjs`、`verify-ground-rendering.mjs` | 与上一轮相同的覆盖 | 全部通过 |
+| `npm test` | 单元测试 | 121/121 通过 |
+
+**一处订正**：上一轮的表把 `verify-catalog-landmarks.mjs` 记成在生产构建上通过，但该脚本在页面里动态导入 `/solar-system/src/surface/sites.js`，
+那是开发服务器才有的源文件路径，指向 `vite preview` 时该导入直接失败。该专项只能在开发服务器上跑，本轮也是这样跑的；
+其余专项仍指向生产构建。这不影响上一轮的结论，但那张表的"用生产构建"对这一个脚本不成立。
+
+**没跑的**：`verify-release.mjs`（需现网地址与部署核验）、`verify-moon-textures.mjs`、`verify-surface-panorama.mjs`（针对地表贴图），
+以及黑洞与猎户座专项——本轮没有改到它们。
+
 ## 回退点
 
 发布前的现网生产部署已经通过 Vercel API 只读核验：
