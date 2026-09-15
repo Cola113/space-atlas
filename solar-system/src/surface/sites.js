@@ -104,7 +104,7 @@ export const additionalLandingSites = Object.freeze({
     parentTexture:'/solar-system/textures/2k_uranus.jpg', texture:'/surface/miranda.webp',
     source:'https://science.nasa.gov/uranus/moons/miranda/',
     description:'层状冰岩断崖从碎裂的平原升起，崖脚散落着棱角分明的坡积物。',
-    notes:'旅行者 2 号影像提供地貌依据，近地轮廓、崖高和距离为艺术构建，不是测量模型。使用 IAU 极轴与自转相位，包括主要章动项；1900—2100 年轨道独立采用 JPL URA184；落点地形、姿态和时标近似仍不适用于精确日食预报。',
+    notes:'旅行者 2 号影像提供地貌依据，近地轮廓、崖高和距离为艺术构建，不是测量模型。使用 IAU 极轴与自转相位，包括主要章动项；1900—2100 年轨道独立采用 JPL URA184；落点地形、姿态和时标近似仍不适用于精确日食预报。**这里的季节以十年计**：天王星倾角约 98°，天卫五跟着它绕太阳转，落点会连续多年见不到太阳——2026 年前后太阳高度角整日都在 −32° 与 −4° 之间，2085 年前后正午可到约 80°。默认日期只是资料时刻，从太阳系降落时继承当前模拟时间；在这些年份里「寻找日照」找不到日照是正确结果，不是故障。',
     solarDay:1.414, initialPitch:9, referenceSolarAltitude:15,
   },
   mercury: {
