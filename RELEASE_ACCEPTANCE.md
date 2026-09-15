@@ -167,6 +167,25 @@
 
 **没跑的**：与上一节相同；`verify-ground-rendering.mjs` 的固定端口 5192 被上一轮遗留的服务占用，未跑（它针对地表天空着色，本轮未改）。
 
+## 2026-09-15 追加：球面网格的法线不再重算
+
+用户指出"一些星球有很明显的接缝，这在 main 中是没有的"。原因是给天体加上 `shape` 之后，
+`body-geometry.js` 用 `computeVertexNormals()` 重算球面法线：球体的 UV 接缝是一列重复顶点，
+逐面平均只看得见各自一侧的面，两列法线相差 3.3°，着色沿整条子午线折出一道缝；极点处三角扇退化，
+法线长度为零。main 里多数天体没有 `shape`，用的是 three.js 自带解析法线，所以看不到。
+改为把法线按线性映射的逆转置**变换**（含赤道脊的闭式解），重复列与极点都不再有分歧。
+细节、量测与证据在 [BODY_MODELS.md](solar-system/BODY_MODELS.md) 与 `outputs/globe-seam/`。
+
+| 专项 | 覆盖 | 结果 |
+| --- | --- | --- |
+| `body-models.test.js`（**新增一项**） | 接缝两列法线夹角 < 0.05°、法线均为单位长度、与参数曲面的有限差分法线相差 < 0.05°、反向对照（旧写法必须仍 > 0.5°） | 通过；单元测试 124/124 |
+| 同上，对着改动前的实现跑 | 守卫是否真的抓得住 | 失败："shape 1,0.902,1: 2 normals are not unit length"（极点退化） |
+| 相机绕行 12 个取景 ×（改动前 / 改动后） | 逐像素相减，差异是否集中在少数几列（那条子午线） | view 0 在 x=485–488、view 1 在 437–439、view 8 在 72–74、view 9 在 87–89 各成窄列簇；接缝落在背光面的取景为 0 |
+| `verify-integration.mjs`、`verify-catalog-landmarks.mjs`、`verify-landings.mjs`、`verify-saturn-shadows.mjs`、`verify-ring-faces.mjs` | 与上一轮相同的覆盖 | 全部通过 |
+
+**边界**：这条缝在像素上只有 3–5/255，与云带自身的横向梯度同量级，因此没有做成像素阈值断言——
+守卫是几何量的单元测试，判据写在 `outputs/globe-seam/README.md` 里，不含糊成"看不出来就算过"。
+
 ## 回退点
 
 发布前的现网生产部署已经通过 Vercel API 只读核验：

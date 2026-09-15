@@ -424,6 +424,16 @@ Titan（23 km，τ≈4）、Maxwell、Bond、Dawes 三条在 C 环内，Huygens�
 两种约定在哪一站可分辨、图钉实际跟的是哪一种，由 `feature-anchors.test.js` 的
 「landing markers sit on the measured ellipsoid of every shaped body」逐站检查。
 
+**网格法线是变换出来的，不是重新算的。** 球体克隆后按半轴缩放，法线取该线性映射的逆转置作用于原法线
+（赤道脊那一路多一个随纬度变化的赤道缩放，其雅可比同样有闭式解）。不用 `computeVertexNormals()` 是必须的：
+球体的 UV 接缝是一列**重复顶点**，逐面平均只看得到各自一侧的面，两列法线相差可达 3.3°，着色沿整条子午线折出一道缝；
+极点处三角扇退化，`computeVertexNormals` 给出的法线长度为零。这两件事只有给天体加上 `shape` 之后才会上屏，
+2026-09-15 之前多数天体是单位球、用的是 three.js 自带的解析法线，所以看不出。
+`body-models.test.js` 的「a shaped globe keeps one normal per surface point, seam and poles included」
+断言接缝两列夹角 < 0.05°、法线都是单位长度、与参数曲面的有限差分法线相差 < 0.05°，并带反向对照
+（旧的逐面平均必须仍然超过 0.5°，否则测试本身失效）；对着未修改的实现跑，它以退化法线的断言失败。
+证据与量测留在 `outputs/globe-seam/`。
+
 静态地标的取景方向取该点处椭球的真实法线，即 x²/sx² + y²/sy² + z²/sz² 的梯度，而不是从球心指向标记的半径向量。
 球体上两者相同，扁球上不同：土星中纬度处相差可达数度，若沿用半径向量，相机会偏轴看向标记边缘。
 标记位置仍在压扁后的表面上按显示约定的 1.017 抬升，取景距离沿用同一 `extent`，不因这次修正改变缩放节奏。

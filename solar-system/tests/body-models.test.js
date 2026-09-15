@@ -145,6 +145,69 @@ test('names, round major moons, equatorial ridges and the Haumea system are dist
   assert.ok(ring.geometry.parameters.outerRadius > ring.geometry.parameters.innerRadius);
 });
 
+// The globe's normals are what the shading reads, and a sphere mesh carries its texture
+// seam as a duplicated column of vertices. A per-face normal average (three's
+// computeVertexNormals) gives those two columns different normals - it only sees the
+// faces on its own side of the seam - which draws a crease down the whole meridian, and
+// it leaves the pole vertices, where the triangle fan collapses, with no usable normal at
+// all. The shading step across the seam is at most the angle between the two normals times
+// the surface brightness, so that angle is the quantity to hold down.
+test('a shaped globe keeps one normal per surface point, seam and poles included', () => {
+  const sphere = new THREE.SphereGeometry(1, 112, 80);
+  const columns = 113, rows = 81;
+  const angle = (a, b) => Math.acos(Math.min(1, Math.max(-1, a.dot(b)))) * 180 / Math.PI;
+  for (const body of [{ shape: [1, .902, 1] }, { shape: [1, .65, .92], ridge: { height: .30, width: .11 } }, { shape: [1, .9, .94] }]) {
+    const geometry = createBodyGeometry(body, sphere);
+    const normals = geometry.attributes.normal, points = geometry.attributes.position;
+    let degenerate = 0, worstExact = 0, worstSeam = 0;
+    for (let i = 0; i < normals.count; i++) {
+      const normal = new THREE.Vector3(normals.getX(i), normals.getY(i), normals.getZ(i));
+      if (Math.abs(normal.length() - 1) > 1e-4) degenerate++;
+    }
+    // Reference normal straight off the parametric surface, by finite differences, so the
+    // test does not repeat the closed form it is checking.
+    const [sx, sy, sz] = body.shape;
+    const height = body.ridge?.height || 0, width = body.ridge?.width || 1, normalization = 1 + height;
+    const map = (latitude, longitude) => {
+      const equatorial = 1 + (height ? height * Math.exp(-Math.pow(latitude / width, 2)) : 0);
+      const ring = Math.sqrt(Math.max(0, 1 - latitude * latitude));
+      return new THREE.Vector3(ring * Math.cos(longitude) * sx * equatorial / normalization,
+        latitude * sy / normalization, ring * Math.sin(longitude) * sz * equatorial / normalization);
+    };
+    for (let i = 0; i < normals.count; i += 29) {
+      const latitude = (points.getY(i) * normalization / sy);
+      if (Math.abs(latitude) > .999) continue;
+      const longitude = Math.atan2(points.getZ(i) * sx, points.getX(i) * sz);
+      const step = 1e-6;
+      const alongLongitude = map(latitude, longitude + step).sub(map(latitude, longitude - step));
+      const alongLatitude = map(latitude + step, longitude).sub(map(latitude - step, longitude));
+      const reference = new THREE.Vector3().crossVectors(alongLatitude, alongLongitude).normalize();
+      const normal = new THREE.Vector3(normals.getX(i), normals.getY(i), normals.getZ(i));
+      worstExact = Math.max(worstExact, angle(normal, reference));
+    }
+    for (let row = 1; row < rows - 1; row++) {
+      const first = row * columns, last = first + columns - 1;
+      const a = new THREE.Vector3(normals.getX(first), normals.getY(first), normals.getZ(first));
+      const b = new THREE.Vector3(normals.getX(last), normals.getY(last), normals.getZ(last));
+      worstSeam = Math.max(worstSeam, angle(a, b));
+    }
+    assert.equal(degenerate, 0, `shape ${body.shape}: ${degenerate} normals are not unit length`);
+    assert.ok(worstSeam < .05, `shape ${body.shape}: the seam's two columns disagree by ${worstSeam.toFixed(3)} degrees`);
+    assert.ok(worstExact < .05, `shape ${body.shape}: normals are off the ellipsoid by ${worstExact.toFixed(3)} degrees`);
+  }
+  // Negative control: the per-face average this replaced fails the same two bounds, so the
+  // test cannot pass by accident of the sphere being smooth.
+  const averaged = sphere.clone();
+  const points = averaged.attributes.position;
+  for (let i = 0; i < points.count; i++) points.setXYZ(i, points.getX(i), points.getY(i) * .902, points.getZ(i));
+  averaged.computeVertexNormals();
+  const normals = averaged.attributes.normal;
+  const first = 40 * columns, last = first + columns - 1;
+  const a = new THREE.Vector3(normals.getX(first), normals.getY(first), normals.getZ(first));
+  const b = new THREE.Vector3(normals.getX(last), normals.getY(last), normals.getZ(last));
+  assert.ok(angle(a, b) > .5, `the per-face average no longer shows the seam (${angle(a, b).toFixed(3)} degrees), so this test proves nothing`);
+});
+
 test('every display silhouette is taken from a sourced set of semi-axes', () => {
   const byId = Object.fromEntries(bodies.map(b => [b.id, b]));
   const sphere = new THREE.SphereGeometry(1, 112, 80);

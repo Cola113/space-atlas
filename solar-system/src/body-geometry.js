@@ -16,19 +16,44 @@ export function shapeSurfaceNormal(body, point) {
   return point.set(point.x / (sx * sx), point.y / (sy * sy), point.z / (sz * sz)).normalize();
 }
 
+// The globe is a sphere moved by a linear map, so its normals are that map's inverse
+// transpose applied to the sphere's own normals — not a per-face average. Recomputing
+// them with `computeVertexNormals` is what put a meridian line on every shaped body: the
+// sphere's texture seam is a duplicated column of vertices, and a per-face average gives
+// those two columns different normals (up to three degrees apart, and degenerate at the
+// poles, where the triangle fan collapses), so a crease runs pole to pole exactly where
+// the texture wraps. The transform below depends only on the vertex, so the twins come
+// out identical, and it is the exact ellipsoid normal rather than a faceted approximation.
+//
+// With the equatorial ridge the map is no longer linear: the ridge multiplies the
+// equatorial components by m(y) = 1 + height * exp(-(y/width)²) before the same per-axis
+// scaling. Its Jacobian is still diagonal except for one row, and the inverse transpose
+// of that is the closed form worked out below, with m' = dm/dy.
 export function createBodyGeometry(body, sphere) {
   if (!body.shape && !body.ridge) return sphere;
   const geometry = sphere.clone();
   const points = geometry.attributes.position;
+  const normals = geometry.attributes.normal;
   const [sx, sy, sz] = body.shape || [1, 1, 1];
+  const height = body.ridge?.height || 0, width = body.ridge?.width || 1;
+  const normalization = 1 + height;
   for (let i = 0; i < points.count; i++) {
     const latitude = points.getY(i);
-    const ridge = body.ridge ? body.ridge.height * Math.exp(-Math.pow(latitude / body.ridge.width, 2)) : 0;
-    const normalization = 1 + (body.ridge?.height || 0);
-    points.setXYZ(i, points.getX(i) * sx * (1 + ridge) / normalization,
-      latitude * sy / normalization, points.getZ(i) * sz * (1 + ridge) / normalization);
+    const ridge = height ? height * Math.exp(-Math.pow(latitude / width, 2)) : 0;
+    const equatorial = 1 + ridge;
+    const slope = height ? -2 * latitude * ridge / (width * width) : 0;
+    points.setXYZ(i, points.getX(i) * sx * equatorial / normalization,
+      latitude * sy / normalization, points.getZ(i) * sz * equatorial / normalization);
+    const nx = normals.getX(i), ny = normals.getY(i), nz = normals.getZ(i);
+    // The unit sphere's normal is its position, so 1 - y² is nx² + nz².
+    const vx = nx / (sx * equatorial);
+    const vy = (ny - slope * (nx * nx + nz * nz) / equatorial) / sy;
+    const vz = nz / (sz * equatorial);
+    const length = Math.hypot(vx, vy, vz) || 1;
+    normals.setXYZ(i, vx / length, vy / length, vz / length);
   }
-  geometry.computeVertexNormals();
+  // The normals are written from the positions, so they have to be marked.
+  normals.needsUpdate = true;
   geometry.computeBoundingSphere();
   return geometry;
 }
