@@ -88,6 +88,33 @@
 
 高DPI、手机、平板与安全区为桌面Edge上的视口/布局模拟；后台原生测试为Windows Edge。可访问名称取浏览器计算树，未声称运行第三方屏幕阅读器。性能数值只适用于记录的设备和测量方式；完整像素回读耗时包含同步及回读成本，不能直接换算显示帧率。详见[性能验收](PERFORMANCE_VALIDATION.md)。
 
+## 2026-09-15 追加：形体与环系数据接入后的浏览器复验
+
+天体外形（53 个天体改用实测半轴）、环系（四个环系、401 个环带、公里级光学厚度剖面与逐环区颜色）改动之后，
+按本文件与 [AGENTS.md](AGENTS.md) 已列的检查项重跑一遍浏览器专项，**用生产构建**（`npm run build` 后 `vite preview`），不是开发服务器：
+
+| 专项 | 覆盖 | 结果 |
+| --- | --- | --- |
+| `verify-catalog-landmarks.mjs` | 1440×900、390×844、800×450、640×360；选中标签可见、整段文字可点、控件避让、非空画布、九降落图标 | 四屏通过 |
+| 同上，`ATLAS_MOTION=1`（正常动画模式） | 转场与跟随在非减少动态效果模式下的同一组检查 | 四屏通过 |
+| `verify-saturn-shadows.mjs` | 南极、北极、桌面、手机、短横屏、紧凑六种取景；环影渲染、场景标记与开关 | 六种通过 |
+| `verify-landings.mjs` | 九处落点 × 四屏共 36 次图标点击、进入与返回、移动视角、变焦、时间继承、地表控件 | 36/36 通过 |
+| `verify-time-follow.mjs` | 四屏日期、速率、方向、跟随、相机返回与键盘焦点恢复 | 四屏通过 |
+| `verify-surface-ephemeris.mjs` | 星历失败时入口禁用、键盘重试、跨年暂停恢复 | 两项通过 |
+| `verify-integration.mjs` | 四屏综合：58 个天体、无浏览器错误、黑洞场景可进入 | 四屏通过 |
+| `verify-physical-definitions.mjs` | 四屏读取发布产物中的 `physical-definitions.json` | 四屏通过 |
+| `verify-accessibility-names.mjs` | 四屏浏览器计算树中的可访问名称 | 四屏通过 |
+| `verify-solar-loading.mjs` | 四屏首帧与星历超时键盘重试 | 五项通过 |
+| 环系专项（`outputs/ring-multiple-scattering/`） | 土星四个取景、四个环系各一张、环平面周期三个日期（含像素量测）、改动前后 A/B 亮度 | 全部无运行错误 |
+
+**没跑的**：`verify-release.mjs`（需现网 `ATLAS_URL` 与部署核验，本地不具备）、`verify-moon-textures.mjs`、`verify-surface-panorama.mjs`、
+`verify-ground-rendering.mjs`（三者都针对地表贴图与地表天空着色，本目标明确不含地表贴图，且本轮未改这些文件）。
+黑洞与猎户座专项与本次改动无关，未重跑。
+
+**本轮复验的边界**：这些通过不消除程序活动、固定贴图与平均模型的精度限制；性能增量见[性能验收](PERFORMANCE_VALIDATION.md#环系数据接入后的复测)。
+另外 `verify-physical-definitions.mjs` 等读取构建产物的专项**必须指向生产构建**：指向开发服务器时该路径会落到 SPA 回退页，
+表现为「是 HTML 回退」的断言失败，那是取错地址而不是回归。
+
 ## 回退点
 
 发布前的现网生产部署已经通过 Vercel API 只读核验：
