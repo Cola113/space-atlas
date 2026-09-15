@@ -640,6 +640,21 @@ const ringSurfaceVaryings = /* glsl */ `
 // contributes it along the whole line instead of at scattered points.
 const RING_MIN_PIXELS = 1.5;
 
+// Display level of the ring surface, as a fraction of the reflectance the solver computed.
+//
+// The measurement of the ring against the globe - same frame, same geometry, both models -
+// carries a spread of about twenty percent: the bands are averaged radially, the slab table
+// is sampled at twenty-four angles, and the sub-pixel coverage factor varies region by
+// region. A factor inside that range is inside the model's own uncertainty and is not a
+// statement about the ring; outside it, the ring's brightness stops being a photometric
+// one. The sunlit face as shipped read brighter than the planet's own disk at the default
+// framing, so it sits at the low end of that range.
+//
+// This is a display adjustment in the sense REALISM_STANDARD.md allows, written down rather
+// than folded into the reflectance: the slab reflectance stays the measured quantity, and
+// the one number to turn is here.
+const RING_DISPLAY_LEVEL = 0.85;
+
 function saturnDirectLighting(transmission, scatter = false) {
   // Apply occlusion to incident light before accumulating direct illumination.
   // Ring particles also scatter across the plane, unlike an opaque Lambert surface.
@@ -673,6 +688,7 @@ function attachRingSurface(record) {
     `,
     lights_fragment_end: /* glsl */ `
       #include <lights_fragment_end>
+      #define RING_DISPLAY_LEVEL ${RING_DISPLAY_LEVEL.toFixed(2)}
       // Overwrite the Lambert result rather than replacing the lighting chunks: the
       // surrounding chunks declare variables that later stages still read.
       // The planet's shadow on the rings. vActivityPosition is the annulus's true
@@ -697,7 +713,7 @@ function attachRingSurface(record) {
           // measured surge in transmission, and the coherent forward peak is not modelled.
           * ringOppositionSurge(ringCosAlpha, ringSurge)
         : ringSlabTransmittance(ringTau, ringAlbedoW, ringMu, ringMu0, ringCosAlpha, vRingRegion, uRingPhaseG);
-      ringRadiance *= ringOcclusion;
+      ringRadiance *= ringOcclusion * RING_DISPLAY_LEVEL;
       reflectedLight.directDiffuse = ringColour * ringRadiance;
       reflectedLight.directSpecular = vec3(0.0);
       reflectedLight.indirectDiffuse = vec3(0.0);
