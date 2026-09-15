@@ -6,11 +6,12 @@ const base = process.env.ATLAS_URL || 'http://127.0.0.1:5271';
 const output = new URL('./', import.meta.url);
 const tag = process.env.TAG || 'view';
 const date = Number(process.env.DATE || Date.UTC(2026, 8, 15));
+const offset = JSON.parse(process.env.OFFSET || 'null');
 const browser = await chromium.launch({ channel: 'msedge', headless: true });
 const context = await browser.newContext({ viewport: { width: 1200, height: 900 }, reducedMotion: 'reduce' });
-await context.addInitScript(({ date }) => sessionStorage.setItem('space-atlas:scene:solar-system', JSON.stringify({
+await context.addInitScript(({ date, offset }) => sessionStorage.setItem('space-atlas:scene:solar-system', JSON.stringify({
   version: 1, value: { selected: 'saturn', playing: false, shadows: false, dynamics: false, followRotation: false,
-    date, speed: 1000, speedUnit: 'realtime', direction: 1, portrait: false } })), { date });
+    date, speed: 1000, speedUnit: 'realtime', direction: 1, portrait: false, ...(offset ? { offset } : {}) } })), { date, offset });
 const page = await context.newPage();
 await page.goto(base + '/solar-system/');
 await page.waitForFunction(() => { const s = window.solarAtlas?.snapshot(); return s?.ready && !s.flight && !s.ephemeris.blocked; }, null, { timeout: 120000 });

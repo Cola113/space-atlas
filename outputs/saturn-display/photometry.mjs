@@ -141,7 +141,7 @@ const ringDepth = (x, y) => {
   const t = relative.clone().negate().dot(ringNormal) / denom;
   return t > 0 ? t : null;
 };
-const samples = { globe: [], C: [], B: [], A: [] };
+const samples = { globe: [], litC: [], litB: [], litA: [], unlitC: [], unlitB: [], unlitA: [] };
 for (let y = 0; y < info.height; y++) for (let x = 0; x < info.width; x++) {
   const ringT = ringDepth(x, y), globeT = globeDepth(x, y);
   const ring = ringAt(x, y);
@@ -150,13 +150,16 @@ for (let y = 0; y < info.height; y++) for (let x = 0; x < info.width; x++) {
   const ringInFront = ring && ring.facing > 0 && ringT !== null && globeT !== null && ringT < globeT;
   const globe = globeAt(x, y);
   if (globe && globe.mu0 > .5 && globe.mu > .5 && !ringInFront) samples.globe.push({ x, y, ...globe });
-  if (!ring || ring.facing <= 0) continue;
+  if (!ring) continue;
   if (globeT !== null && ringT !== null && ringT > globeT) continue;   // hidden behind the globe
   // Inside the globe's own disc the pixel is mostly globe seen through a thin slab, so it
   // is not a measurement of the ring either.
   if (Math.hypot(x + .5 - cx, y + .5 - cy) < radiusPx * 1.02) continue;
   const band = ring.radial < 1.5 ? 'C' : ring.radial < 1.95 ? 'B' : ring.radial > 2.03 ? 'A' : null;
-  if (band) samples[band].push({ x, y, ...ring });
+  if (!band) continue;
+  // Both faces are measured: which one the camera is on is the sign of the two cosines
+  // from the ring normal, and the model answers with reflection or transmission.
+  samples[(ring.facing > 0 ? 'lit' : 'unlit') + band].push({ x, y, ...ring });
 }
 const report = {};
 for (const [name, list] of Object.entries(samples)) {
@@ -192,9 +195,16 @@ for (const [name, value] of Object.entries(report)) {
   console.log(`  ${name.padEnd(5)} pixels ${String(value.pixels).padStart(5)}  screen ${value.measured.toExponential(3)}` +
     `  model I/F ${value.reflectance.toExponential(3)}  screen/I-F ${(value.measured / value.reflectance).toFixed(3)}${extra}`);
 }
-if (report.globe && report.B) {
-  const screen = report.B.measured / report.globe.measured;
-  const physical = report.B.reflectance / report.globe.reflectance;
+for (const band of ['B', 'A', 'C']) {
+  const lit = report[`lit${band}`], unlit = report[`unlit${band}`];
+  if (!lit || !unlit) { console.log(`  ${band} ring: one face is not visible in this framing`); continue; }
+  const screen = unlit.measured / lit.measured, physical = unlit.reflectance / lit.reflectance;
+  console.log(`  ${band} ring unlit/lit: on screen ${(100 * screen).toFixed(1)}%, model says ${(100 * physical).toFixed(1)}%` +
+    ` -> the dark face carries ${(screen / physical).toFixed(2)}x its physical share`);
+}
+if (report.globe && report.litB) {
+  const screen = report.litB.measured / report.globe.measured;
+  const physical = report.litB.reflectance / report.globe.reflectance;
   console.log(`\nB ring against the globe: on screen ${screen.toFixed(3)}, models say ${physical.toFixed(3)}` +
     ` -> the ring shows ${(screen / physical).toFixed(2)}x its physical share`);
 }
