@@ -33,7 +33,12 @@ const fitted = v => {
   return a.map((x, i) => x / b[i]);
 };
 const exposure = 1.12;
-const toScreen = linear => mul(ACESOutput, fitted(mul(ACESInput, linear.map(v => v * exposure))))[0];
+// With the renderer's tone mapping switched off (NO_TONE=1 shots) the screen value is the
+// scene radiance itself and only the sRGB transfer sits in between.
+const noTone = Boolean(process.env.NO_TONE);
+const toScreen = noTone
+  ? linear => linear[0]
+  : linear => mul(ACESOutput, fitted(mul(ACESInput, linear.map(v => v * exposure))))[0];
 const fromScreen = target => {
   let lo = 0, hi = 200;
   for (let i = 0; i < 60; i++) {
