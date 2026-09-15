@@ -5,6 +5,7 @@ import json
 from pathlib import Path
 import numpy as np
 from PIL import Image, ImageDraw, ImageFilter
+from landing_texture_lib import remove_black_sky, wrap
 
 Image.MAX_IMAGE_PIXELS = 300_000_000
 parser = argparse.ArgumentParser()
@@ -17,29 +18,8 @@ records = []
 if args.mars_only:
     records=[entry for entry in json.loads((args.output/'landings-provenance.json').read_text(encoding='utf-8'))['assets'] if entry['id']!='mars']
 
-def wrap(image, band=70):
-    a = np.asarray(image).astype(np.float32)
-    edge = (a[:, 0] + a[:, -1])*.5
-    left, right = a[:, 0].copy(), a[:, -1].copy()
-    for x in range(band):
-        weight = (1-x/band)**2
-        a[:, x] += (edge-left)*weight
-        a[:, -1-x] += (edge-right)*weight
-    # Fade only the last few degrees of ground to avoid a polar pinwheel.
-    for y in range(image.height-60, image.height):
-        t=((y-image.height+60)/59)**2
-        a[y,:,:3]=a[y,:,:3]*(1-t)+a[y,:,:3].mean(axis=0)*t
-    return Image.fromarray(np.uint8(np.clip(a,0,255)))
-
-def remove_black_sky(image):
-    a=np.asarray(image.convert('RGB')).copy()
-    black=a.max(axis=2)<26
-    mask=Image.fromarray(np.uint8(black)*255).copy()
-    ImageDraw.floodfill(mask,(0,0),128)
-    sky=np.asarray(mask)==128
-    alpha=np.uint8(~sky)*255
-    a[sky]=0
-    return Image.fromarray(np.dstack([a,alpha]))
+# wrap() and remove_black_sky() live in landing_texture_lib.py so this batch and
+# the later second-site batch treat the seam and the nadir identically.
 
 def record(source, image, id, mode, processing):
     dest=args.output/f'{id}.webp'

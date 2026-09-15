@@ -5,9 +5,9 @@ const out='test-results/solar-controls',base=process.env.ATLAS_URL||'http://127.
 const browser=await chromium.launch({channel:'msedge',headless:true}),results=[];let page,name;
 const snap=()=>page.evaluate(()=>window.solarAtlas.snapshot());
 const settle=()=>page.waitForFunction(()=>{const s=window.solarAtlas?.snapshot();return s?.ready&&!s.flight&&!s.ephemeris.blocked;},null,{timeout:60000});
-const direct=['#scene-switcher','#overview-tab','#atlas-tab','#display-settings summary','#rotation-toggle','#observation-settings summary','#back-button','#body-details-button','#surface-button','[data-landing-body]','#zoom-in','#zoom-out','#reset-camera','#play-toggle','#time-settings summary','#catalog-filter','#dock-prev','#dock-next'];
+const direct=['#scene-switcher','#overview-tab','#atlas-tab','#display-settings summary','#rotation-toggle','#observation-settings summary','#back-button','#body-details-button','#surface-button','[data-landing-site]','#zoom-in','#zoom-out','#reset-camera','#play-toggle','#time-settings summary','#catalog-filter','#dock-prev','#dock-next'];
 async function control(sel,{scroll=false}={}){
- const e=page.locator(sel);if(scroll)await e.scrollIntoViewIfNeeded();
+ const e=page.locator(sel).first();if(scroll)await e.scrollIntoViewIfNeeded();
  const r=await e.boundingBox(),vp=page.viewportSize();
  assert.ok(r&&r.width>=43.9&&r.height>=43.9,`${name} small ${sel} ${JSON.stringify(r)}`);
  assert.ok(r.x>=-.1&&r.y>=-.1&&r.x+r.width<=vp.width+.1&&r.y+r.height<=vp.height+.1,`${name} outside ${sel} ${JSON.stringify(r)}`);
@@ -15,7 +15,7 @@ async function control(sel,{scroll=false}={}){
  assert.ok(hit,`${name} covered ${sel}`);return {...r,sel};
 }
 function gaps(rects){for(let i=0;i<rects.length;i++)for(let j=i+1;j<rects.length;j++){const a=rects[i],b=rects[j];const dx=Math.max(0,a.x-b.x-b.width,b.x-a.x-a.width),dy=Math.max(0,a.y-b.y-b.height,b.y-a.y-a.height);assert.ok(Math.hypot(dx,dy)>=7.9,`${name} gap ${a.sel}/${b.sel}: ${dx},${dy}`);}}
-async function directControls(){const rects=[];for(const sel of direct)if(await page.locator(sel).isVisible())rects.push(await control(sel));gaps(rects);const info=await page.locator('#planet-info').boundingBox(),footer=await page.locator('.explorer-bottom').boundingBox();if(info)assert.ok(info.y+info.height<=footer.y-7.9,`${name} info overlaps footer`);return rects;}
+async function directControls(){const rects=[];for(const sel of direct)if(await page.locator(sel).first().isVisible())rects.push(await control(sel));gaps(rects);const info=await page.locator('#planet-info').boundingBox(),footer=await page.locator('.explorer-bottom').boundingBox();if(info)assert.ok(info.y+info.height<=footer.y-7.9,`${name} info overlaps footer`);return rects;}
 async function select(id){await page.locator('#atlas-tab').click();await page.locator('#atlas-search').fill(id);await page.locator(`.atlas-item[data-body="${id}"]`).click();await settle();}
 async function openDisplay(){await page.locator('#display-settings summary').click();}
 async function checkDisplay(){await openDisplay();const rects=[];for(const sel of ['#display-settings-close','#activity-toggle','#orbit-toggle','#label-toggle','#info-button','#fullscreen','#reset-camera'])rects.push(await control(sel,{scroll:true}));

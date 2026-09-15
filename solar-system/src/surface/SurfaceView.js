@@ -17,8 +17,8 @@ const compass = angle => ['北','东北','东','东南','南','西南','西','�
 
 // Camera position is fixed. A brief lens/attitude change settles the arrival;
 // after landing, only the look direction changes. Time and rate carry across views.
-export function createSurfaceView(id, {renderOrbit,onClosed,initialDate,initialRate,initialDirection=1,initialPlaying=true,onDirectionChange,onPlayingChange,onRateChange,onTimeChange,provider=physicalState}) {
-  const site = landingSites[id];
+export function createSurfaceView(siteId, {renderOrbit,onClosed,initialDate,initialRate,initialDirection=1,initialPlaying=true,onDirectionChange,onPlayingChange,onRateChange,onTimeChange,provider=physicalState}) {
+  const site = landingSites[siteId];
   if (!site) throw new Error('这个天体还没有开放着陆点。');
   const parsedDate = initialDate instanceof Date ? initialDate.getTime()
     : (typeof initialDate === 'number' ? initialDate : Date.parse(initialDate || site.date));
@@ -88,7 +88,7 @@ export function createSurfaceView(id, {renderOrbit,onClosed,initialDate,initialR
   let renderer, sky, disposed = false, loaded = false, raf = 0, noticeTimer = 0, groundMask;
   let lastFrame = null, lastDraw = -Infinity, lastSkyUpdate = -Infinity, skyTime = null, lastOrbit = null, dirty = true, lastReadout = '';
   let resetExposure = true, exposureElapsed = 0;
-  const initialPitch = () => site.initialPitch + (id === 'europa' && innerWidth < 600 ? 8 : 0);
+  const initialPitch = () => site.initialPitch + (site.id === 'europa' && innerWidth < 600 ? 8 : 0);
   let resetPitch = initialPitch();
   let heading = site.initialHeading, pitch = resetPitch, motion = null, drag = null;
   const scene = new THREE.Scene();
@@ -362,9 +362,9 @@ export function createSurfaceView(id, {renderOrbit,onClosed,initialDate,initialR
       canvas.setAttribute('aria-label',`${site.name}固定观景点，拖动改变朝向`);canvas.tabIndex=0;
       $('.surface-canvas').append(canvas);
       const compact=innerWidth<=760||renderer.capabilities.maxTextureSize<(site.textureWidth||8192);
-      const groundUrl=compact?(site.mobileTexture||(id==='moon'?'/surface/moon-4k.webp':site.texture)):site.texture;
+      const groundUrl=compact?(site.mobileTexture||site.texture):site.texture;
       const pending=await Promise.allSettled([texture(groundUrl),site.parentTexture?texture(site.parentTexture):Promise.resolve(null),
-        id==='moon'?texture('/solar-system/textures/2k_earth_clouds.jpg'):Promise.resolve(null),
+        site.parentClouds?texture(site.parentClouds):Promise.resolve(null),
         site.parent==='Saturn'?texture('/solar-system/textures/2k_saturn_ring_alpha.png'):Promise.resolve(null)]);
       if(disposed)return;
       for(const result of pending)if(result.status==='rejected')throw new Error('全景或天体纹理未能加载，请返回轨道后重试。');
@@ -428,7 +428,7 @@ export function createSurfaceView(id, {renderOrbit,onClosed,initialDate,initialR
           if(disposed)return;
           if(!blob){notice('照片生成失败，请再试一次。');return;}
           const url=URL.createObjectURL(blob),link=document.createElement('a');
-          link.href=url;link.download=`space-atlas-${id}.png`;link.click();
+          link.href=url;link.download=`space-atlas-${siteId}.png`;link.click();
           setTimeout(()=>URL.revokeObjectURL(url),1000);
           notice('照片已生成，已开始下载。');
         },'image/png');

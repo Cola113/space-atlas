@@ -167,7 +167,7 @@ export function createLandmarks(objects, camera, onSelect, dynamicAnchor, { land
   let bodyId = null;
   let active = null;
   let markers = [];
-  let landingMarker = null;
+  let landingMarkers = [];
   let shadows = true;
   const frameFor = feature => objects.has(bodyId) ? landmarkFrame(feature, objects.get(bodyId), dynamicAnchor, shadows) : null;
   picker.addEventListener("change", () => onSelect(picker.value));
@@ -183,7 +183,7 @@ export function createLandmarks(objects, camera, onSelect, dynamicAnchor, { land
       );
       picker.parentElement.hidden = features.length === 0;
       container.replaceChildren();
-      landingMarker = null;
+      landingMarkers = [];
       markers = features.map((feature) => {
         const button = document.createElement("button");
         button.className = "landmark-marker";
@@ -200,12 +200,14 @@ export function createLandmarks(objects, camera, onSelect, dynamicAnchor, { land
         container.append(button);
         return { feature, button, label, option: picker.options[features.indexOf(feature) + 1], available: false, x: 0, y: 0, visible: false };
       });
-      const site = landingSites[id];
-      if (site) {
+      // A body may carry more than one site; each gets its own pin, and the
+      // collision pass in update() keeps overlapping labels apart.
+      landingMarkers = Object.values(landingSites).filter((site) => site.id === id).map((site) => {
         const button = document.createElement("button");
         button.className = "landmark-marker landing-marker";
         button.setAttribute("aria-label", `降落到${site.name}表面 · ${site.title}`);
-        button.dataset.landingBody = id;
+        button.dataset.landingSite = site.siteId;
+        button.dataset.landingBody = site.id;
         button.hidden = true;
         const pin = createElement(MapPin, { 'aria-hidden': 'true', width: 13, height: 13 });
         const label = document.createElement("span");
@@ -213,10 +215,13 @@ export function createLandmarks(objects, camera, onSelect, dynamicAnchor, { land
         label.textContent = `降落 · ${site.title}`;
         button.title = `${label.textContent} · ${Math.abs(site.latitude)}°${site.latitude < 0 ? 'S' : 'N'} / ${site.longitude}°E`;
         button.append(pin, label);
-        button.addEventListener("click", () => { if (landingMarker?.enabled && landingMarker.visible && !button.disabled) onLanding(id); });
+        const marker = { site, button, label, x: 0, y: 0, visible: false, exposed: false, enabled: false };
+        button.addEventListener("click", () => {
+          if (marker.enabled && marker.visible && !button.disabled) onLanding(site.id, site.siteId);
+        });
         container.append(button);
-        landingMarker = { site, button, label, x: 0, y: 0, visible: false, exposed: false, enabled: false };
-      }
+        return marker;
+      });
     },
     select(id) {
       const feature = (landmarks[bodyId] || []).find((feature) => feature.id === id);
@@ -232,16 +237,18 @@ export function createLandmarks(objects, camera, onSelect, dynamicAnchor, { land
       return active;
     },
     setLandingAvailable(enabled) {
-      if (!landingMarker) return;
-      landingMarker.enabled = Boolean(enabled);
-      landingMarker.button.setAttribute("aria-disabled", String(!enabled));
-      landingMarker.button.tabIndex = enabled ? 0 : -1;
+      for (const marker of landingMarkers) {
+        marker.enabled = Boolean(enabled);
+        marker.button.setAttribute("aria-disabled", String(!enabled));
+        marker.button.tabIndex = enabled ? 0 : -1;
+      }
     },
     setLandingBusy(busy) {
-      if (landingMarker) landingMarker.button.disabled = Boolean(busy);
+      for (const marker of landingMarkers) marker.button.disabled = Boolean(busy);
     },
-    focusLanding() {
-      if (landingMarker?.enabled && landingMarker.visible) landingMarker.button.focus({ preventScroll: true });
+    focusLanding(siteId) {
+      const marker = landingMarkers.find((entry) => (siteId ? entry.site.siteId === siteId : true) && entry.enabled && entry.visible);
+      if (marker) marker.button.focus({ preventScroll: true });
       else {
         const info = document.getElementById('body-details-button');
         (info.checkVisibility() ? info : document.getElementById('landmark-brief-close')).focus({ preventScroll: true });
@@ -261,7 +268,16 @@ export function createLandmarks(objects, camera, onSelect, dynamicAnchor, { land
       const body = objects.get(bodyId);
       const occupied = [];
       const priority = marker => marker.feature === active ? 2 : marker.site ? 1 : 0;
-      for (const marker of [...markers, ...(landingMarker ? [landingMarker] : [])].sort((a, b) => priority(b) - priority(a))) {
+      // Two sites on one body compete for the same space when the body is small.
+      // The one facing the camera claims it first, so rotating to a site reveals it.
+      const facing = marker => {
+        if (!marker.site || !body) return 0;
+        const frame = landingFrame(marker.site, body);
+        if (!frame) return 0;
+        const towardCamera = camera.position.clone().sub(frame.point);
+        return frame.direction.dot(towardCamera.normalize());
+      };
+      for (const marker of [...markers, ...landingMarkers].sort((a, b) => priority(b) - priority(a) || facing(b) - facing(a))) {
         marker.visible = false;
         const frame = marker.site ? body && landingFrame(marker.site, body) : frameFor(marker.feature);
         marker.available = Boolean(frame);
@@ -320,7 +336,7 @@ export function createLandmarks(objects, camera, onSelect, dynamicAnchor, { land
           visible,
           available,
         })),
-        landing: landingMarker ? { body: bodyId, latitude: landingMarker.site.latitude, longitude: landingMarker.site.longitude, visible: landingMarker.visible, exposed: landingMarker.exposed, enabled: landingMarker.enabled, x: landingMarker.x, y: landingMarker.y } : null,
+        landing: landingMarkers.map(({ site, x, y, visible, exposed, enabled }) => ({ siteId: site.siteId, body: bodyId, latitude: site.latitude, longitude: site.longitude, visible, exposed, enabled, x, y })),
       };
     },
   };

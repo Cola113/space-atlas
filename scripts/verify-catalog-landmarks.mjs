@@ -5,7 +5,7 @@ import { fileURLToPath } from 'node:url';
 import { Quaternion, Vector3 } from 'three';
 import sharp from 'sharp';
 import { configureDeploymentAccess } from './deployment-access.mjs';
-import { aimAtLanding } from './landing-navigation.mjs';
+import { aimAtLanding, landingEntry } from './landing-navigation.mjs';
 
 const base = process.env.ATLAS_URL || 'http://127.0.0.1:5191';
 const output = new URL('../test-results/catalog-landmarks/', import.meta.url);
@@ -128,19 +128,24 @@ try {
     await selectBody(page, 'venus');
     assert.equal((await snapshot(page)).catalog, 'planets');
     assert.equal((await snapshot(page)).followRotation, false);
-    for (const id of ['moon', 'europa', 'mars', 'io', 'titan', 'enceladus', 'pluto', 'miranda', 'mercury']) {
+    // [site id, body id]: several sites may share one body, so each site gets its
+    // own marker and is selected through the body it stands on.
+    for (const [id, bodyId] of [['moon', 'moon'], ['moon-farside', 'moon'], ['europa', 'europa'], ['europa-subjovian', 'europa'],
+      ['mars', 'mars'], ['mars-phoenix', 'mars'], ['io', 'io'], ['io-subjovian', 'io'], ['titan', 'titan'],
+      ['enceladus', 'enceladus'], ['pluto', 'pluto'], ['pluto-charonface', 'pluto'], ['miranda', 'miranda'],
+      ['mercury', 'mercury'], ['mercury-pole', 'mercury'], ['charon', 'charon']]) {
       await page.locator('#atlas-tab').click();
       await page.locator('#atlas-system').selectOption('all');
-      await page.locator('#atlas-search').fill(id);
-      await page.locator(`.atlas-item[data-body="${id}"]`).click();
+      await page.locator('#atlas-search').fill(bodyId);
+      await page.locator(`.atlas-item[data-body="${bodyId}"]`).click();
       await settle(page);
-      const landing = page.locator(`[data-landing-body="${id}"]`);
+      const landing = page.locator(`[data-landing-site="${id}"]`);
       assert.equal(await landing.count(), 1, `${id}: missing landing coordinate marker`);
-      const initialPin = (await snapshot(page)).landmarks.landing;
+      const initialPin = landingEntry(await snapshot(page), id);
       if (!initialPin.exposed) assert.equal(await landing.isVisible(), false, `${id}: obscured landing point is visible`);
       if (['moon', 'enceladus'].includes(id)) {
         await aimAtLanding(page, id, {back:true});
-        assert.equal((await snapshot(page)).landmarks.landing.exposed, false);
+        assert.equal(landingEntry(await snapshot(page), id).exposed, false);
         assert.equal(await landing.isVisible(), false);
         await aimAtLanding(page, id);
         assert.equal(await landing.isVisible(), true);

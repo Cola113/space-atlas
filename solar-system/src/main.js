@@ -32,7 +32,7 @@ import {
 import { bodies, ORBIT_SPACING, SYSTEM_RADIUS } from "./data.js";
 import { createDynamics, activityProfiles } from "./dynamics.js";
 import { createLandmarks, landmarks } from "./landmarks.js";
-import { landingSites } from "./surface/geometry.js";
+import { landingSites, defaultSiteId } from "./surface/geometry.js";
 import {
   cameraPath,
   occludedByBody,
@@ -1764,12 +1764,15 @@ function selectLandmark(id) {
   loadHighTexture(body);
 }
 
-async function landOnSurface(bodyId = state.selected) {
+async function landOnSurface(bodyId = state.selected, siteId = null) {
   if (!state.ready || landingBusy || surfaceView || !landableBodyIds.includes(bodyId)) return;
   const id = bodyId;
   if (id !== state.selected) return;
   const body = objects.get(id);
   if (state.system || !body?.physicalAvailable || observationGate?.blocked) return;
+  // Several sites may share one body; a body's own-keyed site is the default.
+  const site = landingSites[siteId || defaultSiteId(bodyId)];
+  if (!site || site.id !== bodyId) return;
   const previousControls = controls.enabled;
   const pose = { position: camera.position.clone(), target: controls.target.clone(),
     quaternion: camera.quaternion.clone(), offset: viewOffset.clone(), width, height };
@@ -1803,7 +1806,7 @@ async function landOnSurface(bodyId = state.selected) {
     const { createSurfaceView } = await import("./surface/SurfaceView.js");
     if (disposed) return;
     $("app").classList.add("surface-journey-background");
-    surfaceView = createSurfaceView(id, {
+    surfaceView = createSurfaceView(site.siteId, {
       initialDate: state.date,
       initialRate: state.speed,
       initialDirection: state.direction,
@@ -1834,7 +1837,7 @@ async function landOnSurface(bodyId = state.selected) {
         camera.position.add(delta);controls.target.add(delta);
         updateSimulationDate();
         refreshObservationGate();
-        requestAnimationFrame(() => landmarkView?.focusLanding());
+        requestAnimationFrame(() => landmarkView?.focusLanding(site.siteId));
       },
     });
   } catch {
@@ -2563,6 +2566,8 @@ async function init() {
         speed: state.speed,
         direction: state.direction,
         date: state.date,
+        landing: Object.values(landingSites).map(site => ({ siteId: site.siteId, body: site.id, title: site.title,
+          latitude: site.latitude, longitude: site.longitude })),
         surface: surfaceView?.snapshot() || null,
         earthObservation: isEarthObservation(),
         observedClouds: observedClouds.snapshot(),

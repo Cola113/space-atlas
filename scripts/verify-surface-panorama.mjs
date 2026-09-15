@@ -38,7 +38,7 @@ try{for(const [name,width,height,dpr] of [['desktop',1440,900,1],['phone',390,84
   await page.locator('#atlas-tab').click();await page.locator('#atlas-search').fill(id);await page.locator(`.atlas-item[data-body="${id}"]`).click();
   await page.waitForFunction(()=>{const s=window.solarAtlas.snapshot();return !s.flight&&!s.ephemeris.blocked;});
   await revealLanding(page,id);
-  await page.locator(`[data-landing-body="${id}"]`).click();await page.waitForFunction(()=>document.querySelector('.surface-view')?.dataset.ready==='true',null,{timeout:60000});
+  await page.locator(`[data-landing-site="${id}"]`).click();await page.waitForFunction(()=>document.querySelector('.surface-view')?.dataset.ready==='true',null,{timeout:60000});
   const before=await page.evaluate(()=>window.solarAtlas.snapshot().surface);
   // Exercise the installed keyboard look handler, without altering physical
   // state, camera internals or textures. Repeated downward input reaches nadir.

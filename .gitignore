@@ -15,3 +15,6 @@ Thumbs.db
 # branch keeps its diff readable; the scripts, reports and notes stay tracked.
 outputs/**/*.png
 outputs/**/*.jpg
+
+# Python bytecode from the local texture scripts
+__pycache__/

@@ -156,6 +156,194 @@
         "3840x1920 prepared composition with temporary near-ground fill",
         "1920x541 PIA26410 photographic mosaic preview"
       ]
+    },
+    {
+      "id": "moon-farside",
+      "generatedOn": "2026-09-16",
+      "mode": "reference-edit with same-body material reference",
+      "sourceFile": "moon-farside-retry-1.png",
+      "sourceDimensions": [
+        3840,
+        2160
+      ],
+      "deliveredDimensions": [
+        3840,
+        1920
+      ],
+      "sourceSha256": "100832b081dd3d7c1e0b255adae8d841bbaf77cc2bc946aa785d72cb8aa0586d",
+      "file": "moon-farside.webp",
+      "sha256": "8ae0edde7580d8f7167153724e570359735d69397be08b1ba424c8a94d32d516",
+      "bytes": 1566858,
+      "processing": "Provider frame 3840x2160 reparameterized to 360x180 at 3840x1920; top-connected black sky removed; narrow wrap blend; nadir smoothing; WebP encoding. The landscape is a new drawing informed by the mare floor description of Von Karman crater; the same body's published Hadley-Apennine panorama was attached for regolith colour and grain only, and is not reproduced.",
+      "model": "gpt-image-2.5-sunburst",
+      "requestedQuality": "high",
+      "requestedSize": "3840x1920",
+      "qualityExecutionVerified": false,
+      "references": [
+        "public/surface/moon.webp (same body, material character only)"
+      ],
+      "requestedSizeAccepted": false
+    },
+    {
+      "id": "pluto-charonface",
+      "generatedOn": "2026-09-16",
+      "mode": "reference-edit with same-body material reference",
+      "sourceFile": "pluto-charonface.png",
+      "sourceDimensions": [
+        3840,
+        2160
+      ],
+      "deliveredDimensions": [
+        3840,
+        1920
+      ],
+      "sourceSha256": "99b0ce2bd173a43c5c0b0d93fef42bfb8dc25214dd4119f5dd11ecddc4b9ac07",
+      "file": "pluto-charonface.webp",
+      "sha256": "ae344a11788a9cdca5998d14f0c8038a749332eed754ed52ad244593f932baf1",
+      "bytes": 1439240,
+      "processing": "Provider frame 3840x2160 reparameterized to 360x180 at 3840x1920; top-connected black sky removed; narrow wrap blend; nadir smoothing; WebP encoding. New drawing; the Sputnik Planitia panorama was attached for ice colour and grain only, and is not reproduced.",
+      "model": "gpt-image-2.5-sunburst",
+      "requestedQuality": "high",
+      "requestedSize": "3840x1920",
+      "qualityExecutionVerified": false,
+      "references": [
+        "public/surface/pluto.webp (same body, material character only)"
+      ],
+      "requestedSizeAccepted": false
+    },
+    {
+      "id": "mercury-pole",
+      "generatedOn": "2026-09-16",
+      "mode": "reference-edit with same-body material reference",
+      "sourceFile": "mercury-pole.png",
+      "sourceDimensions": [
+        3840,
+        2160
+      ],
+      "deliveredDimensions": [
+        3840,
+        1920
+      ],
+      "sourceSha256": "a6181ab77796da3db4d91e0a740ac47e6b32cf6b53f4db9131c086be36743561",
+      "file": "mercury-pole.webp",
+      "sha256": "e84796680af390bff8388e09c3e22cf3efcbee263729c3b16ca0dcdfb2331da5",
+      "bytes": 1891760,
+      "processing": "Provider frame 3840x2160 reparameterized to 360x180 at 3840x1920; top-connected black sky removed; narrow wrap blend; nadir smoothing; WebP encoding. New drawing; the Caloris plains panorama was attached for regolith colour and tone only, and is not reproduced.",
+      "model": "gpt-image-2.5-sunburst",
+      "requestedQuality": "high",
+      "requestedSize": "3840x1920",
+      "qualityExecutionVerified": false,
+      "references": [
+        "public/surface/mercury.webp (same body, material character only)"
+      ],
+      "requestedSizeAccepted": false
+    },
+    {
+      "id": "io-subjovian",
+      "generatedOn": "2026-09-16",
+      "mode": "reference-edit with same-body material reference",
+      "sourceFile": "io-subjovian.png",
+      "sourceDimensions": [
+        3840,
+        2160
+      ],
+      "deliveredDimensions": [
+        3840,
+        1920
+      ],
+      "sourceSha256": "8cb09c678d9773cfd83f11c8a2f5efd96bb1fba7d542ecf4563bf6435f41850d",
+      "file": "io-subjovian.webp",
+      "sha256": "fea990942185c42980a0d39bf115be80da2261da2ef570803066a6844cfb012d",
+      "bytes": 1747332,
+      "processing": "Provider frame 3840x2160 reparameterized to 360x180 at 3840x1920; top-connected black sky removed; narrow wrap blend; nadir smoothing; WebP encoding. New drawing; the volcanic plain panorama was attached for sulfur and basalt colour only, and is not reproduced.",
+      "model": "gpt-image-2.5-sunburst",
+      "requestedQuality": "high",
+      "requestedSize": "3840x1920",
+      "qualityExecutionVerified": false,
+      "references": [
+        "public/surface/io.webp (same body, material character only)"
+      ],
+      "requestedSizeAccepted": false
+    },
+    {
+      "id": "europa-subjovian",
+      "generatedOn": "2026-09-16",
+      "mode": "reference-edit with same-body material reference",
+      "sourceFile": "europa-subjovian.png",
+      "sourceDimensions": [
+        3840,
+        2160
+      ],
+      "deliveredDimensions": [
+        3840,
+        1920
+      ],
+      "sourceSha256": "27b55d0fddf1958c870fd4cf73d1b334d12ba9164d5eb2444f54ae58cf87348d",
+      "file": "europa-subjovian.webp",
+      "sha256": "3ad833862ad8165e80e71c4bbf2b788793c2d9260a10a35f6a55ea86868043a0",
+      "bytes": 1445160,
+      "processing": "Provider frame 3840x2160 reparameterized to 360x180 at 3840x1920; top-connected black sky removed; narrow wrap blend; nadir smoothing; WebP encoding. New drawing; the sub-Jovian ice field panorama was attached for ice colour and fracture tone only, and is not reproduced.",
+      "model": "gpt-image-2.5-sunburst",
+      "requestedQuality": "high",
+      "requestedSize": "3840x1920",
+      "qualityExecutionVerified": false,
+      "references": [
+        "public/surface/europa.webp (same body, material character only)"
+      ],
+      "requestedSizeAccepted": false
+    },
+    {
+      "id": "mars-phoenix",
+      "generatedOn": "2026-09-16",
+      "mode": "multi-reference edit: observed Phoenix panorama for ground pattern, same-body panorama for material",
+      "sourceFile": "mars-phoenix.png",
+      "sourceDimensions": [
+        3840,
+        2160
+      ],
+      "deliveredDimensions": [
+        3840,
+        1920
+      ],
+      "sourceSha256": "a3499d1e5d024afb0479eb89c0cef640aaee44c25eed0b948832d45d5c1b0729",
+      "file": "mars-phoenix.webp",
+      "sha256": "4df88907d1b739978c185ca93c9d5aa371d0b8485b4898903767a792900c4b83",
+      "bytes": 1550338,
+      "processing": "Provider frame 3840x2160 reparameterized to 360x180 at 3840x1920; top-connected black sky removed; narrow wrap blend; nadir smoothing; WebP encoding. New drawing. NASA PIA13804, the real full-circle Phoenix panorama of this landing area, supplied the polygonal ground pattern and flat horizon; the same body's Gediz Vallis panorama supplied Mars soil colour and tone. Lander deck, solar panels, meteorology mast and arm trenches visible in the photograph were not reproduced, and no pixel of either input is preserved.",
+      "model": "gpt-image-2.5-sunburst",
+      "requestedQuality": "high",
+      "requestedSize": "3840x1920",
+      "qualityExecutionVerified": false,
+      "references": [
+        "NASA/JPL-Caltech/University of Arizona PIA13804 (ground pattern, observed)",
+        "public/surface/mars.webp (same body, material character only)"
+      ],
+      "requestedSizeAccepted": false
+    },
+    {
+      "id": "charon",
+      "generatedOn": "2026-09-16",
+      "mode": "text-to-image",
+      "sourceFile": "charon.png",
+      "sourceDimensions": [
+        3840,
+        2160
+      ],
+      "deliveredDimensions": [
+        3840,
+        1920
+      ],
+      "sourceSha256": "7258f45c13095674812f15230601b01ffd92966e975f78f0ad60f28ac78677bd",
+      "file": "charon.webp",
+      "sha256": "b70eac288cbcf2f7e6d45a2ab44e1f81b1208467d67ecf16b6d7bff1d68e191f",
+      "bytes": 1576668,
+      "processing": "Complete 3840x2160 generated panorama reparameterized to 360x180 at 3840x1920; top-connected black sky removed; narrow wrap blend; nadir smoothing; WebP encoding. No reference image was supplied.",
+      "model": "gpt-image-2.5-sunburst",
+      "requestedQuality": "high",
+      "requestedSize": "3840x1920",
+      "qualityExecutionVerified": false,
+      "requestedSizeAccepted": false
     }
-  ]
+  ],
+  "updatedOn": "2026-09-16"
 }

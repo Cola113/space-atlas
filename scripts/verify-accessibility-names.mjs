@@ -35,11 +35,11 @@ try{for(const [screen,width,height,dpr] of [['desktop',1440,900,1],['phone',390,
  await openAndAudit('#observation-settings summary','solar-observation');
  await openAndAudit('#time-settings summary','solar-time');
  await page.locator('#atlas-tab').click();await audit('solar-atlas');
- for(const id of ['mercury','mars','io','titan','enceladus','pluto','miranda','moon','europa']){
+ for(const id of ['moon','moon-farside','europa','europa-subjovian','mars','mars-phoenix','io','io-subjovian','titan','enceladus','pluto','pluto-charonface','miranda','mercury','mercury-pole','charon']){
   if(!await page.locator('#atlas-search').isVisible())await page.locator('#atlas-tab').click();
   await page.locator('#atlas-search').fill(id);await page.locator(`.atlas-item[data-body="${id}"]`).click();await settleSolar();
   await revealLanding(page,id);
-  await page.locator(`[data-landing-body="${id}"]`).click();await page.waitForFunction(()=>document.querySelector('.surface-view')?.dataset.ready==='true',null,{timeout:60000});
+  await page.locator(`[data-landing-site="${id}"]`).click();await page.waitForFunction(()=>document.querySelector('.surface-view')?.dataset.ready==='true',null,{timeout:60000});
   await audit('surface-'+id);await openAndAudit('.surface-info-button','surface-'+id+'-details');
   assert.equal(await page.locator('.surface-view').evaluate(e=>e.open),true,'closing details also closed the surface dialog');
   assert.equal(await page.locator('.surface-info-button').evaluate(e=>e===document.activeElement),true);
@@ -51,7 +51,7 @@ try{for(const [screen,width,height,dpr] of [['desktop',1440,900,1],['phone',390,
  // Native dialog close is also a public browser path (for example a close
  // request the browser does not allow canceling). It must release orbit UI.
  await revealLanding(page,'europa');
- await page.locator('[data-landing-body="europa"]').click();await page.waitForFunction(()=>document.querySelector('.surface-view')?.dataset.ready==='true');
+ await page.locator('[data-landing-site="europa"]').click();await page.waitForFunction(()=>document.querySelector('.surface-view')?.dataset.ready==='true');
  await page.evaluate(()=>document.querySelector('.surface-view').close());
  await page.waitForFunction(()=>!document.querySelector('.surface-view'));
  assert.equal(await page.locator('#scene-switcher').isVisible(),true);

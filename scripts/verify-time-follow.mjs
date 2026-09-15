@@ -47,7 +47,7 @@ for(const testCase of [['desktop',1440,900,1],['phone',390,844,3],['tablet',800,
  await page.locator('#observation-settings summary').click();await page.locator('#family-select').selectOption('system:jupiter');await settle();assert.equal((await snap()).system,true);assert.equal((await snap()).followActive,false);assert.equal((await snap()).followRotation,true);
  await page.locator('#observation-settings summary').click();await page.locator('#family-select').selectOption('europa');await settle();assert.equal((await snap()).followRotation,true);await play(true);drift=Math.max(drift,await followDrift());await play(false);
  await revealLanding(page,'europa');
- const departure=await snap();await page.locator(`[data-landing-body="europa"]`).click();await page.waitForFunction(()=>document.querySelector('.surface-view')?.dataset.ready==='true',null,{timeout:90000});
+ const departure=await snap();await page.locator(`[data-landing-site="europa"]`).click();await page.waitForFunction(()=>document.querySelector('.surface-view')?.dataset.ready==='true',null,{timeout:90000});
  const arrived=(await snap()).surface;assert.equal(arrived.date,departure.date);assert.equal(arrived.playing,false);assert.equal(arrived.direction,-1);assert.equal(arrived.rate,100000);assert.equal((await snap()).followActive,false);
  await page.locator('.surface-time-toggle').click();await page.locator('.surface-direction').scrollIntoViewIfNeeded();await verifyBounds('.surface-direction');
  await page.locator('.surface-direction').click();assert.equal((await snap()).surface.direction,1);assert.equal((await snap()).direction,1);assert.equal((await snap()).surface.date,departure.date);
