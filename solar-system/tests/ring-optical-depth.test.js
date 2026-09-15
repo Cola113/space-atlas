@@ -187,6 +187,33 @@ test('the colour ratio follows the measured ordering of the rings', () => {
   assert.equal(regions[0][6], 1.0, 'the D ring takes the C ring value');
 });
 
+test('every kilometre-scale region carries the mean of the profile it was cut from', () => {
+  // The build script derives each region's optical depth as the mean of the profile over
+  // its span. Nothing else re-derives that, so a bug in the cutting step would ship
+  // regions that no longer describe the measurement.
+  const regions = JSON.parse(readFileSync(new URL('../src/ring-regions.json', import.meta.url), 'utf8')).regions;
+  const profile = RING_TAU_PROFILE, scale = profile.scale, start = profile.startKm;
+  let measured = 0;
+  for (const [name, inner, outer, value] of regions) {
+    if (inner < MEASURED_FROM_KM) continue;          // the D ring keeps its published anchor
+    const from = inner - start, to = outer - start;
+    assert.ok(from >= 0 && to <= profile.samples, `${name} ${inner}-${outer}: outside the measured profile`);
+    let sum = 0;
+    for (let index = from; index < to; index++) sum += profile.tau[index] / scale;
+    const mean = sum / (to - from);
+    // The shipped value is rounded to four decimals by the build script.
+    assert.ok(Math.abs(mean - value) <= 5e-4, `${name} ${inner}-${outer}: region says ${value}, profile mean is ${mean.toFixed(4)}`);
+    measured++;
+  }
+  assert.equal(measured, regions.length - 1, 'every region but the D ring must come from the profile');
+  // And the regions must tile the measured span without gaps or overlaps.
+  const sorted = regions.slice(1).sort((left, right) => left[1] - right[1]);
+  assert.equal(sorted[0][1], MEASURED_FROM_KM, 'the regions must start at the measured edge');
+  assert.equal(sorted.at(-1)[2], RING_OUTER_KM, 'the regions must reach the outer edge');
+  for (let index = 1; index < sorted.length; index++)
+    assert.equal(sorted[index][1], sorted[index - 1][2], `gap or overlap at ${sorted[index][1]} km`);
+});
+
 test('the generated profile texture matches the profile it is built from', () => {
   const texture = createRingOpticalDepthTexture();
   assert.equal(texture.image.width, 16384);

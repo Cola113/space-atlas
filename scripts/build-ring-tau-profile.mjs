@@ -166,10 +166,15 @@ const anchorFor = (from, to) => {
 const dRing = RING_TABLE[0];
 const measuredRows = regions.map(([from, to]) => {
   const anchor = anchorFor(from, to);
-  const inner = startKm + from, outer = startKm + to;
+  // The profile stores one value per kilometre including the last, so the exclusive end
+  // index of the final region sits one kilometre past the ring system. The span and the
+  // mean are both held to the declared outer radius, so the region describes exactly the
+  // disc it draws and nothing beyond it.
+  const firstIndex = Math.max(from, 0), lastIndex = Math.min(to, samples - 1);
+  const inner = startKm + firstIndex, outer = startKm + lastIndex;
   // Mean rather than median: a region is an average opacity over its span, and the
   // splitting has already isolated the sharp features into regions of their own.
-  const value = mean(from, to);
+  const value = mean(firstIndex, lastIndex);
   return [anchor[0], inner, outer, Number(value.toFixed(4)), anchor[4], anchor[5], anchor[6]];
 });
 const rows = [[...dRing], ...measuredRows];

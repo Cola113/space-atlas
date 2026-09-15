@@ -4,6 +4,8 @@ import { Vector3, Object3D, Mesh, SphereGeometry, MeshBasicMaterial } from 'thre
 import { ringShadowAnchor } from '../src/feature-anchors.js';
 import { landmarkFrame, landingFrame, landingPointVisible } from '../src/landmarks.js';
 import { landingSites, surfaceFrame } from '../src/surface/geometry.js';
+import { bodies } from '../src/data.js';
+import { uvDirection } from '../src/feature-anchors.js';
 import { localPhysics } from './physical-fixture.js';
 import { updateDisplayState } from '../src/orbits.js';
 import { skyRotation } from '../src/sky-coordinates.js';
@@ -114,6 +116,62 @@ test('nine landing markers use the same east-positive coordinates and dated atti
       mesh.geometry.dispose(); mesh.material.dispose();
     }
   } finally { provider.dispose(); }
+});
+
+test('landing markers sit on the measured ellipsoid of every shaped body', async () => {
+  // The goal's shape criterion asks for the landmark AND the landing geometry that
+  // depends on the silhouette to be verified, not just the mesh. The landing test below
+  // builds bodies without a shape, so it cannot see this: every one of the nine landing
+  // sites is on a body that now carries measured semi-axes.
+  const byId = Object.fromEntries(bodies.map(body => [body.id, body]));
+  const shapeOf = id => byId[id]?.shape;
+  let checked = 0;
+  for (const site of Object.values(landingSites)) {
+    const shape = shapeOf(site.id);
+    if (!shape) continue;
+    checked++;
+    const root = new Object3D(), mesh = new Mesh(new SphereGeometry(1, 64, 48), new MeshBasicMaterial());
+    root.add(mesh);
+    mesh.scale.setScalar(4);
+    // An arbitrary dated attitude, so a marker that ignored the rotation would fail.
+    mesh.rotation.set(.31, -.72, .19);
+    root.position.set(10, 20, 30);
+    root.updateMatrixWorld(true);
+    const body = { ...byId[site.id], root, mesh };
+    const frame = landingFrame(site, body);
+    const local = frame.point.clone().sub(root.position)
+      .applyQuaternion(mesh.quaternion.clone().invert())
+      .divideScalar(4);
+    const [sx, sy, sz] = shape;
+    // Same mapping as landmarks.js's geographic(): longitude wrapped into [0, 1).
+    const [ux, uy, uz] = [...uvDirection([((site.longitude + 180) % 360) / 360, (site.latitude + 90) / 180])];
+    // On the ellipsoid rather than on a unit sphere. The two differ by only 6e-5 for
+    // Mars at 4.85 degrees south, so the tolerance has to be far tighter than the
+    // flattening itself for this to detect a marker that ignored the shape.
+    assert.ok(Math.abs((local.x / sx) ** 2 + (local.y / sy) ** 2 + (local.z / sz) ** 2 - 1) < 1e-9,
+      `${site.id}: the landing marker left the measured surface`);
+    // Exactly the ellipsoid radius in that direction, which a unit sphere would miss even
+    // where the flattening barely shows.
+    const expected = Math.hypot(ux * sx, uy * sy, uz * sz);
+    assert.ok(Math.abs(local.length() - expected) < 1e-12,
+      `${site.id}: marker radius ${local.length()} against the ellipsoid's ${expected}`);
+    if (sy < .999 && Math.abs(uy) > 1e-3)
+      assert.ok(local.length() < 1 - 1e-9, `${site.id}: flattening never reached the landing marker`);
+    // The pin aims along the observer's up, which is the radius vector and not the
+    // ellipsoid normal: the surface view builds its horizon from the geocentric
+    // direction, so a normal-aimed pin would fight the view it opens. Landmarks aim
+    // along the ellipsoid normal instead, because there the direction is only the
+    // camera bearing. These two sites are where the choice is observable, so the test
+    // states the difference and then checks which one the pin followed.
+    const normal = new Vector3(local.x / sx ** 2, local.y / sy ** 2, local.z / sz ** 2).normalize();
+    const radial = frame.point.clone().sub(root.position).normalize();
+    if (sy < .999 && Math.abs(local.y) > 1e-2)
+      assert.ok(normal.distanceTo(local.clone().normalize()) > 1e-4,
+        `${site.id}: the two conventions do not differ here, so this site proves nothing`);
+    assert.ok(frame.direction.distanceTo(radial) < 1e-9, `${site.id}: pin direction is not the observer's up`);
+    mesh.geometry.dispose(); mesh.material.dispose();
+  }
+  assert.ok(checked >= 8, `only ${checked} landing sites are on shaped bodies`);
 });
 
 test('landing markers hide beyond the limb and behind foreground geometry, then reappear when uncovered', () => {

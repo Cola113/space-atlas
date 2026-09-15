@@ -21,6 +21,27 @@
 
 复现脚本：`scripts/measure-startup.mjs`；分批加载使用 `npx tsx scripts/verify-solar-loading.mjs`。完整本地证据：`test-results/performance/main-baseline-rtx.json`、`shared-physics-rtx.json`、`comparison-shared-physics-rtx.json` 与 `test-results/solar-loading/report.json`。
 
+## 环系数据接入后的复测
+
+2026-09-15。公里级环剖面接入后重新测了一次同样的进入判据：同一台设备、Edge、1440×900、DPR 1、10 Mbit/s、40 ms 延迟、禁用缓存，三次独立运行。
+
+| 项目 | 2026-09-14 记录 | 2026-09-15 复测 |
+| --- | ---: | ---: |
+| 三次可交互耗时 / ms | 2530.0、930.4、955.4 | 2828.0、1171.5、1193.2 |
+| 中位耗时 / ms | 955.4 | **1193.2** |
+| 进入前纹理请求 | 11 | 11 |
+| 进入前纹理字节 | 214978 | 214978 |
+
+中位耗时上升约 238 ms（+25%），相对 `main` 基线的 36619.1 ms 仍减少 96.7%，所以本文件的主要结论不变，但这个增量是真实开销，逐项核过来源：
+
+- **路线包体变大是主因**：`solar-system` 分块 418.85 kB → 906.76 kB（gzip 129.76 → 304.77 kB）。新增的是三个环系数据文件，gzip 后共约 189 kB：`ring-scattering.json` 82.5 kB、`ring-tau-profile.json` 102.2 kB、`ring-regions.json` 4.3 kB。按 10 Mbit/s 折算约 150 ms 的传输时间。纹理请求与字节没有变化，所以这一项不是纹理所致。
+- **环网格在启动时构建**：四个环系的环带顶点合计 218k 个，全部在场景创建时用 JS 生成并上传 GPU。实测构建耗时 56.8 ms，其中土星 401 圈环带占 51.7 ms。
+- 其余（解析、着色器编译）未单独拆分。
+
+复现：`npm run build` 后 `npx vite preview --port 5190`，再用 `ATLAS_URL=http://127.0.0.1:5190 MEASURE_LABEL=rings-rtx-final node scripts/measure-startup.mjs`；原始结果 `test-results/performance/rings-rtx-final.json`（同目录另有区域边界修正前的一次 `rings-rtx.json`）。
+
+**已知可改进，但本轮没做**：这三个数据文件只有四个带环天体用到，58 个天体里其余 54 个不需要它们，却被打进启动包。改成动态 `import()` 按需加载可以把这 189 kB 移出启动路径，预计回到 1.0 s 量级；代价是要把环网格与散射表的创建一并延后，涉及启动顺序，属独立改动，未在本轮范围内。
+
 ## 星云四档绘制开销
 
 相同 RTX 2080 Ti / Edge 环境，每档使用独立浏览器进程，暂停在相同巡游位置。预热两帧，测量五次从本帧首次清屏到体积、恒星绘制结束并回读整个 RGBA 缓冲的耗时。校验 GL 错误、实际尺寸、非空像素及不同曝光的像素校验和，避免只计到提交命令或上一帧。切档不改变巡游时间、位置或曝光设置。
