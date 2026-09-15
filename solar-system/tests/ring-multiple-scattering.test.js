@@ -8,7 +8,7 @@ import {
   createRingScatteringTexture, shippedScatteringTable, scatteringRegions,
   SCATTERING_ROW_BASE, ANGLES,
 } from '../src/ring-multiple-scattering.js';
-import { ringSystems, ringSpan } from '../src/ring-systems.js';
+import { ringSystems, ringSpan, createRingSystemGeometry } from '../src/ring-systems.js';
 
 // Gauss-Legendre nodes and weights on [0, 1], for the angular integrals the energy
 // budget needs. Nothing here shares code with the discrete-ordinates solver.
@@ -195,6 +195,39 @@ test('the scattering texture carries every system, one row pair per region', () 
     assert.equal(scatteringRegions(id), system.regions.length);
   }
   texture.dispose();
+});
+
+test('the ring mesh tells the shader each annulus edge and its true width', () => {
+  // The vertex shader widens a sub-pixel annulus outwards from aRingEdge and takes the
+  // light back out with aRingHalfWidth, so both have to describe the annulus the region
+  // declares. A wrong half width would scale the wrong amount of light away.
+  const segments = 256;
+  let regions = 0;
+  for (const [id, system] of Object.entries(ringSystems)) {
+    const geometry = createRingSystemGeometry(system, segments);
+    for (const name of ['aRingEdge', 'aRingHalfWidth', 'aRingProfile', 'aRingRegion'])
+      assert.ok(geometry.attributes[name], `${id}: missing ${name}`);
+    assert.equal(geometry.attributes.position.count, system.regions.length * 2 * (segments + 1),
+      `${id}: vertex count does not match the region list`);
+    const edge = geometry.attributes.aRingEdge, halfWidth = geometry.attributes.aRingHalfWidth;
+    const perRegion = segments + 1;
+    system.regions.forEach((region, index) => {
+      const [, innerKm, outerKm] = region;
+      const base = index * 2 * perRegion;
+      for (let vertex = 0; vertex < perRegion; vertex++) {
+        assert.equal(edge.getX(base + vertex), -1, `${id}/${innerKm}: the inner row must be the inward edge`);
+        assert.equal(edge.getX(base + perRegion + vertex), 1, `${id}/${outerKm}: the outer row must be the outward edge`);
+      }
+      const expected = (Math.min(outerKm, Infinity) - innerKm) / 2 / system.equatorialKm;
+      // The attribute is a float32 buffer, so the comparison is to its own precision.
+      assert.ok(Math.abs(halfWidth.getX(base) - expected) <= Math.max(1, expected) * 1e-7,
+        `${id} region ${index}: half width ${halfWidth.getX(base)} against ${expected}`);
+      assert.ok(expected > 0, `${id} region ${index}: an annulus of no width cannot be widened`);
+      regions++;
+    });
+    geometry.dispose();
+  }
+  assert.ok(regions > 200, `only ${regions} annuli checked`);
 });
 
 test('every declared ring system is ordered, self-consistent and inside its planet', () => {

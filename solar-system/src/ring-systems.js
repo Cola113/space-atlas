@@ -122,11 +122,14 @@ export function ringSpan(system) {
 // kilometre ring; a radial profile texture would have to sample 68,000 km of radial
 // extent finely enough to keep them, and would lose them.
 export function createRingSystemGeometry(system, segments = 256) {
-  const positions = [], profiles = [], regions = [], uvs = [], indices = [];
+  const positions = [], profiles = [], regions = [], uvs = [], edges = [], halfWidths = [], indices = [];
   system.regions.forEach(([, innerKm, outerKm, tau, albedo, surge, colour], index) => {
     const inner = innerKm / system.equatorialKm, outer = outerKm / system.equatorialKm;
     const base = positions.length / 3;
-    for (const radius of [inner, outer])
+    // The two rows are the annulus's own edges; the vertex shader needs to know which is
+    // which so it can widen a sub-pixel ring outwards from its true span, and how wide
+    // the true span is, so it can take the light back out again.
+    for (const [radius, edge] of [[inner, -1], [outer, 1]])
       for (let step = 0; step <= segments; step++) {
         const angle = (step / segments) * Math.PI * 2;
         // Built in the XY plane, so the ring normal is the mesh's local +Z; the mesh
@@ -136,6 +139,8 @@ export function createRingSystemGeometry(system, segments = 256) {
         profiles.push(tau, albedo, surge, colour ?? DEFAULT_COLOUR_RATIO);
         regions.push(index);
         uvs.push(radius, 0.5);
+        edges.push(edge);
+        halfWidths.push((outer - inner) / 2);
       }
     const ring = segments + 1;
     for (let step = 0; step < segments; step++) {
@@ -147,6 +152,8 @@ export function createRingSystemGeometry(system, segments = 256) {
   geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
   geometry.setAttribute('aRingProfile', new THREE.Float32BufferAttribute(profiles, 4));
   geometry.setAttribute('aRingRegion', new THREE.Float32BufferAttribute(regions, 1));
+  geometry.setAttribute('aRingEdge', new THREE.Float32BufferAttribute(edges, 1));
+  geometry.setAttribute('aRingHalfWidth', new THREE.Float32BufferAttribute(halfWidths, 1));
   geometry.setAttribute('uv', new THREE.Float32BufferAttribute(uvs, 2));
   geometry.setIndex(indices);
   geometry.computeBoundingSphere();

@@ -267,13 +267,30 @@ function patchMaterial(material, key, uniforms, snippets) {
         "#include <common>",
         "#include <common>\nvarying vec3 vActivityDir; varying vec2 vActivityUv; varying vec3 vActivityPosition;" +
           (saturnShadow ? "\nvarying mat3 vActivityViewToLocal;" : "") +
-          (ringSurface ? "\nattribute vec4 aRingProfile; attribute float aRingRegion;\nvarying vec4 vRingProfile; varying float vRingRegion;" : ""),
+          (ringSurface ? "\nattribute vec4 aRingProfile; attribute float aRingRegion; attribute float aRingEdge; attribute float aRingHalfWidth;"
+            + "\nuniform float uRingPixelScale;\nvarying vec4 vRingProfile; varying float vRingRegion; varying float vRingCoverage;"
+            + `\n#define RING_MIN_PIXELS ${RING_MIN_PIXELS.toFixed(1)}` : ""),
       )
       .replace(
         "#include <begin_vertex>",
         "#include <begin_vertex>\nvActivityDir = normalize(position); vActivityUv = uv; vActivityPosition = position;" +
           (saturnShadow ? "\nvActivityViewToLocal = transpose(mat3(modelViewMatrix));" : "") +
-          (ringSurface ? "\nvRingProfile = aRingProfile; vRingRegion = aRingRegion;" : ""),
+          (ringSurface ? /* glsl */ `
+            vRingProfile = aRingProfile; vRingRegion = aRingRegion;
+            {
+              // Screen size of one pixel in the body's own units. projectionMatrix[1][1]
+              // is 1/tan(fov/2) and uRingPixelScale is the viewport height in device
+              // pixels, so the widening needs no camera uniform of its own.
+              float ringBodyScale = max(length(modelMatrix[0].xyz), .000001);
+              vec4 ringView = modelViewMatrix * vec4(position, 1.0);
+              float ringPixel = 2.0 * max(-ringView.z, .0001)
+                / (uRingPixelScale * projectionMatrix[1][1] * ringBodyScale);
+              float ringWiden = max(0.0, RING_MIN_PIXELS * ringPixel * 0.5 - aRingHalfWidth);
+              vec2 ringOutward = normalize(position.xy + vec2(.000001, 0.0));
+              transformed = position + vec3(ringOutward * ringWiden * aRingEdge, 0.0);
+              vRingCoverage = aRingHalfWidth / (aRingHalfWidth + ringWiden);
+            }
+          ` : ""),
       );
     shader.fragmentShader = shader.fragmentShader.replace(
       "#include <common>",
@@ -564,7 +581,27 @@ const saturnShadowFunctions = /* glsl */ `
 const ringSurfaceVaryings = /* glsl */ `
   varying vec4 vRingProfile;
   varying float vRingRegion;
+  // Fraction of the drawn band that is the ring itself. A ring narrower than a pixel is
+  // drawn widened so the rasteriser always finds it, and its opacity is scaled by this
+  // fraction so the light it contributes is unchanged.
+  varying float vRingCoverage;
 `;
+
+// Minimum screen width an annulus is drawn at, in device pixels.
+//
+// A ring drawn at its measured width is thinner than a pixel once you are far enough
+// away: Uranus's rings are 1.6 to 58 km against roughly 100 km per pixel at the framing
+// this was reported from, so every one of them lands between 0.02 and 0.6 of a pixel. At
+// that size the rasteriser's fixed sample positions catch a ribbon on some pixels and
+// miss it on others, and a ring that should read as a faint continuous line reads as
+// scattered specks instead. Widening the band to a pixel and a half makes the coverage
+// deterministic, and dividing the opacity by the same factor keeps the total light
+// correct, so the ring appears as the faint line it is.
+//
+// This is antialiasing, not a visibility boost. Nothing is brightened: a ring covering a
+// thousandth of a pixel still contributes a thousandth of a pixel of light, it just
+// contributes it along the whole line instead of at scattered points.
+const RING_MIN_PIXELS = 1.5;
 
 function saturnDirectLighting(transmission, scatter = false) {
   // Apply occlusion to incident light before accumulating direct illumination.
@@ -595,7 +632,7 @@ function attachRingSurface(record) {
       float ringSurge = vRingProfile.b;
       vec3 ringColour = ringParticleColour(vRingProfile.a);
       float ringCosAlpha = dot(ringSunLocal, ringViewLocal);
-      diffuseColor.a = 1.0 - exp(-ringTau / ringMu);
+      diffuseColor.a = (1.0 - exp(-ringTau / ringMu)) * vRingCoverage;
     `,
     lights_fragment_end: /* glsl */ `
       #include <lights_fragment_end>
@@ -963,6 +1000,9 @@ export function createDynamics(objects, { defer = false } = {}) {
         // to it, which BODY_MODELS.md states as an assumption.
         uRingPhaseG: { value: ringSystemFor(body.id)?.phaseG ?? 0 },
         uRingSurgeScale: { value: RING_SURGE_SCALE_RAD },
+        // Viewport height in device pixels; the vertex widening turns it into a screen
+        // width. Replaced every frame from the caller's pixelScale.
+        uRingPixelScale: { value: 1080 },
         uCloudVisible: { value: 1 },
         uNightEnabled: { value: body.nightMap ? 1 : 0 },
         uShadowEnabled: { value: 1 },
@@ -1118,6 +1158,9 @@ export function createDynamics(objects, { defer = false } = {}) {
         if (particle.kind === "solar")
           particle.mesh.visible = active && inEvent;
       }
+      // The ring widening needs the viewport height every frame, the same value the
+      // particles are sized with.
+      if (record.uniforms.uRingPixelScale) record.uniforms.uRingPixelScale.value = pixelScale;
     }
   }
 

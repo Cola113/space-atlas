@@ -105,6 +105,7 @@
 | `verify-physical-definitions.mjs` | 四屏读取发布产物中的 `physical-definitions.json` | 四屏通过 |
 | `verify-accessibility-names.mjs` | 四屏浏览器计算树中的可访问名称 | 四屏通过 |
 | `verify-solar-loading.mjs` | 四屏首帧与星历超时键盘重试 | 五项通过 |
+| `verify-ring-thin-coverage.mjs` | 天王星环面近侧视（张角 1.7°）下 1 像素约 141 km，亚像素环是否仍连成线 | 斑点指数 1.29、35% 行无凹陷，通过（去掉最小宽度下限时为 2.17 / 66%，脚本失败） |
 | 环系专项（`outputs/ring-multiple-scattering/`） | 土星四个取景、四个环系各一张、环平面周期三个日期（含像素量测）、改动前后 A/B 亮度 | 全部无运行错误 |
 
 **没跑的**：`verify-release.mjs`（需现网 `ATLAS_URL` 与部署核验，本地不具备）、`verify-moon-textures.mjs`、`verify-surface-panorama.mjs`、

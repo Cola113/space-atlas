@@ -40,6 +40,17 @@ ATLAS_URL=http://127.0.0.1:5173 node outputs/ring-multiple-scattering/capture.mj
 且把卷文件映射在 `/holdings/` 下，因此可以按单个产品下载 1 km 剖面而不必取 438 MB 整卷。
 残留近似（单次掩星、仰角依赖、B 环局部饱和、每区算术平均）写在文档里。
 
+## 亚像素环的斑点
+
+用户 2026-09-15 报告：天王星球面上有一条暗线，线上和旁边散布着斑点。
+`compare-uranus-line.mjs` 复现这个取景并量出成因与修法效果，`measure-uranus-angle.mjs` 量出应用自己的
+环面张角（天王星 28°，所以那条线是环系内缘扫过球面）。修法在 `dynamics.js` 的 `RING_MIN_PIXELS`，
+验收脚本是 `scripts/verify-ring-thin-coverage.mjs`。
+
+对比图：`uranus-ring/line-before.png`（斑点）与 `uranus-ring/line-fixed.png`（连续线），
+以及 `uranus-ring/crop-before.png` / `crop-after.png` 的同框裁剪。
+判据不是亮度——随机采样的**期望**通量是守恒的，问题在方差；所以量的是逐行凹陷的离散度。
+
 ## 图片不进版本库
 
 `outputs/**/*.png`、`*.jpg` 已加入 `.gitignore`：这些截图由上面列出的脚本重新生成，
