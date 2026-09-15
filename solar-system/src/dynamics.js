@@ -638,9 +638,14 @@ function attachRingSurface(record) {
       #include <lights_fragment_end>
       // Overwrite the Lambert result rather than replacing the lighting chunks: the
       // surrounding chunks declare variables that later stages still read.
+      // The planet's shadow on the rings. vActivityPosition is the annulus's true
+      // position, not the widened one the rasteriser was given, so the shadow edge stays
+      // on the measured radius.
+      float ringOcclusion = mix(
+        1.0, planetTransmission(vActivityPosition / uBodyRadius, ringSunLocal), uShadowEnabled);
       float ringRadiance = ringSlabReflectance(
-        ringTau, ringAlbedoW, ringMu, ringMu0, ringCosAlpha, vRingRegion, uRingPhaseG);
-      ringRadiance *= ringOppositionSurge(ringCosAlpha, ringSurge);
+        ringTau, ringAlbedoW, ringMu, ringMu0, ringCosAlpha, vRingRegion, uRingPhaseG)
+        * ringOppositionSurge(ringCosAlpha, ringSurge) * ringOcclusion;
       reflectedLight.directDiffuse = ringColour * ringRadiance;
       reflectedLight.directSpecular = vec3(0.0);
       reflectedLight.indirectDiffuse = vec3(0.0);

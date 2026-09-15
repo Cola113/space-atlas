@@ -89,8 +89,60 @@ try {
     assert.deepEqual(errors, []);
     report.push({ name, date: state.date, camera: state.camera, target: state.target,
       orientation: body.orientation, sunDirection: body.sunDirection, layout, errors, passed: true });
-    console.log(`${name}: ring shadow rendering, scene marker and toggle passed`);
+    console.log(`${name}: scene marker, toggle wiring, layout and the ring-plane shadow pixels passed`);
     await context.close();
+  }
+  // The planet's shadow across the ring plane, measured on the ring surface alone.
+  //
+  // The dynamic layers are switched off for this pair: the ring particle swarm also
+  // follows the projection toggle, but only by scaling its own alpha, and in these
+  // framings it leaves a few hundred changed pixels that swamp the surface's shadow when
+  // both are counted together. With the layers off the two states are unambiguous - a
+  // working shadow darkens about 55,000 pixels of the ring annulus by more than 10%, and
+  // a shadow that never reaches the ring surface darkens none. That is the regression
+  // that shipped between 2026-09-15's ring generalisation and this check, and it was
+  // found by eye rather than by any of the checks above.
+  {
+    const shots = {};
+    for (const shadows of [true, false]) {
+      const context = await browser.newContext({ viewport: { width: 1000, height: 1000 }, deviceScaleFactor: 2, reducedMotion: 'reduce' });
+      await context.addInitScript(({ shadows }) => sessionStorage.setItem('space-atlas:scene:solar-system', JSON.stringify({
+        version: 1, value: { selected: 'saturn', playing: false, shadows, dynamics: false,
+          followRotation: false, date: Date.UTC(2002, 9, 1), speed: 1000, speedUnit: 'realtime', direction: 1, portrait: false },
+      })), { shadows });
+      const page = await context.newPage();
+      await page.goto(base + '/solar-system/');
+      await settle(page);
+      await page.waitForTimeout(900);
+      const state = await page.evaluate(() => window.solarAtlas.snapshot());
+      const body = state.bodies.find(b => b.id === 'saturn');
+      const buffer = await page.screenshot();
+      if (shadows) await writeFile(new URL('ring-plane-shadow.png', output), buffer);
+      else await writeFile(new URL('ring-plane-shadow-off.png', output), buffer);
+      shots[shadows ? 'on' : 'off'] = { buffer, body };
+      await context.close();
+    }
+    const pixels = async entry => {
+      const { data, info } = await sharp(entry.buffer).removeAlpha().raw().toBuffer({ resolveWithObject: true });
+      return { data, info, lum: i => (data[i] + data[i + 1] + data[i + 2]) / 3 / 255 };
+    };
+    const on = await pixels(shots.on), off = await pixels(shots.off);
+    const ratio = 2;
+    const cx = shots.on.body.x * ratio, cy = shots.on.body.y * ratio, radiusPx = shots.on.body.radiusPx * ratio;
+    let annulus = 0, strong = 0, deepest = 0;
+    for (let y = 0; y < on.info.height; y++) for (let x = 0; x < on.info.width; x++) {
+      const distance = Math.hypot(x - cx, y - cy) / radiusPx;
+      if (distance < 1.15 || distance > 2.4) continue;
+      annulus++;
+      const i = (y * on.info.width + x) * on.info.channels;
+      const drop = (off.lum(i) - on.lum(i));
+      if (drop > deepest) deepest = drop;
+      if (drop > .1) strong++;
+    }
+    console.log(`ring-plane shadow on the ring surface: ${strong} px of ${annulus} darkened by more than 10%, deepest ${deepest.toFixed(3)}`);
+    report.push({ name: 'ring-plane-shadow', annulus, strongPixels: strong, deepestDarkening: Number(deepest.toFixed(3)) });
+    assert.ok(deepest > .2, `the projection barely darkens the ring surface: deepest ${deepest.toFixed(3)}`);
+    assert.ok(strong > 2000, `the projection darkens too little of the ring plane: ${strong} px of ${annulus}`);
   }
   await writeFile(new URL('report.json', output), JSON.stringify(report, null, 2));
 } finally { await browser.close(); }
