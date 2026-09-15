@@ -269,7 +269,7 @@ function patchMaterial(material, key, uniforms, snippets) {
         "#include <common>",
         "#include <common>\nvarying vec3 vActivityDir; varying vec2 vActivityUv; varying vec3 vActivityPosition;" +
           (saturnShadow ? "\nvarying mat3 vActivityViewToLocal;" : "") +
-          (ringSurface ? "\nattribute vec4 aRingProfile; attribute float aRingRegion; attribute float aRingEdge; attribute float aRingHalfWidth;"
+          (ringSurface ? "\nattribute vec4 aRingProfile; attribute float aRingRegion; attribute float aRingEdge; attribute float aRingHalfWidth; attribute float aRingRoom;"
             + "\nuniform float uRingPixelScale;\nvarying vec4 vRingProfile; varying float vRingRegion; varying float vRingCoverage;"
             + `\n#define RING_MIN_PIXELS ${RING_MIN_PIXELS.toFixed(1)}` : ""),
       )
@@ -288,6 +288,10 @@ function patchMaterial(material, key, uniforms, snippets) {
               float ringPixel = 2.0 * max(-ringView.z, .0001)
                 / (uRingPixelScale * projectionMatrix[1][1] * ringBodyScale);
               float ringWiden = max(0.0, RING_MIN_PIXELS * ringPixel * 0.5 - aRingHalfWidth);
+              // Only into the gap beside this edge. Two annuli that abut would otherwise
+              // overlap once widened, and overlapping translucent strips composite to less
+              // light than their sum, which dims the whole band rather than one ring.
+              ringWiden = min(ringWiden, aRingRoom);
               vec2 ringOutward = normalize(position.xy + vec2(.000001, 0.0));
               transformed = position + vec3(ringOutward * ringWiden * aRingEdge, 0.0);
               vRingCoverage = aRingHalfWidth / (aRingHalfWidth + ringWiden);

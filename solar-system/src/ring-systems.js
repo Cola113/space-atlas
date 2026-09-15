@@ -122,13 +122,24 @@ export function ringSpan(system) {
 // kilometre ring; a radial profile texture would have to sample 68,000 km of radial
 // extent finely enough to keep them, and would lose them.
 export function createRingSystemGeometry(system, segments = 256) {
-  const positions = [], profiles = [], regions = [], uvs = [], edges = [], halfWidths = [], indices = [];
+  const positions = [], profiles = [], regions = [], uvs = [], edges = [], halfWidths = [], rooms = [], indices = [];
   system.regions.forEach(([, innerKm, outerKm, tau, albedo, surge, colour], index) => {
     const inner = innerKm / system.equatorialKm, outer = outerKm / system.equatorialKm;
+    // How far each edge may be widened before it reaches the middle of the gap to its
+    // neighbour. Widening is what keeps a sub-pixel ring from being missed by the
+    // rasteriser, but two annuli that abut or nearly abut would overlap once widened, and
+    // overlapping translucent strips composite to less light than their sum: on Saturn's
+    // four hundred tiles that cost the band about four tenths of its light. Allowing the
+    // widening only into empty space leaves abutting tiles at their true width - the band
+    // as a whole is far wider than a pixel, so nothing is missed - and leaves an isolated
+    // narrow ring free to widen, which is the case the widening exists for.
+    const previousOuter = index > 0 ? system.regions[index - 1][2] / system.equatorialKm : null;
+    const nextInner = index + 1 < system.regions.length ? system.regions[index + 1][1] / system.equatorialKm : null;
     const base = positions.length / 3;
     // The two rows are the annulus's own edges; the vertex shader needs to know which is
-    // which so it can widen a sub-pixel ring outwards from its true span, and how wide
-    // the true span is, so it can take the light back out again.
+    // which so it can widen a sub-pixel ring outwards from its true span, how wide the
+    // true span is so it can take the light back out again, and how much room that edge
+    // has.
     for (const [radius, edge] of [[inner, -1], [outer, 1]])
       for (let step = 0; step <= segments; step++) {
         const angle = (step / segments) * Math.PI * 2;
@@ -141,6 +152,9 @@ export function createRingSystemGeometry(system, segments = 256) {
         uvs.push(radius, 0.5);
         edges.push(edge);
         halfWidths.push((outer - inner) / 2);
+        const neighbour = edge < 0 ? previousOuter : nextInner;
+        const room = edge < 0 ? inner - previousOuter : nextInner - outer;
+        rooms.push(neighbour === null ? Number.MAX_VALUE : Math.max(0, room / 2));
       }
     const ring = segments + 1;
     for (let step = 0; step < segments; step++) {
@@ -154,6 +168,7 @@ export function createRingSystemGeometry(system, segments = 256) {
   geometry.setAttribute('aRingRegion', new THREE.Float32BufferAttribute(regions, 1));
   geometry.setAttribute('aRingEdge', new THREE.Float32BufferAttribute(edges, 1));
   geometry.setAttribute('aRingHalfWidth', new THREE.Float32BufferAttribute(halfWidths, 1));
+  geometry.setAttribute('aRingRoom', new THREE.Float32BufferAttribute(rooms, 1));
   geometry.setAttribute('uv', new THREE.Float32BufferAttribute(uvs, 2));
   geometry.setIndex(indices);
   geometry.computeBoundingSphere();

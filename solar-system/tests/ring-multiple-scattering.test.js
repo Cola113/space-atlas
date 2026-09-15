@@ -279,6 +279,41 @@ test('the ring mesh tells the shader each annulus edge and its true width', () =
   assert.ok(regions > 200, `only ${regions} annuli checked`);
 });
 
+test('an annulus may only widen into the gap beside it', () => {
+  // Widening is what keeps a sub-pixel ring off the rasteriser's blind spots, but two
+  // annuli that abut would overlap once widened, and overlapping translucent strips
+  // composite to less light than their sum: that cost Saturn's band about four tenths of
+  // its brightness before aRingRoom bounded it. Abutting neighbours therefore get no room
+  // and an isolated narrow ring gets half the gap.
+  const segments = 16;
+  for (const [id, system] of Object.entries(ringSystems)) {
+    const geometry = createRingSystemGeometry(system, segments);
+    const room = geometry.attributes.aRingRoom;
+    assert.ok(room, `${id}: missing aRingRoom`);
+    const perRegion = segments + 1;
+    let bounded = 0;
+    system.regions.forEach((region, index) => {
+      const [, , outerKm] = region;
+      const base = index * 2 * perRegion;
+      const previousOuter = index > 0 ? system.regions[index - 1][2] : null;
+      const nextInner = index + 1 < system.regions.length ? system.regions[index + 1][1] : null;
+      const inner = region[1];
+      for (const [row, neighbour, gap] of [[0, previousOuter, previousOuter === null ? null : (inner - previousOuter) / 2],
+        [1, nextInner, nextInner === null ? null : (nextInner - outerKm) / 2]]) {
+        const value = room.getX(base + row * perRegion);
+        if (gap === null) { assert.ok(value > 1e6, `${id} region ${index}: the system's own edge must widen freely`); continue; }
+        assert.ok(gap >= 0, `${id} region ${index}: an overlapping neighbour cannot bound the widening`);
+        assert.ok(Math.abs(value - gap / system.equatorialKm) <= Math.max(1e-9, gap / system.equatorialKm) * 1e-6,
+          `${id} region ${index}: room ${value} against half the gap ${gap / system.equatorialKm}`);
+        if (gap === 0) bounded++;
+      }
+    });
+    // Saturn's kilometre-scale tiles are contiguous, so the bound must actually bite there.
+    if (id === 'saturn') assert.ok(bounded > system.regions.length, `${id}: no abutting pair was bounded`);
+    geometry.dispose();
+  }
+});
+
 test('every declared ring system is ordered, self-consistent and inside its planet', () => {
   for (const [id, system] of Object.entries(ringSystems)) {
     assert.ok(system.equatorialKm > 0, `${id}: no equatorial radius`);

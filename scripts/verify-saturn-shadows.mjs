@@ -195,7 +195,11 @@ try {
     for (let y = 0; y < off.info.height; y++) for (let x = 0; x < off.info.width; x++) {
       const i = (y * off.info.width + x) * off.info.channels;
       const lit = off.lum(i);
-      if (lit < .01) continue;                       // no ring drawn here, or it is unlit
+      // Bright enough for a ten percent drop to mean something: on a pixel sitting at two
+      // or three levels out of 255, one level of rounding is thirty percent, and those
+      // pixels appear all over the annulus and drag the measured width out to the ring's
+      // outer edge. The shadow itself is measured on the lit band, which is far above this.
+      if (lit < .08) continue;
       const dx = x + .5 - body.x, dy = y + .5 - body.y;
       const distance = Math.hypot(dx, dy) / body.radiusPx;
       if (distance < 1.05 || distance > 2.4) continue;
