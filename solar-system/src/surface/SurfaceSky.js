@@ -14,6 +14,7 @@ import { bodyTexturePath } from '../body-textures.js';
 import { createRingSystemGeometry, ringSystemFor } from '../ring-systems.js';
 import { createRingScatteringTexture, SCATTERING_ROW_BASE, shippedScatteringTable } from '../ring-multiple-scattering.js';
 import { createRingSurfaceMaterial } from '../ring-photometry.js';
+import { patchEarthNightMaterial } from '../earth-night.js';
 
 const { smoothstep, clamp, degToRad } = THREE.MathUtils;
 const HOURS = 3600000;
@@ -158,6 +159,7 @@ export function createSurfaceSky({scene,renderer,site,parentMap,cloudMap,groundM
   // The shape comes from the same body model the solar-system view uses, so a flattened
   // world is flattened here too: shading these as spheres made Jupiter and Saturn round
   // discs from their own moons while the overview drew them oblate.
+  const earthNight=[];  // {globe, uniforms} for every globe that shows the night side
   function addGlobe(id,name,radiusKm,map,emissive=false) {
     const material=emissive?new THREE.MeshBasicMaterial({map,color:map?'#ffffff':'#fff8e8'}):new THREE.MeshLambertMaterial({map,color:map?'#ffffff':'#bbbcb6'});
     const globe=new THREE.Mesh(skyGlobeGeometry(id,Boolean(map)),material);
@@ -181,6 +183,7 @@ export function createSurfaceSky({scene,renderer,site,parentMap,cloudMap,groundM
       globe.material.map=texture;
       globe.material.color.set('#ffffff');
       globe.material.needsUpdate=true;
+      if(id==='earth')enableEarthNight(globe);
     },undefined,()=>{});
   }
   if(parentMap)parentMap.wrapS=THREE.RepeatWrapping;
@@ -222,6 +225,22 @@ export function createSurfaceSky({scene,renderer,site,parentMap,cloudMap,groundM
     }
   }
   if(site.parent!=='Sun')addGlobe('sun','Sun',physicalData.sun.radiusKm,null,true);
+  // Earth's night side is lit by its own cities in the overview; without the same term the
+  // landing sky drew it black, which is the one body where the two views showed different
+  // worlds for a reason the user can see.
+  // Only a globe that already carries its day map can take the night patch: the term is
+  // sampled with the map's own coordinates, and without a map that varying does not exist.
+  function enableEarthNight(globe){
+    if(!globe||!globe.material.map||globe.userData.earthNight)return;
+    globe.userData.earthNight=true;
+    textureLoader.load('/solar-system/textures/earth_night_2016.jpg',nightMap=>{
+      if(signal.aborted){nightMap.dispose();return;}
+      nightMap.colorSpace=THREE.SRGBColorSpace;
+      const uniforms=patchEarthNightMaterial(globe.material,nightMap);
+      earthNight.push({globe,uniforms});
+    },undefined,()=>{});
+  }
+  if(objects.has('Earth'))enableEarthNight(objects.get('Earth').globe);
 
   const atmosphere=site.atmosphere?new THREE.Mesh(new THREE.SphereGeometry(1800,48,32),new THREE.ShaderMaterial({
     uniforms:{sun:{value:frame.targets.Sun.direction.clone()},day:{value:1},kind:{value:{mars:1,titan:2,pluto:3}[site.atmosphere]}},
@@ -291,6 +310,11 @@ export function createSurfaceSky({scene,renderer,site,parentMap,cloudMap,groundM
     }
     windCycle.value.fromArray(surfaceWindCycle((time-epoch)/HOURS));
     light.position.copy(frame.targets.Sun.direction).multiplyScalar(1e6);
+    for(const entry of earthNight){
+      entry.globe.updateWorldMatrix(true,false);
+      entry.uniforms.uSurfaceSun.value.copy(frame.targets.Sun.direction)
+        .applyMatrix3(new THREE.Matrix3().setFromMatrix4(entry.globe.matrixWorld).invert()).normalize();
+    }
     if(ring){
       // The slab model wants both in the ring's own frame, in equatorial radii: the
       // vertex positions are built that way, so the shading cannot disagree with geometry.

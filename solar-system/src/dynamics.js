@@ -3,6 +3,7 @@ import simplexSource from "glsl-noise/simplex/3d.glsl?raw";
 import { additionalBodies } from "./additional-bodies.js";
 import { solarEruptionAxis, volcanicAxis, icePlumeAxis, plumeViewDirection } from './feature-anchors.js';
 import { createRingOpticalDepthTexture, RING_INNER, RING_OUTER, RING_SURGE_SCALE_RAD } from './ring-optical-depth.js';
+import { EARTH_NIGHT_GLSL } from './earth-night.js';
 import { RING_PHOTOMETRY_GLSL, RING_DISPLAY_LEVEL } from './ring-photometry.js';
 import { ringSystems, ringSystemFor } from './ring-systems.js';
 import { createRingScatteringTexture, SCATTERING_ROW_BASE, shippedScatteringTable } from './ring-multiple-scattering.js';
@@ -139,6 +140,7 @@ export const activityProfiles = {
 };
 
 const common = /* glsl */ `
+  ${EARTH_NIGHT_GLSL}
   uniform float uActivityTime;
   uniform float uActivityEnabled;
   uniform float uActivityDetail;
@@ -451,10 +453,10 @@ function attachEarthSurface(record) {
   patchMaterial(record.body.mesh.material, "earth-surface", record.uniforms, {
     emissivemap_fragment: /* glsl */ `
       #include <emissivemap_fragment>
-      float night = 1.0 - smoothstep(-.14,.10,dot(normalize(vActivityDir),uSurfaceSun));
-      vec3 nightColor = texture2D(uNightTexture,vActivityUv).rgb;
-      float cityMask = smoothstep(.012,.12,max(nightColor.r,nightColor.g));
-      totalEmissiveRadiance += nightColor * cityMask * night * uNightEnabled * 1.6;
+      // The terminator band, the city threshold and the brightness are shared with the
+      // landing sky, which draws the same Earth from further away.
+      totalEmissiveRadiance += earthNightLights(texture2D(uNightTexture,vActivityUv).rgb,
+        earthNightFactor(vActivityDir,uSurfaceSun),uNightEnabled);
     `,
     lights_fragment_end: /* glsl */ `
       #include <lights_fragment_end>
