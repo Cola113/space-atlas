@@ -86,7 +86,7 @@ for name, code in [('io', 501), ('europa', 502), ('jupiter', 599)]:
 
 # The Mars system barycenter substitutes for its center: displacement from its
 # tiny satellites is below 0.2 m, far below the separately stated angular gate.
-ids = {'sun':10, 'mercury':199, 'moon':301, 'earth':399, 'mars':4,
+ids = {'sun':10, 'mercury':199, 'venus':299, 'moon':301, 'earth':399, 'mars':4,
        'enceladus':602, 'titan':606, 'saturn':699, 'miranda':705,
        'uranus':799, 'pluto':999, 'charon':901}
 

@@ -76,9 +76,21 @@
 提示词为对应的 `*-prompt.txt`；加工脚本 `scripts/prepare-landing-sites.py --sources <source-directory>`
 只处理已保存图片，接缝与极点处理与首批共用 `scripts/landing_texture_lib.py`。
 
+### 2026-09-16 金星 · 金星 13 号着陆区
+
+| 天体 / 落点 | 来源与实际生成方式 | 站立位置与天空要点 |
+| --- | --- | --- |
+| 金星 / 金星 13 号着陆区 · 腓比区东侧 | 参考图重绘：[金星 13 号着陆全景](https://commons.wikimedia.org/wiki/File:V13_vg261_262.tif)（USSR / NASA，公有领域）为唯一输入，提供扁平层状岩板、暗褐色土壤与棱角碎石的地貌特征与暖赭色调；该片只覆盖约 40° 竖直视野，脚下没有实拍，按同一材质延续，未引入新地貌类型 | 7.5°S / 303°E。浓厚硫酸云下是均匀的赭黄漫射光，看不到太阳圆面、星空或任何其它天体，太阳只表现为云内一块略亮的光斑；一个太阳日约 116.75 地球日，太阳高度角 84.5° – −81.0°，太阳视直径约 0.741°（约地球上的 1.4 倍），自转逆行 |
+
+一次调用为八方 API `gpt-image-2.5-sunburst`，明确请求 `quality: high` 与 `size: 3840x1920`，服务商返回
+**3840×2160**，按与其它落点相同的方式重参数化到 360×180 的 3840×1920，记 `requestedSizeAccepted: false`。
+照片中的着陆器硬件（齿状环、镜头盖、条纹标尺、天线）没有重建，整幅为新画面、未保留输入像素。
+提示词为 `venus-prompt.txt`；加工走 `scripts/prepare-landing-sites.py --sources <source-directory>`，
+只处理已保存图片，接缝与极点处理与其它落点共用 `scripts/landing_texture_lib.py`。
+
 ### 计算方法与限制
 
-十六个地表共同读取 `solar-system/src/physics/state.js` 的物理状态。该层使用公里、J2000 赤道惯性坐标和统一 TT/TDB 时刻，与展示缩放分开。主要行星、月球及伽利略卫星继续使用 Astronomy Engine 2.1.19；1900—2100 年土卫二/泰坦取 JPL SAT441、米兰达取 URA184，冥王星—冥卫一取 PLU060。土星、天王星的日心平移仍取 Astronomy Engine，卫星相对位置取 JPL；冥王星系统包含相对太阳的质心轨道及两者相对质心的位置。总览和十六个落点现在读取同一模拟时刻的位置、速度与姿态，再分别进行显示变换。共享状态不意味着消除了模型近似，完整项目仍待最终交互及发布验收。**新落点与原有九处走同一条计算路径，但独立 DE440/Horizons/CSPICE 样本目前只覆盖原有九处**，见[地表科学校核](../../solar-system/GROUND_AUDIT.md#2026-09-16-新落点的覆盖范围)；不复用同一天体旧落点的误差数值当作新落点已核对。
+十七个地表共同读取 `solar-system/src/physics/state.js` 的物理状态。该层使用公里、J2000 赤道惯性坐标和统一 TT/TDB 时刻，与展示缩放分开。主要行星、月球及伽利略卫星继续使用 Astronomy Engine 2.1.19；1900—2100 年土卫二/泰坦取 JPL SAT441、米兰达取 URA184，冥王星—冥卫一取 PLU060。土星、天王星的日心平移仍取 Astronomy Engine，卫星相对位置取 JPL；冥王星系统包含相对太阳的质心轨道及两者相对质心的位置。总览和十六个落点现在读取同一模拟时刻的位置、速度与姿态，再分别进行显示变换。共享状态不意味着消除了模型近似，完整项目仍待最终交互及发布验收。十七处落点都走同一条计算路径，并且都有独立的 DE440/Horizons/CSPICE 对照样本（671 个），见[地表科学校核](../../solar-system/GROUND_AUDIT.md#2026-09-16-新落点的覆盖范围已补齐)；测试会因"有落点没有样本"而失败，不再靠人工记得补。
 
 位置与姿态分别计算。月球保留 Astronomy Engine 的 IAU 周期项，适用的 34 个卫星和小天体姿态系数来自 [NAIF PCK00011](https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/pck00011.tpc)，不以主星方向锁定经线，也不由经线反推轨道。未额外加入非刚体物理天平动。观察者位于统一定义半径对应的球面上，使用行星中心纬度、东经和 1.65 m 眼高。目标距离、方向及角直径由观察者位置计算，角直径为 `2 asin(radius / distance)`。半径及类型的唯一定义为 `physics/body-definitions.json`，由 `physical-scale.js` 派生提供；太阳统一采用 NAIF PCK00011 中采用的 695700 km 球面半径。
 

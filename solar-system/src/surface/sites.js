@@ -159,6 +159,17 @@ export const additionalLandingSites = Object.freeze({
     notes:'落点在朝冥王星的一侧：冥王星高度角 88.4°、视直径 7.2°，一个自转周期内几乎不动（互相潮汐锁定）。赤道峡谷带依据新视野号影像的地貌描述重建，崖高、走向与宽度不是测量值。冥卫一北半球的暗红色极冠（Mordor Macula）不在本落点视野内。1900—2100 年位置采用 JPL PLU060。',
     atmosphere:'pluto', solarDay:6.388, initialPitch:10, referenceSolarAltitude:20,
   },
+  venus: {
+    ...common, id:'venus', body:'Venus', name:'金星', title:'金星 13 号着陆区 · 腓比区东侧', english:'VENERA 13 · EAST OF PHOEBE REGIO',
+    radiusKm:physicalData.venus.radiusKm, latitude:-7.5, longitude:303,
+    parent:'Sun', parentName:'太阳', parentRadiusKm:physicalData.sun.radiusKm, texture:'/surface/venus.webp',
+    date:'2026-12-11T06:00:00Z',
+    provenance:'金星 13 号实拍参考 · AI 重绘', credit:'苏联金星 13 号着陆全景 · USSR / NASA 公有领域 · 地表重绘 gpt-image-2.5-sunburst',
+    source:'https://commons.wikimedia.org/wiki/File:V13_vg261_262.tif',
+    description:'层状岩板铺满地面，暗褐色土壤里散着棱角碎石，浓厚的云把光散成一片均匀的赭黄。',
+    notes:'金星 13 号 1982 年 3 月 1 日在南纬 7.5°、东经 303°（腓比区东侧）着陆，本落点即其着陆区。地面形态依据它拍下的可见光彩色全景参考重绘，整幅为新画面、未逐像素保留原片，照片中的着陆器硬件（齿状环、镜头盖、条纹标尺、天线）没有重建；参考片只覆盖约 40° 竖直视野，脚下没有实拍，按同一材质延续。金星大气为浓厚硫酸云：天空是均匀的赭黄漫射光，看不到太阳圆面、星空或任何其它天体，太阳只表现为云内一块略亮的光斑，该渲染是展示近似而不是辐射传输计算。一个太阳日约 116.75 地球日，落点处太阳高度角在 84.5° 与 −81.0° 之间变化；太阳视直径约 0.741°，约为地球上的 1.4 倍。金星自转逆行，太阳从西边升起。',
+    atmosphere:'venus', solarDay:116.75, referenceSolarAltitude:60, initialHeading:180, panoramaCenter:180,
+  },
 });
 
 // A body is landable when it owns at least one site; several sites may share one.

@@ -11,7 +11,7 @@ const output=new URL(process.env.ATLAS_OUTPUT||'../test-results/landings/',impor
 await mkdir(output,{recursive:true});
 const browser=await chromium.launch({channel:'msedge',headless:true});
 const report=[];
-const ids=(process.env.ATLAS_LANDING_IDS||'moon,moon-farside,europa,europa-subjovian,mars,mars-phoenix,io,io-subjovian,titan,enceladus,pluto,pluto-charonface,miranda,mercury,mercury-pole,charon').split(',');
+const ids=(process.env.ATLAS_LANDING_IDS||'moon,moon-farside,europa,europa-subjovian,mars,mars-phoenix,io,io-subjovian,titan,enceladus,pluto,pluto-charonface,miranda,mercury,mercury-pole,charon,venus').split(',');
 // Sites whose parent cannot be looked at: haze hides it, or it never rises here.
 const parentNotice={titan:/雾霾/,pluto:/地平线下/,'moon-farside':/地平线下/};
 async function pixels(page,checkBrightness=true){

@@ -22626,6 +22626,942 @@
       "visibleSolarFraction": 1.0
     },
     {
+      "siteId": "venus",
+      "id": "venus",
+      "parent": "sun",
+      "date": "1900-01-01T00:00:00Z",
+      "tdbSeconds": -3155716802.7589946,
+      "latitude": -7.5,
+      "longitude": 303,
+      "radiusKm": 6051.8,
+      "parentRadiusKm": 695700,
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.7356003681508008,
+            0.6644425379645215,
+            -0.13194018387008558
+          ],
+          "distanceKm": 108818649.90538654,
+          "angularDiameter": 0.01278649826891635,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        }
+      }
+    },
+    {
+      "siteId": "venus",
+      "id": "venus",
+      "parent": "sun",
+      "date": "1900-12-31T23:59:59Z",
+      "tdbSeconds": -3124180802.4052444,
+      "latitude": -7.5,
+      "longitude": 303,
+      "radiusKm": 6051.8,
+      "parentRadiusKm": 695700,
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.012809341290977907,
+            0.9939194779920781,
+            -0.10936174853963286
+          ],
+          "distanceKm": 108053394.83725926,
+          "angularDiameter": 0.012877055972871022,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        }
+      }
+    },
+    {
+      "siteId": "venus",
+      "id": "venus",
+      "parent": "sun",
+      "date": "1971-08-01T17:00:00Z",
+      "tdbSeconds": -896813958.2280614,
+      "latitude": -7.5,
+      "longitude": 303,
+      "radiusKm": 6051.8,
+      "parentRadiusKm": 695700,
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.9396433925158233,
+            0.3420733919507838,
+            -0.007489287058160375
+          ],
+          "distanceKm": 107516646.13416207,
+          "angularDiameter": 0.012941342198005608,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        }
+      }
+    },
+    {
+      "siteId": "venus",
+      "id": "venus",
+      "parent": "sun",
+      "date": "2000-01-01T12:00:00Z",
+      "tdbSeconds": 64.18392728473108,
+      "latitude": -7.5,
+      "longitude": 303,
+      "radiusKm": 6051.8,
+      "parentRadiusKm": 695700,
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.9732454871144626,
+            -0.21976684237914343,
+            0.06705040493563892
+          ],
+          "distanceKm": 107743661.45914371,
+          "angularDiameter": 0.012914074479062128,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        }
+      }
+    },
+    {
+      "siteId": "venus",
+      "id": "venus",
+      "parent": "sun",
+      "date": "2100-12-31T23:59:59Z",
+      "tdbSeconds": 3187252868.183877,
+      "latitude": -7.5,
+      "longitude": 303,
+      "radiusKm": 6051.8,
+      "parentRadiusKm": 695700,
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.9115443852255174,
+            -0.40838288368082565,
+            0.048065102521129735
+          ],
+          "distanceKm": 108490627.46063864,
+          "angularDiameter": 0.012825158897261333,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        }
+      }
+    },
+    {
+      "siteId": "venus",
+      "id": "venus",
+      "parent": "sun",
+      "date": "2026-12-11T06:00:00Z",
+      "tdbSeconds": 850240869.1833311,
+      "latitude": -7.5,
+      "longitude": 303,
+      "radiusKm": 6051.8,
+      "parentRadiusKm": 695700,
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.0022371756388925835,
+            0.9954346024467571,
+            -0.0954198474994956
+          ],
+          "distanceKm": 107535017.37240402,
+          "angularDiameter": 0.012939131273565848,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        }
+      }
+    },
+    {
+      "siteId": "venus",
+      "id": "venus",
+      "parent": "sun",
+      "date": "2026-12-11T06:00:00.000Z",
+      "tdbSeconds": 850240869.1833311,
+      "latitude": -7.5,
+      "longitude": 303,
+      "radiusKm": 6051.8,
+      "parentRadiusKm": 695700,
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.0022371756388925835,
+            0.9954346024467571,
+            -0.0954198474994956
+          ],
+          "distanceKm": 107535017.37240402,
+          "angularDiameter": 0.012939131273565848,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        }
+      }
+    },
+    {
+      "siteId": "venus",
+      "id": "venus",
+      "parent": "sun",
+      "date": "2027-01-08T08:06:08.631Z",
+      "tdbSeconds": 852667637.8151251,
+      "latitude": -7.5,
+      "longitude": 303,
+      "radiusKm": 6051.8,
+      "parentRadiusKm": 695700,
+      "targets": {
+        "sun": {
+          "direction": [
+            0.9976837525579959,
+            0.05583863773639099,
+            0.03884811987135921
+          ],
+          "distanceKm": 107531240.35488789,
+          "angularDiameter": 0.012939585764811284,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        }
+      }
+    },
+    {
+      "siteId": "venus",
+      "id": "venus",
+      "parent": "sun",
+      "date": "2027-02-05T10:12:17.263Z",
+      "tdbSeconds": 855094406.4478891,
+      "latitude": -7.5,
+      "longitude": 303,
+      "radiusKm": 6051.8,
+      "parentRadiusKm": 695700,
+      "targets": {
+        "sun": {
+          "direction": [
+            0.10157159163221582,
+            -0.9821326744146042,
+            0.15842544499074368
+          ],
+          "distanceKm": 107928807.99889348,
+          "angularDiameter": 0.012891920714994624,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        }
+      }
+    },
+    {
+      "siteId": "venus",
+      "id": "venus",
+      "parent": "sun",
+      "date": "2027-03-05T12:18:25.894Z",
+      "tdbSeconds": 857521175.0794415,
+      "latitude": -7.5,
+      "longitude": 303,
+      "radiusKm": 6051.8,
+      "parentRadiusKm": 695700,
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.9869609777569712,
+            -0.16015212262070538,
+            0.01610360223944057
+          ],
+          "distanceKm": 108481007.37480699,
+          "angularDiameter": 0.01282629624677347,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        }
+      }
+    },
+    {
+      "siteId": "venus",
+      "id": "venus",
+      "parent": "sun",
+      "date": "2027-04-02T14:24:34.526Z",
+      "tdbSeconds": 859947943.7116563,
+      "latitude": -7.5,
+      "longitude": 303,
+      "radiusKm": 6051.8,
+      "parentRadiusKm": 695700,
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.22618519628905506,
+            0.9604495155060461,
+            -0.16240992932663667
+          ],
+          "distanceKm": 108870632.3586997,
+          "angularDiameter": 0.012780393017349055,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        }
+      }
+    },
+    {
+      "siteId": "venus",
+      "id": "venus",
+      "parent": "sun",
+      "date": "2027-04-30T16:30:43.157Z",
+      "tdbSeconds": 862374712.3424911,
+      "latitude": -7.5,
+      "longitude": 303,
+      "radiusKm": 6051.8,
+      "parentRadiusKm": 695700,
+      "targets": {
+        "sun": {
+          "direction": [
+            0.955204878946413,
+            0.2838826283129834,
+            -0.08363188733420192
+          ],
+          "distanceKm": 108883466.83945306,
+          "angularDiameter": 0.012778886526553885,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        }
+      }
+    },
+    {
+      "siteId": "venus",
+      "id": "venus",
+      "parent": "sun",
+      "date": "2027-05-28T18:36:51.789Z",
+      "tdbSeconds": 864801480.9739914,
+      "latitude": -7.5,
+      "longitude": 303,
+      "radiusKm": 6051.8,
+      "parentRadiusKm": 695700,
+      "targets": {
+        "sun": {
+          "direction": [
+            0.35512078996792706,
+            -0.9302380873548225,
+            0.09244633776952561
+          ],
+          "distanceKm": 108507316.52248433,
+          "angularDiameter": 0.012823186285550847,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        }
+      }
+    },
+    {
+      "siteId": "venus",
+      "id": "venus",
+      "parent": "sun",
+      "date": "2027-06-25T20:43:00.420Z",
+      "tdbSeconds": 867228249.6042731,
+      "latitude": -7.5,
+      "longitude": 303,
+      "radiusKm": 6051.8,
+      "parentRadiusKm": 695700,
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.9117170175100693,
+            -0.4067936699824866,
+            0.05736715126902917
+          ],
+          "distanceKm": 107948047.25972697,
+          "angularDiameter": 0.0128896229943227,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        }
+      }
+    },
+    {
+      "siteId": "venus",
+      "id": "venus",
+      "parent": "sun",
+      "date": "2027-07-23T22:49:09.052Z",
+      "tdbSeconds": 869655018.2354953,
+      "latitude": -7.5,
+      "longitude": 303,
+      "radiusKm": 6051.8,
+      "parentRadiusKm": 695700,
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.4577570998259936,
+            0.885386302282306,
+            -0.0809291868843387
+          ],
+          "distanceKm": 107536786.01895545,
+          "angularDiameter": 0.012938918462024489,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        }
+      }
+    },
+    {
+      "siteId": "venus",
+      "id": "venus",
+      "parent": "sun",
+      "date": "2027-08-21T00:55:17.683Z",
+      "tdbSeconds": 872081786.8658277,
+      "latitude": -7.5,
+      "longitude": 303,
+      "radiusKm": 6051.8,
+      "parentRadiusKm": 695700,
+      "targets": {
+        "sun": {
+          "direction": [
+            0.8649562813837688,
+            0.5014557729788985,
+            -0.019817644685932372
+          ],
+          "distanceKm": 107529953.77563776,
+          "angularDiameter": 0.012939740587112012,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        }
+      }
+    },
+    {
+      "siteId": "venus",
+      "id": "venus",
+      "parent": "sun",
+      "date": "2027-09-18T03:01:26.315Z",
+      "tdbSeconds": 874508555.4974198,
+      "latitude": -7.5,
+      "longitude": 303,
+      "radiusKm": 6051.8,
+      "parentRadiusKm": 695700,
+      "targets": {
+        "sun": {
+          "direction": [
+            0.5438842078439083,
+            -0.8277196346297153,
+            0.13809480405306568
+          ],
+          "distanceKm": 107929143.03799151,
+          "angularDiameter": 0.0128918806946888,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        }
+      }
+    },
+    {
+      "siteId": "venus",
+      "id": "venus",
+      "parent": "sun",
+      "date": "2027-10-16T05:07:34.946Z",
+      "tdbSeconds": 876935324.128369,
+      "latitude": -7.5,
+      "longitude": 303,
+      "radiusKm": 6051.8,
+      "parentRadiusKm": 695700,
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.8049685945214269,
+            -0.5888659250652769,
+            0.07254298126775824
+          ],
+          "distanceKm": 108484707.03391759,
+          "angularDiameter": 0.012825858824987534,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        }
+      }
+    },
+    {
+      "siteId": "venus",
+      "id": "venus",
+      "parent": "sun",
+      "date": "2027-11-13T07:13:43.578Z",
+      "tdbSeconds": 879362092.7606947,
+      "latitude": -7.5,
+      "longitude": 303,
+      "radiusKm": 6051.8,
+      "parentRadiusKm": 695700,
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.6452762155658809,
+            0.7519339658921145,
+            -0.1349589439893889
+          ],
+          "distanceKm": 108872584.63782561,
+          "angularDiameter": 0.012780163839046654,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        }
+      }
+    },
+    {
+      "siteId": "venus",
+      "id": "venus",
+      "parent": "sun",
+      "date": "2027-12-11T09:19:52.209Z",
+      "tdbSeconds": 881788861.3923279,
+      "latitude": -7.5,
+      "longitude": 303,
+      "radiusKm": 6051.8,
+      "parentRadiusKm": 695700,
+      "targets": {
+        "sun": {
+          "direction": [
+            0.7167123677086352,
+            0.6839195744365453,
+            -0.1362989276407441
+          ],
+          "distanceKm": 108880977.85386328,
+          "angularDiameter": 0.012779178651936111,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        }
+      }
+    },
+    {
+      "siteId": "venus",
+      "id": "venus",
+      "parent": "sun",
+      "date": "2028-01-08T11:26:00.841Z",
+      "tdbSeconds": 884215630.0251215,
+      "latitude": -7.5,
+      "longitude": 303,
+      "radiusKm": 6051.8,
+      "parentRadiusKm": 695700,
+      "targets": {
+        "sun": {
+          "direction": [
+            0.7421615228697535,
+            -0.6677166901129727,
+            0.05788519427474014
+          ],
+          "distanceKm": 108504842.89679004,
+          "angularDiameter": 0.012823478624555306,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        }
+      }
+    },
+    {
+      "siteId": "venus",
+      "id": "venus",
+      "parent": "sun",
+      "date": "2028-02-05T13:32:09.472Z",
+      "tdbSeconds": 886642398.6568861,
+      "latitude": -7.5,
+      "longitude": 303,
+      "radiusKm": 6051.8,
+      "parentRadiusKm": 695700,
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.6240349124535087,
+            -0.7742088896044073,
+            0.10574035793703616
+          ],
+          "distanceKm": 107948922.18835907,
+          "angularDiameter": 0.012889518522169335,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        }
+      }
+    },
+    {
+      "siteId": "venus",
+      "id": "venus",
+      "parent": "sun",
+      "date": "2028-03-04T15:38:18.104Z",
+      "tdbSeconds": 889069167.2894398,
+      "latitude": -7.5,
+      "longitude": 303,
+      "radiusKm": 6051.8,
+      "parentRadiusKm": 695700,
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.8125407015033317,
+            0.5814666791742602,
+            -0.04091588213068242
+          ],
+          "distanceKm": 107537207.42069031,
+          "angularDiameter": 0.012938867758097095,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        }
+      }
+    },
+    {
+      "siteId": "venus",
+      "id": "venus",
+      "parent": "sun",
+      "date": "2028-04-01T17:44:26.735Z",
+      "tdbSeconds": 891495935.9206562,
+      "latitude": -7.5,
+      "longitude": 303,
+      "radiusKm": 6051.8,
+      "parentRadiusKm": 695700,
+      "targets": {
+        "sun": {
+          "direction": [
+            0.5418545754966407,
+            0.8380223126801114,
+            -0.06412661275658307
+          ],
+          "distanceKm": 107526541.07626897,
+          "angularDiameter": 0.012940151276977896,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        }
+      }
+    },
+    {
+      "siteId": "venus",
+      "id": "venus",
+      "parent": "sun",
+      "date": "2028-04-29T19:50:35.367Z",
+      "tdbSeconds": 893922704.5524927,
+      "latitude": -7.5,
+      "longitude": 303,
+      "radiusKm": 6051.8,
+      "parentRadiusKm": 695700,
+      "targets": {
+        "sun": {
+          "direction": [
+            0.8664805555121604,
+            -0.4903430920863216,
+            0.09367549819757205
+          ],
+          "distanceKm": 107926182.53615426,
+          "angularDiameter": 0.01289223433422485,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        }
+      }
+    },
+    {
+      "siteId": "venus",
+      "id": "venus",
+      "parent": "sun",
+      "date": "2028-05-27T21:56:43.998Z",
+      "tdbSeconds": 896349473.1829941,
+      "latitude": -7.5,
+      "longitude": 303,
+      "radiusKm": 6051.8,
+      "parentRadiusKm": 695700,
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.4458638025206348,
+            -0.8880750597364461,
+            0.11192925388810508
+          ],
+          "distanceKm": 108487349.04333332,
+          "angularDiameter": 0.01282554647055544,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        }
+      }
+    },
+    {
+      "siteId": "venus",
+      "id": "venus",
+      "parent": "sun",
+      "date": "2028-06-25T00:02:52.630Z",
+      "tdbSeconds": 898776241.8142765,
+      "latitude": -7.5,
+      "longitude": 303,
+      "radiusKm": 6051.8,
+      "parentRadiusKm": 695700,
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.9222873375187545,
+            0.3769093022060113,
+            -0.08558881330608692
+          ],
+          "distanceKm": 108878751.5758273,
+          "angularDiameter": 0.012779439955372566,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        }
+      }
+    },
+    {
+      "siteId": "venus",
+      "id": "venus",
+      "parent": "sun",
+      "date": "2028-07-23T02:09:01.261Z",
+      "tdbSeconds": 901203010.4444984,
+      "latitude": -7.5,
+      "longitude": 303,
+      "radiusKm": 6051.8,
+      "parentRadiusKm": 695700,
+      "targets": {
+        "sun": {
+          "direction": [
+            0.3204179814765817,
+            0.9320841041308333,
+            -0.16897200943675464
+          ],
+          "distanceKm": 108885155.9984167,
+          "angularDiameter": 0.012778688282226959,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        }
+      }
+    },
+    {
+      "siteId": "venus",
+      "id": "venus",
+      "parent": "sun",
+      "date": "2028-08-20T04:15:09.893Z",
+      "tdbSeconds": 903629779.07583,
+      "latitude": -7.5,
+      "longitude": 303,
+      "radiusKm": 6051.8,
+      "parentRadiusKm": 695700,
+      "targets": {
+        "sun": {
+          "direction": [
+            0.9658738384313158,
+            -0.25898099346799963,
+            0.004071026441145726
+          ],
+          "distanceKm": 108506695.42834213,
+          "angularDiameter": 0.012823259686689759,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        }
+      }
+    },
+    {
+      "siteId": "venus",
+      "id": "venus",
+      "parent": "sun",
+      "date": "2028-09-17T06:21:18.525Z",
+      "tdbSeconds": 906056547.7074208,
+      "latitude": -7.5,
+      "longitude": 303,
+      "radiusKm": 6051.8,
+      "parentRadiusKm": 695700,
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.19886590815258973,
+            -0.9711421800918304,
+            0.13166326982546284
+          ],
+          "distanceKm": 107950692.75745648,
+          "angularDiameter": 0.012889307109916598,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        }
+      }
+    },
+    {
+      "siteId": "venus",
+      "id": "venus",
+      "parent": "sun",
+      "date": "2028-10-15T08:27:27.156Z",
+      "tdbSeconds": 908483316.3383684,
+      "latitude": -7.5,
+      "longitude": 303,
+      "radiusKm": 6051.8,
+      "parentRadiusKm": 695700,
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.9884923156670076,
+            0.15044074412710107,
+            0.01582796176900799
+          ],
+          "distanceKm": 107536486.74387638,
+          "angularDiameter": 0.012938954471661662,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        }
+      }
+    },
+    {
+      "siteId": "venus",
+      "id": "venus",
+      "parent": "sun",
+      "date": "2028-11-12T10:33:35.788Z",
+      "tdbSeconds": 910910084.9706926,
+      "latitude": -7.5,
+      "longitude": 303,
+      "radiusKm": 6051.8,
+      "parentRadiusKm": 695700,
+      "targets": {
+        "sun": {
+          "direction": [
+            0.09939105268097671,
+            0.9914688313743232,
+            -0.08432659758463538
+          ],
+          "distanceKm": 107520328.77761868,
+          "angularDiameter": 0.012940898942159676,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        }
+      }
+    },
+    {
+      "siteId": "venus",
+      "id": "venus",
+      "parent": "sun",
+      "date": "2028-12-10T12:39:44.419Z",
+      "tdbSeconds": 913336853.6023247,
+      "latitude": -7.5,
+      "longitude": 303,
+      "radiusKm": 6051.8,
+      "parentRadiusKm": 695700,
+      "targets": {
+        "sun": {
+          "direction": [
+            0.9984121611989772,
+            -0.04418780057336809,
+            0.034937009752920085
+          ],
+          "distanceKm": 107919135.27019553,
+          "angularDiameter": 0.012893076226281226,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        }
+      }
+    },
+    {
+      "siteId": "venus",
+      "id": "venus",
+      "parent": "sun",
+      "date": "2029-01-07T14:45:53.051Z",
+      "tdbSeconds": 915763622.235118,
+      "latitude": -7.5,
+      "longitude": 303,
+      "radiusKm": 6051.8,
+      "parentRadiusKm": 695700,
+      "targets": {
+        "sun": {
+          "direction": [
+            0.011352513284734512,
+            -0.9920149264506716,
+            0.1256085432651311
+          ],
+          "distanceKm": 108486520.95629357,
+          "angularDiameter": 0.012825644370407951,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        }
+      }
+    },
+    {
+      "siteId": "venus",
+      "id": "venus",
+      "parent": "sun",
+      "date": "2029-02-04T16:52:01.682Z",
+      "tdbSeconds": 918190390.8668832,
+      "latitude": -7.5,
+      "longitude": 303,
+      "radiusKm": 6051.8,
+      "parentRadiusKm": 695700,
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.9963088274979368,
+            -0.08206965364472811,
+            -0.02516529754087915
+          ],
+          "distanceKm": 108882271.2939208,
+          "angularDiameter": 0.012779026842772715,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        }
+      }
+    },
+    {
+      "siteId": "venus",
+      "id": "venus",
+      "parent": "sun",
+      "date": "2029-03-04T18:58:10.314Z",
+      "tdbSeconds": 920617159.499438,
+      "latitude": -7.5,
+      "longitude": 303,
+      "radiusKm": 6051.8,
+      "parentRadiusKm": 695700,
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.14635978903259286,
+            0.973727046638134,
+            -0.17445472421150449
+          ],
+          "distanceKm": 108886387.41084054,
+          "angularDiameter": 0.012778543764165365,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        }
+      }
+    },
+    {
+      "siteId": "venus",
+      "id": "venus",
+      "parent": "sun",
+      "date": "2029-04-01T21:04:18.945Z",
+      "tdbSeconds": 923043928.130656,
+      "latitude": -7.5,
+      "longitude": 303,
+      "radiusKm": 6051.8,
+      "parentRadiusKm": 695700,
+      "targets": {
+        "sun": {
+          "direction": [
+            0.9769212207177699,
+            0.20582071083319378,
+            -0.05712060489368877
+          ],
+          "distanceKm": 108505207.0471705,
+          "angularDiameter": 0.012823435587555162,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        }
+      }
+    },
+    {
+      "siteId": "venus",
+      "id": "venus",
+      "parent": "sun",
+      "date": "2029-04-29T23:10:27.577Z",
+      "tdbSeconds": 925470696.7624942,
+      "latitude": -7.5,
+      "longitude": 303,
+      "radiusKm": 6051.8,
+      "parentRadiusKm": 695700,
+      "targets": {
+        "sun": {
+          "direction": [
+            0.2699553029601426,
+            -0.9541347234565505,
+            0.1294259011874739
+          ],
+          "distanceKm": 107951487.384797,
+          "angularDiameter": 0.012889212230838252,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        }
+      }
+    },
+    {
+      "siteId": "venus",
+      "id": "venus",
+      "parent": "sun",
+      "date": "2029-05-28T01:16:36.208Z",
+      "tdbSeconds": 927897465.3929969,
+      "latitude": -7.5,
+      "longitude": 303,
+      "radiusKm": 6051.8,
+      "parentRadiusKm": 695700,
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.9467821891619188,
+            -0.31258176296380374,
+            0.07678624712931979
+          ],
+          "distanceKm": 107539923.10063438,
+          "angularDiameter": 0.012938541011407487,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        }
+      }
+    },
+    {
       "siteId": "enceladus",
       "id": "enceladus",
       "parent": "saturn",

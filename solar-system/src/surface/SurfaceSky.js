@@ -243,7 +243,7 @@ export function createSurfaceSky({scene,renderer,site,parentMap,cloudMap,groundM
   if(objects.has('Earth'))enableEarthNight(objects.get('Earth').globe);
 
   const atmosphere=site.atmosphere?new THREE.Mesh(new THREE.SphereGeometry(1800,48,32),new THREE.ShaderMaterial({
-    uniforms:{sun:{value:frame.targets.Sun.direction.clone()},day:{value:1},kind:{value:{mars:1,titan:2,pluto:3}[site.atmosphere]}},
+    uniforms:{sun:{value:frame.targets.Sun.direction.clone()},day:{value:1},kind:{value:{mars:1,titan:2,pluto:3,venus:4}[site.atmosphere]}},
     vertexShader:'varying vec3 direction;void main(){direction=position;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}',
     fragmentShader:`varying vec3 direction;uniform vec3 sun;uniform float day;uniform float kind;
       void main(){vec3 d=normalize(direction);float h=exp(-max(d.y,0.)*3.);float alignment=max(0.,dot(d,sun));
@@ -252,6 +252,8 @@ export function createSurfaceSky({scene,renderer,site,parentMap,cloudMap,groundM
           colour+=vec3(.16,.24,.32)*pow(alignment,90.)*day;opacity=mix(.06,.96,day);}
         else if(kind<2.5){colour=mix(vec3(.24,.11,.03),vec3(.48,.26,.09),h)*(.04+.96*day);
           colour+=vec3(.16,.095,.028)*pow(alignment,18.)*day;opacity=1.;}
+        else if(kind<3.5){colour=mix(vec3(.30,.23,.12),vec3(.60,.51,.29),h)*(.05+.95*day);
+          colour+=vec3(.17,.14,.08)*pow(alignment,6.)*day;opacity=1.;}
         else{colour=vec3(.08,.13,.22)*day;opacity=.12*exp(-abs(d.y)*18.)*day;}
         gl_FragColor=vec4(colour,opacity);
         #include <colorspace_fragment>
