@@ -343,6 +343,33 @@
       "requestedSize": "3840x1920",
       "qualityExecutionVerified": false,
       "requestedSizeAccepted": false
+    },
+    {
+      "id": "venus",
+      "generatedOn": "2026-09-16",
+      "mode": "reference-edit with the observed Venera 13 landing panorama",
+      "sourceFile": "venus.png",
+      "sourceDimensions": [
+        3840,
+        2160
+      ],
+      "deliveredDimensions": [
+        3840,
+        1920
+      ],
+      "sourceSha256": "72525d79e3f50296fac5247ceaa10c5645729a8ce9d8e016a78eda6f53b2748c",
+      "file": "venus.webp",
+      "sha256": "57e48d9241ba474d13279672e7996e3be72906853e3b749c274637b661c5d0d2",
+      "bytes": 1797562,
+      "processing": "Provider frame 3840x2160 reparameterized to 360x180 at 3840x1920; top-connected black sky removed; narrow wrap blend; nadir smoothing; WebP encoding. New drawing. The real Venera 13 colour panorama of this landing area (7.5S, 303E, east of Phoebe Regio) supplied the flat layered rock slabs, the dark soil with angular gravel and the warm ochre tone; that frame spans only about 40 degrees vertically, so the ground below it, which the probe never photographed, continues the same material and no new landform type is introduced. Lander hardware in the photograph (toothed rim, disc lens cap, striped ranging rod, antenna) was not reproduced, and no pixel of the input is preserved.",
+      "model": "gpt-image-2.5-sunburst",
+      "requestedQuality": "high",
+      "requestedSize": "3840x1920",
+      "qualityExecutionVerified": false,
+      "references": [
+        "Venera 13 lander colour panorama, USSR/NASA, public domain (ground character, observed)"
+      ],
+      "requestedSizeAccepted": false
     }
   ],
   "updatedOn": "2026-09-16"

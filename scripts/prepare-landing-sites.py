@@ -77,6 +77,17 @@ SITES = [
      'Complete 3840x2160 generated panorama reparameterized to 360x180 at 3840x1920; top-connected black '
      'sky removed; narrow wrap blend; nadir smoothing; WebP encoding. No reference image was supplied.',
      {'requestedSizeAccepted': False}),
+    ('venus', 'venus.png',
+     'reference-edit with the observed Venera 13 landing panorama',
+     'Provider frame 3840x2160 reparameterized to 360x180 at 3840x1920; top-connected black sky removed; '
+     'narrow wrap blend; nadir smoothing; WebP encoding. New drawing. The real Venera 13 colour panorama of '
+     'this landing area (7.5S, 303E, east of Phoebe Regio) supplied the flat layered rock slabs, the dark '
+     'soil with angular gravel and the warm ochre tone; that frame spans only about 40 degrees vertically, '
+     'so the ground below it, which the probe never photographed, continues the same material and no new '
+     'landform type is introduced. Lander hardware in the photograph (toothed rim, disc lens cap, striped '
+     'ranging rod, antenna) was not reproduced, and no pixel of the input is preserved.',
+     {'references': ['Venera 13 lander colour panorama, USSR/NASA, public domain (ground character, observed)'],
+      'requestedSizeAccepted': False}),
 ]
 
 parser = argparse.ArgumentParser()
