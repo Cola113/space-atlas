@@ -28,27 +28,13 @@
     },
     "controlsChecked": 27,
     "sceneBrightPixels": 20006,
-    "brightPixelsHiddenByUi": 1049,
+    "dimmedByChromePixels": 1038,
+    "dimmingRatioRange": [
+      0.188,
+      0.833
+    ],
+    "hiddenByUiPixels": 11,
     "hiddenByChrome": [
-      {
-        "sel": "div.timeline",
-        "text": "太阳与行星矮行星小行星地月系火星系木星系",
-        "pixels": 97,
-        "threshold": 90,
-        "sceneAnchored": false,
-        "rect": {
-          "x": 36,
-          "y": 528,
-          "w": 1208,
-          "h": 60
-        },
-        "area": {
-          "x0": 576,
-          "y0": 528,
-          "x1": 927,
-          "y1": 537
-        }
-      },
       {
         "sel": "canvas.",
         "text": "",
@@ -109,9 +95,9 @@
     ],
     "hiddenBySceneAnchoredContent": [
       {
-        "sel": "span.landmark-name",
-        "text": "土星环阴影",
-        "pixels": 903,
+        "sel": "content",
+        "text": "scene-anchored marker",
+        "pixels": 1,
         "threshold": 90,
         "sceneAnchored": true,
         "rect": {
@@ -121,63 +107,29 @@
           "h": 22
         },
         "area": {
-          "x0": 738,
-          "y0": 321,
-          "x1": 799,
-          "y1": 341
-        }
-      },
-      {
-        "sel": "button.landmark-marker",
-        "text": "土星环阴影",
-        "pixels": 37,
-        "threshold": 90,
-        "sceneAnchored": true,
-        "rect": {
-          "x": 705.4,
-          "y": 309.7,
-          "w": 44,
-          "h": 44
-        },
-        "area": {
-          "x0": 721,
-          "y0": 324,
-          "x1": 735,
-          "y1": 338
-        }
-      },
-      {
-        "sel": "span.landmark-dot",
-        "text": "",
-        "pixels": 2,
-        "threshold": 90,
-        "sceneAnchored": true,
-        "rect": {
-          "x": 722.9,
-          "y": 327.2,
-          "w": 9,
-          "h": 9
-        },
-        "area": {
-          "x0": 730,
-          "y0": 335,
-          "x1": 731,
-          "y1": 336
+          "x0": 747,
+          "y0": 325,
+          "x1": 747,
+          "y1": 325
         }
       }
     ],
-    "maxHiddenByOneChromeElement": 97,
+    "hiddenInsideBodySilhouette": 0,
+    "maxHiddenByOneChromeElement": 7,
+    "hiddenAllowancePixels": 64,
     "motionBaselinePixels": 0,
     "sensitivity": {
       "60": {
-        "sceneBrightPixels": 34010,
-        "brightPixelsHiddenByUi": 993,
-        "maxHiddenByOneChromeElement": 72,
+        "sceneBrightPixels": 34013,
+        "dimmedPixels": 957,
+        "dimmingRatioRange": [
+          0.188,
+          0.82
+        ],
+        "hiddenPixels": 36,
+        "hiddenInsideBodySilhouette": 0,
+        "maxHiddenByOneChromeElement": 22,
         "hiddenByChrome": [
-          {
-            "sel": "div.timeline",
-            "pixels": 72
-          },
           {
             "sel": "canvas.",
             "pixels": 22
@@ -214,13 +166,15 @@
       },
       "90": {
         "sceneBrightPixels": 20006,
-        "brightPixelsHiddenByUi": 1049,
-        "maxHiddenByOneChromeElement": 97,
+        "dimmedPixels": 1038,
+        "dimmingRatioRange": [
+          0.188,
+          0.833
+        ],
+        "hiddenPixels": 11,
+        "hiddenInsideBodySilhouette": 0,
+        "maxHiddenByOneChromeElement": 7,
         "hiddenByChrome": [
-          {
-            "sel": "div.timeline",
-            "pixels": 97
-          },
           {
             "sel": "canvas.",
             "pixels": 7
@@ -237,13 +191,15 @@
       },
       "140": {
         "sceneBrightPixels": 15888,
-        "brightPixelsHiddenByUi": 1112,
-        "maxHiddenByOneChromeElement": 56,
+        "dimmedPixels": 1110,
+        "dimmingRatioRange": [
+          0.188,
+          0.89
+        ],
+        "hiddenPixels": 2,
+        "hiddenInsideBodySilhouette": 0,
+        "maxHiddenByOneChromeElement": 2,
         "hiddenByChrome": [
-          {
-            "sel": "div.timeline",
-            "pixels": 56
-          },
           {
             "sel": "canvas.",
             "pixels": 2
@@ -259,6 +215,7 @@
         "h": 215
       },
       "sceneBrightInsidePlantedRect": 12673,
+      "dimmedByPlantedPanel": 12673,
       "hiddenByPlantedPanel": 12673,
       "detected": true
     },
@@ -296,7 +253,12 @@
     },
     "controlsChecked": 19,
     "sceneBrightPixels": 7944,
-    "brightPixelsHiddenByUi": 1108,
+    "dimmedByChromePixels": 1068,
+    "dimmingRatioRange": [
+      0.123,
+      0.601
+    ],
+    "hiddenByUiPixels": 39,
     "hiddenByChrome": [
       {
         "sel": "#selected-name",
@@ -337,44 +299,6 @@
         }
       },
       {
-        "sel": "#planet-info",
-        "text": "",
-        "pixels": 8,
-        "threshold": 90,
-        "sceneAnchored": false,
-        "rect": {
-          "x": 16,
-          "y": 501,
-          "w": 358,
-          "h": 131
-        },
-        "area": {
-          "x0": 34,
-          "y0": 501,
-          "x1": 41,
-          "y1": 501
-        }
-      },
-      {
-        "sel": "canvas.",
-        "text": "",
-        "pixels": 1,
-        "threshold": 90,
-        "sceneAnchored": false,
-        "rect": {
-          "x": 0,
-          "y": 0,
-          "w": 390,
-          "h": 844
-        },
-        "area": {
-          "x0": 282,
-          "y0": 328,
-          "x1": 282,
-          "y1": 328
-        }
-      },
-      {
         "sel": "#back-button",
         "text": "",
         "pixels": 1,
@@ -396,9 +320,9 @@
     ],
     "hiddenBySceneAnchoredContent": [
       {
-        "sel": "span.landmark-name",
-        "text": "土星环阴影",
-        "pixels": 984,
+        "sel": "content",
+        "text": "scene-anchored marker",
+        "pixels": 2,
         "threshold": 90,
         "sceneAnchored": true,
         "rect": {
@@ -408,57 +332,27 @@
           "h": 22
         },
         "area": {
-          "x0": 169,
+          "x0": 182,
           "y0": 340,
-          "x1": 225,
-          "y1": 361
-        }
-      },
-      {
-        "sel": "button.landmark-marker",
-        "text": "土星环阴影",
-        "pixels": 63,
-        "threshold": 90,
-        "sceneAnchored": true,
-        "rect": {
-          "x": 135.5,
-          "y": 328.8,
-          "w": 44,
-          "h": 44
-        },
-        "area": {
-          "x0": 151,
-          "y0": 344,
-          "x1": 165,
-          "y1": 358
-        }
-      },
-      {
-        "sel": "span.landmark-dot",
-        "text": "",
-        "pixels": 15,
-        "threshold": 90,
-        "sceneAnchored": true,
-        "rect": {
-          "x": 153,
-          "y": 346.3,
-          "w": 9,
-          "h": 9
-        },
-        "area": {
-          "x0": 153,
-          "y0": 346,
-          "x1": 161,
-          "y1": 355
+          "x1": 187,
+          "y1": 342
         }
       }
     ],
+    "hiddenInsideBodySilhouette": 0,
     "maxHiddenByOneChromeElement": 21,
+    "hiddenAllowancePixels": 64,
     "motionBaselinePixels": 0,
     "sensitivity": {
       "60": {
         "sceneBrightPixels": 13921,
-        "brightPixelsHiddenByUi": 1064,
+        "dimmedPixels": 1009,
+        "dimmingRatioRange": [
+          0.123,
+          0.509
+        ],
+        "hiddenPixels": 53,
+        "hiddenInsideBodySilhouette": 0,
         "maxHiddenByOneChromeElement": 29,
         "hiddenByChrome": [
           {
@@ -468,14 +362,6 @@
           {
             "sel": "#body-details-button",
             "pixels": 15
-          },
-          {
-            "sel": "#planet-info",
-            "pixels": 9
-          },
-          {
-            "sel": "canvas.",
-            "pixels": 2
           },
           {
             "sel": "#back-button",
@@ -489,7 +375,13 @@
       },
       "90": {
         "sceneBrightPixels": 7944,
-        "brightPixelsHiddenByUi": 1108,
+        "dimmedPixels": 1068,
+        "dimmingRatioRange": [
+          0.123,
+          0.601
+        ],
+        "hiddenPixels": 39,
+        "hiddenInsideBodySilhouette": 0,
         "maxHiddenByOneChromeElement": 21,
         "hiddenByChrome": [
           {
@@ -501,14 +393,6 @@
             "pixels": 15
           },
           {
-            "sel": "#planet-info",
-            "pixels": 8
-          },
-          {
-            "sel": "canvas.",
-            "pixels": 1
-          },
-          {
             "sel": "#back-button",
             "pixels": 1
           }
@@ -516,7 +400,13 @@
       },
       "140": {
         "sceneBrightPixels": 6550,
-        "brightPixelsHiddenByUi": 1092,
+        "dimmedPixels": 1073,
+        "dimmingRatioRange": [
+          0.123,
+          0.717
+        ],
+        "hiddenPixels": 19,
+        "hiddenInsideBodySilhouette": 0,
         "maxHiddenByOneChromeElement": 10,
         "hiddenByChrome": [
           {
@@ -526,10 +416,6 @@
           {
             "sel": "#selected-name",
             "pixels": 9
-          },
-          {
-            "sel": "#planet-info",
-            "pixels": 6
           }
         ]
       }
@@ -542,6 +428,7 @@
         "h": 215
       },
       "sceneBrightInsidePlantedRect": 7330,
+      "dimmedByPlantedPanel": 7330,
       "hiddenByPlantedPanel": 7330,
       "detected": true
     },
