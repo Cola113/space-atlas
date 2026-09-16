@@ -116,6 +116,19 @@ python scripts/build-surface-textures.py --moon JSC2007e045379.jpg --europa euro
 - 另有九落点 359 个 DE440/Horizons/CSPICE 样本、21 组实际材质相位像素及四种物理遮挡关系校核。独立参考、各落点误差与有限摆动范围见发布的 `/solar-system/GROUND_AUDIT.md`；编码小于 1 km 不等于天空方向和食相预测的总误差也满足该界。新增七处落点尚未进入这批独立样本，覆盖范围与原因见同页「新落点的覆盖范围」。
 - 浏览器报告在 `test-results/landings/` 和 `test-results/surface-ephemeris/`（开发验收文件，不随站发布）。本轮地表按钮使用文字、44px 点击区与 8px 间隔；弹层按工具栏实际高度预留空间并允许内部滚动。全站其它场景按钮仍需继续改造和核验。
 
+## 天空里的天体与总览同源
+
+2026-09-16 修正。落点天空里的主星、可见邻居与环，一度是相对太阳系总览另写的一套：球体网格、
+按落点写死的贴图路径、一段 Lambert 环带。结果同一颗土星在总览是实测椭球、在土卫二天上是正球；
+冥王星与冥卫一在总览用 `completed/`、`repaired/` 的成品图，落点天空仍指向更早的 2k jpg
+（逐像素平均差 41.6/255，是两张底图）；环在环平面穿越时变成一条暗线，而真实情况是横贯土星的亮线。
+
+现在三者都取自同一份定义：形状走 `createBodyGeometry` 与 `body-models.js` 的实测轴比，
+贴图走 `body-textures.js` 的目录条目键，环走 `ringSystemFor` 的 401 段实测分区与共用的
+Chandrasekhar 粒子层光度学。判据与验收见[天体模型](../solar-system/BODY_MODELS.md)；
+`scripts/verify-sky-bodies.mjs` 检查环在掠射下确实亮于天空且着色器无编译错误，
+`tests/surface-sky-bodies.test.js` 检查轮廓比例与贴图键。
+
 ## 一个天体多处落点与主星遮挡
 
 2026-09-16。同一星球可以有多个落点后，两处落点在天空上确实不同，这是它们存在的理由；数值见上表。

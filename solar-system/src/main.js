@@ -47,6 +47,7 @@ import { RotationFollow, restoreFollowRotation } from './camera-follow.js';
 import { physicalData } from "./physical-scale.js";
 import { landableBodyIds } from './surface/sites.js';
 import { catalogSections, dockCatalogs, dockCatalogFor, matchesCatalog, proximityCatalog, satelliteSystems, systemMembers, systemName } from './catalog.js';
+import { baseTextureKey } from './body-textures.js';
 import { createBodyGeometry, createNarrowRing } from './body-geometry.js';
 import { createRingSystemGeometry, ringSystemFor, ringSpan } from './ring-systems.js';
 import { createObservedClouds } from "./observed-clouds.js";
@@ -534,7 +535,7 @@ function updateResourceStatus() {
   if (body) updateResolution(body);
 }
 
-const baseKey = body => body.baseTexture || `2k_${body.texture}.jpg`;
+const baseKey = baseTextureKey;
 function bodiesForTexture(key) {
   if (key === '2k_earth_clouds.jpg' || key === 'earth_night_2016.jpg') return [objects.get('earth')];
   if (key === '2k_venus_surface.jpg') return [objects.get('venus')];
