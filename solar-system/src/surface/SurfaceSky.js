@@ -8,6 +8,12 @@ import { brightStars } from '../sky-data/bright-stars.js';
 import { equatorialDirection, starAppearance } from '../sky-coordinates.js';
 import { SurfaceExposure } from './SurfaceExposure.js';
 import { bindSkyDepth, skyDepthParameters } from './sky-depth.js';
+import { createBodyGeometry } from '../body-geometry.js';
+import { bodyModels } from '../body-models.js';
+import { bodyTexturePath } from '../body-textures.js';
+import { createRingSystemGeometry, ringSystemFor } from '../ring-systems.js';
+import { createRingScatteringTexture, SCATTERING_ROW_BASE, shippedScatteringTable } from '../ring-multiple-scattering.js';
+import { createRingSurfaceMaterial } from '../ring-photometry.js';
 
 const { smoothstep, clamp, degToRad } = THREE.MathUtils;
 const HOURS = 3600000;
@@ -92,7 +98,14 @@ export function surfaceLight(frame, site, referenceAltitude) {
     stars:THREE.MathUtils.lerp(1.25,.35,smoothstep(direct*eclipse,0,.15)) };
 }
 
-export function createSurfaceSky({scene,renderer,site,parentMap,cloudMap,ringMap,groundMaterial,onCatalogueError,onCatalogueReady,signal,provider=physicalState,initialFrame}) {
+// The globe outline for a body, from the same model the solar-system view builds its mesh
+// from. Exported so a test can hold the landing sky to that model instead of a screenshot.
+export function skyGlobeGeometry(id, detailed) {
+  const sphere = new THREE.SphereGeometry(1, detailed ? 72 : 24, detailed ? 48 : 32);
+  return createBodyGeometry(bodyModels[id] || {}, sphere);
+}
+
+export function createSurfaceSky({scene,renderer,site,parentMap,cloudMap,groundMaterial,onCatalogueError,onCatalogueReady,signal,provider=physicalState,initialFrame}) {
   const epoch=Date.parse(site.date), objects=new Map();
   let frame=initialFrame || surfaceFrame(site,new Date(site.date),provider), stars, clouds;
   const referenceAltitude=site.referenceSolarAltitude??horizonAngles(frame.targets.Sun.direction).altitude;
@@ -142,9 +155,12 @@ export function createSurfaceSky({scene,renderer,site,parentMap,cloudMap,ringMap
     };
     material.customProgramCacheKey=()=>`surface-wind-cycle-${strength}`;
   }
-  function addGlobe(name,radiusKm,map,emissive=false) {
-    const material=emissive?new THREE.MeshBasicMaterial({color:'#fff8e8'}):new THREE.MeshLambertMaterial({map,color:map?'#ffffff':'#bbbcb6'});
-    const globe=new THREE.Mesh(new THREE.SphereGeometry(1,map?72:24,map?48:16),material);
+  // The shape comes from the same body model the solar-system view uses, so a flattened
+  // world is flattened here too: shading these as spheres made Jupiter and Saturn round
+  // discs from their own moons while the overview drew them oblate.
+  function addGlobe(id,name,radiusKm,map,emissive=false) {
+    const material=emissive?new THREE.MeshBasicMaterial({map,color:map?'#ffffff':'#fff8e8'}):new THREE.MeshLambertMaterial({map,color:map?'#ffffff':'#bbbcb6'});
+    const globe=new THREE.Mesh(skyGlobeGeometry(id,Boolean(map)),material);
     globe.name=`surface-${name}`;
     if(name==='Jupiter'&&map)windMaterial(material,.0001);
     const sunlight=new THREE.Vector3();
@@ -153,16 +169,36 @@ export function createSurfaceSky({scene,renderer,site,parentMap,cloudMap,ringMap
     bindSkyDepth(material,physicalScale,depthRange);
     objects.set(name,{globe,radiusKm,sunlight,physicalScale});scene.add(globe);return globe;
   }
+  // A neighbour is only worth a texture once it is more than a dot: the same key the
+  // overview starts from is used, loaded here because this view owns its own sky.
+  const textureLoader=new THREE.TextureLoader();
+  function loadNeighbourTexture(globe,id) {
+    const url=bodyTexturePath(id);
+    if(!url)return;
+    textureLoader.load(url,texture=>{
+      if(signal.aborted){texture.dispose();return;}
+      texture.colorSpace=THREE.SRGBColorSpace;
+      globe.material.map=texture;
+      globe.material.color.set('#ffffff');
+      globe.material.needsUpdate=true;
+    },undefined,()=>{});
+  }
   if(parentMap)parentMap.wrapS=THREE.RepeatWrapping;
-  const globe=addGlobe(site.parent,site.parentRadiusKm,parentMap,site.parent==='Sun');
-  if(ringMap&&site.parent==='Saturn'){
-    const geometry=new THREE.RingGeometry(74500/site.parentRadiusKm,136780/site.parentRadiusKm,256);
-    const positions=geometry.attributes.position,uv=geometry.attributes.uv;
-    for(let i=0;i<positions.count;i++)uv.setXY(i,(Math.hypot(positions.getX(i),positions.getY(i))*site.parentRadiusKm-74500)/(136780-74500),.5);
-    const rings=new THREE.Mesh(geometry,new THREE.MeshLambertMaterial({map:ringMap,side:THREE.DoubleSide,transparent:true,depthWrite:false,opacity:.8}));
-    rings.rotation.x=-Math.PI/2;globe.add(rings);
-    bindPhysicalSun(rings.material,objects.get(site.parent).sunlight);
-    bindSkyDepth(rings.material,objects.get(site.parent).physicalScale,depthRange);
+  const globe=addGlobe(site.parent.toLowerCase(),site.parent,site.parentRadiusKm,parentMap,site.parent==='Sun');
+  // The rings are the measured system, not a textured band: the same 401 regions, the same
+  // span and the same slab photometry the overview uses. A Lambert annulus receives nothing
+  // at grazing incidence, which is exactly how the rings look from inside the ring plane.
+  let ring=null;
+  if(site.parent==='Saturn'){
+    const system=ringSystemFor('saturn');
+    const scatteringRows=Object.values(shippedScatteringTable().systems).reduce((total,entry)=>total+2*entry.regions.length,0);
+    const material=createRingSurfaceMaterial({
+      scattering:createRingScatteringTexture().texture, rowBase:SCATTERING_ROW_BASE.saturn??0,
+      rows:scatteringRows, phaseG:system.phaseG, lightIntensity:2.2,
+    });
+    bindSkyDepth(material,objects.get(site.parent).physicalScale,depthRange);
+    ring=new THREE.Mesh(createRingSystemGeometry(system),material);
+    ring.rotation.x=-Math.PI/2;globe.add(ring);
   }
   if(cloudMap){
     cloudMap.wrapS=THREE.RepeatWrapping;
@@ -172,13 +208,20 @@ export function createSurfaceSky({scene,renderer,site,parentMap,cloudMap,ringMap
     bindSkyDepth(material,objects.get(site.parent).physicalScale,depthRange);
     clouds=new THREE.Mesh(globe.geometry,material);clouds.scale.setScalar(1.003);globe.add(clouds);
   }
+  const resolvable=target=>target&&target.angularDiameter>THREE.MathUtils.degToRad(.08);
   for(const name of ['Mercury','Venus','Earth','Mars','Jupiter','Saturn','Uranus','Neptune'])
-    if(name!==site.parent&&frame.targets[name])addGlobe(name,frame.targets[name].radiusKm,null);
+    if(name!==site.parent&&frame.targets[name]){
+      const neighbour=addGlobe(name.toLowerCase(),name,frame.targets[name].radiusKm,null);
+      if(resolvable(frame.targets[name]))loadNeighbourTexture(neighbour,name.toLowerCase());
+    }
   for(const [name,target] of Object.entries(frame.targets)) {
     const physicalBody=frame.physical.bodies.get(target.id);
-    if(!objects.has(name)&&[site.id,site.parent.toLowerCase()].includes(physicalBody.parent))addGlobe(name,target.radiusKm,null);
+    if(!objects.has(name)&&[site.id,site.parent.toLowerCase()].includes(physicalBody.parent)){
+      const neighbour=addGlobe(target.id,name,target.radiusKm,null);
+      if(resolvable(target))loadNeighbourTexture(neighbour,target.id);
+    }
   }
-  if(site.parent!=='Sun')addGlobe('Sun',physicalData.sun.radiusKm,null,true);
+  if(site.parent!=='Sun')addGlobe('sun','Sun',physicalData.sun.radiusKm,null,true);
 
   const atmosphere=site.atmosphere?new THREE.Mesh(new THREE.SphereGeometry(1800,48,32),new THREE.ShaderMaterial({
     uniforms:{sun:{value:frame.targets.Sun.direction.clone()},day:{value:1},kind:{value:{mars:1,titan:2,pluto:3}[site.atmosphere]}},
@@ -248,6 +291,14 @@ export function createSurfaceSky({scene,renderer,site,parentMap,cloudMap,ringMap
     }
     windCycle.value.fromArray(surfaceWindCycle((time-epoch)/HOURS));
     light.position.copy(frame.targets.Sun.direction).multiplyScalar(1e6);
+    if(ring){
+      // The slab model wants both in the ring's own frame, in equatorial radii: the
+      // vertex positions are built that way, so the shading cannot disagree with geometry.
+      ring.updateWorldMatrix(true,false);
+      ring.material.uniforms.uRingCamera.value.copy(ring.worldToLocal(camera.position.clone()));
+      ring.material.uniforms.uRingSun.value.copy(frame.targets.Sun.direction)
+        .applyMatrix3(new THREE.Matrix3().setFromMatrix4(ring.matrixWorld).invert()).normalize();
+    }
     illumination=surfaceLight(frame,site,referenceAltitude);
     if(atmosphere){atmosphere.material.uniforms.sun.value.copy(frame.targets.Sun.direction);}
     if(resetExposure||!exposure.value)exposure.reset(illumination);

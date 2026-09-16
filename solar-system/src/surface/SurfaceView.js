@@ -8,6 +8,7 @@ import { createSurfaceSky, surfaceCameraRange } from './SurfaceSky.js';
 import './surface.css';
 import { SURFACE_FOV_DEGREES, TELESCOPE_MAGNIFICATIONS, telescopeFieldOfView } from './lens.js';
 import { physicalState } from '../physics/state.js';
+import { bodyTexturePath } from '../body-textures.js';
 import { MissingEphemerisError } from '../physics/ephemeris.js';
 import { ObservationGate } from '../physics/observation-gate.js';
 
@@ -363,12 +364,14 @@ export function createSurfaceView(siteId, {renderOrbit,onClosed,initialDate,init
       $('.surface-canvas').append(canvas);
       const compact=innerWidth<=760||renderer.capabilities.maxTextureSize<(site.textureWidth||8192);
       const groundUrl=compact?(site.mobileTexture||site.texture):site.texture;
-      const pending=await Promise.allSettled([texture(groundUrl),site.parentTexture?texture(site.parentTexture):Promise.resolve(null),
-        site.parentClouds?texture(site.parentClouds):Promise.resolve(null),
-        site.parent==='Saturn'?texture('/solar-system/textures/2k_saturn_ring_alpha.png'):Promise.resolve(null)]);
+      // The parent's texture comes from the same catalogue key the solar-system view
+      // starts from, so one world cannot be drawn from two different images.
+      const parentUrl=bodyTexturePath(site.parent);
+      const pending=await Promise.allSettled([texture(groundUrl),parentUrl?texture(parentUrl):Promise.resolve(null),
+        site.parentClouds?texture(site.parentClouds):Promise.resolve(null)]);
       if(disposed)return;
       for(const result of pending)if(result.status==='rejected')throw new Error('全景或天体纹理未能加载，请返回轨道后重试。');
-      const [ground,parentMap,cloudMap,ringMap]=pending.map(x=>x.value);
+      const [ground,parentMap,cloudMap]=pending.map(x=>x.value);
       const mask=document.createElement('canvas');mask.width=512;mask.height=256;
       const maskContext=mask.getContext('2d',{willReadFrequently:true});maskContext.drawImage(ground.image,0,0,512,256);
       groundMask=maskContext.getImageData(0,0,512,256).data;
@@ -389,7 +392,7 @@ export function createSurfaceView(siteId, {renderOrbit,onClosed,initialDate,init
           }`,
         side:THREE.BackSide,transparent:true,depthWrite:false,depthTest:false,
       }));dome.renderOrder=20;scene.add(dome);
-      sky=createSurfaceSky({scene,renderer,site,parentMap,cloudMap,ringMap,groundMaterial:dome.material,signal:events.signal,provider,initialFrame:frame,
+      sky=createSurfaceSky({scene,renderer,site,parentMap,cloudMap,groundMaterial:dome.material,signal:events.signal,provider,initialFrame:frame,
         onCatalogueReady:()=>{lastSkyUpdate=-Infinity;invalidate();},
         onCatalogueError:()=>{notice('完整星表暂未加载，已显示主要亮星。');invalidate();}});
       listen(canvas,'pointerdown',event=>{
