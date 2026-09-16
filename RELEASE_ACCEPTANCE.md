@@ -220,6 +220,31 @@
 | `verify-ring-thin-coverage.mjs` | 天王星亚像素环 | 斑点指数 1.288、34% 行无凹陷，同值 |
 | `ring-multiple-scattering.test.js` | 环带几何与散射表 | 15/15 通过 |
 
+## 2026-09-16 追加：视觉检查进入自动验收
+
+此前 CI 只跑数值测试与构建，浏览器专项靠人工另行执行。现在 `npm run test:visual`
+一条命令跑完五个专项，CI 的 `visual-gate` 作业在 `test-and-build` 之后执行它：
+
+| 专项 | 覆盖 |
+| --- | --- |
+| `verify-integration.mjs` | 关键截图、场景切换与资源加载 |
+| `verify-saturn-shadows.mjs` | 土星环影开关，桌面/手机/800×450/640×360 |
+| `verify-solar-controls.mjs` | 手机、平板与短横屏布局、44px 命中区、模拟安全区 |
+| `verify-sky-bodies.mjs` | 落点天空的环与天空像素亮度 |
+| `verify-landings.mjs` | 十七处落点 × 四屏与 canvas 像素 |
+
+判定规则：每个专项必须**退出码为 0**，并且它自己写的数值报告存在、可解析、不含 `passed: false`。
+只写出截图不算通过——专项在写报告前崩溃会被判失败。运行目标是生产构建（`npm run build` 后由
+`server/index.js` 在空闲端口提供 `dist/`），不是 dev server，因此门槛测的是会上线的产物。
+
+浏览器通道由 `ATLAS_BROWSER_CHANNEL` 选择：本机默认 Edge（与既有报告的数字可直接比较），
+CI 用 `npx playwright install --with-deps chromium` 装好的 Playwright 自带 Chromium。两者渲染并不
+逐像素相同，所以专项的断言都是容差判断，不与金标图逐像素比较。失败时 CI 上传整个 `test-results/`
+供复核。这五个专项已改用 `scripts/browser-launch.mjs`；其余浏览器脚本仍按本机 Edge 启动，属人工专项。
+
+边界：CI 上没有 GPU，WebGL 走 SwiftShader，与真实显卡的像素计数会有差异；这条路径验证布局、
+开关与像素量级，不替代发布前在真实设备上的复核。
+
 ## 回退点
 
 发布前的现网生产部署已经通过 Vercel API 只读核验：

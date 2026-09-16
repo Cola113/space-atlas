@@ -1,4 +1,5 @@
 import { chromium } from 'playwright';
+import {launchBrowser} from './browser-launch.mjs';
 import assert from 'node:assert/strict';
 import { mkdir, writeFile } from 'node:fs/promises';
 import sharp from 'sharp';
@@ -9,7 +10,7 @@ import { revealLanding } from './landing-navigation.mjs';
 const base=process.env.ATLAS_URL||'http://127.0.0.1:5192';
 const output=new URL(process.env.ATLAS_OUTPUT||'../test-results/landings/',import.meta.url);
 await mkdir(output,{recursive:true});
-const browser=await chromium.launch({channel:'msedge',headless:true});
+const browser=await launchBrowser();
 const report=[];
 const ids=(process.env.ATLAS_LANDING_IDS||'moon,moon-farside,europa,europa-subjovian,mars,mars-phoenix,io,io-subjovian,titan,enceladus,pluto,pluto-charonface,miranda,mercury,mercury-pole,charon,venus').split(',');
 // Sites whose parent cannot be looked at: haze hides it, or it never rises here.

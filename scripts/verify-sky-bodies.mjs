@@ -1,6 +1,8 @@
 // 着陆天空里的天体是否与太阳系视图同模型、同贴图：量形状与环，并检查着色器无报错。
 //   npx tsx scripts/verify-sky-bodies.mjs
 import { chromium } from 'playwright';
+import {launchBrowser} from './browser-launch.mjs';
+
 import assert from 'node:assert/strict';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
@@ -14,7 +16,7 @@ const output = new URL(process.env.ATLAS_OUTPUT || '../test-results/sky-bodies/'
 await mkdir(output, { recursive: true });
 const overlays = '.surface-header,.surface-footer,.surface-location,.surface-crosshair,.surface-message,.surface-details,.surface-clock-panel,.surface-vignette,.surface-target,.surface-ephemeris,.surface-journey-caption,.surface-skip{visibility:hidden !important}';
 
-const browser = await chromium.launch({ channel: 'msedge', headless: true });
+const browser = await launchBrowser();
 const report = [];
 try {
   const context = await browser.newContext({ viewport: { width: 1000, height: 700 }, deviceScaleFactor: 1, reducedMotion: 'reduce' });

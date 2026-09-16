@@ -1,8 +1,10 @@
 import {chromium} from 'playwright';
+import {launchBrowser} from './browser-launch.mjs';
+
 import assert from 'node:assert/strict';
 import {mkdir,writeFile} from 'node:fs/promises';
 const out='test-results/solar-controls',base=process.env.ATLAS_URL||'http://127.0.0.1:5191';await mkdir(out,{recursive:true});
-const browser=await chromium.launch({channel:'msedge',headless:true}),results=[];let page,name;
+const browser=await launchBrowser(),results=[];let page,name;
 const snap=()=>page.evaluate(()=>window.solarAtlas.snapshot());
 const settle=()=>page.waitForFunction(()=>{const s=window.solarAtlas?.snapshot();return s?.ready&&!s.flight&&!s.ephemeris.blocked;},null,{timeout:60000});
 const direct=['#scene-switcher','#overview-tab','#atlas-tab','#display-settings summary','#rotation-toggle','#observation-settings summary','#back-button','#body-details-button','#surface-button','[data-landing-site]','#zoom-in','#zoom-out','#reset-camera','#play-toggle','#time-settings summary','#catalog-filter','#dock-prev','#dock-next'];

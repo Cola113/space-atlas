@@ -1,4 +1,6 @@
 import { chromium } from 'playwright';
+import {launchBrowser} from './browser-launch.mjs';
+
 import assert from 'node:assert/strict';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
@@ -9,7 +11,7 @@ import { configureDeploymentAccess } from './deployment-access.mjs';
 const base = process.env.ATLAS_URL || 'http://127.0.0.1:5191';
 const output = new URL(process.env.ATLAS_OUTPUT || '../test-results/saturn-shadows/', import.meta.url);
 await mkdir(output, { recursive: true });
-const browser = await chromium.launch({ channel: 'msedge', headless: true });
+const browser = await launchBrowser();
 const report = [];
 const settle = page => page.waitForFunction(() => {
   const s = window.solarAtlas?.snapshot();
