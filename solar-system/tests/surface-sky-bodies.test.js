@@ -1,11 +1,12 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { MathUtils } from 'three';
+import { MathUtils, MeshLambertMaterial, Texture } from 'three';
 import { skyGlobeGeometry } from '../src/surface/SurfaceSky.js';
 import { bodyModels } from '../src/body-models.js';
 import { baseTextureKey, bodyTexturePath } from '../src/body-textures.js';
 import { createRingSystemGeometry, ringSystemFor } from '../src/ring-systems.js';
 import { createRingSurfaceMaterial } from '../src/ring-photometry.js';
+import { EARTH_NIGHT_GLSL, patchEarthNightMaterial } from '../src/earth-night.js';
 import { bodies } from '../src/data.js';
 import { landingSites } from '../src/surface/geometry.js';
 
@@ -90,4 +91,25 @@ test('the sky places bodies by angle, so the drawn size is the physical one', ()
   const drawn = 2 * MathUtils.radToDeg(Math.asin(scale / skyDistance));
   const physical = 2 * MathUtils.radToDeg(Math.asin(radiusKm / distanceKm));
   assert.ok(Math.abs(drawn - physical) < 1e-9, `${drawn} vs ${physical}`);
+});
+
+test('Earth shows its night side in both views from one definition', () => {
+  // The day map has no city light, so the night hemisphere is black without this term; the
+  // landing sky used to draw Earth that way while the overview showed the lights.
+  for (const name of ['earthNightFactor', 'earthCityMask', 'earthNightLights'])
+    assert.ok(EARTH_NIGHT_GLSL.includes(`float ${name}(`) || EARTH_NIGHT_GLSL.includes(`vec3 ${name}(`), name);
+  // The lander threshold, the city cutoff and the brightness are stated once, here.
+  assert.ok(/smoothstep\(-\.14, ?\.10,/.test(EARTH_NIGHT_GLSL), 'the terminator band moved');
+  assert.ok(/smoothstep\(\.012, ?\.12,/.test(EARTH_NIGHT_GLSL), 'the city threshold moved');
+  assert.ok(/\* 1\.6;/.test(EARTH_NIGHT_GLSL), 'the night brightness moved');
+
+  const material = new MeshLambertMaterial({ map: new Texture() });
+  const uniforms = patchEarthNightMaterial(material, new Texture());
+  const shader = { uniforms: {}, vertexShader: '#include <begin_vertex>', fragmentShader: '#include <emissivemap_fragment>' };
+  material.onBeforeCompile(shader, {});
+  assert.ok(shader.fragmentShader.includes('earthNightLights('), 'the landing patch does not use the shared term');
+  assert.ok(shader.fragmentShader.includes("vMapUv"), "the night texture is not sampled with the day map's coordinates");
+  assert.ok(shader.vertexShader.includes('vEarthSurface'), 'the surface direction is not passed to the fragment stage');
+  assert.ok(shader.uniforms.uNightTexture && shader.uniforms.uSurfaceSun && shader.uniforms.uNightEnabled);
+  assert.ok(uniforms.uSurfaceSun.value.isVector3, 'the caller needs a vector to write the sun direction into');
 });

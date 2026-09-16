@@ -221,3 +221,10 @@
 - 为共用在 `dynamics.js` 抽出环的 GLSL 与 `RING_DISPLAY_LEVEL` 到 `ring-photometry.js`，总览行为不变（着色器文本逐字保留）。
 
 验收：单元测试 135/135（新增 4 项：按天体模型核对轮廓比例、按目录核对贴图键、环的实测分区与光度学、按角度的绘制尺寸）；`verify-sky-bodies.mjs` 在浏览器中确认环亮于天空（环峰值 251 对天空 43）且无着色器编译错误，环与行星圆面亮度比 1.04；`verify-surface-render.mjs` 十六处仍全部通过，天空与时钟差 0.000°，十三处地平中位差 ≤1.0°。规范同步写入 [真实性标准](REALISM_STANDARD.md)、[天体模型](solar-system/BODY_MODELS.md) 与[贴图流程](solar-system/TEXTURE_WORKFLOW.md)。
+
+### 地球夜面（2026-09-16 同日）
+
+落点天空此前只用地球昼面贴图，月球上看地球夜面是纯黑，而总览有夜间灯光。现抽出 `earth-night.js`：
+晨昏带宽度、城市阈值与亮度各只有一份定义，总览的 `attachEarthSurface` 与落点天空的
+`patchEarthNightMaterial` 都从这里取；落点天空每帧把太阳方向写进地球的局部坐标。
+月球落点在 8× 下可同时看到昼面与暗面上的城市灯光。总览行为不变。
