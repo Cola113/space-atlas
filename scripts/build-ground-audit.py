@@ -34,39 +34,55 @@ for line in Path('pck00011.tpc').read_text(encoding='ascii').splitlines():
 spice.lmpool(lines)
 
 jovian_dates = sorted({i['tdbSeconds'] for i in inputs if i['id'] in ('io', 'europa')})
+# Horizons returns at most 80 discrete epochs per request, and truncates the rest silently:
+# a 136-epoch TLIST comes back as 80 rows. The list is therefore fetched in chunks and joined,
+# and each chunk keeps its own query and response digest as provenance.
+CHUNK = 60
 vectors, sources = {}, {}
 for name, code in [('io', 501), ('europa', 502), ('jupiter', 599)]:
-    query = {'format':'json', 'COMMAND':str(code), 'CENTER':'500@10', 'MAKE_EPHEM':'YES',
-             'EPHEM_TYPE':'VECTORS', 'TIME_TYPE':'TDB', 'REF_PLANE':'FRAME', 'REF_SYSTEM':'ICRF',
-             'VEC_TABLE':'2', 'VEC_CORR':'NONE', 'OUT_UNITS':'KM-S', 'CSV_FORMAT':'YES',
-             'TLIST':"'" + ' '.join(f'{2451545 + t / 86400:.12f}' for t in jovian_dates) + "'"}
-    query_id = hashlib.sha256(json.dumps(query, sort_keys=True).encode()).hexdigest()[:16]
-    path = CACHE / f'horizons-{name}-{query_id}.json'
-    if not path.exists():
-        if '--download' not in sys.argv:
-            raise FileNotFoundError(f'{path.name}: rerun with --download')
-        response = requests.get('https://ssd.jpl.nasa.gov/api/horizons.api', params=query, timeout=60)
-        response.raise_for_status()
-        payload = response.json()
-        if '$$SOE' not in payload.get('result', ''):
-            raise ValueError(payload.get('error', payload.get('result', 'Invalid Horizons response')))
-        path.write_text(json.dumps(payload, indent=2), encoding='utf-8')
-    raw = path.read_bytes()
-    result = json.loads(raw)['result']
-    if f'({code})' not in result.split('$$SOE')[0]:
-        raise ValueError(f'Wrong target in {path.name}')
-    rows = list(csv.reader(io.StringIO(result.split('$$SOE')[1].split('$$EOE')[0].strip())))
-    if len(rows) != len(jovian_dates):
-        raise ValueError(f'Missing epochs: {name}, {len(rows)} / {len(jovian_dates)}')
-    vectors[name] = {}
-    for t, row in zip(jovian_dates, rows):
-        if abs((float(row[0]) - 2451545)*86400 - t) > .0001:
-            raise ValueError(f'Wrong TDB epoch {name}')
-        vectors[name][t] = np.array(list(map(float, row[2:5])))
-    sources[name] = {'url':'https://ssd.jpl.nasa.gov/api/horizons.api', 'query':query,
-                     'sha256':hashlib.sha256(raw).hexdigest(),
-                     'header':result.split('$$SOE')[0]}
-    print(f'{name}: {len(rows)} independent Horizons epochs', flush=True)
+    vectors[name], chunks = {}, []
+    for start in range(0, len(jovian_dates), CHUNK):
+        epochs = jovian_dates[start:start + CHUNK]
+        query = {'format':'json', 'COMMAND':str(code), 'CENTER':'500@10', 'MAKE_EPHEM':'YES',
+                 'EPHEM_TYPE':'VECTORS', 'TIME_TYPE':'TDB', 'REF_PLANE':'FRAME', 'REF_SYSTEM':'ICRF',
+                 'VEC_TABLE':'2', 'VEC_CORR':'NONE', 'OUT_UNITS':'KM-S', 'CSV_FORMAT':'YES',
+                 'TLIST':"'" + ' '.join(f'{2451545 + t / 86400:.12f}' for t in epochs) + "'"}
+        query_id = hashlib.sha256(json.dumps(query, sort_keys=True).encode()).hexdigest()[:16]
+        path = CACHE / f'horizons-{name}-{query_id}.json'
+        if not path.exists():
+            if '--download' not in sys.argv:
+                raise FileNotFoundError(f'{path.name}: rerun with --download')
+            # A 60-epoch TLIST is already ~1.5 KB; the front end answers 502 for the long
+            # query string it produces, while the same fields POSTed as a form return the table.
+            # The cache key is the query itself, so responses fetched either way stay interchangeable.
+            response = requests.post('https://ssd.jpl.nasa.gov/api/horizons.api', data=query, timeout=90)
+            response.raise_for_status()
+            payload = response.json()
+            result = payload.get('result', '')
+            if '$$SOE' not in result:
+                raise ValueError(payload.get('error', result or 'Invalid Horizons response'))
+            # Truncation is silent, so the row count is checked before the response is cached:
+            # a response that fails here must not be left on disk to be read back as if valid.
+            if len(result.split('$$SOE')[1].split('$$EOE')[0].strip().splitlines()) != len(epochs):
+                raise ValueError(f'{name}: Horizons returned '
+                                 f'{len(result.split("$$SOE")[1].split("$$EOE")[0].strip().splitlines())} '
+                                 f'of {len(epochs)} epochs; response not cached')
+            path.write_text(json.dumps(payload, indent=2), encoding='utf-8')
+        raw = path.read_bytes()
+        result = json.loads(raw)['result']
+        if f'({code})' not in result.split('$$SOE')[0]:
+            raise ValueError(f'Wrong target in {path.name}')
+        rows = list(csv.reader(io.StringIO(result.split('$$SOE')[1].split('$$EOE')[0].strip())))
+        if len(rows) != len(epochs):
+            raise ValueError(f'Missing epochs: {name}, {len(rows)} / {len(epochs)}')
+        for t, row in zip(epochs, rows):
+            if abs((float(row[0]) - 2451545)*86400 - t) > .0001:
+                raise ValueError(f'Wrong TDB epoch {name}')
+            vectors[name][t] = np.array(list(map(float, row[2:5])))
+        chunks.append({'url':'https://ssd.jpl.nasa.gov/api/horizons.api', 'query':query,
+                       'sha256':hashlib.sha256(raw).hexdigest(), 'header':result.split('$$SOE')[0]})
+    sources[name] = {'requests':chunks}
+    print(f'{name}: {len(vectors[name])} independent Horizons epochs in {len(chunks)} request(s)', flush=True)
 
 # The Mars system barycenter substitutes for its center: displacement from its
 # tiny satellites is below 0.2 m, far below the separately stated angular gate.
@@ -146,7 +162,10 @@ for item in inputs:
     local = np.array([east, up, -north]) @ rotation
     observer = body + rotation.T @ (up * (item['radiusKm'] + .00165))
     targets = {}
-    for name in {'sun', item['parent']}:
+    # Ordered and de-duplicated: iterating a set here made the key order of every written
+    # fixture depend on the process hash seed, so two runs on identical input produced
+    # different bytes for equal numbers.
+    for name in dict.fromkeys(('sun', item['parent'])):
         target = position(name, t)
         relative = target - observer
         distance = np.linalg.norm(relative)
@@ -165,10 +184,11 @@ for item in inputs:
     fixtures.append(fixture)
 
 output = {'generatedWith':f'{spice.tkvrsn("TOOLKIT")} / spiceypy {spice.__version__}',
-          'scope':'Independent geometric ICRF vectors (no light-time or aberration), CSPICE IAU frames, spherical observer, phase and angular scale. Mars barycenter approximates its center within 0.2 m. TT/TDB inputs use the separately tested time layer.',
+          'scope':'Independent geometric ICRF vectors (no light-time or aberration), CSPICE IAU frames, spherical observer, phase and angular scale. Mars barycenter approximates its center within 0.2 m. TT/TDB inputs use the separately tested time layer. Samples are keyed by siteId; one body may carry several.',
           'kernelSha256':{p:hashlib.sha256(Path(p).read_bytes()).hexdigest() for p in
                           ['de440s.bsp', 'surface-reference-valid-coverage.bsp', 'pck00011.tpc']},
           'horizons':sources, 'fixtures':fixtures}
 (ROOT / 'solar-system/tests/ground-audit-reference.json').write_text(
     json.dumps(output, indent=2) + '\n', encoding='utf-8')
-print(f'Wrote {len(fixtures)} independent ground checks for nine landing sites.')
+sites = sorted({f['siteId'] for f in fixtures})
+print(f'Wrote {len(fixtures)} independent ground checks for {len(sites)} landing sites: ' + ', '.join(sites))

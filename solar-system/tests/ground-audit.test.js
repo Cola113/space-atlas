@@ -7,14 +7,20 @@ import {solarVisibility,surfaceSkyDistance} from '../src/surface/SurfaceSky.js';
 import {localPhysics} from './physical-fixture.js';
 import {skyDepthParameters,skyDepthValue} from '../src/surface/sky-depth.js';
 
-test('nine landing skies and physical illumination agree with independent DE440/Horizons/CSPICE references',async()=>{
+test('every landing sky and its physical illumination agree with independent DE440/Horizons/CSPICE references',async()=>{
   const {fixtures}=JSON.parse(await readFile(new URL('ground-audit-reference.json',import.meta.url),'utf8'));
-  assert.equal(new Set(fixtures.map(f=>f.id)).size,9);
+  // A site without samples is not covered, and the earlier count-of-bodies assertion could not
+  // tell that apart from a second site on a body that already had one.
+  const covered=new Set(fixtures.map(f=>f.siteId));
+  const uncovered=Object.keys(landingSites).filter(id=>!covered.has(id));
+  assert.deepEqual(uncovered,[],'landing sites missing independent samples');
   const provider=localPhysics(),maxima={};
   let partialEclipses=0;
   try {
     for(const sample of fixtures){
-      const date=new Date(sample.date),site=landingSites[sample.id];
+      const date=new Date(sample.date),site=landingSites[sample.siteId];
+      assert.ok(site,`${sample.siteId}: reference sample for an unknown site`);
+      assert.equal(site.id,sample.id,`${sample.siteId}: reference body no longer matches the site`);
       await provider.ensure(date,[sample.id],{prefetch:false});
       const frame=surfaceFrame(site,date,provider);
       if(sample.visibleSolarFraction!==undefined){
@@ -31,10 +37,12 @@ test('nine landing skies and physical illumination agree with independent DE440/
         // These are angular model gates, not the unrelated 1 km encoding gate.
         // AE's short planetary/lunar theories are compared in the local sky;
         // its advertised geocentric accuracy is not a surface-satellite bound.
-        const jplParent=['enceladus','titan','miranda','pluto'].includes(sample.id)&&name!=='sun';
-        assert.ok(directionError<(jplParent ? .001 : name==='sun' ? 1 : 6),`${sample.id}/${name}/${sample.date}: ${directionError} arcmin`);
-        assert.ok(diameterError<(jplParent ? .01 : name==='sun' ? 1 : 10),`${sample.id}/${name}: ${diameterError} arcsec`);
-        const metrics=maxima[sample.id]??={sunArcmin:0,parentArcmin:0,phaseFraction:0};
+        // Parent geometry that comes from the JPL satellite kernels (not AE's planetary theory)
+        // is held to the tighter gate; charon's parent is Pluto, which the same kernel carries.
+        const jplParent=['enceladus','titan','miranda','pluto','charon'].includes(sample.id)&&name!=='sun';
+        assert.ok(directionError<(jplParent ? .001 : name==='sun' ? 1 : 6),`${sample.siteId}/${name}/${sample.date}: ${directionError} arcmin`);
+        assert.ok(diameterError<(jplParent ? .01 : name==='sun' ? 1 : 10),`${sample.siteId}/${name}: ${diameterError} arcsec`);
+        const metrics=maxima[sample.siteId]??={sunArcmin:0,parentArcmin:0,phaseFraction:0};
         const key=name==='sun'?'sunArcmin':'parentArcmin';
         metrics[key]=Math.max(metrics[key],directionError);
         if(name!=='sun'){
@@ -50,7 +58,7 @@ test('nine landing skies and physical illumination agree with independent DE440/
     }
   } finally { provider.dispose(); }
   assert.ok(partialEclipses>=3,'independently selected eclipse samples include partial coverage');
-  console.log('Independent nine-site angular/phase maxima:',JSON.stringify(maxima));
+  console.log(`Independent landing-site angular/phase maxima (${covered.size} sites):`,JSON.stringify(maxima));
 });
 
 test('local moons dim a planetary landing during transit, without counting overlapping disks twice',()=>{
