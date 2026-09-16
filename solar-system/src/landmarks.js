@@ -81,6 +81,12 @@ export const landmarks = {
     { id: 'south-pole', name: '南极虎纹区', uv: geographic(-90, 0), location: '南极 / 虎纹裂缝区域', text: '南极裂缝向外输送水蒸气和冰粒，标记指向南极区域而非单条裂缝的测量坐标。', source: 'https://science.nasa.gov/mission/cassini/science/enceladus/' },
     { id: 'ice-plume', name: '南极冰粒喷流', dynamic: 'ice-plume', zoom: 1.4, location: '南极 / 喷流示意', text: '冰粒沿当前动画中的南极喷口向外扩散，亮度与规模为演示效果。', source: 'https://science.nasa.gov/mission/cassini/science/enceladus/' },
   ],
+  triton: [
+    { id: 'nitrogen-plume', name: '南极氮气喷流', dynamic: 'ice-plume', zoom: 1.4, location: '南纬约 55°–60° / 喷流示意', text: '旅行者 2 号 1989 年在海卫一南极区拍到约 8 km 高的氮气喷流，横向被风吹弯。喷口经度当时未确定，此处按同一机制重建，位置与强度为示意，不表示当前正在喷发。', source: 'https://science.nasa.gov/neptune/moons/triton/' },
+  ],
+  ganymede: [
+    { id: 'auroral-ovals', name: '极光卵', dynamic: 'ice-plume', zoom: 1.4, location: '极区 / 极光卵示意', text: '哈勃观测到木卫三南北两极各有一圈极光卵，随木星磁层的等离子体扫过而来回摆动。这里的相位按木星 System III 自转周期推进，亮度与摆动幅度为示意，不是某次观测的重演。', source: 'https://science.nasa.gov/mission/hubble/science/explore-the-night-sky/hubble-messier-catalog/' },
+  ],
   pluto: [
     {
       id: "sputnik",

@@ -2398,6 +2398,7 @@ function animate(now) {
   }
   setSceneVisibility();
   dynamics.update({
+    date: state.date,
     dt,
     moving: state.playing && !observationGate?.blocked && !state.atlas && !infoDialogOpen(),
     selected: state.system ? null : state.selected,

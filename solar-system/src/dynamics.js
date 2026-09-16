@@ -1,10 +1,11 @@
 import * as THREE from "three";
 import simplexSource from "glsl-noise/simplex/3d.glsl?raw";
 import { additionalBodies } from "./additional-bodies.js";
-import { solarEruptionAxis, volcanicAxis, icePlumeAxis, plumeViewDirection } from './feature-anchors.js';
+import { solarEruptionAxis, volcanicAxis, icePlumeAxis, tritonPlumeAxis, plumeViewDirection } from './feature-anchors.js';
 import { createRingOpticalDepthTexture, RING_INNER, RING_OUTER, RING_SURGE_SCALE_RAD } from './ring-optical-depth.js';
 import { EARTH_NIGHT_GLSL } from './earth-night.js';
-import { RING_PHOTOMETRY_GLSL, RING_DISPLAY_LEVEL } from './ring-photometry.js';
+import { RING_PHOTOMETRY_GLSL, RING_DISPLAY_LEVEL, RING_SPOKE_LEVEL } from './ring-photometry.js';
+import {marsPolarFrostEdges, marsSolarLongitude} from './mars-seasons.js';
 import { ringSystems, ringSystemFor } from './ring-systems.js';
 import { createRingScatteringTexture, SCATTERING_ROW_BASE, shippedScatteringTable } from './ring-multiple-scattering.js';
 
@@ -128,6 +129,24 @@ export const activityProfiles = {
     duration: 18,
     interval: 40,
   },
+  ganymede: {
+    title: "极光卵与磁层耦合",
+    text: "南北两极各有一圈极光卵，随木星磁层的等离子体扫过而摆动与明暗变化。相位按木星自转推进，幅度为示意。",
+    trigger: "观测极光",
+    idle: "极光卵",
+    active: "极光增强",
+    duration: 18,
+    interval: 40,
+  },
+  triton: {
+    title: "南极氮气喷流",
+    text: "氮气从南极附近喷出约 8 km 高，随气流横向弯曲。旅行者 2 号 1989 年观测到这些喷流，本项目按同一机制重建，位置与强度为示意，不表示当前正在喷发。",
+    trigger: "观测喷流",
+    idle: "南极氮气喷流",
+    active: "喷流增强",
+    duration: 20,
+    interval: 44,
+  },
   titan: {
     title: "雾霾与高层大气",
     text: "橙色雾霾缓慢流动，高空云纹逐渐聚散。当前展示雾霾外观示意，地表被大气遮挡。",
@@ -150,6 +169,11 @@ const common = /* glsl */ `
   uniform vec3 uWeatherOffset;
   uniform vec3 uSurfaceSun;
   uniform vec3 uRingSun;
+  // Declared for every patched material; only the Mars and Ganymede globes assign them.
+  uniform float uMarsFrostNorth;
+  uniform float uMarsFrostSouth;
+  uniform float uGanymedeAurora;
+  uniform float uGanymedeOvalShift;
   uniform mat3 uSurfaceToCloud;
   uniform sampler2D uCloudTexture;
   uniform sampler2D uObservedCloudPrevious;
@@ -605,6 +629,7 @@ function attachRingSurface(record) {
     lights_fragment_end: /* glsl */ `
       #include <lights_fragment_end>
       #define RING_DISPLAY_LEVEL ${RING_DISPLAY_LEVEL.toFixed(2)}
+      #define RING_SPOKE_LEVEL ${RING_SPOKE_LEVEL.toFixed(2)}
       // Overwrite the Lambert result rather than replacing the lighting chunks: the
       // surrounding chunks declare variables that later stages still read.
       // The planet's shadow on the rings. vActivityPosition is the annulus's true
@@ -623,17 +648,77 @@ function attachRingSurface(record) {
       // is the product of the two cosines from the ring normal: positive means the sun and
       // the camera are on the same side.
       float ringFacing = ringSunLocal.z * ringViewLocal.z;
+      // Spokes. Dark radial markings, seen on the B ring, reported mainly near ring-plane equinox and
+      // gathered in patches that come and go over hours to days. Their drift does not follow the ring
+      // material and is still not explained, so the two things this does keep are the ones the
+      // observations establish: the season (grazing sun elevation) and the radial band (the measured B
+      // ring span, in units of the equatorial radius). How many there are and where in azimuth they
+      // fall is a display choice, marked as such: spreading them around the ring keeps the effect
+      // visible from any framing, which a few narrow wedges at one azimuth do not.
+      float spokeRadius = length(vActivityPosition.xy);
+      float spokeBand = smoothstep(1.526, 1.560, spokeRadius) * (1.0 - smoothstep(1.915, 1.951, spokeRadius));
+      float spokeSeason = 1.0 - smoothstep(.05, .35, abs(ringSunLocal.z));
+      float spokeAzimuth = atan(vActivityPosition.y, vActivityPosition.x);
+      float spokePattern = 0.0;
+      for (int i = 0; i < 8; i++) {
+        float spacing = 6.2831853 / 8.0;
+        float offset = float(i) * spacing + sin(float(i) * 12.9898) * .21;
+        float width = .030 + .022 * (.5 + .5 * sin(float(i) * 7.233));
+        float delta = atan(sin(spokeAzimuth - offset), cos(spokeAzimuth - offset));
+        spokePattern = max(spokePattern, 1.0 - smoothstep(width * .45, width, abs(delta)));
+      }
+      float spoke = spokePattern * spokeBand * spokeSeason * RING_SPOKE_LEVEL;
       float ringRadiance = ringFacing > 0.0
         ? ringSlabReflectance(ringTau, ringAlbedoW, ringMu, ringMu0, ringCosAlpha, vRingRegion, uRingPhaseG)
           // The opposition surge was fitted to the ring's reflected I/F; there is no
           // measured surge in transmission, and the coherent forward peak is not modelled.
           * ringOppositionSurge(ringCosAlpha, ringSurge)
         : ringSlabTransmittance(ringTau, ringAlbedoW, ringMu, ringMu0, ringCosAlpha, vRingRegion, uRingPhaseG);
-      ringRadiance *= ringOcclusion * RING_DISPLAY_LEVEL;
+      ringRadiance *= ringOcclusion * RING_DISPLAY_LEVEL * (1.0 - spoke);
       reflectedLight.directDiffuse = ringColour * ringRadiance;
       reflectedLight.directSpecular = vec3(0.0);
       reflectedLight.indirectDiffuse = vec3(0.0);
       reflectedLight.indirectSpecular = vec3(0.0);
+    `,
+  });
+}
+
+// Ganymede's auroral ovals. Hubble found two ovals that rock back and forth as Jupiter's
+// magnetosphere sweeps past, and brighten when the sub-Jovian longitude points the plasma sheet at
+// the moon. The phase here follows Jupiter's System III rotation, which is the driver; the amplitude
+// and the oval's latitude are taken from the observed order of magnitude and are a display
+// approximation, not a replay of any particular observation. The ovals emit rather than reflect, so
+// they are added to the lit result instead of multiplied into it.
+const GANYMEDE_AURORA_PERIOD_SECONDS = 9.925 * 3600;
+function attachGanymedeAurora(record) {
+  // The overview objects name the sphere `mesh`; `globe` is the landing sky's name for its own.
+  if (!record.body.mesh?.material) return;
+  record.uniforms.uGanymedeAurora = {value: 0};
+  record.uniforms.uGanymedeOvalShift = {value: 0};
+  patchMaterial(record.body.mesh.material, "ganymede-aurora", record.uniforms, {
+    lights_fragment_end: /* glsl */ `
+      #include <lights_fragment_end>
+      float ganymedeLatitude = abs((vActivityUv.y - .5) * 180.0) + uGanymedeOvalShift;
+      float ganymedeOval = smoothstep(62.0, 68.0, ganymedeLatitude) * (1.0 - smoothstep(76.0, 84.0, ganymedeLatitude));
+      reflectedLight.directDiffuse += vec3(.42, .58, 1.0) * ganymedeOval * uGanymedeAurora;
+    `,
+  });
+}
+
+// Mars's seasonal caps: the extent is measured against the planet's own season, the shading is a
+// display approximation (see mars-seasons.js). The residual water-ice remnant means the north edge
+// never reaches the pole-to-80N extreme the south one does.
+function attachMarsFrost(record) {
+  if (!record.body.mesh?.material) return;
+  record.uniforms.uMarsFrostNorth = {value: 80};
+  record.uniforms.uMarsFrostSouth = {value: -87};
+  patchMaterial(record.body.mesh.material, "mars-frost", record.uniforms, {
+    map_fragment: /* glsl */ `
+      float marsLatitude = (vActivityUv.y - .5) * 180.0;
+      float marsNorthFrost = smoothstep(uMarsFrostNorth - 6.0, uMarsFrostNorth + 2.0, marsLatitude);
+      float marsSouthFrost = 1.0 - smoothstep(uMarsFrostSouth - 2.0, uMarsFrostSouth + 6.0, marsLatitude);
+      float marsFrost = max(marsNorthFrost, marsSouthFrost);
+      diffuseColor.rgb = mix(diffuseColor.rgb, vec3(.93, .95, .97), marsFrost * .8);
     `,
   });
 }
@@ -851,11 +936,19 @@ function createParticles(record, kind) {
       vAlpha = sin(progress * 3.14159265) * .9 * step(0.0,uActivityProgress) * smoothstep(.0,.035,travel);
     `;
   } else if (kind === "ice" || kind === "volcanic") {
+    // Each body's plumes rise from its own surface point: Enceladus vents along its south polar
+    // fractures, Triton's nitrogen plumes sit in its south polar region. The vent spread stays a
+    // rendering detail; the axis is the part that has to be the right body's.
+    const plumeAxis = kind === "ice" ? (record.body.id === "triton" ? tritonPlumeAxis : icePlumeAxis) : volcanicAxis;
+    record.plumeAnchorAxis = plumeAxis;
+    const ventAxis = kind === "ice"
+      ? `normalize(vec3(${plumeAxis.toArray().join(',')}) + vec3(vent * .012, 0., vent * .012))`
+      : `vec3(${volcanicAxis.toArray().join(',')})`;
     positionCode = /* glsl */ `
       float age = fract(aSeed.x + uActivityTime * .16);
       float azimuth = aSeed.y * 6.2831853;
       float vent = floor(aSeed.z * 4.0);
-      vec3 axis = ${kind === "ice" ? "normalize(vec3(.10 + vent * .025, -1.0, .06 * sin(vent * 2.0)))" : `vec3(${volcanicAxis.toArray().join(',')})`};
+      vec3 axis = ${ventAxis};
       vec3 side = normalize(cross(axis, vec3(1.0, 0.0, 0.0)));
       vec3 up = cross(axis, side);
       float height = ${kind === "ice" ? "age * (.22 + aSeed.w * .42)" : "sin(age * 3.14159265) * (.10 + aSeed.w * .13)"};
@@ -1067,10 +1160,13 @@ export function createDynamics(objects, { defer = false } = {}) {
     }
     if (record.body.id === "mars") {
       attachDust(record);
+      attachMarsFrost(record);
+      attachGanymedeAurora(record);
       createParticles(record, "dust");
     }
     if (record.body.id === "saturn") createParticles(record, "rings");
     if (record.body.id === "enceladus") createParticles(record, "ice");
+    if (record.body.id === "triton") createParticles(record, "ice");
     if (record.body.id === "io") createParticles(record, "volcanic");
   }
 
@@ -1094,7 +1190,31 @@ export function createDynamics(objects, { defer = false } = {}) {
     }
   }
 
-  function update({ dt, moving, selected, isMobile, pixelScale }) {
+  // The caps move on the planet's own clock, so they are recomputed when the simulation date moves
+  // by more than a fraction of a day rather than every frame.
+  let marsFrostDay = null;
+  function updateMarsFrost(date) {
+    const mars = records.get("mars");
+    if (!mars?.uniforms.uMarsFrostNorth || !date) return;
+    const day = Math.floor(Date.parse(date) / 86400000);
+    if (day === marsFrostDay) return;
+    marsFrostDay = day;
+    const edges = marsPolarFrostEdges(marsSolarLongitude(new Date(date)));
+    mars.uniforms.uMarsFrostNorth.value = edges.northLatitude;
+    mars.uniforms.uMarsFrostSouth.value = edges.southLatitude;
+  }
+
+  // The plasma sweep is set by Jupiter's rotation, so the aurora's phase is a function of the
+  // simulation date: brightness and a small latitudinal rocking, both at System III's period.
+  function updateGanymedeAurora(date) {
+    const ganymede = records.get("ganymede");
+    if (!ganymede?.uniforms.uGanymedeAurora || !date) return;
+    const phase = (Date.parse(date) / 1000 % GANYMEDE_AURORA_PERIOD_SECONDS) / GANYMEDE_AURORA_PERIOD_SECONDS * Math.PI * 2;
+    ganymede.uniforms.uGanymedeAurora.value = .35 + .65 * (.5 + .5 * Math.sin(phase));
+    ganymede.uniforms.uGanymedeOvalShift.value = 4.0 * Math.sin(phase + 1.1);
+  }
+
+  function update({ dt, moving, selected, isMobile, pixelScale, date }) {
     setFocus(selected);
     mobile = isMobile;
     for (const [id, record] of records) {
@@ -1118,6 +1238,8 @@ export function createDynamics(objects, { defer = false } = {}) {
         : 0;
       const layerAvailable = id !== "venus" || record.body.layerVisible;
       record.uniforms.uActivityTime.value = record.time;
+      if (id === "mars") updateMarsFrost(date);
+      if (id === "ganymede") updateGanymedeAurora(date);
       record.uniforms.uFlowPhase.value = (record.time / FLOW_PERIOD) % 1;
       record.uniforms.uWeatherOffset.value.set(
         Math.sin(record.time * 0.013) * 4,
@@ -1167,9 +1289,9 @@ export function createDynamics(objects, { defer = false } = {}) {
       } else if (kind === 'solar-eruption' && progress > .03 && progress < .97) {
         point = solarEruptionAxis.clone().multiplyScalar(1.006 + Math.max(progress - .16, 0) * 2.25);
       } else if (kind === 'volcanic-plume' && strength > .06) {
-        point = volcanicAxis.clone().multiplyScalar(1.002 + .13 * (.65 + strength * .7));
+        point = (record.plumeAnchorAxis || volcanicAxis).clone().multiplyScalar(1.002 + .13 * (.65 + strength * .7));
       } else if (kind === 'ice-plume') {
-        point = icePlumeAxis.clone().multiplyScalar(1.002 + .24 * (.65 + strength * .7));
+        point = (record.plumeAnchorAxis || icePlumeAxis).clone().multiplyScalar(1.002 + .24 * (.65 + strength * .7));
       }
       return point ? { point, viewDirection: plumeViewDirection(point) } : null;
     },

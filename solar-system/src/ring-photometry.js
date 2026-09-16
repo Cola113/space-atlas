@@ -107,6 +107,11 @@ float ringSlabTransmittance(float tau, float albedo, float mu, float mu0, float 
 // the one number to turn is here.
 export const RING_DISPLAY_LEVEL = 0.85;
 
+// How much of the ring's radiance a spoke removes at its centre. Spokes are dark in the images and
+// their own scattering is not modelled, so this is a display level for a darkening, not a physical
+// reflectance: it says how dark the markings are drawn, not how much dust is there.
+export const RING_SPOKE_LEVEL = 0.55;
+
 // The landing sky lights its globes with a directional light of this intensity, so the ring
 // is scaled by the same number to stay commensurate with the planet beside it.
 export function createRingSurfaceMaterial({ scattering, rowBase = 0, rows, phaseG = RING_PHASE_G, lightIntensity = 1 }) {

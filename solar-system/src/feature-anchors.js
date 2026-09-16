@@ -28,6 +28,10 @@ export function ringShadowAnchor(sun, shape = [1, 1, 1]) {
 export const solarEruptionAxis = new Vector3(.88, .32, .26).normalize();
 export const volcanicAxis = new Vector3(.07, .19, .98).normalize();
 export const icePlumeAxis = new Vector3(.1375, -1, 0).normalize();
+// Voyager 2 saw Triton's nitrogen plumes in the south polar region, reported near 55-60S; the
+// longitude was never identified, so this axis is tilted from the pole by about 32 degrees without
+// claiming a vent site. Triton is tidally locked, so a vent would stay at a fixed surface point.
+export const tritonPlumeAxis = new Vector3(.30, -.85, .43).normalize();
 
 export function plumeViewDirection(point) {
   const normal = point.clone().normalize();
