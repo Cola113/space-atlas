@@ -1217,13 +1217,21 @@ export function createDynamics(objects, { defer = false } = {}) {
 
   // Re-applying the patch is cheap unless the material changed, which is the case this guards.
   function maintainGanymedeAurora(record) {
+    // attachGanymedeAurora is not guaranteed to have run before this: when it had not, the uniform
+    // the driver writes to did not exist, the shader read an unassigned value of 0, and the aurora
+    // was invisible while every other part of it measured as correct.
+    record.uniforms.uGanymedeAurora ??= {value: 0};
+    record.uniforms.uGanymedeOvalShift ??= {value: 0};
     maintainGlobePatch(record, "ganymede-aurora", record.uniforms, {
       // The albedo stage, because it is the one this material reliably exposes: a two-colour probe
       // through map_fragment covered the globe, while the same snippet at lights_fragment_end and at
       // emissivemap_fragment produced nothing at all. That costs the emission its independence from
       // sunlight -- the ring reads as a bright polar band where the surface is lit and does not glow
       // on the night side, which a true emissive term would -- and BODY_MODELS.md says so.
+      // The map chunk is kept in place and the glow is added after it: replacing the chunk outright
+      // would drop the albedo map, and the addition has to sit on top of the surface, not instead of it.
       map_fragment: /* glsl */ `
+        #include <map_fragment>
         float ganymedeLatitude = abs((vActivityUv.y - .5) * 180.0) + uGanymedeOvalShift;
         float ganymedeOval = smoothstep(58.0, 66.0, ganymedeLatitude) * (1.0 - smoothstep(74.0, 82.0, ganymedeLatitude));
         diffuseColor.rgb += vec3(.30, .42, .85) * ganymedeOval * uGanymedeAurora;
@@ -1231,6 +1239,8 @@ export function createDynamics(objects, { defer = false } = {}) {
     });
   }
   function maintainMarsFrost(record) {
+    record.uniforms.uMarsFrostNorth ??= {value: 80};
+    record.uniforms.uMarsFrostSouth ??= {value: -87};
     maintainGlobePatch(record, "mars-frost", record.uniforms, {
       map_fragment: /* glsl */ `
         float marsLatitude = (vActivityUv.y - .5) * 180.0;
