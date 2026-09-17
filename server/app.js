@@ -9,7 +9,11 @@ export function createAtlasServer({ publicDirectory, cloudDirectory, fetcher } =
     etag: true,
     setHeaders(res, path) {
       res.setHeader("X-Content-Type-Options", "nosniff");
-      res.setHeader("Cache-Control", path.endsWith(".html") ? "no-cache" : "public, max-age=3600");
+      // A route like /solar-system/ serves an index.html, and sirv hands this the requested path
+      // rather than the resolved file, so a trailing slash has to count as HTML too: otherwise the
+      // app's own pages were cached for an hour and a rebuild looked like it had done nothing.
+      const html = path.endsWith(".html") || path.endsWith("/");
+      res.setHeader("Cache-Control", html ? "no-cache" : "public, max-age=3600");
     },
   });
   const notFound = (_req, res) => {
