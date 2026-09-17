@@ -683,6 +683,16 @@ function attachRingSurface(record) {
   });
 }
 
+// A patched material is not the material that ends up on screen: the globe's material is replaced
+// when the body's detail arrives, which discards an onBeforeCompile patch hung on the earlier one
+// without a word. The identity is therefore checked per frame and the patch re-applied on a change.
+function maintainGlobePatch(record, key, uniforms, snippets) {
+  const material = record.body.mesh?.material;
+  if (!material || record.globePatch?.[key] === material) return;
+  record.globePatch = {...record.globePatch, [key]: material};
+  patchMaterial(material, key, uniforms, snippets);
+}
+
 // Ganymede's auroral ovals. Hubble found two ovals that rock back and forth as Jupiter's
 // magnetosphere sweeps past, and brighten when the sub-Jovian longitude points the plasma sheet at
 // the moon. The phase here follows Jupiter's System III rotation, which is the driver; the amplitude
@@ -695,7 +705,7 @@ function attachGanymedeAurora(record) {
   if (!record.body.mesh?.material) return;
   record.uniforms.uGanymedeAurora = {value: 0};
   record.uniforms.uGanymedeOvalShift = {value: 0};
-  patchMaterial(record.body.mesh.material, "ganymede-aurora", record.uniforms, {
+  maintainGlobePatch(record, "ganymede-aurora", record.uniforms, {
     lights_fragment_end: /* glsl */ `
       #include <lights_fragment_end>
       float ganymedeLatitude = abs((vActivityUv.y - .5) * 180.0) + uGanymedeOvalShift;
@@ -712,7 +722,7 @@ function attachMarsFrost(record) {
   if (!record.body.mesh?.material) return;
   record.uniforms.uMarsFrostNorth = {value: 80};
   record.uniforms.uMarsFrostSouth = {value: -87};
-  patchMaterial(record.body.mesh.material, "mars-frost", record.uniforms, {
+  maintainGlobePatch(record, "mars-frost", record.uniforms, {
     map_fragment: /* glsl */ `
       float marsLatitude = (vActivityUv.y - .5) * 180.0;
       float marsNorthFrost = smoothstep(uMarsFrostNorth - 6.0, uMarsFrostNorth + 2.0, marsLatitude);
@@ -1196,7 +1206,8 @@ export function createDynamics(objects, { defer = false } = {}) {
   function updateMarsFrost(date) {
     const mars = records.get("mars");
     if (!mars?.uniforms.uMarsFrostNorth || !date) return;
-    const day = Math.floor(Date.parse(date) / 86400000);
+    // state.date is a millisecond number, not a string: Date.parse would give NaN here.
+    const day = Math.floor(new Date(date).getTime() / 86400000);
     if (day === marsFrostDay) return;
     marsFrostDay = day;
     const edges = marsPolarFrostEdges(marsSolarLongitude(new Date(date)));
@@ -1204,12 +1215,39 @@ export function createDynamics(objects, { defer = false } = {}) {
     mars.uniforms.uMarsFrostSouth.value = edges.southLatitude;
   }
 
+  // Re-applying the patch is cheap unless the material changed, which is the case this guards.
+  function maintainGanymedeAurora(record) {
+    maintainGlobePatch(record, "ganymede-aurora", record.uniforms, {
+      // Emissive, so it is added to totalEmissiveRadiance rather than to the lit result: an aurora
+      // emits on the night side too. This is also the chunk the globe's shader is known to carry,
+      // where an earlier attempt at lights_fragment_end silently did nothing.
+      emissivemap_fragment: /* glsl */ `
+        #include <emissivemap_fragment>
+        float ganymedeLatitude = abs((vActivityUv.y - .5) * 180.0) + uGanymedeOvalShift;
+        float ganymedeOval = smoothstep(62.0, 68.0, ganymedeLatitude) * (1.0 - smoothstep(76.0, 84.0, ganymedeLatitude));
+        totalEmissiveRadiance += vec3(.42, .58, 1.0) * ganymedeOval * uGanymedeAurora;
+      `,
+    });
+  }
+  function maintainMarsFrost(record) {
+    maintainGlobePatch(record, "mars-frost", record.uniforms, {
+      map_fragment: /* glsl */ `
+        float marsLatitude = (vActivityUv.y - .5) * 180.0;
+        float marsNorthFrost = smoothstep(uMarsFrostNorth - 6.0, uMarsFrostNorth + 2.0, marsLatitude);
+        float marsSouthFrost = 1.0 - smoothstep(uMarsFrostSouth - 2.0, uMarsFrostSouth + 6.0, marsLatitude);
+        float marsFrost = max(marsNorthFrost, marsSouthFrost);
+        diffuseColor.rgb = mix(diffuseColor.rgb, vec3(.93, .95, .97), marsFrost * .8);
+      `,
+    });
+  }
+
   // The plasma sweep is set by Jupiter's rotation, so the aurora's phase is a function of the
   // simulation date: brightness and a small latitudinal rocking, both at System III's period.
   function updateGanymedeAurora(date) {
     const ganymede = records.get("ganymede");
     if (!ganymede?.uniforms.uGanymedeAurora || !date) return;
-    const phase = (Date.parse(date) / 1000 % GANYMEDE_AURORA_PERIOD_SECONDS) / GANYMEDE_AURORA_PERIOD_SECONDS * Math.PI * 2;
+    // Same trap as above: the simulation date is a number, so it is read through Date.
+    const phase = (new Date(date).getTime() / 1000 % GANYMEDE_AURORA_PERIOD_SECONDS) / GANYMEDE_AURORA_PERIOD_SECONDS * Math.PI * 2;
     ganymede.uniforms.uGanymedeAurora.value = .35 + .65 * (.5 + .5 * Math.sin(phase));
     ganymede.uniforms.uGanymedeOvalShift.value = 4.0 * Math.sin(phase + 1.1);
   }
@@ -1239,7 +1277,8 @@ export function createDynamics(objects, { defer = false } = {}) {
       const layerAvailable = id !== "venus" || record.body.layerVisible;
       record.uniforms.uActivityTime.value = record.time;
       if (id === "mars") updateMarsFrost(date);
-      if (id === "ganymede") updateGanymedeAurora(date);
+      if (id === "ganymede") { maintainGanymedeAurora(record); updateGanymedeAurora(date); }
+      if (id === "mars") maintainMarsFrost(record);
       record.uniforms.uFlowPhase.value = (record.time / FLOW_PERIOD) % 1;
       record.uniforms.uWeatherOffset.value.set(
         Math.sin(record.time * 0.013) * 4,
