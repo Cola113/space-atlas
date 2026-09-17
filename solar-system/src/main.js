@@ -57,7 +57,7 @@ import { FrameWorkQueue } from './resource-queue.js';
 import { createTextureResources, firstScreenTextures, firstScreenIds, textureRoot } from './texture-resources.js';
 import { simulationElapsed, simulationRates, defaultSimulationRate, restoreSimulationRate,
   defaultSimulationDate, restoreSimulationDate, formatSimulationRate, simulationRateEquivalent, restoreSimulationDirection, simulationDirectionLabel } from "./simulation-time.js";
-import { FIRST_MONTH_YEAR, LAST_MONTH_YEAR, maxMonthIndex, clampMonthIndex, dateFromMonthIndex, monthIndexFromDate, monthIndexOfYear, monthLabel } from "./time-jump.js";
+import { DATA_FIRST_YEAR, DATA_LAST_YEAR, maxMonthIndex, clampMonthIndex, dateFromIndex, dateLabel, dateLabelFromDate, indexFromDate, indexFromYear } from "./time-jump.js";
 
 const icons = {
   Orbit,
@@ -934,11 +934,12 @@ function updateSimulationDate() {
   // the thumb and a drag does not get snapped back before it is committed.
   const monthSlider = $("time-month");
   if (monthSlider && document.activeElement !== monthSlider) {
-    const index = monthIndexFromDate(date);
-    if (monthSlider.value !== String(index)) {
-      monthSlider.value = String(index);
-      $("month-value").textContent = monthLabel(index);
-    }
+    const {index, inside} = indexFromDate(date);
+    if (monthSlider.value !== String(index)) monthSlider.value = String(index);
+    // A date before 1975 or after 2075 has no position of its own on the slider, so the label says
+    // the date and that it is outside rather than showing the end of the window as if it were it.
+    const label = inside ? dateLabel(index) : `${dateLabelFromDate(date)}（在滑杆范围外）`;
+    if ($("month-value").textContent !== label) $("month-value").textContent = label;
   }
 }
 
@@ -1969,12 +1970,12 @@ function bindEvents() {
   });
   // Jumping to a month changes the date and nothing else: direction, rate and whether the clock is
   // running all stay as they were, which is the rule the direction toggle already follows.
-  const jumpToMonth = (index, commit) => {
+  const jumpToDay = (index, commit) => {
     const clamped = clampMonthIndex(index);
     $("time-month").value = String(clamped);
-    $("month-value").textContent = monthLabel(clamped);
+    $("month-value").textContent = dateLabel(clamped);
     if (!commit) return;
-    state.date = dateFromMonthIndex(clamped);
+    state.date = dateFromIndex(clamped);
     lastFrame = performance.now();
   };
   $("date-jump").addEventListener("click", () => {
@@ -1984,19 +1985,37 @@ function bindEvents() {
   const monthSlider = $("time-month");
   // The span is set from the module that defines it, so the markup cannot drift from the ephemeris.
   monthSlider.max = String(maxMonthIndex);
-  $("time-year-input").min = String(FIRST_MONTH_YEAR);
-  $("time-year-input").max = String(LAST_MONTH_YEAR);
+  // The year field reaches the data span, which is wider than the slider's own window.
+  $("time-year-input").min = String(DATA_FIRST_YEAR);
+  $("time-year-input").max = String(DATA_LAST_YEAR);
   // Dragging updates the scene as it goes, not on release: the clock already moves the date once per
   // frame while playing, so a drag costs the same work a playing frame does.
-  monthSlider.addEventListener("input", () => jumpToMonth(Number(monthSlider.value), true));
-  monthSlider.addEventListener("change", () => jumpToMonth(Number(monthSlider.value), true));
+  monthSlider.addEventListener("input", () => jumpToDay(Number(monthSlider.value), true));
+  monthSlider.addEventListener("change", () => jumpToDay(Number(monthSlider.value), true));
+  // A day per step is right for aiming but wrong for travelling, so the coarse moves keep a button.
+  const stepBy = days => jumpToDay(Number(monthSlider.value) + days, true);
+  $("time-step-back-year").addEventListener("click", () => stepBy(-365));
+  $("time-step-back-month").addEventListener("click", () => stepBy(-30));
+  $("time-step-forward-month").addEventListener("click", () => stepBy(30));
+  $("time-step-forward-year").addEventListener("click", () => stepBy(365));
   const jumpToYear = () => {
     const year = Number($("time-year-input").value);
-    if (Number.isFinite(year)) jumpToMonth(monthIndexOfYear(year), true);
+    // The year field jumps to the year's first day and is allowed past the slider's window -- that is
+    // the path to 1900 or 2085. It therefore sets the date rather than an index: clamping the index
+    // would have landed on 1975 when 1971 was asked for, which the four-viewport check caught. The
+    // thumb is placed by the per-frame sync, at the nearest end, with the label saying so.
+    if (Number.isFinite(year)) jumpToDate(Date.UTC(year, 0, 1));
   };
   $("time-jump-apply").addEventListener("click", jumpToYear);
   $("time-year-input").addEventListener("keydown", (event) => { if (event.key === "Enter") jumpToYear(); });
-  $("time-jump-today").addEventListener("click", () => jumpToMonth(monthIndexFromDate(Date.now()), true));
+  // The paths that may land outside the slider's window: they set the date itself and let the
+  // per-frame sync decide where the thumb rests and what the label has to admit.
+  const jumpToDate = time => {
+    if (!Number.isFinite(time)) return;
+    state.date = time;
+    lastFrame = performance.now();
+  };
+  $("time-jump-today").addEventListener("click", () => jumpToDate(Date.now()));
   $("orbit-toggle").addEventListener("click", () => {
     state.orbits = !state.orbits;
     updateDisplaySettings();

@@ -47,18 +47,31 @@ try{for(const [caseName,width,height,dpr] of [['desktop',1440,900,1],['phone',39
  await page.locator('#time-jump-apply').click();await settle();
  const jumped=await snap();
  assert.equal(new Date(jumped.date).getUTCFullYear(),2032,`${name} year jump`);
- assert.equal(await page.locator('#month-value').textContent(),'2032 年 1 月',`${name} month label`);
+ // The label is written by the per-frame UI update, so the check waits for the frame that carries it
+ // rather than reading immediately after the click.
+ await page.waitForFunction(text => document.getElementById('month-value').textContent === text,'2032 年 1 月 1 日',{timeout:5000})
+   .catch(() => { throw new Error(`${name} the label carries the day: got "${page.locator}` + '`#month-value`' + `"`); });
  assert.equal(jumped.direction,beforeJump.direction,`${name} the jump kept the direction`);
  assert.equal(jumped.speed,beforeJump.speed,`${name} the jump kept the rate`);
  // Dragging has to move the scene as it goes: an input event alone, with no change event behind it,
  // must already have moved the date.
- await page.locator('#time-month').evaluate(el => { el.value = String(Number(el.max) - 24); el.dispatchEvent(new Event('input', {bubbles:true})); });
+ await page.locator('#time-month').evaluate(el => { el.value = String(Number(el.max) - 720); el.dispatchEvent(new Event('input', {bubbles:true})); });
  await settle();
  const dragged=await snap();
- assert.equal(new Date(dragged.date).getUTCFullYear(),2098,`${name} the drag moved the date before release`);
+ // 720 days before the window's last day, computed from the window rather than written as a year.
+ const expectedDrag=new Date(Date.UTC(2075,11,31)-720*86400000).toISOString().slice(0,10);
+ assert.equal(new Date(dragged.date).toISOString().slice(0,10),expectedDrag,`${name} the drag moved the date before release`);
+ const beforeStep=new Date((await snap()).date).getUTCFullYear();
+ await page.locator('#time-step-forward-year').click();await settle();
+ assert.equal(new Date((await snap()).date).getUTCFullYear(),beforeStep+1,`${name} the coarse step moved a year`);
  await page.locator('#time-year-input').fill('1971');
  await page.locator('#time-jump-apply').click();await settle();
- assert.equal(new Date((await snap()).date).getUTCFullYear(),1971,`${name} back to the session year`);
+ assert.equal(new Date((await snap()).date).getUTCFullYear(),1971,`${name} the year field reaches past the slider window`);
+ await page.waitForFunction(() => /在滑杆范围外/.test(document.getElementById('month-value').textContent),null,{timeout:5000})
+   .catch(() => { throw new Error(`${name} the label admits a date outside the window`); });
+ await page.locator('#time-year-input').fill('2032');
+ await page.locator('#time-jump-apply').click();await settle();
+ await page.waitForFunction(text => document.getElementById('month-value').textContent === text,'2032 年 1 月 1 日',{timeout:5000});
  await page.keyboard.press('Escape');
  const display=await checkDisplay();
  await page.locator('#scene-switcher').click();for(const id of ['solar-system','black-hole','orion-nebula'])await control(`#scene-menu a[data-scene-link="${id}"]`,{scroll:true});await page.keyboard.press('ArrowDown');assert.equal(await page.locator('#scene-menu a').evaluateAll(a=>a.some(e=>e===document.activeElement)),true);await page.keyboard.press('Escape');assert.equal(await page.locator('#scene-switcher').evaluate(e=>e===document.activeElement),true);
