@@ -648,26 +648,37 @@ function attachRingSurface(record) {
       // is the product of the two cosines from the ring normal: positive means the sun and
       // the camera are on the same side.
       float ringFacing = ringSunLocal.z * ringViewLocal.z;
-      // Spokes. Dark radial markings, seen on the B ring, reported mainly near ring-plane equinox and
-      // gathered in patches that come and go over hours to days. Their drift does not follow the ring
-      // material and is still not explained, so the two things this does keep are the ones the
-      // observations establish: the season (grazing sun elevation) and the radial band (the measured B
-      // ring span, in units of the equatorial radius). How many there are and where in azimuth they
-      // fall is a display choice, marked as such: spreading them around the ring keeps the effect
-      // visible from any framing, which a few narrow wedges at one azimuth do not.
+      // Spokes. A few dark radial markings on the B ring, seen mainly near ring-plane equinox and
+      // gathered on the morning side -- the part of the ring that has just come out of the planet's
+      // shadow, where they are reported to form. Their drift does not follow the ring material and is
+      // still not explained, so it is not simulated. What is kept is what the observations do
+      // establish: the season (grazing sun elevation), the radial band (the measured B ring, in units
+      // of the equatorial radius), the morning sector, a wedge that widens outward, and a contrast
+      // that depends on the scattering geometry, because the markings are dust against the rings.
+      // How many there are and exactly where they sit is a display choice, said so in BODY_MODELS.md.
       float spokeRadius = length(vActivityPosition.xy);
-      float spokeBand = smoothstep(1.526, 1.560, spokeRadius) * (1.0 - smoothstep(1.915, 1.951, spokeRadius));
-      float spokeSeason = 1.0 - smoothstep(.05, .35, abs(ringSunLocal.z));
+      float spokeSpan = clamp((spokeRadius - 1.526) / (1.951 - 1.526), 0.0, 1.0);
+      float spokeBand = smoothstep(.02, .10, spokeSpan) * (1.0 - smoothstep(.90, .99, spokeSpan));
+      // Vanishing only near solstice, not at 20 degrees of opening: the dark markings are photographed
+      // across a wide range of opening angles, and a window narrow enough to be edge-on hides them by
+      // making the ring itself a line. The equinox *appearance* -- dust standing above the ring plane,
+      // which is what the famous Cassini equinox images show -- needs vertical structure this planar
+      // ring shader does not have, so it is not attempted here.
+      float spokeSeason = 1.0 - smoothstep(.25, .75, abs(ringSunLocal.z));
       float spokeAzimuth = atan(vActivityPosition.y, vActivityPosition.x);
+      float spokeMorning = atan(ringSunLocal.y, ringSunLocal.x) + 1.5707963;
       float spokePattern = 0.0;
-      for (int i = 0; i < 8; i++) {
-        float spacing = 6.2831853 / 8.0;
-        float offset = float(i) * spacing + sin(float(i) * 12.9898) * .21;
-        float width = .030 + .022 * (.5 + .5 * sin(float(i) * 7.233));
+      for (int i = 0; i < 3; i++) {
+        float seed = float(i);
+        float offset = spokeMorning + (seed - 1.0) * .19;
         float delta = atan(sin(spokeAzimuth - offset), cos(spokeAzimuth - offset));
-        spokePattern = max(spokePattern, 1.0 - smoothstep(width * .45, width, abs(delta)));
+        float width = (.020 + .018 * spokeSpan) * (1.0 + .35 * sin(seed * 5.7));
+        spokePattern = max(spokePattern, 1.0 - smoothstep(width * .55, width, abs(delta)));
       }
-      float spoke = spokePattern * spokeBand * spokeSeason * RING_SPOKE_LEVEL;
+      // Forward scattering shows the markings best and backscatter shows them least, which is the
+      // opposite of the ring's own opposition surge; both cosines are already in hand.
+      float spokePhase = mix(1.0, .35, smoothstep(-.2, .8, ringCosAlpha));
+      float spoke = spokePattern * spokeBand * spokeSeason * spokePhase * RING_SPOKE_LEVEL;
       float ringRadiance = ringFacing > 0.0
         ? ringSlabReflectance(ringTau, ringAlbedoW, ringMu, ringMu0, ringCosAlpha, vRingRegion, uRingPhaseG)
           // The opposition surge was fitted to the ring's reflected I/F; there is no
