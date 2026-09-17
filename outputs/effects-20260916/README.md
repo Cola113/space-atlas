@@ -33,3 +33,18 @@ ATLAS_URL=http://127.0.0.1:5312 npx tsx outputs/effects-20260916/capture-effects
 `state.date` 是毫秒数，`Date.parse(date)` 得 NaN 会让驱动量变成 NaN——已改为 `new Date(date).getTime()`。
 火星正是靠这两处修复才生效的；木卫三仍不渲染，`lights_fragment_end` 与 `emissivemap_fragment` 两个挂点都试过。
 下一步建议：用已在球面上验证有效的 `map_fragment` 挂点先放一块**常量颜色**做二分（辐条那次就是这样定位的），确认补丁落地后再排 UV 纬度与挂点。
+
+### 2026-09-16 追加：木卫三极光的三合一探针结果
+
+用 `map_fragment`(火星证明有效的挂点)一次测三件事,同一帧同一取景:
+
+| 探针 | 结果 | 说明 |
+| --- | --- | --- |
+| 不带位移的极光带(红通道) | 2067 px | 带公式本身是对的 |
+| 带 `uGanymedeOvalShift` 的带(绿通道) | 2250 px | 位移量不是 NaN,公式仍成立 |
+| `uGanymedeAurora > 0.5` 整球标志(蓝通道) | 744 px | **若 uniform 真的 >0.5,整球都该变蓝**;只有 744 px 说明它不在 0.5 以上——取值可疑 |
+
+结论:挂点对、UV 纬度对、带公式对,**问题在驱动量 `uGanymedeAurora` 的取值**。下一步不要再做阈值探针(0.5 的阈值本身有歧义),直接把它的值打出来看:
+临时在 `updateGanymedeAurora` 里写 `document.title = String(value)`,或用 `window.solarAtlas` 的调试面暴露它;拿到实际数值再判断是没被写入、写成了 0,还是写成了 NaN。
+
+注:`attachGanymedeAurora` 的初始值是 `{value: 0}`,所以"没写入"与"写成 0"在画面上不可区分——这也是为什么前面几轮看不到任何东西。

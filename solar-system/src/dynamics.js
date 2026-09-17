@@ -1218,14 +1218,15 @@ export function createDynamics(objects, { defer = false } = {}) {
   // Re-applying the patch is cheap unless the material changed, which is the case this guards.
   function maintainGanymedeAurora(record) {
     maintainGlobePatch(record, "ganymede-aurora", record.uniforms, {
-      // Emissive, so it is added to totalEmissiveRadiance rather than to the lit result: an aurora
-      // emits on the night side too. This is also the chunk the globe's shader is known to carry,
-      // where an earlier attempt at lights_fragment_end silently did nothing.
-      emissivemap_fragment: /* glsl */ `
-        #include <emissivemap_fragment>
+      // The albedo stage, because it is the one this material reliably exposes: a two-colour probe
+      // through map_fragment covered the globe, while the same snippet at lights_fragment_end and at
+      // emissivemap_fragment produced nothing at all. That costs the emission its independence from
+      // sunlight -- the ring reads as a bright polar band where the surface is lit and does not glow
+      // on the night side, which a true emissive term would -- and BODY_MODELS.md says so.
+      map_fragment: /* glsl */ `
         float ganymedeLatitude = abs((vActivityUv.y - .5) * 180.0) + uGanymedeOvalShift;
-        float ganymedeOval = smoothstep(62.0, 68.0, ganymedeLatitude) * (1.0 - smoothstep(76.0, 84.0, ganymedeLatitude));
-        totalEmissiveRadiance += vec3(.42, .58, 1.0) * ganymedeOval * uGanymedeAurora;
+        float ganymedeOval = smoothstep(58.0, 66.0, ganymedeLatitude) * (1.0 - smoothstep(74.0, 82.0, ganymedeLatitude));
+        diffuseColor.rgb += vec3(.30, .42, .85) * ganymedeOval * uGanymedeAurora;
       `,
     });
   }
