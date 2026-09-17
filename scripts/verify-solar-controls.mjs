@@ -36,6 +36,24 @@ try{for(const [caseName,width,height,dpr] of [['desktop',1440,900,1],['phone',39
  for(const selector of ['#zoom-in','#zoom-out']){await page.locator(selector).click();await settle();assert.equal((await snap()).date,start.date);}
  await page.locator('#body-details-button').click();const date=(await snap()).date;await control('#close-body-details');assert.match(await page.locator('#planet-title').textContent(),/木卫二/);await page.waitForTimeout(100);assert.equal((await snap()).date,date);
  await control('#activity-rate',{scroll:true});await page.locator('#activity-rate').selectOption('2');assert.equal(await page.locator('#activity-rate').inputValue(),'2');await page.screenshot({path:`${out}/${name}-details-scrolled.png`});await page.keyboard.press('Escape');assert.equal(await page.locator('#body-details-button').evaluate(e=>e===document.activeElement),true);
+ // The date scrubber: the date itself is the trigger, the slider jumps months, and a jump must
+ // change the date and nothing else -- direction and rate are the two things it may not touch.
+ const beforeJump=await snap();
+ await page.locator('#date-jump').click();
+ assert.equal(await page.locator('#time-settings').getAttribute('open'),'','the date opens the time panel');
+ const monthBox=await control('#time-month',{scroll:true});
+ assert.ok(monthBox.width>120,`${name} month slider too short to drag: ${monthBox.width}`);
+ await page.locator('#time-year-input').fill('2032');
+ await page.locator('#time-jump-apply').click();await settle();
+ const jumped=await snap();
+ assert.equal(new Date(jumped.date).getUTCFullYear(),2032,`${name} year jump`);
+ assert.equal(await page.locator('#month-value').textContent(),'2032 年 1 月',`${name} month label`);
+ assert.equal(jumped.direction,beforeJump.direction,`${name} the jump kept the direction`);
+ assert.equal(jumped.speed,beforeJump.speed,`${name} the jump kept the rate`);
+ await page.locator('#time-year-input').fill('1971');
+ await page.locator('#time-jump-apply').click();await settle();
+ assert.equal(new Date((await snap()).date).getUTCFullYear(),1971,`${name} back to the session year`);
+ await page.keyboard.press('Escape');
  const display=await checkDisplay();
  await page.locator('#scene-switcher').click();for(const id of ['solar-system','black-hole','orion-nebula'])await control(`#scene-menu a[data-scene-link="${id}"]`,{scroll:true});await page.keyboard.press('ArrowDown');assert.equal(await page.locator('#scene-menu a').evaluateAll(a=>a.some(e=>e===document.activeElement)),true);await page.keyboard.press('Escape');assert.equal(await page.locator('#scene-switcher').evaluate(e=>e===document.activeElement),true);
  await select('earth');await page.locator('#body-details-button').click();for(const sel of ['#cloud-mode','#activity-rate','#layer-toggle'])await control(sel,{scroll:true});const checked=await page.locator('#layer-toggle').isChecked();await page.locator('#layer-toggle').setChecked(!checked);await page.locator('#layer-toggle').setChecked(checked);await page.keyboard.press('Escape');

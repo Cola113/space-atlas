@@ -2474,3 +2474,16 @@ dialog .dialog-close {
   .timeline-title {display:flex;gap:8px;}
   .time-settings-panel {position:fixed;top:max(72px,env(safe-area-inset-top));bottom:calc(var(--explorer-height) + 8px);right:max(24px,env(safe-area-inset-right));max-height:none;width:min(340px,calc(100vw - 48px));}
 }
+
+/* Date scrubber, opened from the date in the timeline row. A year is twelve of the slider's steps,
+   which is under two pixels on a 380px track, so the marks are decades and the month is carried by
+   the label beside it. Sized exactly like #time-speed in the same panel. */
+/* The hit area is 44px as every other control's is, but the padding is taken back out of the row
+   with a negative margin: the date used to be plain text, and growing the timeline row squeezed
+   the gap between the info card and the bottom bar below the 8px the layout is held to. */
+.date-jump {min-height:44px;display:inline-flex;align-items:center;padding:14px 6px;margin:-14px 0;border:1px solid transparent;border-radius:4px;background:none;color:inherit;font:inherit;cursor:pointer;}
+.date-jump:hover,.date-jump:focus-visible {border-color:#536b5f;}
+#time-settings-panel input#time-month {height:44px;min-height:44px;width:100%;margin:0;background-image:repeating-linear-gradient(90deg,#536b5f66 0 1px,transparent 1px 4.975%);background-repeat:no-repeat;background-position:center;background-size:100% 10px;}
+.time-jump-row {display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.time-jump-row input {height:44px;min-height:44px;width:88px;padding:0 8px;border:1px solid #536b5f;border-radius:5px;background:#0c1211f5;color:#dce9e2;font:inherit;}
+.time-jump-row button {min-height:44px;min-width:44px;padding:0 12px;border:1px solid #536b5f;border-radius:5px;background:#21382c;color:#e4f2e9;font-size:12px;}

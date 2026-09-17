@@ -265,7 +265,13 @@
               <option value="planets">太阳与行星</option>
               <option value="dwarfs">矮行星</option>
               <option value="asteroids">小行星</option></select
-            ><small id="body-count">正在加载天体</small><time id="simulation-date"></time>
+            ><small id="body-count">正在加载天体</small><button
+              type="button"
+              id="date-jump"
+              class="date-jump"
+              data-tip="跳转日期"
+              aria-label="跳转到某个月"
+            ><time id="simulation-date"></time></button>
           </div>
           <div class="time-controls">
             <button
@@ -285,6 +291,22 @@
                 <label for="time-speed">时间倍率 <output id="speed-value" for="time-speed">1k×</output></label>
                 <input id="time-speed" type="range" min="0" max="4" step="1" value="1" aria-label="时间流速" />
                 <p id="time-equivalent"></p>
+                <label for="time-month">跳转日期 <output id="month-value" for="time-month"></output></label>
+                <input
+                  id="time-month"
+                  type="range"
+                  min="0"
+                  max="2411"
+                  step="1"
+                  value="0"
+                  aria-label="按月份跳转日期"
+                />
+                <div class="time-jump-row">
+                  <label for="time-year-input">年份</label>
+                  <input id="time-year-input" type="number" min="1900" max="2100" step="1" inputmode="numeric" placeholder="2032" />
+                  <button type="button" id="time-jump-apply">跳转</button>
+                  <button type="button" id="time-jump-today">回到今天</button>
+                </div>
               </div>
             </details>
           </div>

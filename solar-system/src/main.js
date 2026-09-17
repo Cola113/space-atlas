@@ -57,6 +57,7 @@ import { FrameWorkQueue } from './resource-queue.js';
 import { createTextureResources, firstScreenTextures, firstScreenIds, textureRoot } from './texture-resources.js';
 import { simulationElapsed, simulationRates, defaultSimulationRate, restoreSimulationRate,
   defaultSimulationDate, restoreSimulationDate, formatSimulationRate, simulationRateEquivalent, restoreSimulationDirection, simulationDirectionLabel } from "./simulation-time.js";
+import { clampMonthIndex, dateFromMonthIndex, monthIndexFromDate, monthIndexOfYear, monthLabel } from "./time-jump.js";
 
 const icons = {
   Orbit,
@@ -929,6 +930,16 @@ function updateSimulationDate() {
   }
   $("simulation-date").dateTime = date.toISOString();
   $("simulation-date").title = date.toISOString().replace("T", " ").slice(0,19) + " UTC";
+  // The scrubber follows the clock unless it is the thing being dragged, so playing does not fight
+  // the thumb and a drag does not get snapped back before it is committed.
+  const monthSlider = $("time-month");
+  if (monthSlider && document.activeElement !== monthSlider) {
+    const index = monthIndexFromDate(date);
+    if (monthSlider.value !== String(index)) {
+      monthSlider.value = String(index);
+      $("month-value").textContent = monthLabel(index);
+    }
+  }
 }
 
 function isEarthObservation() {
@@ -1956,6 +1967,30 @@ function bindEvents() {
     state.speed = simulationRates[Number(event.target.value)];lastFrame=performance.now();
     updateTimeRateUi();
   });
+  // Jumping to a month changes the date and nothing else: direction, rate and whether the clock is
+  // running all stay as they were, which is the rule the direction toggle already follows.
+  const jumpToMonth = (index, commit) => {
+    const clamped = clampMonthIndex(index);
+    $("time-month").value = String(clamped);
+    $("month-value").textContent = monthLabel(clamped);
+    if (!commit) return;
+    state.date = dateFromMonthIndex(clamped);
+    lastFrame = performance.now();
+  };
+  $("date-jump").addEventListener("click", () => {
+    $("time-settings").open = true;
+    $("time-month").focus();
+  });
+  const monthSlider = $("time-month");
+  monthSlider.addEventListener("input", () => jumpToMonth(Number(monthSlider.value), false));
+  monthSlider.addEventListener("change", () => jumpToMonth(Number(monthSlider.value), true));
+  const jumpToYear = () => {
+    const year = Number($("time-year-input").value);
+    if (Number.isFinite(year)) jumpToMonth(monthIndexOfYear(year), true);
+  };
+  $("time-jump-apply").addEventListener("click", jumpToYear);
+  $("time-year-input").addEventListener("keydown", (event) => { if (event.key === "Enter") jumpToYear(); });
+  $("time-jump-today").addEventListener("click", () => jumpToMonth(monthIndexFromDate(Date.now()), true));
   $("orbit-toggle").addEventListener("click", () => {
     state.orbits = !state.orbits;
     updateDisplaySettings();
