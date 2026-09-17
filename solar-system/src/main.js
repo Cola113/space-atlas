@@ -57,7 +57,7 @@ import { FrameWorkQueue } from './resource-queue.js';
 import { createTextureResources, firstScreenTextures, firstScreenIds, textureRoot } from './texture-resources.js';
 import { simulationElapsed, simulationRates, defaultSimulationRate, restoreSimulationRate,
   defaultSimulationDate, restoreSimulationDate, formatSimulationRate, simulationRateEquivalent, restoreSimulationDirection, simulationDirectionLabel } from "./simulation-time.js";
-import { clampMonthIndex, dateFromMonthIndex, monthIndexFromDate, monthIndexOfYear, monthLabel } from "./time-jump.js";
+import { FIRST_MONTH_YEAR, LAST_MONTH_YEAR, maxMonthIndex, clampMonthIndex, dateFromMonthIndex, monthIndexFromDate, monthIndexOfYear, monthLabel } from "./time-jump.js";
 
 const icons = {
   Orbit,
@@ -1982,7 +1982,13 @@ function bindEvents() {
     $("time-month").focus();
   });
   const monthSlider = $("time-month");
-  monthSlider.addEventListener("input", () => jumpToMonth(Number(monthSlider.value), false));
+  // The span is set from the module that defines it, so the markup cannot drift from the ephemeris.
+  monthSlider.max = String(maxMonthIndex);
+  $("time-year-input").min = String(FIRST_MONTH_YEAR);
+  $("time-year-input").max = String(LAST_MONTH_YEAR);
+  // Dragging updates the scene as it goes, not on release: the clock already moves the date once per
+  // frame while playing, so a drag costs the same work a playing frame does.
+  monthSlider.addEventListener("input", () => jumpToMonth(Number(monthSlider.value), true));
   monthSlider.addEventListener("change", () => jumpToMonth(Number(monthSlider.value), true));
   const jumpToYear = () => {
     const year = Number($("time-year-input").value);

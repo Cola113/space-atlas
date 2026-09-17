@@ -4,8 +4,11 @@
 // has no data for. Months are indexed from 1900-01 and read in UTC, which is how the simulation date
 // is kept; the hour is the epoch's own 17:00 UTC so a jump lands on the same time of day the default
 // date uses instead of midnight.
-export const FIRST_MONTH_YEAR = 1900;
-export const LAST_MONTH_YEAR = 2100;
+// The span is the shipped ephemeris's own, read from its definition rather than written again here.
+import { EPHEMERIS_YEARS } from "./physics/ephemeris.js";
+
+export const FIRST_MONTH_YEAR = EPHEMERIS_YEARS.first;
+export const LAST_MONTH_YEAR = EPHEMERIS_YEARS.last;
 const MONTH_HOUR_UTC = 17;
 
 export const monthCount = (LAST_MONTH_YEAR - FIRST_MONTH_YEAR + 1) * 12;

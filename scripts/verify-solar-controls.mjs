@@ -50,6 +50,12 @@ try{for(const [caseName,width,height,dpr] of [['desktop',1440,900,1],['phone',39
  assert.equal(await page.locator('#month-value').textContent(),'2032 年 1 月',`${name} month label`);
  assert.equal(jumped.direction,beforeJump.direction,`${name} the jump kept the direction`);
  assert.equal(jumped.speed,beforeJump.speed,`${name} the jump kept the rate`);
+ // Dragging has to move the scene as it goes: an input event alone, with no change event behind it,
+ // must already have moved the date.
+ await page.locator('#time-month').evaluate(el => { el.value = String(Number(el.max) - 24); el.dispatchEvent(new Event('input', {bubbles:true})); });
+ await settle();
+ const dragged=await snap();
+ assert.equal(new Date(dragged.date).getUTCFullYear(),2098,`${name} the drag moved the date before release`);
  await page.locator('#time-year-input').fill('1971');
  await page.locator('#time-jump-apply').click();await settle();
  assert.equal(new Date((await snap()).date).getUTCFullYear(),1971,`${name} back to the session year`);

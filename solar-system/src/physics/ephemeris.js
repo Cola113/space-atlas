@@ -75,7 +75,7 @@ export class EphemerisStore {
   }
   load(system, year) {
     if (this.disposed) return Promise.reject(new Error('Ephemeris store disposed'));
-    if (!['saturn','uranus','pluto'].includes(system) || !Number.isInteger(year) || year < 1900 || year > 2100) return Promise.reject(new RangeError('Unsupported ephemeris year or system'));
+    if (!['saturn','uranus','pluto'].includes(system) || !Number.isInteger(year) || year < EPHEMERIS_YEARS.first || year > EPHEMERIS_YEARS.last) return Promise.reject(new RangeError('Unsupported ephemeris year or system'));
     const key = `${system}/${year}`, cached = this.get(system, year);
     if (cached) return Promise.resolve(cached);
     if (this.pending.has(key)) return this.pending.get(key).promise;
@@ -101,7 +101,7 @@ export class EphemerisStore {
     const year = date.getUTCFullYear(), unique = [...new Set(systems)];
     await Promise.all(unique.map(system => this.load(system, year)));
     if (prefetch) for (const system of unique) for (const neighbor of [year - 1, year + 1]) {
-      if (neighbor >= 1900 && neighbor <= 2100) void this.load(system, neighbor).catch(() => {});
+      if (neighbor >= EPHEMERIS_YEARS.first && neighbor <= EPHEMERIS_YEARS.last) void this.load(system, neighbor).catch(() => {});
     }
   }
   dispose() {

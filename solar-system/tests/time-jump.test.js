@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import {EPHEMERIS_YEARS} from '../src/physics/ephemeris.js';
 import {FIRST_MONTH_YEAR, LAST_MONTH_YEAR, maxMonthIndex, clampMonthIndex, monthIndexFromDate,
   dateFromMonthIndex, monthLabel, monthIndexOfYear} from '../src/time-jump.js';
 
@@ -10,6 +11,12 @@ test('month indices span the years the ephemeris covers', () => {
   // The end of the span is December 2100, not the start of 2101.
   assert.equal(new Date(dateFromMonthIndex(maxMonthIndex)).getUTCFullYear(), 2100);
   assert.equal(new Date(dateFromMonthIndex(maxMonthIndex)).getUTCMonth(), 11);
+});
+
+test('the span is the ephemeris span, not a second copy of it', () => {
+  assert.equal(FIRST_MONTH_YEAR, EPHEMERIS_YEARS.first);
+  assert.equal(LAST_MONTH_YEAR, EPHEMERIS_YEARS.last);
+  assert.equal(maxMonthIndex, (EPHEMERIS_YEARS.last - EPHEMERIS_YEARS.first + 1) * 12 - 1);
 });
 
 test('a month index and a date round-trip', () => {
