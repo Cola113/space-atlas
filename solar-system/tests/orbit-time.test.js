@@ -15,7 +15,9 @@ function scene(){return new Map(bodies.map(b=>{
 
 test('overview preserves physical latitude, eccentricity, orientation and Sun direction across display scales',async()=>{
   const provider=localPhysics(),objects=scene();
-  await provider.ensure(new Date('2000-01-01'),['enceladus','miranda','pluto'],{prefetch:false});
+  // Every catalogue body must be present in the frame, so the dated systems are all
+  // loaded here; Ceres joined that list when its Horizons bundle replaced the ellipse.
+  await provider.ensure(new Date('2000-01-01'),['enceladus','miranda','pluto','ceres'],{prefetch:false});
   for(const stamp of ['2000-01-01','2000-03-21','2000-07-04','2000-12-21']){
     const frame=provider.frame(new Date(stamp)),rotation=skyRotation(frame.time.astronomy);
     updateDisplayState(objects,frame);

@@ -647,9 +647,10 @@
         "semiAxesNote": "PCK00011 的三轴半径按体固坐标 X、Y、Z 排列，Z 为自转轴；此处按 a、b、c 顺序记录。"
       },
       "orbit": {
-        "provider": "mean-kepler",
+        "provider": "jpl-year",
         "center": "parent",
-        "validity": "固定平均椭圆；不含摄动、节点/拱线进动或历元后轨道演化，不用于方位、交会、掩食预报。",
+        "validity": "轨道尺寸/周期仅用于目录与显示尺度；真实日期状态由指定星历提供。重点校准 1900—2100，范围外明确近似。",
+        "stateSource": "local-ephemeris",
         "a": {
           "value": 2.765552595034094,
           "unit": "au"

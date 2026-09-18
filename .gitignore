@@ -18,3 +18,7 @@ outputs/**/*.jpg
 
 # Python bytecode from the local texture scripts
 __pycache__/
+
+# Private generation workspace: full API requests and responses stay here and are
+# never published. Only the prompt and the delivered asset go to public/surface/.
+work/

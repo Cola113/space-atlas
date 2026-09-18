@@ -1,11 +1,14 @@
 export const EPHEMERIS_YEARS = Object.freeze({ first: 1900, last: 2100 });
 export const EPHEMERIS_SYSTEMS = Object.freeze({
   enceladus: 'saturn', titan: 'saturn', miranda: 'uranus', pluto: 'pluto', charon: 'pluto',
+  ceres: 'ceres',
 });
+export const EPHEMERIS_SYSTEM_IDS = Object.freeze(Object.keys(EPHEMERIS_SYSTEMS).concat(['saturn','uranus']));
+const SYSTEM_NAMES = Object.freeze({ saturn:'土星', uranus:'天王星', pluto:'冥王星', ceres:'谷神星' });
 
 export class MissingEphemerisError extends Error {
   constructor(system, year, cause) {
-    super(`${year} 年${{saturn:'土星', uranus:'天王星', pluto:'冥王星'}[system]}星历尚未就绪`, { cause });
+    super(`${year} 年${SYSTEM_NAMES[system] || system}星历尚未就绪`, { cause });
     this.name = 'MissingEphemerisError'; this.system = system; this.year = year;
   }
 }
@@ -75,7 +78,7 @@ export class EphemerisStore {
   }
   load(system, year) {
     if (this.disposed) return Promise.reject(new Error('Ephemeris store disposed'));
-    if (!['saturn','uranus','pluto'].includes(system) || !Number.isInteger(year) || year < EPHEMERIS_YEARS.first || year > EPHEMERIS_YEARS.last) return Promise.reject(new RangeError('Unsupported ephemeris year or system'));
+    if (!EPHEMERIS_SYSTEM_IDS.includes(system) || !Number.isInteger(year) || year < EPHEMERIS_YEARS.first || year > EPHEMERIS_YEARS.last) return Promise.reject(new RangeError('Unsupported ephemeris year or system'));
     const key = `${system}/${year}`, cached = this.get(system, year);
     if (cached) return Promise.resolve(cached);
     if (this.pending.has(key)) return this.pending.get(key).promise;

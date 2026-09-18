@@ -40,7 +40,7 @@ import {
 } from "./camera-navigation.js";
 import { updateDisplayState } from './orbits.js';
 import { RING_INNER, RING_OUTER, ringUvAtRatio } from './ring-optical-depth.js';
-import { physicalState } from './physics/state.js';
+import { physicalState, ephemerisBodyIds } from './physics/state.js';
 import { ObservationGate } from './physics/observation-gate.js';
 import { bindPhysicalSun } from './physical-lighting.js';
 import { RotationFollow, restoreFollowRotation } from './camera-follow.js';
@@ -904,7 +904,9 @@ function updatePositions() {
 
 function refreshObservationGate() {
   const body=objects.get(state.selected), family=familyOf(body);
-  const ids=body ? (family ? systemMembers(family.id).map(member=>member.id) : [body.id]) : (backgroundStarted ? ['pluto'] : []);
+  // With nothing selected the overview still prefetches every body whose state comes
+  // from a year bundle, so each one is available (or visibly missing) on arrival.
+  const ids=body ? (family ? systemMembers(family.id).map(member=>member.id) : [body.id]) : (backgroundStarted ? [...ephemerisBodyIds] : []);
   const key=ids.join(',');
   if(key!==observationKey){
     observationGate?.dispose(); observationKey=key;

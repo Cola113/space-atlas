@@ -17,6 +17,11 @@ export const physicalNames = Object.freeze({ sun:'Sun', mercury:'Mercury', venus
 const vectorKm = value => new Vector3(value.x,value.y,value.z).multiplyScalar(AU_KM);
 const velocityKmS = value => new Vector3(value.vx,value.vy,value.vz).multiplyScalar(AU_KM/86400);
 export const systemsForBodies = ids => [...new Set(ids.map(id => EPHEMERIS_SYSTEMS[id] || EPHEMERIS_SYSTEMS[meanElements.bodies[id]?.parent]).filter(Boolean))];
+// Bodies whose dated state comes from a published year bundle. The overview must
+// prefetch all of them, not just one representative: Ceres looks permanently
+// unavailable until its own bundle is resident, and listing a body here is exactly
+// what makes that visible instead of silent.
+export const ephemerisBodyIds = Object.freeze(Object.keys(EPHEMERIS_SYSTEMS));
 
 /** One geometric physical frame per date/cache revision. All vectors are km in
  * heliocentric J2000 equatorial axes; callers must clone before transforming.
@@ -57,14 +62,14 @@ export class PhysicalState {
     }
     const inRange = inEphemerisRange(date);
     const extrapolation = inRange ? null : anchors.anchors[date.getUTCFullYear()<1900?'first':'last'].elements;
-    for (const [system,ids] of [['saturn',['enceladus','titan']],['uranus',['miranda']],['pluto',['pluto','charon']]]) {
+    for (const [system,ids] of [['saturn',['enceladus','titan']],['uranus',['miranda']],['pluto',['pluto','charon']],['ceres',['ceres']]]) {
       let bundle;
       try { bundle = this.ephemeris.require(system,date); }
       catch (error) { for (const id of ids) missing.set(id,error); continue; }
       const at = (target,center,t=time.tdbSeconds) => new Vector3().fromArray(evaluateEphemeris(bundle,target,center,t));
       const derivative = fn => fn(time.tdbSeconds+1).sub(fn(time.tdbSeconds-1)).multiplyScalar(.5);
       const relativeAt = (target,parent,center,t) => at(target,center,t).sub(at(parent,center,t));
-      const model = inRange ? `JPL ${ {saturn:'SAT441',uranus:'URA184',pluto:'PLU060'}[system]} 原始多项式`
+      const model = inRange ? `JPL ${ {saturn:'SAT441',uranus:'URA184',pluto:'PLU060',ceres:'Horizons 小行星星历'}[system]} 原始多项式`
         : '范围外近似：最近边界 JPL 状态的二体轨道外推，无摄动及精度保证';
       if (system === 'pluto') {
         const barycenter = inRange ? at(9,0).sub(at(10,0)) : keplerPosition(extrapolation.plutoBarycenter,time.tdbSeconds);
@@ -80,6 +85,17 @@ export class PhysicalState {
         add('charon',pluto.clone().add(relative),'pluto',relative,model,{relativeVelocityKmS:vRelative,velocityKmS:vPluto.clone().add(vRelative)});
         barycenters.set('pluto',barycenter);
         barycenterVelocities.set('pluto',vBary);
+      } else if (system === 'ceres') {
+        // Heliocentric small body: the published track is already the Sun-relative
+        // position (target 20000001 about center 10), so there is no parent center to
+        // subtract and no moon-relative frame to build. Outside 1900–2100 the fallback
+        // stays the sourced mean ellipse, which is what the project used throughout
+        // before this kernel existed.
+        const heliocentric = inRange ? at(20000001,10) : keplerPosition(extrapolation.ceres,time.tdbSeconds);
+        const v = inRange ? derivative(t=>at(20000001,10,t))
+          : keplerPosition(extrapolation.ceres,time.tdbSeconds+1)
+            .sub(keplerPosition(extrapolation.ceres,time.tdbSeconds-1)).multiplyScalar(.5);
+        add('ceres',heliocentric,'sun',heliocentric.clone(),model,{velocityKmS:v,relativeVelocityKmS:v.clone()});
       } else for (const id of ids) {
         const target = {enceladus:602,titan:606,miranda:705}[id], parent = system==='saturn'?699:799, center = system==='saturn'?6:7;
         const relative = inRange ? at(target,center).sub(at(parent,center)) : keplerPosition(extrapolation[id],time.tdbSeconds);
