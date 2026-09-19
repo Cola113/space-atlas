@@ -72,7 +72,7 @@ export const landmarks = {
   ],
   saturn: [
     { id: 'ring-shadow', name: '土星环阴影', dynamic: 'ring-shadow', location: '云顶 / 环系投影', text: '光环挡住阳光，在云层上形成暗带。标记依据当前日照与环面计算，阴影对比度经过展示增强。', source: 'https://science.nasa.gov/saturn/facts/' },
-    { id: 'hexagon', name: '北极六边形风暴', uv: geographic(90, 0), location: '北极 / 六边形急流示意', text: '北极周围的高速急流形成近六边形边界，中心另有极地涡旋。形状和云纹为程序示意，不代表同期观测。', source: 'https://science.nasa.gov/photojournal/saturns-north-pole-hexagon-and-aurora/' },
+    { id: 'hexagon', name: '北极六边形风暴', uv: geographic(90, 0), location: '北极 / 六边形急流示意', text: '北极周围的高速急流形成近六边形边界，中心另有极地涡旋。边线起伏与内部云纹随活动时钟推进，形状、振幅和色彩为程序示意，不代表同期观测。', source: 'https://science.nasa.gov/photojournal/saturns-north-pole-hexagon-and-aurora/' },
   ],
   io: [
     { id: 'volcanic-plume', name: '火山喷发', dynamic: 'volcanic-plume', zoom: 1.3, location: '模拟热点 / 火山喷发', text: '喷发物从当前演示热点拱起并散落。此位置不指代某座已命名火山，强度与时间均为示意。', source: 'https://science.nasa.gov/jupiter/moons/io/' },

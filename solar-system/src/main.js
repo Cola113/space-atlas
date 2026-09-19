@@ -2461,7 +2461,8 @@ function animate(now) {
     date: state.date,
     dt,
     moving: state.playing && !observationGate?.blocked && !state.atlas && !infoDialogOpen(),
-    selected: state.system ? null : state.selected,
+    selected: state.selected,
+    system: state.system,
     isMobile: mobile,
     pixelScale: height * renderer.getPixelRatio(),
   });

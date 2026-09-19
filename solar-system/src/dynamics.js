@@ -70,10 +70,10 @@ export const activityProfiles = {
     interval: 37,
   },
   saturn: {
-    title: "大气环流与光环粒子",
-    text: "柔和云带缓慢流动。环中的冰粒沿各自轨道运行，内侧环粒绕行得更快。",
+    title: "差速云带与北极六边形",
+    text: "赤道急流快于高纬云带。北极六边形的边线缓缓起伏，中心极地涡旋带动云纹旋转，南极另有涡旋。云纹运动为程序示意，不是同期气象。环中的冰粒沿各自轨道运行，内侧环粒绕行得更快。",
     trigger: "环粒高亮",
-    idle: "云流与环粒绕行",
+    idle: "差速云流与六边形",
     active: "光环粒子观测",
     duration: 18,
     interval: 43,
@@ -364,15 +364,6 @@ function gasMap(id) {
       swirl: 0.085,
       cloud: 0.045,
     },
-    saturn: {
-      bands: 34,
-      drift: 0.001,
-      warp: 0.001,
-      center: [".20", ".64"],
-      size: [".06", ".04"],
-      swirl: 0.06,
-      cloud: 0.04,
-    },
     uranus: {
       bands: 14,
       drift: 0.0015,
@@ -419,18 +410,120 @@ function gasMap(id) {
       gasColor.rgb += vec3(${num(settings.cloud)}) * flowAmount * movingCloud
         * (.25 + uActivityEvent * .75) * (.24 + stormMask * .76);
       ${id === "neptune" ? "gasColor.rgb *= 1.0 - stormMask * uActivityEvent * .24;" : ""}
-      ${id === 'saturn' ? `
-        // A sourced polar shape with illustrative cloud detail, not dated imagery.
-        vec3 polar = normalize(vActivityDir);
-        float sector = mod(atan(polar.z, polar.x) + .5235988, 1.0471976) - .5235988;
-        float hexRadius = length(polar.xz) * cos(sector);
-        float north = smoothstep(.96, .975, polar.y);
-        float hexEdge = exp(-pow((hexRadius - .180) / .007, 2.0)) * north;
-        float hexInterior = (1.0 - smoothstep(.168, .184, hexRadius)) * north;
-        gasColor.rgb = mix(gasColor.rgb, gasColor.rgb * vec3(.72, .83, .83), hexInterior * .55);
-        gasColor.rgb *= 1.0 - hexEdge * .28;
-        gasColor.rgb *= 1.0 - exp(-dot(polar.xz, polar.xz) / .00022) * north * .45;
-      ` : ''}
+      diffuseColor *= gasColor;
+    #endif
+  `;
+}
+
+// Saturn's gold map has much lower contrast than Jupiter's belts, so the shared
+// gasMap path (a generic storm oval plus ~0.1% albedo flicker) does not read as
+// motion. This shader keeps Jupiter's dual-phase advection so the map never
+// stretches without bound, but the wind, overlays and polar shapes are Saturn's.
+//
+// Drivers: uFlowPhase / uActivityTime (demonstration clock, not the ephemeris),
+// uWeatherOffset, uActivityEnabled, uActivityDetail, uActivityEvent.
+// Limits: zonal speeds are display-scaled, not m/s; hexagon colour, wave
+// amplitude and ammonia-ice streaks are illustrative; nothing here is a dated
+// weather map or a hydrodynamics solve.
+export const SATURN_ATMOSPHERE = {
+  equatorialDrift: 0.006,
+  hexagonApothem: 0.180,
+  hexagonLatitudeDeg: 78,
+  ribbonLatitudeDeg: 47,
+  flowPeriod: FLOW_PERIOD,
+};
+
+function saturnAtmosphereMap() {
+  return /* glsl */ `
+    #ifdef USE_MAP
+      vec2 flowUv = vMapUv;
+      float flowAmount = uActivityEnabled * uActivityDetail;
+      float lat = (flowUv.y - 0.5) * 3.14159265;
+      float poleFade = pow(max(cos(lat), 0.0), 1.25);
+      vec3 polar = normalize(vActivityDir);
+      vec3 cycle = flowCycle();
+      float turbulence = weatherNoise(vActivityDir * vec3(3.2, 20.0, 3.2) + uWeatherOffset);
+
+      // Hexagon: apothem 0.180 places the vertices near 78°N. The figure
+      // co-rotates with System III (already the body frame), so it is not
+      // spun here. The sides meander; that waving is observed, the amplitude
+      // is chosen for the close-up, not measured.
+      float hexAngle = atan(polar.z, polar.x);
+      float hexWave = flowAmount * 0.0055 * sin(hexAngle * 6.0 + uActivityTime * 0.33)
+        + flowAmount * 0.0030 * sin(hexAngle * 12.0 - uActivityTime * 0.21);
+      float sector = mod(hexAngle + 0.5235988, 1.0471976) - 0.5235988;
+      float hexRadius = length(polar.xz) * cos(sector) + hexWave;
+      float north = smoothstep(0.96, 0.975, polar.y);
+      float hexEdgeDelta = (hexRadius - 0.180) / 0.007;
+      float hexEdge = exp(-hexEdgeDelta * hexEdgeDelta) * north;
+      float hexInterior = (1.0 - smoothstep(0.168, 0.184, hexRadius)) * north;
+
+      // South polar vortex, a hurricane-like eye Cassini imaged in 2006–2007.
+      // polar.y = -1 at the south pole. Shape and colour are illustrative.
+      float south = 1.0 - smoothstep(-0.997, -0.978, polar.y);
+      float southR = length(polar.xz);
+      float southEye = exp(-southR * southR / 0.0016) * south;
+      float southWallDelta = (southR - 0.072) / 0.014;
+      float southWall = exp(-southWallDelta * southWallDelta) * south;
+
+      // Schematic zonal wind after Cassini / Voyager cloud-tracking: a broad
+      // eastward equatorial jet (physically ~370–500 m/s, here display-scaled),
+      // weaker mid-latitude jets, and a polar jet at the hexagon.
+      float eqArg = lat / 0.36;
+      float eqJet = exp(-eqArg * eqArg);
+      float midJets = 0.40 * sin(lat * 7.0) * poleFade;
+      float hexJetArg = (lat - 1.3614) / 0.065;
+      float hexJet = 0.45 * exp(-hexJetArg * hexJetArg);
+      float jet = eqJet * 1.20 + midJets + hexJet;
+      vec2 wind = vec2(flowAmount * 0.0060 * jet * poleFade, 0.0);
+      // Extra longitude shift inside either polar vortex is rotation about the pole.
+      wind.x += flowAmount * (hexInterior * 0.030 + south * 0.024);
+
+      // Ribbon meander near 47°N, a wavy jet Cassini tracked. Wavelength and
+      // amplitude are schematic.
+      float ribbonArg = (lat - 0.8203) / 0.050;
+      float ribbon = exp(-ribbonArg * ribbonArg);
+      flowUv.y += flowAmount * ribbon * 0.012 * sin(flowUv.x * 50.26548 + cycle.x * 0.35);
+      flowUv.y += flowAmount * 0.0018 * turbulence * poleFade * (1.0 - ribbon);
+
+      // Compact vortices Saturn actually has many of; positions are schematic.
+      // Dual-phase swirl, same trick as Jupiter's Great Red Spot.
+      float swirl = flowAmount * 0.055 * (1.0 + uActivityEvent * 0.35);
+      vec2 uvA = vortexUv(flowUv + wind * cycle.x, vec2(0.31, 0.69), vec2(0.032, 0.026), cycle.x * swirl);
+      uvA = vortexUv(uvA, vec2(0.58, 0.31), vec2(0.028, 0.022), cycle.x * swirl * 0.85);
+      vec2 uvB = vortexUv(flowUv + wind * cycle.y, vec2(0.31, 0.69), vec2(0.032, 0.026), cycle.y * swirl);
+      uvB = vortexUv(uvB, vec2(0.58, 0.31), vec2(0.028, 0.022), cycle.y * swirl * 0.85);
+      vec4 gasColor = mix(sampleGlobe(map, uvB), sampleGlobe(map, uvA), cycle.z);
+
+      // Ammonia-ice streaks: same noise field, advected with the wind, dual-phase
+      // sampled like the albedo so they slide instead of boiling or washing out.
+      vec2 streakUv = flowUv * vec2(6.0, 16.0);
+      float streakA = weatherNoise(vec3(streakUv + vec2(wind.x * cycle.x * 14.0, 0.0), 3.1));
+      float streakB = weatherNoise(vec3(streakUv + vec2(wind.x * cycle.y * 14.0, 0.0), 3.1));
+      float streaks = mix(streakB, streakA, cycle.z);
+      vec2 billowUv = flowUv * vec2(2.8, 7.5);
+      float billowA = weatherNoise(vec3(billowUv + vec2(wind.x * cycle.x * 6.0, 0.0), 8.7));
+      float billowB = weatherNoise(vec3(billowUv + vec2(wind.x * cycle.y * 6.0, 0.0), 8.7));
+      float billow = mix(billowB, billowA, cycle.z);
+      // Multiply the gold map so the shear reads on a low-contrast planet;
+      // additive ammonia-ice sits on the bright ridges of the same field.
+      gasColor.rgb *= 1.0 + flowAmount * 0.24 * streaks * poleFade;
+      float bright = smoothstep(0.16, 0.72, streaks) * smoothstep(-0.08, 0.38, billow) * poleFade;
+      gasColor.rgb += vec3(0.32, 0.27, 0.16) * flowAmount * bright
+        * (0.58 + uActivityEvent * 0.42);
+
+      float belt = 0.5 + 0.5 * sin(lat * 12.0 + turbulence * 0.35);
+      gasColor.rgb *= 1.0 - flowAmount * 0.06 * belt * poleFade * (1.0 - bright * 0.55);
+
+      gasColor.rgb = mix(gasColor.rgb, gasColor.rgb * vec3(0.72, 0.83, 0.83), hexInterior * 0.55);
+      gasColor.rgb += vec3(0.05, 0.06, 0.07) * hexInterior * turbulence * flowAmount * 0.40;
+      gasColor.rgb *= 1.0 - hexEdge * (0.28 + flowAmount * 0.10);
+      gasColor.rgb *= 1.0 - exp(-dot(polar.xz, polar.xz) / 0.00022) * north * 0.45;
+
+      gasColor.rgb = mix(gasColor.rgb, gasColor.rgb * vec3(0.82, 0.74, 0.58), southWall * 0.42);
+      gasColor.rgb *= 1.0 - southEye * 0.38;
+      gasColor.rgb += vec3(0.06, 0.05, 0.03) * south * turbulence * flowAmount * 0.30;
+
       diffuseColor *= gasColor;
     #endif
   `;
@@ -1116,7 +1209,7 @@ export function createDynamics(objects, { defer = false } = {}) {
       )
     ) {
       patchMaterial(body.mesh.material, body.id, record.uniforms, {
-        map_fragment: gasMap(body.id),
+        map_fragment: body.id === "saturn" ? saturnAtmosphereMap() : gasMap(body.id),
         ...(body.id === "saturn"
           ? { lights_fragment_begin: saturnDirectLighting(
               // Origin the shadow ray at the real surface point. Re-normalising it would
@@ -1242,12 +1335,17 @@ export function createDynamics(objects, { defer = false } = {}) {
     ganymede.uniforms.uGanymedeOvalShift.value = 4.0 * Math.sin(phase + 1.1);
   }
 
-  function update({ dt, moving, selected, isMobile, pixelScale, date }) {
-    setFocus(selected);
+  function update({ dt, moving, selected, isMobile, pixelScale, date, system = false }) {
+    // Particle bursts and triggered events stay on the solo-body close-up.
+    // The selected primary still gets full globe-flow detail in its system
+    // view: Saturn's default framing is 土星系, and 0.12 detail is invisible
+    // on the gold map.
+    setFocus(system ? null : selected);
     mobile = isMobile;
     for (const [id, record] of records) {
       const observed = id === "earth" && record.uniforms.uObservedClouds.value > .5;
       const active = enabled && id === focus && !observed;
+      const globeDetail = enabled && !observed && (id === focus || (system && id === selected));
       const profile = activityProfiles[id];
       if (moving && enabled && (!focus || id === focus))
         record.time += dt * rate;
@@ -1277,7 +1375,7 @@ export function createDynamics(objects, { defer = false } = {}) {
       );
       record.uniforms.uActivityEnabled.value =
         enabled && layerAvailable ? 1 : 0;
-      record.uniforms.uActivityDetail.value = active ? 1 : 0.12;
+      record.uniforms.uActivityDetail.value = globeDetail ? 1 : 0.12;
       record.uniforms.uActivityEvent.value = observed ? 0 : envelope;
       record.uniforms.uActivityProgress.value = inEvent ? progress : -1;
       if (id === "titan" && record.body.clouds) {
