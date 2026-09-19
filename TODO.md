@@ -84,7 +84,7 @@
 
 2026-09-16 实施，不再是暂缓项。
 
-- [x] 将已有浏览器专项接入 CI 与发布门槛。`npm run test:visual` 一条命令跑五个专项：关键截图与场景切换（verify-integration）、土星环影开关四屏（verify-saturn-shadows）、手机/平板/短横屏布局与命中区（verify-solar-controls）、落点天空的环与天空像素（verify-sky-bodies）、十七处落点 × 四屏与 canvas 像素（verify-landings）。CI 的 `visual-gate` 作业在 `test-and-build` 之后运行它，失败时上传 `test-results/`。
+- [x] 将已有浏览器专项接入 CI 与发布门槛。`npm run test:visual` 一条命令跑五个专项：关键截图与场景切换（verify-integration）、土星环影开关四屏（verify-saturn-shadows）、手机/平板/短横屏布局与命中区（verify-solar-controls）、落点天空的环与天空像素（verify-sky-bodies）、十八处落点 × 四屏与 canvas 像素（verify-landings）。CI 的 `visual-gate` 作业在 `test-and-build` 之后运行它，失败时上传 `test-results/`。本门槛之外另有若干专项脚本不在其中，它们的既存失败见本文件末尾的「未入门槛的专项脚本」。
 - [x] 为自动运行配置可用浏览器、稳定日期与视角、合理的像素差异阈值，并保存失败截图及报告。浏览器通道由 `ATLAS_BROWSER_CHANNEL` 选择：本机默认用 Edge，CI 用 `npx playwright install --with-deps chromium` 装好的 Playwright 自带 Chromium（版本由 playwright 包锁定，不随 runner 漂移）；断言都是容差判断而不是与金标图逐像素比较，因为两种构建并不逐像素相同。门槛判定要求**每个专项退出码为 0，并且它自己写的数值报告存在、可解析、不含 `passed: false`**——只写出截图不算通过，专项在写报告前崩掉会被判失败。运行目标是被测应用的生产构建（`npm run build` 后由 `server/index.js` 在空闲端口提供 `dist/`），不是 dev server。
 - [ ] 整理待办与验收记录中的过时状态，使当前能力、已完成项和后续计划一致。本轮已按用户安排整理 `TODO.md`；其它验收文档的历史状态归档仍待检查。2026-09-16 再次清理本文件：结掉两条土星评审缺陷、复查云图条目、按复算重排落点候选顺序、更正已并入 main 的分支状态；仍未处理的是 `RELEASE_ACCEPTANCE.md`、`IMPLEMENTATION_STATUS.md` 等文档里的历史状态归档。
 
@@ -123,3 +123,13 @@
 - [ ] **地球 · 极光**：真实但强度由空间天气决定（Kp 指数无法从星历推出），只能做成"偶发"事件并明确标注示意。夜面城市灯光与实拍云图已经是真实动态，极光属于锦上添花。
 
 **不建议做**：冥王星的氮冰对流（周转约 50 万年，动画化即失真）、多数小卫星（无观测到的活动）、水星钠尾（需要大视场，当前视图装不下）。
+
+## 未入门槛的专项脚本
+
+2026-09-19 复核分支时逐条执行了 `scripts/` 下的专项脚本，发现两个**不在 `npm run test:visual` 门槛里**的既存失败。两者都在 `main`（fa14123）上以完全相同的数值复现，不是谷神星落点引入的，因此没有随本轮改动修复。
+
+- [ ] `verify-ground-rendering.mjs` 的 `moon/0.1` 相位断言失败：`day.p01 = 12`，期望 `> 70`；该样本是 2019-04-22T09:20:43.200Z，地球相位 0.105，向阳半球的像素亮度与背阳半球几乎没有差别（`day.mean 12.95` 对 `night.mean 25.26`），说明这一相位下地球的受光在像素回读里没表现出来。脚本自 2026-09-14 建立（d6920c1）起就是这条断言，`ground-audit-reference.json` 里月球的 77 条样本在 main 与本分支上哈希完全相同，已排除参考数据变动。需要先判断是渲染问题还是这条断言对 0.1 相位的期望值不合理。
+- [ ] `verify-surface-panorama.mjs` 遍历落点时按 `data-body="${id}"` 找目录项，但六处第二落点（`mars-phoenix`、`io-subjovian`、`pluto-charonface`、`mercury-pole`、`moon-farside`、`europa-subjovian`）是**落点 id 而非天体 id**，目录里没有对应条目，于是在 `mars-phoenix` 上超时。同样在 main 上复现。第二落点自 2026-09-16（878bcbe）引入，早于本轮；应改为先选天体再选落点，与 `verify-landings.mjs` 的 `revealLanding` 一致。
+
+同一批复核还发现并已修复本分支引入的一个真实回归：`verify-surface-physics.mjs` 与 `verify-surface-render.mjs` 预热的是硬编码星历列表，加入谷神星后 `surfaceFrame` 因系统未预热而抛 `MissingEphemerisError`。两者已改为从 `landingSites` 派生（见 1c6be80），并顺手修掉成功信息里写死的"16 处落点"。
+
