@@ -170,6 +170,17 @@ export const additionalLandingSites = Object.freeze({
     notes:'金星 13 号 1982 年 3 月 1 日在南纬 7.5°、东经 303°（腓比区东侧）着陆，本落点即其着陆区。地面形态依据它拍下的可见光彩色全景参考重绘，整幅为新画面、未逐像素保留原片，照片中的着陆器硬件（齿状环、镜头盖、条纹标尺、天线）没有重建；参考片只覆盖约 40° 竖直视野，脚下没有实拍，按同一材质延续。金星大气为浓厚硫酸云：天空是均匀的赭黄漫射光，看不到太阳圆面、星空或任何其它天体，太阳只表现为云内一块略亮的光斑，该渲染是展示近似而不是辐射传输计算。一个太阳日约 116.75 地球日，落点处太阳高度角在 84.5° 与 −81.0° 之间变化；太阳视直径约 0.741°，约为地球上的 1.4 倍。金星自转逆行，太阳从西边升起。',
     atmosphere:'venus', solarDay:116.75, referenceSolarAltitude:60, initialHeading:180, panoramaCenter:180,
   },
+  ceres: {
+    ...common, id:'ceres', body:'Ceres', name:'谷神星', title:'奥卡托撞击坑 · 盐类亮斑', english:'OCCATOR CRATER · CEREALIA FACULA',
+    radiusKm:physicalData.ceres.radiusKm, latitude:19.7, longitude:239.6,
+    parent:'Sun', parentName:'太阳', parentRadiusKm:physicalData.sun.radiusKm, texture:'/surface/ceres.webp',
+    date:'2026-09-18T00:20:25Z',
+    provenance:'黎明号实拍参考 · AI 重绘', credit:'NASA / JPL-Caltech / UCLA / MPS-DLR-IDA · PIA21924 与 PIA24021 · 地表重绘 gpt-image-2.5-sunburst',
+    source:'https://www.jpl.nasa.gov/images/pia21924-mosaic-of-cerealia-facula-in-occator-crater',
+    description:'暗灰色坑底铺着细碎撞击碎屑，不远处升起一片白色的盐壳，像被压碎的脏雪一样反光。',
+    notes:'落点取奥卡托撞击坑中央的 Cerealia Facula（亮斑），坐标 19.7°N / 239.6°E 出自 JPL 对该拼图的说明（坑本身约 20°N / 239°E）。亮斑是钠碳酸盐与氯化铵的盐壳，按反光材质表现，因此随日照变化，不设为自发光。地面形态依据黎明号低高度轨道拼图参考重绘（PIA21924 提供盐壳材质与碎裂结构，PIA24021 用于核对暗色坑底与盐壳的反差），整幅为新画面、未逐像素保留输入，也未沿用其俯视视角、取景与假彩色处理。谷神星没有可分辨的主星：太阳视直径约 0.199°，仅为地球所见的 0.37 倍，天空中没有可分辨的其它天体（火星、木星在此距离下视直径均小于 0.02°），也没有大气。一个自转周期约 9.074 小时，落点处太阳高度角在此周期内于 −73.35° 与 +67.24° 之间变化；默认资料的太阳高度角约 21.7°。1900—2100 年位置取随站发布的 Horizons 谷神星年历（201 个年份包），范围外回退到 JPL SBDB 的固定平均椭圆——那条约在历元外偏差数百角分，只作范围外近似。',
+    solarDay:0.378083, referenceSolarAltitude:22, initialHeading:180, panoramaCenter:180,
+  },
 });
 
 // A body is landable when it owns at least one site; several sites may share one.

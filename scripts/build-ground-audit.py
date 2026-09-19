@@ -23,6 +23,12 @@ inputs = json.loads((CACHE / 'ground-input.json').read_text())
 os.chdir(ROOT / 'data/jpl')  # CSPICE on Windows cannot open non-ASCII paths.
 spice.furnsh('de440s.bsp')
 spice.furnsh('surface-reference-valid-coverage.bsp')
+# Ceres is not in DE440s and has no NAIF kernel covering all of 1900-2100, so the
+# independent side reads the same Horizons-generated SPK the site is built from --
+# but at target 20000001 through CSPICE, not through the project's bundled
+# Chebyshev re-expression. That still separates the published bundle from the
+# reference: a decoder or windowing mistake would show up as a sky-sized error.
+spice.furnsh('ceres-horizons.spk')
 active, lines = False, []
 for line in Path('pck00011.tpc').read_text(encoding='ascii').splitlines():
     if line.strip() == '\\begindata':
@@ -88,7 +94,7 @@ for name, code in [('io', 501), ('europa', 502), ('jupiter', 599)]:
 # tiny satellites is below 0.2 m, far below the separately stated angular gate.
 ids = {'sun':10, 'mercury':199, 'venus':299, 'moon':301, 'earth':399, 'mars':4,
        'enceladus':602, 'titan':606, 'saturn':699, 'miranda':705,
-       'uranus':799, 'pluto':999, 'charon':901}
+       'uranus':799, 'pluto':999, 'charon':901, 'ceres':20000001}
 
 
 def position(name, t):
@@ -186,7 +192,8 @@ for item in inputs:
 output = {'generatedWith':f'{spice.tkvrsn("TOOLKIT")} / spiceypy {spice.__version__}',
           'scope':'Independent geometric ICRF vectors (no light-time or aberration), CSPICE IAU frames, spherical observer, phase and angular scale. Mars barycenter approximates its center within 0.2 m. TT/TDB inputs use the separately tested time layer. Samples are keyed by siteId; one body may carry several.',
           'kernelSha256':{p:hashlib.sha256(Path(p).read_bytes()).hexdigest() for p in
-                          ['de440s.bsp', 'surface-reference-valid-coverage.bsp', 'pck00011.tpc']},
+                          ['de440s.bsp', 'surface-reference-valid-coverage.bsp', 'pck00011.tpc',
+                           'ceres-horizons.spk']},
           'horizons':sources, 'fixtures':fixtures}
 (ROOT / 'solar-system/tests/ground-audit-reference.json').write_text(
     json.dumps(output, indent=2) + '\n', encoding='utf-8')

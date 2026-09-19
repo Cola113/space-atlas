@@ -12,8 +12,8 @@ const altitudeOf=(site,target,offsetMs=0)=>
   horizonAngles(surfaceFrame(site,new Date(Date.parse(site.date)+offsetMs)).targets[target].direction).altitude;
 
 test('every landing site has a decodable local image and never draws the observer body in the sky',async()=>{
-  assert.equal(landableBodyIds.length,11);
-  assert.equal(Object.keys(landingSites).length,17);
+  assert.equal(landableBodyIds.length,12);
+  assert.equal(Object.keys(landingSites).length,18);
   for(const [siteId,site] of Object.entries(landingSites)){
     assert.equal(site.siteId,siteId,'a site id must match its key');
     const frame=surfaceFrame(site);

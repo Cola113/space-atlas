@@ -370,7 +370,35 @@
         "Venera 13 lander colour panorama, USSR/NASA, public domain (ground character, observed)"
       ],
       "requestedSizeAccepted": false
+    },
+    {
+      "id": "ceres",
+      "generatedOn": "2026-09-19",
+      "mode": "reference-edit with a Dawn orbiter mosaic of the same feature",
+      "sourceFile": "ceres-occator.png",
+      "sourceDimensions": [
+        3840,
+        1920
+      ],
+      "deliveredDimensions": [
+        3840,
+        1920
+      ],
+      "sourceSha256": "e1b4287ca594e06b1c4b7842422da1eceacf2cb4d8d83f3dc2462b9d276eb88b",
+      "file": "ceres.webp",
+      "sha256": "751984b059b43d89cbe5d2e51793ff4fb7de87ee4631256521ae3f65be0ab400",
+      "bytes": 1385500,
+      "processing": "Source frame is already 3840x1920, the requested 2:1, so unlike every earlier site it is NOT reparameterized from 16:9; top-connected black sky removed; narrow wrap blend; nadir smoothing; WebP encoding. New drawing. The Dawn mosaic PIA21924 (Cerealia Facula at about 19.7N, 239.6E) and PIA24021 supplied the white-to-pale-yellow salt crust tone, its fractured structure, the dark gray-brown crater-floor regolith and the contrast between them; the top-down spacecraft viewpoint, framing, false-colour treatment and lighting of those images were not copied, and no pixel of the input is preserved. Standing height, side view of the deposit.",
+      "model": "gpt-image-2.5-sunburst",
+      "requestedQuality": "high",
+      "requestedSize": "3840x1920",
+      "qualityExecutionVerified": false,
+      "references": [
+        "NASA/JPL-Caltech/UCLA/MPS/DLR/IDA PIA21924 (material and landform character)",
+        "NASA/JPL-Caltech/UCLA/MPS/DLR/IDA PIA24021 (salt/regolith contrast, false colour)"
+      ],
+      "requestedSizeAccepted": true
     }
   ],
-  "updatedOn": "2026-09-16"
+  "updatedOn": "2026-09-19"
 }

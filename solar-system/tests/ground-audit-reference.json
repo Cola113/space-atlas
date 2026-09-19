@@ -4,7 +4,8 @@
   "kernelSha256": {
     "de440s.bsp": "c1c7feeab882263fc493a9d5a5b2ddd71b54826cdf65d8d17a76126b260a49f2",
     "surface-reference-valid-coverage.bsp": "7b5c697d5f06311dd9858d95e2376d5e9a44491ae48cc5afe40647c8664bcde2",
-    "pck00011.tpc": "3dff7b1dbeceaa01f25467767d3fa25816051c85d162d1edf04acb310ee28bb1"
+    "pck00011.tpc": "3dff7b1dbeceaa01f25467767d3fa25816051c85d162d1edf04acb310ee28bb1",
+    "ceres-horizons.spk": "f6cb484d1ada38f0139dfe4f7f73a9fdbbd94f23e2edf281171286ae1e516849"
   },
   "horizons": {
     "io": {
@@ -23556,6 +23557,942 @@
           ],
           "distanceKm": 107539923.10063438,
           "angularDiameter": 0.012938541011407487,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        }
+      }
+    },
+    {
+      "siteId": "ceres",
+      "id": "ceres",
+      "parent": "sun",
+      "date": "1900-01-01T00:00:00Z",
+      "tdbSeconds": -3155716802.7589946,
+      "latitude": 19.7,
+      "longitude": 239.6,
+      "radiusKm": 469.7,
+      "parentRadiusKm": 695700,
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.6316170045500382,
+            -0.7099494741537444,
+            -0.3114991231320868
+          ],
+          "distanceKm": 426480067.5575681,
+          "angularDiameter": 0.0032625220331104314,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        }
+      }
+    },
+    {
+      "siteId": "ceres",
+      "id": "ceres",
+      "parent": "sun",
+      "date": "1900-12-31T23:59:59Z",
+      "tdbSeconds": -3124180802.4052444,
+      "latitude": 19.7,
+      "longitude": 239.6,
+      "radiusKm": 469.7,
+      "parentRadiusKm": 695700,
+      "targets": {
+        "sun": {
+          "direction": [
+            0.4624845670181244,
+            -0.8141332277453268,
+            -0.3511340381549959
+          ],
+          "distanceKm": 446090130.41881055,
+          "angularDiameter": 0.003119101879077276,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        }
+      }
+    },
+    {
+      "siteId": "ceres",
+      "id": "ceres",
+      "parent": "sun",
+      "date": "1971-08-01T17:00:00Z",
+      "tdbSeconds": -896813958.2280614,
+      "latitude": 19.7,
+      "longitude": 239.6,
+      "radiusKm": 469.7,
+      "parentRadiusKm": 695700,
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.9970272101844706,
+            0.02820448175274473,
+            0.07170250595921328
+          ],
+          "distanceKm": 395951537.33276963,
+          "angularDiameter": 0.003514068224832637,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        }
+      }
+    },
+    {
+      "siteId": "ceres",
+      "id": "ceres",
+      "parent": "sun",
+      "date": "2000-01-01T12:00:00Z",
+      "tdbSeconds": 64.18392728473108,
+      "latitude": 19.7,
+      "longitude": 239.6,
+      "radiusKm": 469.7,
+      "parentRadiusKm": 695700,
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.9982609569418563,
+            0.00391131070082547,
+            0.058819754284856994
+          ],
+          "distanceKm": 381646799.38541305,
+          "angularDiameter": 0.0036457813162025644,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        }
+      }
+    },
+    {
+      "siteId": "ceres",
+      "id": "ceres",
+      "parent": "sun",
+      "date": "2100-12-31T23:59:59Z",
+      "tdbSeconds": 3187252868.183877,
+      "latitude": 19.7,
+      "longitude": 239.6,
+      "radiusKm": 469.7,
+      "parentRadiusKm": 695700,
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.9974964972267052,
+            -0.028861927999425413,
+            0.06455793624807159
+          ],
+          "distanceKm": 384389697.9583586,
+          "angularDiameter": 0.003619766000545615,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        }
+      }
+    },
+    {
+      "siteId": "ceres",
+      "id": "ceres",
+      "parent": "sun",
+      "date": "2026-09-18T00:20:25Z",
+      "tdbSeconds": 842962894.1824186,
+      "latitude": 19.7,
+      "longitude": 239.6,
+      "radiusKm": 469.7,
+      "parentRadiusKm": 695700,
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.9096587909149635,
+            0.3698933043116094,
+            0.18894397988971814
+          ],
+          "distanceKm": 401459209.09703493,
+          "angularDiameter": 0.0034658582114370493,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        }
+      }
+    },
+    {
+      "siteId": "ceres",
+      "id": "ceres",
+      "parent": "sun",
+      "date": "2026-09-18T00:20:25.000Z",
+      "tdbSeconds": 842962894.1824186,
+      "latitude": 19.7,
+      "longitude": 239.6,
+      "radiusKm": 469.7,
+      "parentRadiusKm": 695700,
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.9096587909149635,
+            0.3698933043116094,
+            0.18894397988971814
+          ],
+          "distanceKm": 401459209.09703493,
+          "angularDiameter": 0.0034658582114370493,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        }
+      }
+    },
+    {
+      "siteId": "ceres",
+      "id": "ceres",
+      "parent": "sun",
+      "date": "2027-04-15T23:53:58.693Z",
+      "tdbSeconds": 861105307.878624,
+      "latitude": 19.7,
+      "longitude": 239.6,
+      "radiusKm": 469.7,
+      "parentRadiusKm": 695700,
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.49957516063377205,
+            -0.8363635705399026,
+            -0.22565601421519074
+          ],
+          "distanceKm": 382881163.9360958,
+          "angularDiameter": 0.0036340277263143365,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        }
+      }
+    },
+    {
+      "siteId": "ceres",
+      "id": "ceres",
+      "parent": "sun",
+      "date": "2027-11-11T23:27:32.386Z",
+      "tdbSeconds": 879247721.5686715,
+      "latitude": 19.7,
+      "longitude": 239.6,
+      "radiusKm": 469.7,
+      "parentRadiusKm": 695700,
+      "targets": {
+        "sun": {
+          "direction": [
+            0.7871079546525934,
+            -0.590996663777107,
+            -0.17658995194217636
+          ],
+          "distanceKm": 384963489.74419826,
+          "angularDiameter": 0.0036143706986120705,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        }
+      }
+    },
+    {
+      "siteId": "ceres",
+      "id": "ceres",
+      "parent": "sun",
+      "date": "2028-06-08T23:01:06.080Z",
+      "tdbSeconds": 897390135.2647046,
+      "latitude": 19.7,
+      "longitude": 239.6,
+      "radiusKm": 469.7,
+      "parentRadiusKm": 695700,
+      "targets": {
+        "sun": {
+          "direction": [
+            0.6770973828711404,
+            0.7011192307387056,
+            0.22354184932002835
+          ],
+          "distanceKm": 405993816.7417527,
+          "angularDiameter": 0.003427147467670321,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        }
+      }
+    },
+    {
+      "siteId": "ceres",
+      "id": "ceres",
+      "parent": "sun",
+      "date": "2029-01-04T22:34:39.773Z",
+      "tdbSeconds": 915532548.9570407,
+      "latitude": 19.7,
+      "longitude": 239.6,
+      "radiusKm": 469.7,
+      "parentRadiusKm": 695700,
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.7442441591138999,
+            0.6475316745322776,
+            0.16371732376956724
+          ],
+          "distanceKm": 430677777.4910294,
+          "angularDiameter": 0.003230723008798274,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        }
+      }
+    },
+    {
+      "siteId": "ceres",
+      "id": "ceres",
+      "parent": "sun",
+      "date": "2029-08-02T22:08:13.466Z",
+      "tdbSeconds": 933674962.649225,
+      "latitude": 19.7,
+      "longitude": 239.6,
+      "radiusKm": 469.7,
+      "parentRadiusKm": 695700,
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.6002647450741081,
+            -0.7272928825287397,
+            -0.3327571168948203
+          ],
+          "distanceKm": 445313429.3153332,
+          "angularDiameter": 0.003124542118874885,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        }
+      }
+    },
+    {
+      "siteId": "ceres",
+      "id": "ceres",
+      "parent": "sun",
+      "date": "2030-02-28T21:41:47.160Z",
+      "tdbSeconds": 951817376.3453751,
+      "latitude": 19.7,
+      "longitude": 239.6,
+      "radiusKm": 469.7,
+      "parentRadiusKm": 695700,
+      "targets": {
+        "sun": {
+          "direction": [
+            0.8568389489626735,
+            -0.46976826467537464,
+            -0.21247304074735734
+          ],
+          "distanceKm": 443611737.9729571,
+          "angularDiameter": 0.0031365278491162067,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        }
+      }
+    },
+    {
+      "siteId": "ceres",
+      "id": "ceres",
+      "parent": "sun",
+      "date": "2030-09-26T21:15:20.853Z",
+      "tdbSeconds": 969959790.0353621,
+      "latitude": 19.7,
+      "longitude": 239.6,
+      "radiusKm": 469.7,
+      "parentRadiusKm": 695700,
+      "targets": {
+        "sun": {
+          "direction": [
+            0.44761732931635934,
+            0.8401234577223105,
+            0.30631895514381613
+          ],
+          "distanceKm": 426314690.92272586,
+          "angularDiameter": 0.0032637876366781253,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        }
+      }
+    },
+    {
+      "siteId": "ceres",
+      "id": "ceres",
+      "parent": "sun",
+      "date": "2031-04-24T20:48:54.547Z",
+      "tdbSeconds": 988102203.732556,
+      "latitude": 19.7,
+      "longitude": 239.6,
+      "radiusKm": 469.7,
+      "parentRadiusKm": 695700,
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.8919928455624412,
+            0.4046336124063466,
+            0.20154504006898757
+          ],
+          "distanceKm": 401267659.92932665,
+          "angularDiameter": 0.003467512675494644,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        }
+      }
+    },
+    {
+      "siteId": "ceres",
+      "id": "ceres",
+      "parent": "sun",
+      "date": "2031-11-20T20:22:28.240Z",
+      "tdbSeconds": 1006244617.4228388,
+      "latitude": 19.7,
+      "longitude": 239.6,
+      "radiusKm": 469.7,
+      "parentRadiusKm": 695700,
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.5345238508875791,
+            -0.816459413312275,
+            -0.21835356476615903
+          ],
+          "distanceKm": 383146864.0378722,
+          "angularDiameter": 0.0036315076414881846,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        }
+      }
+    },
+    {
+      "siteId": "ceres",
+      "id": "ceres",
+      "parent": "sun",
+      "date": "2032-06-17T19:56:01.933Z",
+      "tdbSeconds": 1024387031.1174732,
+      "latitude": 19.7,
+      "longitude": 239.6,
+      "radiusKm": 469.7,
+      "parentRadiusKm": 695700,
+      "targets": {
+        "sun": {
+          "direction": [
+            0.762471752546622,
+            -0.6195519863159525,
+            -0.18652657403287287
+          ],
+          "distanceKm": 385386054.1864684,
+          "angularDiameter": 0.003610407643432003,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        }
+      }
+    },
+    {
+      "siteId": "ceres",
+      "id": "ceres",
+      "parent": "sun",
+      "date": "2033-01-13T19:29:35.627Z",
+      "tdbSeconds": 1042529444.811295,
+      "latitude": 19.7,
+      "longitude": 239.6,
+      "radiusKm": 469.7,
+      "parentRadiusKm": 695700,
+      "targets": {
+        "sun": {
+          "direction": [
+            0.7043733093214607,
+            0.6764685166041862,
+            0.21505484686206439
+          ],
+          "distanceKm": 406101646.0383378,
+          "angularDiameter": 0.003426237480562664,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        }
+      }
+    },
+    {
+      "siteId": "ceres",
+      "id": "ceres",
+      "parent": "sun",
+      "date": "2033-08-11T19:03:09.320Z",
+      "tdbSeconds": 1060671858.5030152,
+      "latitude": 19.7,
+      "longitude": 239.6,
+      "radiusKm": 469.7,
+      "parentRadiusKm": 695700,
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.7183615148045402,
+            0.6737578065014925,
+            0.17322572622455262
+          ],
+          "distanceKm": 430404730.9914039,
+          "angularDiameter": 0.0032327725642824633,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        }
+      }
+    },
+    {
+      "siteId": "ceres",
+      "id": "ceres",
+      "parent": "sun",
+      "date": "2034-03-09T18:36:43.014Z",
+      "tdbSeconds": 1078814272.1995,
+      "latitude": 19.7,
+      "longitude": 239.6,
+      "radiusKm": 469.7,
+      "parentRadiusKm": 695700,
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.6313119651712035,
+            -0.704329574658405,
+            -0.3245998350171853
+          ],
+          "distanceKm": 444850840.7456908,
+          "angularDiameter": 0.0031277912498529833,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        }
+      }
+    },
+    {
+      "siteId": "ceres",
+      "id": "ceres",
+      "parent": "sun",
+      "date": "2034-10-05T18:10:16.707Z",
+      "tdbSeconds": 1096956685.889343,
+      "latitude": 19.7,
+      "longitude": 239.6,
+      "radiusKm": 469.7,
+      "parentRadiusKm": 695700,
+      "targets": {
+        "sun": {
+          "direction": [
+            0.834934963907463,
+            -0.5026103563756417,
+            -0.22420177454425766
+          ],
+          "distanceKm": 443352633.97251594,
+          "angularDiameter": 0.0031383608991936564,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        }
+      }
+    },
+    {
+      "siteId": "ceres",
+      "id": "ceres",
+      "parent": "sun",
+      "date": "2035-05-03T17:43:50.400Z",
+      "tdbSeconds": 1115099099.5854526,
+      "latitude": 19.7,
+      "longitude": 239.6,
+      "radiusKm": 469.7,
+      "parentRadiusKm": 695700,
+      "targets": {
+        "sun": {
+          "direction": [
+            0.4843629035039556,
+            0.8217875599440716,
+            0.30009629126396586
+          ],
+          "distanceKm": 426880982.23181975,
+          "angularDiameter": 0.003259457960989281,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        }
+      }
+    },
+    {
+      "siteId": "ceres",
+      "id": "ceres",
+      "parent": "sun",
+      "date": "2035-11-29T17:17:24.094Z",
+      "tdbSeconds": 1133241513.2770338,
+      "latitude": 19.7,
+      "longitude": 239.6,
+      "radiusKm": 469.7,
+      "parentRadiusKm": 695700,
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.8744261245450495,
+            0.43580045706239917,
+            0.21320627180580273
+          ],
+          "distanceKm": 402935411.40451956,
+          "angularDiameter": 0.003453160610685858,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        }
+      }
+    },
+    {
+      "siteId": "ceres",
+      "id": "ceres",
+      "parent": "sun",
+      "date": "2036-06-26T16:50:57.787Z",
+      "tdbSeconds": 1151383926.9712315,
+      "latitude": 19.7,
+      "longitude": 239.6,
+      "radiusKm": 469.7,
+      "parentRadiusKm": 695700,
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.5591696305092383,
+            -0.801445140800755,
+            -0.21216741173662876
+          ],
+          "distanceKm": 384997170.3390203,
+          "angularDiameter": 0.003614054503333448,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        }
+      }
+    },
+    {
+      "siteId": "ceres",
+      "id": "ceres",
+      "parent": "sun",
+      "date": "2037-01-22T16:24:31.481Z",
+      "tdbSeconds": 1169526340.6655421,
+      "latitude": 19.7,
+      "longitude": 239.6,
+      "radiusKm": 469.7,
+      "parentRadiusKm": 695700,
+      "targets": {
+        "sun": {
+          "direction": [
+            0.7469684923277424,
+            -0.6367305682170795,
+            -0.19134329088728158
+          ],
+          "distanceKm": 385992546.1090467,
+          "angularDiameter": 0.003604734773662935,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        }
+      }
+    },
+    {
+      "siteId": "ceres",
+      "id": "ceres",
+      "parent": "sun",
+      "date": "2037-08-20T15:58:05.174Z",
+      "tdbSeconds": 1187668754.356827,
+      "latitude": 19.7,
+      "longitude": 239.6,
+      "radiusKm": 469.7,
+      "parentRadiusKm": 695700,
+      "targets": {
+        "sun": {
+          "direction": [
+            0.7217950534542507,
+            0.6595657291415388,
+            0.20972589194223482
+          ],
+          "distanceKm": 405141078.1988533,
+          "angularDiameter": 0.0034343609144537397,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        }
+      }
+    },
+    {
+      "siteId": "ceres",
+      "id": "ceres",
+      "parent": "sun",
+      "date": "2038-03-18T15:31:38.867Z",
+      "tdbSeconds": 1205811168.05259,
+      "latitude": 19.7,
+      "longitude": 239.6,
+      "radiusKm": 469.7,
+      "parentRadiusKm": 695700,
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.6969987821652898,
+            0.6940775614600591,
+            0.18013616055018244
+          ],
+          "distanceKm": 428766278.5185121,
+          "angularDiameter": 0.00324512602841208,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        }
+      }
+    },
+    {
+      "siteId": "ceres",
+      "id": "ceres",
+      "parent": "sun",
+      "date": "2038-10-14T15:05:12.561Z",
+      "tdbSeconds": 1223953581.7433622,
+      "latitude": 19.7,
+      "longitude": 239.6,
+      "radiusKm": 469.7,
+      "parentRadiusKm": 695700,
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.6583474178712213,
+            -0.6824672386781758,
+            -0.31751715782502443
+          ],
+          "distanceKm": 443605771.3799563,
+          "angularDiameter": 0.003136570036124721,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        }
+      }
+    },
+    {
+      "siteId": "ceres",
+      "id": "ceres",
+      "parent": "sun",
+      "date": "2039-05-12T14:38:46.254Z",
+      "tdbSeconds": 1242095995.4393165,
+      "latitude": 19.7,
+      "longitude": 239.6,
+      "radiusKm": 469.7,
+      "parentRadiusKm": 695700,
+      "targets": {
+        "sun": {
+          "direction": [
+            0.813504738731607,
+            -0.5318560836060208,
+            -0.23524273929812486
+          ],
+          "distanceKm": 443095206.78309387,
+          "angularDiameter": 0.0031401842095725246,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        }
+      }
+    },
+    {
+      "siteId": "ceres",
+      "id": "ceres",
+      "parent": "sun",
+      "date": "2039-12-08T14:12:19.948Z",
+      "tdbSeconds": 1260238409.1312518,
+      "latitude": 19.7,
+      "longitude": 239.6,
+      "radiusKm": 469.7,
+      "parentRadiusKm": 695700,
+      "targets": {
+        "sun": {
+          "direction": [
+            0.5163483784351217,
+            0.8045324044628317,
+            0.2934483979453199
+          ],
+          "distanceKm": 427426201.8107166,
+          "angularDiameter": 0.0032553002330359166,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        }
+      }
+    },
+    {
+      "siteId": "ceres",
+      "id": "ceres",
+      "parent": "sun",
+      "date": "2040-07-05T13:45:53.641Z",
+      "tdbSeconds": 1278380822.8249848,
+      "latitude": 19.7,
+      "longitude": 239.6,
+      "radiusKm": 469.7,
+      "parentRadiusKm": 695700,
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.8574491005525726,
+            0.46380844748035976,
+            0.22285143932100374
+          ],
+          "distanceKm": 403582776.0463038,
+          "angularDiameter": 0.0034476215826835335,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        }
+      }
+    },
+    {
+      "siteId": "ceres",
+      "id": "ceres",
+      "parent": "sun",
+      "date": "2041-01-31T13:19:27.334Z",
+      "tdbSeconds": 1296523236.5187764,
+      "latitude": 19.7,
+      "longitude": 239.6,
+      "radiusKm": 469.7,
+      "parentRadiusKm": 695700,
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.5854280803945265,
+            -0.7841641957817407,
+            -0.20581660948416128
+          ],
+          "distanceKm": 385172914.43516034,
+          "angularDiameter": 0.0036124055051584975,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        }
+      }
+    },
+    {
+      "siteId": "ceres",
+      "id": "ceres",
+      "parent": "sun",
+      "date": "2041-08-29T12:53:01.028Z",
+      "tdbSeconds": 1314665650.210665,
+      "latitude": 19.7,
+      "longitude": 239.6,
+      "radiusKm": 469.7,
+      "parentRadiusKm": 695700,
+      "targets": {
+        "sun": {
+          "direction": [
+            0.724691922865607,
+            -0.65973511503677,
+            -0.1989250987702889
+          ],
+          "distanceKm": 385549176.2571438,
+          "angularDiameter": 0.003608880113751286,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        }
+      }
+    },
+    {
+      "siteId": "ceres",
+      "id": "ceres",
+      "parent": "sun",
+      "date": "2042-03-27T12:26:34.721Z",
+      "tdbSeconds": 1332808063.9066422,
+      "latitude": 19.7,
+      "longitude": 239.6,
+      "radiusKm": 469.7,
+      "parentRadiusKm": 695700,
+      "targets": {
+        "sun": {
+          "direction": [
+            0.7459566446165826,
+            0.6348426033256109,
+            0.2013046282506452
+          ],
+          "distanceKm": 404546918.2099845,
+          "angularDiameter": 0.003439404981682895,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        }
+      }
+    },
+    {
+      "siteId": "ceres",
+      "id": "ceres",
+      "parent": "sun",
+      "date": "2042-10-23T12:00:08.415Z",
+      "tdbSeconds": 1350950477.5974195,
+      "latitude": 19.7,
+      "longitude": 239.6,
+      "radiusKm": 469.7,
+      "parentRadiusKm": 695700,
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.670013753417672,
+            0.7179655256688369,
+            0.18869836825535646
+          ],
+          "distanceKm": 428641876.87973696,
+          "angularDiameter": 0.0032460678387487975,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        }
+      }
+    },
+    {
+      "siteId": "ceres",
+      "id": "ceres",
+      "parent": "sun",
+      "date": "2043-05-21T11:33:42.108Z",
+      "tdbSeconds": 1369092891.2931511,
+      "latitude": 19.7,
+      "longitude": 239.6,
+      "radiusKm": 469.7,
+      "parentRadiusKm": 695700,
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.6851650740002052,
+            -0.6593318402548602,
+            -0.3095647683384415
+          ],
+          "distanceKm": 444011471.15316993,
+          "angularDiameter": 0.0031337041038756253,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        }
+      }
+    },
+    {
+      "siteId": "ceres",
+      "id": "ceres",
+      "parent": "sun",
+      "date": "2043-12-17T11:07:15.801Z",
+      "tdbSeconds": 1387235304.984488,
+      "latitude": 19.7,
+      "longitude": 239.6,
+      "radiusKm": 469.7,
+      "parentRadiusKm": 695700,
+      "targets": {
+        "sun": {
+          "direction": [
+            0.7929956897413839,
+            -0.5577186072757834,
+            -0.24516890330942698
+          ],
+          "distanceKm": 443632431.9232111,
+          "angularDiameter": 0.0031363815405963205,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        }
+      }
+    },
+    {
+      "siteId": "ceres",
+      "id": "ceres",
+      "parent": "sun",
+      "date": "2044-07-14T10:40:49.495Z",
+      "tdbSeconds": 1405377718.678738,
+      "latitude": 19.7,
+      "longitude": 239.6,
+      "radiusKm": 469.7,
+      "parentRadiusKm": 695700,
+      "targets": {
+        "sun": {
+          "direction": [
+            0.5442371405776754,
+            0.7883650801654319,
+            0.2868561228065175
+          ],
+          "distanceKm": 427606100.30873054,
+          "angularDiameter": 0.003253930691911708,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        }
+      }
+    },
+    {
+      "siteId": "ceres",
+      "id": "ceres",
+      "parent": "sun",
+      "date": "2045-02-09T10:14:23.188Z",
+      "tdbSeconds": 1423520132.372992,
+      "latitude": 19.7,
+      "longitude": 239.6,
+      "radiusKm": 469.7,
+      "parentRadiusKm": 695700,
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.8400261889807389,
+            0.4904534255015448,
+            0.23197292781765913
+          ],
+          "distanceKm": 403122767.6555517,
+          "angularDiameter": 0.0034515557103413897,
           "illuminatedFraction": 1.0,
           "sunDirection": null
         }
