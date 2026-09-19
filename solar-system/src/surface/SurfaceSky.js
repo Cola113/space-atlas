@@ -15,6 +15,7 @@ import { createRingSystemGeometry, ringSystemFor } from '../ring-systems.js';
 import { createRingScatteringTexture, SCATTERING_ROW_BASE, shippedScatteringTable } from '../ring-multiple-scattering.js';
 import { createRingSurfaceMaterial } from '../ring-photometry.js';
 import { patchEarthNightMaterial } from '../earth-night.js';
+import { createSaturnWeatherUniforms, patchSaturnWeather } from '../saturn-weather.js';
 
 const { smoothstep, clamp, degToRad } = THREE.MathUtils;
 const HOURS = 3600000;
@@ -165,6 +166,9 @@ export function createSurfaceSky({scene,renderer,site,parentMap,cloudMap,groundM
     const globe=new THREE.Mesh(skyGlobeGeometry(id,Boolean(map)),material);
     globe.name=`surface-${name}`;
     if(name==='Jupiter'&&map)windMaterial(material,.0001);
+    // The same haze and polar morphology as the overview. Surface skies show the
+    // representative baseline; demonstration weather events belong to the overview.
+    if(id==='saturn')patchSaturnWeather(material,createSaturnWeatherUniforms());
     const sunlight=new THREE.Vector3();
     bindPhysicalSun(material,sunlight);
     const physicalScale={value:1};

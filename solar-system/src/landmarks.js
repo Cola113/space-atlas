@@ -72,7 +72,8 @@ export const landmarks = {
   ],
   saturn: [
     { id: 'ring-shadow', name: '土星环阴影', dynamic: 'ring-shadow', location: '云顶 / 环系投影', text: '光环挡住阳光，在云层上形成暗带。标记依据当前日照与环面计算，阴影对比度经过展示增强。', source: 'https://science.nasa.gov/saturn/facts/' },
-    { id: 'hexagon', name: '北极六边形风暴', uv: geographic(90, 0), location: '北极 / 六边形急流示意', text: '北极周围的高速急流形成近六边形边界，中心另有极地涡旋。形状和云纹为程序示意，不代表同期观测。', source: 'https://science.nasa.gov/photojournal/saturns-north-pole-hexagon-and-aurora/' },
+    { id: 'hexagon', name: '北极六边形风暴', uv: geographic(90, 0), location: '北极 / 约 78°N 的六边形急流', text: '近六边形的急流边界包围北极，云纹沿边界流动，中央另有带风眼的极地涡旋。这里采用自然色观感与加速程序动画，并非同期影像或流体预报。', source: 'https://science.nasa.gov/mission/cassini/science/saturn/hexagon-in-motion/' },
+    { id: 'saturn-storm', name: '白色风暴', dynamic: 'saturn-storm', location: '北半球约 35°N / 经度与演变为示意', text: '参考卡西尼记录的 2010—2011 年巨大风暴：明亮对流云团膨胀，被急流拉成长尾。这里自动间歇演示，也可手动触发；演示频率不代表真实发生周期或当前天气。', source: 'https://science.nasa.gov/resource/spotting-saturns-northern-storm/' },
   ],
   io: [
     { id: 'volcanic-plume', name: '火山喷发', dynamic: 'volcanic-plume', zoom: 1.3, location: '模拟热点 / 火山喷发', text: '喷发物从当前演示热点拱起并散落。此位置不指代某座已命名火山，强度与时间均为示意。', source: 'https://science.nasa.gov/jupiter/moons/io/' },

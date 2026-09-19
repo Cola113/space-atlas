@@ -1,13 +1,15 @@
 import * as THREE from "three";
 import simplexSource from "glsl-noise/simplex/3d.glsl?raw";
 import { additionalBodies } from "./additional-bodies.js";
-import { solarEruptionAxis, volcanicAxis, icePlumeAxis, tritonPlumeAxis, plumeViewDirection } from './feature-anchors.js';
+import { solarEruptionAxis, volcanicAxis, icePlumeAxis, tritonPlumeAxis, plumeViewDirection, uvDirection } from './feature-anchors.js';
 import { createRingOpticalDepthTexture, RING_INNER, RING_OUTER, RING_SURGE_SCALE_RAD } from './ring-optical-depth.js';
 import { EARTH_NIGHT_GLSL } from './earth-night.js';
 import { RING_PHOTOMETRY_GLSL, RING_DISPLAY_LEVEL } from './ring-photometry.js';
 import {marsPolarFrostEdges, marsSolarLongitude} from './mars-seasons.js';
 import { ringSystems, ringSystemFor } from './ring-systems.js';
 import { createRingScatteringTexture, SCATTERING_ROW_BASE, shippedScatteringTable } from './ring-multiple-scattering.js';
+import { createSaturnWeatherUniforms, patchSaturnWeather, saturnStormUv, SATURN_STORM_DURATION } from './saturn-weather.js';
+import { shapeSurfacePoint, shapeSurfaceNormal } from './body-geometry.js';
 
 const simplex = simplexSource.replace("#pragma glslify: export(snoise)", "");
 const TAU = Math.PI * 2;
@@ -70,12 +72,13 @@ export const activityProfiles = {
     interval: 37,
   },
   saturn: {
-    title: "大气环流与光环粒子",
-    text: "柔和云带缓慢流动。环中的冰粒沿各自轨道运行，内侧环粒绕行得更快。",
-    trigger: "环粒高亮",
-    idle: "云流与环粒绕行",
-    active: "光环粒子观测",
-    duration: 18,
+    title: "薄霾、急流与极地涡旋",
+    text: "淡金色薄霾下，云带差速流动，北极云纹沿六边形急流卷动。白色风暴会自动间歇出现，也可手动触发，云团扩张并拖出长尾。演示频率与速度经过加速，非真实发生周期或当前天气。",
+    trigger: "模拟白色风暴",
+    idle: "云带与极地环流",
+    active: "白色风暴演变",
+    automatic: true,
+    duration: SATURN_STORM_DURATION,
     interval: 43,
   },
   uranus: {
@@ -364,15 +367,6 @@ function gasMap(id) {
       swirl: 0.085,
       cloud: 0.045,
     },
-    saturn: {
-      bands: 34,
-      drift: 0.001,
-      warp: 0.001,
-      center: [".20", ".64"],
-      size: [".06", ".04"],
-      swirl: 0.06,
-      cloud: 0.04,
-    },
     uranus: {
       bands: 14,
       drift: 0.0015,
@@ -419,18 +413,6 @@ function gasMap(id) {
       gasColor.rgb += vec3(${num(settings.cloud)}) * flowAmount * movingCloud
         * (.25 + uActivityEvent * .75) * (.24 + stormMask * .76);
       ${id === "neptune" ? "gasColor.rgb *= 1.0 - stormMask * uActivityEvent * .24;" : ""}
-      ${id === 'saturn' ? `
-        // A sourced polar shape with illustrative cloud detail, not dated imagery.
-        vec3 polar = normalize(vActivityDir);
-        float sector = mod(atan(polar.z, polar.x) + .5235988, 1.0471976) - .5235988;
-        float hexRadius = length(polar.xz) * cos(sector);
-        float north = smoothstep(.96, .975, polar.y);
-        float hexEdge = exp(-pow((hexRadius - .180) / .007, 2.0)) * north;
-        float hexInterior = (1.0 - smoothstep(.168, .184, hexRadius)) * north;
-        gasColor.rgb = mix(gasColor.rgb, gasColor.rgb * vec3(.72, .83, .83), hexInterior * .55);
-        gasColor.rgb *= 1.0 - hexEdge * .28;
-        gasColor.rgb *= 1.0 - exp(-dot(polar.xz, polar.xz) / .00022) * north * .45;
-      ` : ''}
       diffuseColor *= gasColor;
     #endif
   `;
@@ -958,6 +940,8 @@ function createParticles(record, kind) {
   const material = new THREE.ShaderMaterial({
     uniforms: {
       ...record.uniforms,
+      // A convective cloud outbreak does not brighten the ring particles.
+      ...(kind === 'rings' ? { uActivityEvent: { value: 0 } } : {}),
       uParticleScale: { value: 1 },
       uParticleColor: {
         value: new THREE.Color(
@@ -1116,7 +1100,7 @@ export function createDynamics(objects, { defer = false } = {}) {
       )
     ) {
       patchMaterial(body.mesh.material, body.id, record.uniforms, {
-        map_fragment: gasMap(body.id),
+        map_fragment: body.id === 'saturn' ? '#include <map_fragment>' : gasMap(body.id),
         ...(body.id === "saturn"
           ? { lights_fragment_begin: saturnDirectLighting(
               // Origin the shadow ray at the real surface point. Re-normalising it would
@@ -1125,6 +1109,10 @@ export function createDynamics(objects, { defer = false } = {}) {
             ) }
           : {}),
       });
+      if (body.id === 'saturn') {
+        record.weather = createSaturnWeatherUniforms();
+        patchSaturnWeather(body.mesh.material, record.weather);
+      }
     }
     if (body.ring && ringSystems[body.id]) attachRingSurface(record);
     if (id === focus) ensureDetail(record);
@@ -1165,6 +1153,14 @@ export function createDynamics(objects, { defer = false } = {}) {
     record.eventStart = record.time;
     record.eventCount++;
     record.nextEvent = record.time + activityProfiles[id].interval;
+    if (record.weather) {
+      // A representative outbreak with no claimed observed longitude. Choose its
+      // initial meridian once; afterwards the cloud and marker share the same drift.
+      const sun = record.uniforms.uSurfaceSun.value;
+      record.stormOrigin = Math.atan2(sun.z, -sun.x) / TAU;
+      record.weather.uSaturnProgress.value = 0;
+      record.weather.uSaturnStorm.value.fromArray(saturnStormUv(0, record.stormOrigin));
+    }
     return true;
   }
 
@@ -1254,6 +1250,7 @@ export function createDynamics(objects, { defer = false } = {}) {
       if (
         moving &&
         active &&
+        profile.automatic !== false &&
         !profile.illumination &&
         record.time >= record.nextEvent &&
         (id !== "venus" || record.body.layerVisible)
@@ -1280,6 +1277,11 @@ export function createDynamics(objects, { defer = false } = {}) {
       record.uniforms.uActivityDetail.value = active ? 1 : 0.12;
       record.uniforms.uActivityEvent.value = observed ? 0 : envelope;
       record.uniforms.uActivityProgress.value = inEvent ? progress : -1;
+      if (record.weather) {
+        record.weather.uSaturnTime.value = record.time;
+        record.weather.uSaturnProgress.value = enabled && inEvent ? progress : -1;
+        record.weather.uSaturnStorm.value.fromArray(saturnStormUv(inEvent ? record.time-record.eventStart : 0, record.stormOrigin));
+      }
       if (id === "titan" && record.body.clouds) {
         // A second, slower haze layer gives Titan's generated atmospheric map
         // visible motion without changing the dated body rotation.
@@ -1311,6 +1313,10 @@ export function createDynamics(objects, { defer = false } = {}) {
       const progress = record.uniforms.uActivityProgress.value;
       const strength = record.uniforms.uActivityEvent.value;
       let point;
+      if (kind === 'saturn-storm' && record.weather?.uSaturnProgress.value >= 0 && record.weather.uSaturnProgress.value < .98) {
+        const local = shapeSurfacePoint(record.body, uvDirection(record.weather.uSaturnStorm.value.toArray()));
+        return { point: local.clone().multiplyScalar(1.017), viewDirection: shapeSurfaceNormal(record.body, local.clone()), extent: 1 };
+      }
       if (kind === 'prominence' && record.prominenceAnchor) {
         const anchor = record.prominenceAnchor;
         const life = .28 + .72 * THREE.MathUtils.smoothstep(Math.sin(record.time * .14 + anchor.phase), -.8, .85);
@@ -1412,6 +1418,13 @@ export function createDynamics(objects, { defer = false } = {}) {
     },
     setEnabled(value) {
       enabled = value;
+      if (!enabled) {
+        const saturn = records.get('saturn');
+        if (saturn?.weather) {
+          saturn.eventStart = -1000;
+          saturn.weather.uSaturnProgress.value = -1;
+        }
+      }
     },
     setRate(value) {
       rate = THREE.MathUtils.clamp(value, 0.5, 4);
@@ -1446,6 +1459,8 @@ export function createDynamics(objects, { defer = false } = {}) {
           event: r.uniforms.uActivityEvent.value,
           eventProgress: r.uniforms.uActivityProgress.value,
           eventCount: r.eventCount,
+          ...(r.weather ? { weather: { time: r.weather.uSaturnTime.value, progress: r.weather.uSaturnProgress.value,
+            stormUv: r.weather.uSaturnStorm.value.toArray() } } : {}),
           sunDirection: r.uniforms.uSurfaceSun.value.toArray(),
           cloudTransform: r.uniforms.uSurfaceToCloud.value.toArray(),
           observedClouds: r.uniforms.uObservedClouds.value,

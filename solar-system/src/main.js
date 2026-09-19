@@ -1653,7 +1653,13 @@ function triggerActivity() {
   state.nightView = false;
   updateObservationTools();
   if (body.layer && !body.layerVisible) setLayer(true);
-  if (["sun", "saturn"].includes(body.id)) {
+  if (body.id === 'saturn') {
+    dynamics.trigger();
+    selectLandmark('saturn-storm');
+    updateActivityUi();
+    return;
+  }
+  if (body.id === "sun") {
     if (state.close) toggleClose();
     else flyTo(body.root.position, focusedOffset(body), 850);
   } else {
