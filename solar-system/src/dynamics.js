@@ -366,12 +366,12 @@ function gasMap(id) {
     },
     saturn: {
       bands: 34,
-      drift: 0.001,
-      warp: 0.001,
-      center: [".20", ".64"],
-      size: [".06", ".04"],
-      swirl: 0.06,
-      cloud: 0.04,
+      drift: 0.0022,
+      warp: 0.0018,
+      center: [".36", ".695"],
+      size: [".070", ".042"],
+      swirl: 0.075,
+      cloud: 0.050,
     },
     uranus: {
       bands: 14,
@@ -399,7 +399,14 @@ function gasMap(id) {
       float flowAmount = uActivityEnabled * uActivityDetail;
       float poleFade = pow(max(sin(flowUv.y * 3.14159265), 0.0), 2.0);
       float latitude = flowUv.y * 3.14159265;
-      float jet = sin(latitude * ${num(settings.bands)}) + .3 * sin(latitude * 47.0);
+      ${id === 'saturn' ? `
+        // Saturn's winds are dominated by the solar system's fastest, broadest equatorial
+        // jet stream (~450 m/s prograde, ~30S to ~30N), with alternating zonal shear jets at mid-high latitudes.
+        float eqJet = exp(-pow((flowUv.y - .5) / .135, 2.0)) * 2.85;
+        float jet = eqJet + sin(latitude * ${num(settings.bands)}) * .65 + .35 * sin(latitude * 53.0);
+      ` : `
+        float jet = sin(latitude * ${num(settings.bands)}) + .3 * sin(latitude * 47.0);
+      `}
       vec2 stormCenter = vec2(${settings.center.join(",")});
       vec2 stormDelta = flowUv - stormCenter;
       stormDelta.x -= floor(stormDelta.x + .5);
@@ -416,20 +423,60 @@ function gasMap(id) {
         vec2(${settings.size.join(",")}), cycle.y * swirl);
       vec4 gasColor = mix(sampleGlobe(map, uvB), sampleGlobe(map, uvA), cycle.z);
       float movingCloud = smoothstep(-.10, .60, turbulence);
-      gasColor.rgb += vec3(${num(settings.cloud)}) * flowAmount * movingCloud
-        * (.25 + uActivityEvent * .75) * (.24 + stormMask * .76);
+      ${id === 'saturn' ? `
+        // Saturn's base map has uniform horizontal bands with little longitudinal contrast.
+        // By advecting procedural cloud billows and ammonia streaks along uvA and uvB,
+        // the 450 m/s equatorial jet stream and mid-latitude shear bands come vividly alive!
+        float waveA = snoise(vec3(uvA.x * 42.0, uvA.y * 28.0, 1.7));
+        float waveB = snoise(vec3(uvB.x * 42.0, uvB.y * 28.0, 1.7));
+        float advectedWaves = mix(waveB, waveA, cycle.z);
+        float saturnCloud = (movingCloud * .4 + advectedWaves * .6);
+        float saturnHaze = saturnCloud * (.55 + uActivityEvent * .50);
+        gasColor.rgb += vec3(.075, .068, .048) * flowAmount * saturnHaze * poleFade;
+        float whiteStorm = exp(-stormDistance * stormDistance * 2.4) * (.55 + uActivityEvent * 1.20);
+        gasColor.rgb += vec3(.110, .105, .090) * flowAmount * whiteStorm;
+      ` : `
+        gasColor.rgb += vec3(${num(settings.cloud)}) * flowAmount * movingCloud
+          * (.25 + uActivityEvent * .75) * (.24 + stormMask * .76);
+      `}
       ${id === "neptune" ? "gasColor.rgb *= 1.0 - stormMask * uActivityEvent * .24;" : ""}
       ${id === 'saturn' ? `
-        // A sourced polar shape with illustrative cloud detail, not dated imagery.
+        // Dynamic North Polar Hexagon (Rossby wave) and central polar hurricane vortex (Cassini PIA14946/PIA17104),
+        // plus South Polar circular hurricane vortex (Cassini PIA09187). Sourced geometry with schematic dynamics.
         vec3 polar = normalize(vActivityDir);
-        float sector = mod(atan(polar.z, polar.x) + .5235988, 1.0471976) - .5235988;
+        float north = smoothstep(.955, .975, polar.y);
+        float polarAngle = atan(polar.z, polar.x);
+
+        // 1. North Polar Hexagon Rossby Wave & Perimeter Jet
+        float sector = mod(polarAngle + .5235988, 1.0471976) - .5235988;
         float hexRadius = length(polar.xz) * cos(sector);
-        float north = smoothstep(.96, .975, polar.y);
-        float hexEdge = exp(-pow((hexRadius - .180) / .007, 2.0)) * north;
-        float hexInterior = (1.0 - smoothstep(.168, .184, hexRadius)) * north;
-        gasColor.rgb = mix(gasColor.rgb, gasColor.rgb * vec3(.72, .83, .83), hexInterior * .55);
-        gasColor.rgb *= 1.0 - hexEdge * .28;
-        gasColor.rgb *= 1.0 - exp(-dot(polar.xz, polar.xz) / .00022) * north * .45;
+        float hexFlowAngle = polarAngle - uActivityTime * .16 * flowAmount;
+        float wavePerturb = sin(hexFlowAngle * 12.0) * .0030 + snoise(vec3(polar.xz * 22.0, uActivityTime * .25)) * .0045;
+        float dynamicHexRadius = hexRadius + wavePerturb * flowAmount;
+        float hexEdge = exp(-pow((dynamicHexRadius - .180) / .007, 2.0)) * north;
+        float hexInterior = (1.0 - smoothstep(.168, .184, dynamicHexRadius)) * north;
+        float hexTurb = weatherNoise(vActivityDir * 32.0 + uWeatherOffset * .6);
+        gasColor.rgb = mix(gasColor.rgb, gasColor.rgb * vec3(.70, .84, .85), hexInterior * (.48 + hexTurb * .22 * flowAmount));
+        gasColor.rgb *= 1.0 - hexEdge * (.28 + wavePerturb * 10.0 * flowAmount);
+
+        // 2. North Polar Hurricane Eye & Spiraling Eyewall
+        float eyeDist = length(polar.xz);
+        float eyeAngle = polarAngle + uActivityTime * .85 * flowAmount - eyeDist * 38.0;
+        float eyeSpiral = sin(eyeAngle * 2.0) * .5 + .5;
+        float eyeCore = 1.0 - exp(-dot(polar.xz, polar.xz) / .00022);
+        float eyeWall = exp(-pow((eyeDist - .024) / .009, 2.0));
+        gasColor.rgb *= 1.0 - (1.0 - eyeCore) * north * .48;
+        gasColor.rgb += vec3(.065, .075, .085) * eyeWall * eyeSpiral * north * flowAmount;
+
+        // 3. South Polar Cyclone & Eyewall
+        float south = smoothstep(-.955, -.975, polar.y);
+        float southDist = length(polar.xz);
+        float southAngle = polarAngle - uActivityTime * .75 * flowAmount - southDist * 36.0;
+        float southSpiral = sin(southAngle * 2.0) * .5 + .5;
+        float southCore = 1.0 - exp(-dot(polar.xz, polar.xz) / .00026);
+        float southWall = exp(-pow((southDist - .028) / .010, 2.0));
+        gasColor.rgb *= 1.0 - (1.0 - southCore) * south * .40;
+        gasColor.rgb += vec3(.060, .062, .050) * southWall * southSpiral * south * flowAmount;
       ` : ''}
       diffuseColor *= gasColor;
     #endif
