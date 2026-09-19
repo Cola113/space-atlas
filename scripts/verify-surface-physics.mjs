@@ -2,7 +2,7 @@
 // npx tsx scripts/verify-surface-physics.mjs
 import { readFile } from 'node:fs/promises';
 import { MathUtils } from 'three';
-import { PhysicalState } from '../solar-system/src/physics/state.js';
+import { PhysicalState, systemsForBodies } from '../solar-system/src/physics/state.js';
 import { EphemerisStore } from '../solar-system/src/physics/ephemeris.js';
 import { physicalDefinitions } from '../solar-system/src/physics/definitions.js';
 import { physicalData } from '../solar-system/src/physical-scale.js';
@@ -15,8 +15,13 @@ const localFetcher = async path => {
 };
 const provider = new PhysicalState({ ephemeris: new EphemerisStore({ fetcher: localFetcher }) });
 provider.ephemeris.maxEntries = 64;
+// Derived from the sites rather than a hand-kept list: several loops below call
+// surfaceFrame, which requires its system synchronously, so a site added without
+// its system warmed here failed with a MissingEphemerisError instead of a check.
+const siteBodies = Object.values(landingSites).flatMap(site => [site.id, site.parent.toLowerCase()]);
+const siteSystems = systemsForBodies(siteBodies);
 for (const year of [1900, 1971, 2000, 2008, 2019, 2026, 2040, 2100]) {
-  try { await provider.ephemeris.ensure(new Date(`${year}-01-01T00:00:00Z`), ['saturn', 'uranus', 'pluto'], { prefetch: false }); } catch { /* out of covered range */ }
+  try { await provider.ephemeris.ensure(new Date(`${year}-01-01T00:00:00Z`), siteSystems, { prefetch: false }); } catch { /* out of covered range */ }
 }
 const deg = MathUtils.radToDeg;
 const failures = [];
@@ -101,5 +106,5 @@ if (failures.length) {
   for (const failure of failures.slice(0, 20)) console.log('  -', failure);
   process.exitCode = 1;
 } else {
-  console.log('\n16 处落点的角尺寸、方向、局部水平与昼夜关系与物理定义一致。');
+  console.log(`\n${Object.keys(landingSites).length} 处落点的角尺寸、方向、局部水平与昼夜关系与物理定义一致。`);
 }

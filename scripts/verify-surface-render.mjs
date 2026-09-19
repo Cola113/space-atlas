@@ -24,8 +24,12 @@ const localFetcher = async path => {
 };
 const provider = new PhysicalState({ ephemeris: new EphemerisStore({ fetcher: localFetcher }) });
 provider.ephemeris.maxEntries = 64;
+// Derived from the sites, not a hand-kept list: surfaceFrame requires its system
+// synchronously, so a site added without its system warmed here fails outright
+// rather than reporting a check.
+const siteBodies = Object.values(landingSites).flatMap(site => [site.id, site.parent.toLowerCase()]);
 for (const year of [1900, 1971, 2000, 2008, 2019, 2026, 2040, 2100]) {
-  try { await provider.ephemeris.ensure(new Date(`${year}-01-01T00:00:00Z`), ['saturn', 'uranus', 'pluto'], { prefetch: false }); } catch { /* outside the covered range */ }
+  try { await provider.ephemeris.ensure(new Date(`${year}-01-01T00:00:00Z`), siteBodies, { prefetch: false }); } catch { /* outside the covered range */ }
 }
 
 // Per texture column, the elevation of the highest ground the artist drew. Comparing the
