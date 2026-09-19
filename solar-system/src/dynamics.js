@@ -364,9 +364,13 @@ function gasMap(id) {
       swirl: 0.085,
       cloud: 0.045,
     },
+    // Saturn's cloud deck moves faster than Jupiter's (its equatorial jet runs at
+    // roughly three times Jupiter's speed), and its map -- unlike Jupiter's -- is
+    // nearly uniform along longitude, so the drift is what has to carry the
+    // visible motion. These magnitudes are a display choice, not a wind solution.
     saturn: {
       bands: 34,
-      drift: 0.001,
+      drift: 0.003,
       warp: 0.001,
       center: [".20", ".64"],
       size: [".06", ".04"],
@@ -430,6 +434,48 @@ function gasMap(id) {
         gasColor.rgb = mix(gasColor.rgb, gasColor.rgb * vec3(.72, .83, .83), hexInterior * .55);
         gasColor.rgb *= 1.0 - hexEdge * .28;
         gasColor.rgb *= 1.0 - exp(-dot(polar.xz, polar.xz) / .00022) * north * .45;
+
+        // The shipped map is almost uniform along longitude (its longitudinal
+        // deviation is about a third of Jupiter's), so the shared warp displaces
+        // nearly nothing the eye can follow: the band drift reads as a static
+        // stripe. The belts and the jets between them are the real part; this
+        // layer draws illustrative cloud filaments on top of them -- in the shear
+        // zones between belts, elongated along the bands, sampled at the same two
+        // flow phases the map uses -- so that what moves is the detail rather
+        // than the map sample. Placement, shape and strength are a display
+        // approximation, not an observation.
+        float saturnShear = pow(abs(cos(latitude * ${num(settings.bands)})), 3.0);
+        float saturnDetail = flowAmount * (.45 + .55 * saturnShear) * poleFade;
+        vec2 filamentUv = vec2(flowUv.x + uActivityTime * .006 * jet * poleFade, flowUv.y);
+        float filaments = weatherNoise(vec3(filamentUv * vec2(11.0, 26.0), uActivityTime * .02));
+        float fineFilaments = snoise(vec3(filamentUv * vec2(30.0, 78.0), uActivityTime * .03));
+        float wisps = smoothstep(-.13, .42, filaments + fineFilaments * .35);
+        gasColor.rgb *= 1.0 + (wisps - .45) * .38 * saturnDetail;
+
+        // Two discrete spots give the eye something to track across the bands --
+        // the part the Great Red Spot plays on Jupiter. Latitude, size, lifetime
+        // and drift are a display approximation, not a replay of any observation.
+        float spotLife = .55 + .45 * sin(uActivityTime * .023);
+        vec2 spotDeltaA = flowUv - vec2(flowUv.x + uActivityTime * .009, .225);
+        spotDeltaA.x -= floor(spotDeltaA.x + .5);
+        vec2 spotDeltaB = flowUv - vec2(flowUv.x - uActivityTime * .006, .625);
+        spotDeltaB.x -= floor(spotDeltaB.x + .5);
+        float spotA = exp(-dot(spotDeltaA / vec2(.018, .0092), spotDeltaA / vec2(.018, .0092)) * 1.8);
+        float spotB = exp(-dot(spotDeltaB / vec2(.015, .0078), spotDeltaB / vec2(.015, .0078)) * 2.2);
+        float rimA = exp(-dot(spotDeltaA / vec2(.023, .0125), spotDeltaA / vec2(.023, .0125)) * 2.0);
+        // Break the flat core: real storm tops are torn by the same shear they ride on.
+        float spotFuzz = .74 + .26 * weatherNoise(vec3(spotDeltaA * vec2(52.0, 76.0), uActivityTime * .04));
+        gasColor.rgb *= 1.0 - (rimA - spotA) * .18 * spotLife * saturnDetail;
+        gasColor.rgb = mix(gasColor.rgb, vec3(.965, .952, .918),
+          clamp(spotA * spotFuzz * .82 + spotB * .62, 0.0, 1.0) * spotLife * saturnDetail);
+
+        // One trackable feature, the part the Great Red Spot plays on Jupiter.
+        // Saturn's own great storms are rare and cannot be scheduled, so this one
+        // develops and turns while the activity event runs. Its place, size and
+        // timing are illustrative.
+        float saturnStorm = stormCloud(flowUv, stormCenter, uActivityTime);
+        gasColor.rgb = mix(gasColor.rgb, vec3(.97, .96, .93),
+          saturnStorm * uActivityEvent * flowAmount * .45);
       ` : ''}
       diffuseColor *= gasColor;
     #endif
