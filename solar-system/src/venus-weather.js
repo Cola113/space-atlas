@@ -52,6 +52,10 @@ const weather = /* glsl */ `
     return vec3(-cos(longitude) * cos(latitude), sin(latitude), sin(longitude) * cos(latitude));
   }
 
+  // A triggered event speeds the advection up; the bounded cycle keeps the offsets in range, so a
+  // faster flow does not stretch the map.
+  float venusFlowGain(float a) { return 1.0 + a * .55; }
+
   vec4 venusMap(sampler2D image, vec2 uv) {
     uv.y = clamp(uv.y, .002, .998);
     vec2 dx = dFdx(uv), dy = dFdy(uv);
@@ -66,41 +70,52 @@ const weather = /* glsl */ `
     }
 
     float time = uVenusTime;
+    float activity = uVenusActivity;
     vec3 sphere = venusSphere(uv);
     float lat = asin(clamp(sphere.y, -1.0, 1.0));
     float absLat = abs(lat);
 
     // Fast westward superrotation: prominent equatorial/low-latitude jet, tapering toward poles.
-    float jet = .0034 * (exp(-pow(lat / .85, 2.0)) + .24 * cos(lat * 1.5));
+    // The globe's cloud-top map is almost featureless along longitude, so the drift alone barely reads on
+    // screen; the tracers below carry the visible motion.
+    float jet = .0068 * (exp(-pow(lat / .85, 2.0)) + .24 * cos(lat * 1.5));
 
     // Two-phase advection cycle (28s) ensures smooth, non-repeating flow without seam shearing.
     float phase = fract(time / 28.0);
     vec2 ages = (vec2(phase, fract(phase + .5)) - .5) * 28.0;
     float blend = .5 - .5 * cos(phase * 6.2831853);
 
-    vec2 advected = uv - vec2(jet * time, 0.0);
+    vec2 advected = uv - vec2(jet * time * venusFlowGain(activity), 0.0);
     vec3 air = venusSphere(advected);
     float eddy = venusCloud(air * vec3(14.0, 68.0, 14.0));
     vec2 warp = vec2(eddy * .0016, eddy * .0012 * sin(lat * 3.14159265));
 
-    vec3 sampleA = venusMap(image, uv + warp - vec2(jet * ages.x, 0.0)).rgb;
-    vec3 sampleB = venusMap(image, uv + warp - vec2(jet * ages.y, 0.0)).rgb;
-    vec3 colour = mix(sampleA, sampleB, blend);
+    vec3 sampleA = venusMap(image, uv + warp - vec2(jet * ages.x * venusFlowGain(activity), 0.0)).rgb;
+    vec3 sampleB = venusMap(image, uv + warp - vec2(jet * ages.y * venusFlowGain(activity), 0.0)).rgb;
+    // The sample on ages.y is the one that sits at zero offset on both ends of the cycle, so it has to
+    // carry the weight that fades out. Mixing them the other way round makes the clouds jump once per
+    // 28-second cycle. Same ordering as the Saturn module.
+    vec3 colour = mix(sampleB, sampleA, blend);
 
     // Planetary-scale Y-wave / chevron feature:
     // Arms open eastward into mid-latitudes, stem along equator, drifting westward with flow.
-    float waveSpeed = .0030;
+    float waveSpeed = .0042;
     float waveLon = (uv.x - waveSpeed * time) * 6.2831853;
     float chevron = waveLon + 1.8 * pow(absLat, 1.25);
     float yPattern = cos(chevron) * .72 + cos(chevron * 2.0 - .8) * .28;
     float waveMask = exp(-pow(absLat / .85, 2.5));
-    float waveModulation = yPattern * waveMask * (.048 + uVenusActivity * .032);
+    float waveModulation = yPattern * waveMask * (.088 + activity * .085);
     colour *= 1.0 + waveModulation;
 
     // Mid-latitude sheared cloud streaks:
     float streaks = venusCloud(air * vec3(48.0, 190.0, 48.0) + eddy * 1.1);
     float streakMask = smoothstep(.18, .45, absLat) * (1.0 - smoothstep(.75, 1.1, absLat));
-    colour *= 1.0 + streakMask * (streaks * .026);
+    colour *= 1.0 + streakMask * (streaks * (.034 + activity * .042) * (.35 + .65 * uVenusDetail));
+
+    // Long-lived cloud patches that travel with the flow. Unlike the two-phase base-map cross-fade,
+    // these are evaluated at one drifting position, so the eye can follow them across the disc.
+    float patches = venusCloud(venusSphere(uv - vec2(jet * time * .72 * venusFlowGain(activity), 0.0)) * vec3(19.0, 96.0, 19.0));
+    colour *= 1.0 + patches * (.030 + activity * .026) * waveMask;
 
     // Polar cold collar & dipole vortex circulation (near both poles):
     float r = length(sphere.xz);
