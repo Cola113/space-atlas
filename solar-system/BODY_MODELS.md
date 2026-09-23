@@ -438,6 +438,13 @@ Chandrasekhar 粒子层光度学：反射/透射两支、Henyey-Greenstein 相�
 未被移植的是行星在环上的投影：落点视角几乎在环平面内，日下点阴影落在行星背后的环段上，
 被行星自身遮住，因此这里不做投影。这一点写在 `ring-photometry.js` 的注释里。
 
+### 落点天空中土星本体上的环影
+
+2026-09-24 补齐。土卫二等卫星表面仰望土星时，此前只移植了大气天气模型（`patchSaturnWeather`），漏掉了总览视图中的环影管线。现在落点天空中土星球体材质接入 `patchSaturnRingShadow`（`saturn-ring-shadow.js`）：
+- **机制**：复用 `dynamics.js` 中的 `saturnShadowFunctions` 与 `saturnDirectLighting`。通过顶点 varying 传递表面点在土星本体局部坐标系的位置 `vActivityPosition`（以赤道半径为单位）与视空间到局部空间的旋转逆变换 `vActivityViewToLocal`，将物理太阳平行光方向还原至土星局部系；射线与环平面（Y=0）求交并采样 `uRingOpticalDepth`（16384 点半精度纹理），经 9 点太阳视圆面带状积分计算 `ringTransmission`，衰减直射光入射强度。
+- **来源链接**：NASA Cassini ISS / UVIS 恒星掩星光深度剖面（与总览视图一致，参见 `solar-system/src/ring-optical-depth.js` 与 `solar-system/src/dynamics.js`）。
+- **限制**：行星投在环上的投影仍未移植（因落点视角处于环平面内，背日阴影区被行星遮挡）；环影只在土星本体生效。
+
 ### 亚像素环的覆盖（抗锯齿）
 
 环按实测宽度绘制带来一个原设计没考虑到的问题：**宽度远小于一个像素的环会变成斑点**。

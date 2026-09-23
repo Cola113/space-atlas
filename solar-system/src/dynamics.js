@@ -481,7 +481,7 @@ function attachEarthSurface(record) {
   });
 }
 
-const saturnShadowFunctions = /* glsl */ `
+export const saturnShadowFunctions = /* glsl */ `
   varying mat3 vActivityViewToLocal;
   float ringOpticalDepth(float radiusUv, float footprint) {
     float edge = max(footprint, .001);
@@ -579,7 +579,7 @@ const ringSurfaceVaryings = /* glsl */ `
 const RING_MIN_PIXELS = 1.5;
 
 
-function saturnDirectLighting(transmission, scatter = false) {
+export function saturnDirectLighting(transmission, scatter = false) {
   // Apply occlusion to incident light before accumulating direct illumination.
   // Ring particles also scatter across the plane, unlike an opaque Lambert surface.
   return THREE.ShaderChunk.lights_fragment_begin.replaceAll(
