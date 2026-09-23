@@ -9,6 +9,7 @@ import {marsPolarFrostEdges, marsSolarLongitude} from './mars-seasons.js';
 import { ringSystems, ringSystemFor } from './ring-systems.js';
 import { createRingScatteringTexture, SCATTERING_ROW_BASE, shippedScatteringTable } from './ring-multiple-scattering.js';
 import { createSaturnWeatherUniforms, patchSaturnWeather, saturnStormUv, SATURN_STORM_DURATION } from './saturn-weather.js';
+import { createVenusWeatherUniforms, patchVenusWeather, VENUS_WAVE_DURATION } from './venus-weather.js';
 import { shapeSurfacePoint, shapeSurfaceNormal } from './body-geometry.js';
 
 const simplex = simplexSource.replace("#pragma glslify: export(snoise)", "");
@@ -36,13 +37,14 @@ export const activityProfiles = {
     interval: 42,
   },
   venus: {
-    title: "浓云中的大气环流",
-    text: "不同高度的云层交错流动，逐渐拉伸与变形。关闭云层后可见稳定的雷达地表。",
+    title: "超级自转、行星云波与极区环流",
+    text: "金星高空浓云以约 4 天一圈的高速超级自转，低纬展开特征性的行星尺度 Y 形波动，两极环绕冷领与极区涡旋。高地山岳上空可见驻留重力波示意。关闭云层后可见稳定的雷达地表。演示频率与速度经过加速，非真实气象周期或当前天气。",
     trigger: "增强云流",
-    idle: "高层云流",
-    active: "云流增强",
-    duration: 16,
-    interval: 39,
+    idle: "超级自转与云流",
+    active: "云流与波系增强",
+    automatic: true,
+    duration: VENUS_WAVE_DURATION,
+    interval: 38,
   },
   earth: {
     title: "云层演变与雷暴",
@@ -1100,7 +1102,7 @@ export function createDynamics(objects, { defer = false } = {}) {
       )
     ) {
       patchMaterial(body.mesh.material, body.id, record.uniforms, {
-        map_fragment: body.id === 'saturn' ? '#include <map_fragment>' : gasMap(body.id),
+        map_fragment: (body.id === 'saturn' || body.id === 'venus') ? '#include <map_fragment>' : gasMap(body.id),
         ...(body.id === "saturn"
           ? { lights_fragment_begin: saturnDirectLighting(
               // Origin the shadow ray at the real surface point. Re-normalising it would
@@ -1112,6 +1114,10 @@ export function createDynamics(objects, { defer = false } = {}) {
       if (body.id === 'saturn') {
         record.weather = createSaturnWeatherUniforms();
         patchSaturnWeather(body.mesh.material, record.weather);
+      }
+      if (body.id === 'venus') {
+        record.weather = createVenusWeatherUniforms();
+        patchVenusWeather(body.mesh.material, record.weather);
       }
     }
     if (body.ring && ringSystems[body.id]) attachRingSurface(record);
@@ -1153,13 +1159,16 @@ export function createDynamics(objects, { defer = false } = {}) {
     record.eventStart = record.time;
     record.eventCount++;
     record.nextEvent = record.time + activityProfiles[id].interval;
-    if (record.weather) {
+    if (id === 'saturn' && record.weather) {
       // A representative outbreak with no claimed observed longitude. Choose its
       // initial meridian once; afterwards the cloud and marker share the same drift.
       const sun = record.uniforms.uSurfaceSun.value;
       record.stormOrigin = Math.atan2(sun.z, -sun.x) / TAU;
       record.weather.uSaturnProgress.value = 0;
       record.weather.uSaturnStorm.value.fromArray(saturnStormUv(0, record.stormOrigin));
+    }
+    if (id === 'venus' && record.weather) {
+      record.weather.uVenusProgress.value = 0;
     }
     return true;
   }
@@ -1277,10 +1286,17 @@ export function createDynamics(objects, { defer = false } = {}) {
       record.uniforms.uActivityDetail.value = active ? 1 : 0.12;
       record.uniforms.uActivityEvent.value = observed ? 0 : envelope;
       record.uniforms.uActivityProgress.value = inEvent ? progress : -1;
-      if (record.weather) {
+      if (id === 'saturn' && record.weather) {
         record.weather.uSaturnTime.value = record.time;
         record.weather.uSaturnProgress.value = enabled && inEvent ? progress : -1;
         record.weather.uSaturnStorm.value.fromArray(saturnStormUv(inEvent ? record.time-record.eventStart : 0, record.stormOrigin));
+      }
+      if (id === 'venus' && record.weather) {
+        record.weather.uVenusTime.value = record.time;
+        record.weather.uVenusProgress.value = enabled && inEvent ? progress : -1;
+        record.weather.uVenusCloudVisible.value = record.body.layerVisible ? 1 : 0;
+        record.weather.uVenusActivity.value = enabled && layerAvailable ? (inEvent ? envelope : 0) : 0;
+        record.weather.uVenusDetail.value = active ? 1 : 0.12;
       }
       if (id === "titan" && record.body.clouds) {
         // A second, slower haze layer gives Titan's generated atmospheric map
@@ -1424,6 +1440,11 @@ export function createDynamics(objects, { defer = false } = {}) {
           saturn.eventStart = -1000;
           saturn.weather.uSaturnProgress.value = -1;
         }
+        const venus = records.get('venus');
+        if (venus?.weather) {
+          venus.eventStart = -1000;
+          venus.weather.uVenusProgress.value = -1;
+        }
       }
     },
     setRate(value) {
@@ -1459,8 +1480,10 @@ export function createDynamics(objects, { defer = false } = {}) {
           event: r.uniforms.uActivityEvent.value,
           eventProgress: r.uniforms.uActivityProgress.value,
           eventCount: r.eventCount,
-          ...(r.weather ? { weather: { time: r.weather.uSaturnTime.value, progress: r.weather.uSaturnProgress.value,
+          ...(id === 'saturn' && r.weather ? { weather: { time: r.weather.uSaturnTime.value, progress: r.weather.uSaturnProgress.value,
             stormUv: r.weather.uSaturnStorm.value.toArray() } } : {}),
+          ...(id === 'venus' && r.weather ? { weather: { time: r.weather.uVenusTime.value, progress: r.weather.uVenusProgress.value,
+            cloudVisible: r.weather.uVenusCloudVisible.value } } : {}),
           sunDirection: r.uniforms.uSurfaceSun.value.toArray(),
           cloudTransform: r.uniforms.uSurfaceToCloud.value.toArray(),
           observedClouds: r.uniforms.uObservedClouds.value,
