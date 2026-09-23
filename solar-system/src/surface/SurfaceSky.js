@@ -261,7 +261,11 @@ export function createSurfaceSky({scene,renderer,site,parentMap,cloudMap,groundM
         else if(kind<3.5){float haze=exp(-max(d.y,0.)*9.);
           colour=(vec3(.14,.28,.46)*haze+vec3(.18,.35,.50)*pow(alignment,16.))*day;
           opacity=clamp((.08*haze+.22*pow(alignment,16.))*day,0.,.35);}
-        else{colour=vec3(.08,.13,.22)*day;opacity=.12*exp(-abs(d.y)*18.)*day;}
+        else{
+          vec3 ochre=mix(vec3(.42,.26,.08),vec3(.64,.44,.18),exp(-max(d.y,0.)*1.5));
+          colour=(ochre+vec3(.32,.25,.10)*pow(alignment,2.5))*(.02+.98*day);
+          opacity=mix(.1,1.,day);
+        }
         gl_FragColor=vec4(colour,opacity);
         #include <colorspace_fragment>
       }`,side:THREE.BackSide,transparent:true,depthWrite:false,depthTest:false
