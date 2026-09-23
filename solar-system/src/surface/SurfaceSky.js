@@ -258,8 +258,9 @@ export function createSurfaceSky({scene,renderer,site,parentMap,cloudMap,groundM
           colour+=vec3(.16,.24,.32)*pow(alignment,90.)*day;opacity=mix(.06,.96,day);}
         else if(kind<2.5){colour=mix(vec3(.24,.11,.03),vec3(.48,.26,.09),h)*(.04+.96*day);
           colour+=vec3(.16,.095,.028)*pow(alignment,18.)*day;opacity=1.;}
-        else if(kind<3.5){colour=mix(vec3(.30,.23,.12),vec3(.60,.51,.29),h)*(.05+.95*day);
-          colour+=vec3(.17,.14,.08)*pow(alignment,6.)*day;opacity=1.;}
+        else if(kind<3.5){float haze=exp(-max(d.y,0.)*9.);
+          colour=(vec3(.14,.28,.46)*haze+vec3(.18,.35,.50)*pow(alignment,16.))*day;
+          opacity=clamp((.08*haze+.22*pow(alignment,16.))*day,0.,.35);}
         else{colour=vec3(.08,.13,.22)*day;opacity=.12*exp(-abs(d.y)*18.)*day;}
         gl_FragColor=vec4(colour,opacity);
         #include <colorspace_fragment>
