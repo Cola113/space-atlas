@@ -1,0 +1,144 @@
+{
+  "version": 1,
+  "date": "2026-09-24",
+  "tool": "realesrgan-ncnn-vulkan v0.2.5.0 (20220424 build)",
+  "model": "realesrgan-x4plus",
+  "backend": "Vulkan (Intel Arc integrated GPU)",
+  "policy": "AI upscale for display sharpness. The added detail is model-generated and is NOT measured data; these files are not native-resolution imagery and must not be presented as such. Uranus and Neptune were deliberately left at 2048x1024 because their maps have no visible structure to recover (mean neighbouring-column difference 0.00 and 0.26 of 255), so an upscaler could only invent features.",
+  "seamHandling": "torus padding (3x3 tile, crop middle+pad) before upscaling, then exact 2:1 crop and a wrap-pair column average; a cross-fade band was measured to be worse",
+  "textures": [
+    {
+      "file": "sr4k/vesta-4096.webp",
+      "source": "2k_vesta.jpg",
+      "sourceSha256": "8407291ba1f5d28a20a417e29f48ee1819cf02a6c8f38c51b537f5ffd511f2c9",
+      "sourceDimensions": [
+        2048,
+        1024
+      ],
+      "deliveredDimensions": [
+        4096,
+        2048
+      ],
+      "scale": 2,
+      "sha256": "19371bda4553e2840f546882193681c8a2fdba1e497593ac680fa87ca3dda8c9",
+      "seconds": 117.04,
+      "attempts": 2,
+      "seamColumnDifference": 0.0,
+      "neighbouringColumnDifference": 3.81
+    },
+    {
+      "file": "sr4k/mimas-2048.webp",
+      "source": "repaired/mimas-1024.webp",
+      "sourceSha256": "7231720c582a0d7b32c2628a1b26b5f2265038b7795ff4c1944416e67cf9c89c",
+      "sourceDimensions": [
+        1024,
+        512
+      ],
+      "deliveredDimensions": [
+        2048,
+        1024
+      ],
+      "scale": 2,
+      "sha256": "fa0b07b196fd470d222c7ed474c8fe16426fae0e2db5e71892e8bde9ce4669dd",
+      "seconds": 35.13,
+      "attempts": 1,
+      "seamColumnDifference": 0.0,
+      "neighbouringColumnDifference": 6.61
+    },
+    {
+      "file": "sr4k/mimas-4096.webp",
+      "source": "repaired/mimas-2048.webp",
+      "sourceSha256": "a08790647f1578c4af42e898686f25640ef1d4705749b700c67e41cce5f6307b",
+      "sourceDimensions": [
+        2048,
+        1024
+      ],
+      "deliveredDimensions": [
+        4096,
+        2048
+      ],
+      "scale": 2,
+      "sha256": "710e3d9fd7465089562fdc2fee6333e27a7e1cafec9c3f2063cc10aec8711fa8",
+      "seconds": 114.62,
+      "attempts": 1,
+      "seamColumnDifference": 0.0,
+      "neighbouringColumnDifference": 4.26
+    },
+    {
+      "file": "sr4k/rhea-2048.webp",
+      "source": "repaired/rhea-1024.webp",
+      "sourceSha256": "2da6e7a34bb7b6d180707034e72825efa26eccdd4a69f418161451509aca9a9b",
+      "sourceDimensions": [
+        1024,
+        512
+      ],
+      "deliveredDimensions": [
+        2048,
+        1024
+      ],
+      "scale": 2,
+      "sha256": "cfeea8f5b0489c1832fe6e4504cc8303c3fa1d5b87b03998a1505bf5499d184d",
+      "seconds": 36.09,
+      "attempts": 1,
+      "seamColumnDifference": 0.0,
+      "neighbouringColumnDifference": 6.1
+    },
+    {
+      "file": "sr4k/rhea-4096.webp",
+      "source": "repaired/rhea-2048.webp",
+      "sourceSha256": "3a0b1f147654686cf5d1af33bf2d403259bab9c6f59191cb312488dcd9d9b15d",
+      "sourceDimensions": [
+        2048,
+        1024
+      ],
+      "deliveredDimensions": [
+        4096,
+        2048
+      ],
+      "scale": 2,
+      "sha256": "c582612bcee7b15d81e45a19f2e868097869dba6a06d1ab62e868a3d1fadd399",
+      "seconds": 116.6,
+      "attempts": 1,
+      "seamColumnDifference": 0.0,
+      "neighbouringColumnDifference": 4.89
+    },
+    {
+      "file": "sr4k/iapetus-2048.webp",
+      "source": "repaired/iapetus-1024.webp",
+      "sourceSha256": "1f8f8389dd89e7233c86e716813948a6354c1a1c32245b8961359fec92a91e15",
+      "sourceDimensions": [
+        1024,
+        512
+      ],
+      "deliveredDimensions": [
+        2048,
+        1024
+      ],
+      "scale": 2,
+      "sha256": "1f18fa698916f9d5d9ec26fb8529d16481dd252aeec433daad8b8b5ad8ef0d13",
+      "seconds": 32.89,
+      "attempts": 1,
+      "seamColumnDifference": 0.0,
+      "neighbouringColumnDifference": 6.76
+    },
+    {
+      "file": "sr4k/iapetus-4096.webp",
+      "source": "repaired/iapetus-2048.webp",
+      "sourceSha256": "cbe74d2c19b7ef8f56a39b361551c2a0f2c789df1b76b55e2d019dcacce9e79f",
+      "sourceDimensions": [
+        2048,
+        1024
+      ],
+      "deliveredDimensions": [
+        4096,
+        2048
+      ],
+      "scale": 2,
+      "sha256": "22e107ca2976a10d49e9dab00ab3df1b895789587f2a4be9c47f37a75930a7e6",
+      "seconds": 111.39,
+      "attempts": 1,
+      "seamColumnDifference": 0.0,
+      "neighbouringColumnDifference": 5.07
+    }
+  ]
+}
