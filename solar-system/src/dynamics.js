@@ -10,6 +10,7 @@ import { ringSystems, ringSystemFor } from './ring-systems.js';
 import { createRingScatteringTexture, SCATTERING_ROW_BASE, shippedScatteringTable } from './ring-multiple-scattering.js';
 import { createSaturnWeatherUniforms, patchSaturnWeather, saturnStormUv, SATURN_STORM_DURATION } from './saturn-weather.js';
 import { createVenusWeatherUniforms, patchVenusWeather, VENUS_WAVE_DURATION } from './venus-weather.js';
+import { createNeptuneWeatherUniforms, patchNeptuneWeather, NEPTUNE_STORM_DURATION } from './neptune-weather.js';
 import { shapeSurfacePoint, shapeSurfaceNormal } from './body-geometry.js';
 import { saturnShadowFunctions, saturnDirectLighting } from './saturn-ring-shadow.js';
 export { saturnShadowFunctions, saturnDirectLighting };
@@ -95,12 +96,12 @@ export const activityProfiles = {
     interval: 46,
   },
   neptune: {
-    title: "高速云流与风暴",
-    text: "高空云系沿纬度流动，局部旋涡不断改变周围云带的形态。",
-    trigger: "增强风暴",
-    idle: "高空云系流动",
-    active: "局部风暴发展",
-    duration: 16,
+    title: "纬向云流与暗斑示意",
+    text: "低对比度的甲烷亮云沿纬度错位；暗斑和伴生亮云的位置、时刻及加速速度为演示示意，并非当前天气。",
+    trigger: "演示暗斑发展",
+    idle: "纬向亮云流动",
+    active: "暗斑与伴生亮云",
+    duration: NEPTUNE_STORM_DURATION,
     interval: 36,
   },
   ...Object.fromEntries(
@@ -380,15 +381,6 @@ function gasMap(id) {
       swirl: 0.08,
       cloud: 0.055,
     },
-    neptune: {
-      bands: 20,
-      drift: 0.0024,
-      warp: 0.002,
-      center: [".23", ".42"],
-      size: [".065", ".055"],
-      swirl: 0.1,
-      cloud: 0.065,
-    },
   }[id];
   const num = (value) => value.toFixed(5);
   return /* glsl */ `
@@ -416,7 +408,6 @@ function gasMap(id) {
       float movingCloud = smoothstep(-.10, .60, turbulence);
       gasColor.rgb += vec3(${num(settings.cloud)}) * flowAmount * movingCloud
         * (.25 + uActivityEvent * .75) * (.24 + stormMask * .76);
-      ${id === "neptune" ? "gasColor.rgb *= 1.0 - stormMask * uActivityEvent * .24;" : ""}
       diffuseColor *= gasColor;
     #endif
   `;
@@ -1030,7 +1021,7 @@ export function createDynamics(objects, { defer = false } = {}) {
       )
     ) {
       patchMaterial(body.mesh.material, body.id, record.uniforms, {
-        map_fragment: (body.id === 'saturn' || body.id === 'venus') ? '#include <map_fragment>' : gasMap(body.id),
+        map_fragment: (body.id === 'saturn' || body.id === 'venus' || body.id === 'neptune') ? '#include <map_fragment>' : gasMap(body.id),
         ...(body.id === "saturn"
           ? { lights_fragment_begin: saturnDirectLighting(
               // Origin the shadow ray at the real surface point. Re-normalising it would
@@ -1046,6 +1037,10 @@ export function createDynamics(objects, { defer = false } = {}) {
       if (body.id === 'venus') {
         record.weather = createVenusWeatherUniforms();
         patchVenusWeather(body.mesh.material, record.weather);
+      }
+      if (body.id === 'neptune') {
+        record.weather = createNeptuneWeatherUniforms();
+        patchNeptuneWeather(body.mesh.material, record.weather);
       }
     }
     if (body.ring && ringSystems[body.id]) attachRingSurface(record);
@@ -1097,6 +1092,9 @@ export function createDynamics(objects, { defer = false } = {}) {
     }
     if (id === 'venus' && record.weather) {
       record.weather.uVenusProgress.value = 0;
+    }
+    if (id === 'neptune' && record.weather) {
+      record.weather.uNeptuneProgress.value = 0;
     }
     return true;
   }
@@ -1225,6 +1223,12 @@ export function createDynamics(objects, { defer = false } = {}) {
         record.weather.uVenusCloudVisible.value = record.body.layerVisible ? 1 : 0;
         record.weather.uVenusActivity.value = enabled && layerAvailable ? (inEvent ? envelope : 0) : 0;
         record.weather.uVenusDetail.value = active ? 1 : 0.12;
+      }
+      if (id === 'neptune' && record.weather) {
+        record.weather.uNeptuneTime.value = record.time;
+        record.weather.uNeptuneProgress.value = enabled && inEvent ? progress : -1;
+        record.weather.uNeptuneActivity.value = enabled && inEvent ? envelope : 0;
+        record.weather.uNeptuneDetail.value = active ? 1 : 0.12;
       }
       if (id === "titan" && record.body.clouds) {
         // A second, slower haze layer gives Titan's generated atmospheric map
@@ -1373,6 +1377,12 @@ export function createDynamics(objects, { defer = false } = {}) {
           venus.eventStart = -1000;
           venus.weather.uVenusProgress.value = -1;
         }
+        const neptune = records.get('neptune');
+        if (neptune?.weather) {
+          neptune.eventStart = -1000;
+          neptune.weather.uNeptuneProgress.value = -1;
+          neptune.weather.uNeptuneActivity.value = 0;
+        }
       }
     },
     setRate(value) {
@@ -1412,6 +1422,8 @@ export function createDynamics(objects, { defer = false } = {}) {
             stormUv: r.weather.uSaturnStorm.value.toArray() } } : {}),
           ...(id === 'venus' && r.weather ? { weather: { time: r.weather.uVenusTime.value, progress: r.weather.uVenusProgress.value,
             cloudVisible: r.weather.uVenusCloudVisible.value } } : {}),
+          ...(id === 'neptune' && r.weather ? { weather: { time: r.weather.uNeptuneTime.value, progress: r.weather.uNeptuneProgress.value,
+            activity: r.weather.uNeptuneActivity.value } } : {}),
           sunDirection: r.uniforms.uSurfaceSun.value.toArray(),
           cloudTransform: r.uniforms.uSurfaceToCloud.value.toArray(),
           observedClouds: r.uniforms.uObservedClouds.value,
