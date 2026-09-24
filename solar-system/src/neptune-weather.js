@@ -87,14 +87,12 @@ const weather = /* glsl */ `
     float east = zonalTracer(neptuneSphere(uv - vec2(-.0017 * time, 0.0)), .08, .090, -.0044, 8.0, 4.1);
     float north = zonalTracer(neptuneSphere(uv - vec2(.0010 * time, 0.0)), .43, .075, .0032, 9.0, 8.6);
     float tracers = west * .62 + east * .46 + north * .34;
-    float tracerFine = neptuneNoise(sphere * vec3(32.0, 92.0, 32.0) + vec3(time * .025, 0.0, -time * .018));
-    float tracerContrast = (.045 + .022 * activity) * (.38 + .62 * uNeptuneDetail);
-    colour *= 1.0 + tracers * tracerContrast + tracerFine * .012;
+    float tracerContrast = .045 * (.38 + .62 * uNeptuneDetail);
+    colour *= 1.0 + tracers * tracerContrast;
 
     // A soft southern dark spot and its northern methane-bright companion. The
     // location, size and lifetime are illustrative; they are not current weather.
-    float gain = 1.0 + activity * .42;
-    vec2 spotCenter = vec2(.49 + .0047 * time * gain, .385);
+    vec2 spotCenter = vec2(.49 + .0047 * time, .385);
     vec2 spotDelta = uv - spotCenter;
     spotDelta.x -= floor(spotDelta.x + .5);
     vec2 spotQ = spotDelta / vec2(.078, .040);
@@ -111,7 +109,7 @@ const weather = /* glsl */ `
 
     float companion = exp(-pow((spotQ.y - .86) / .34, 2.0))
       * exp(-pow(spotQ.x / 1.38, 2.0));
-    float companionTexture = smoothstep(.10, .68,
+    float companionTexture = companion * smoothstep(.10, .68,
       neptuneCloud(vec3(spotQ * vec2(7.0, 12.0) - vec2(time * .36, 0.0), time * .06)) + companion * .72);
     float companionAmount = companionTexture * (.11 + .19 * activity) * spotLife;
     colour = mix(colour, vec3(.82, .91, 1.07), companionAmount);
