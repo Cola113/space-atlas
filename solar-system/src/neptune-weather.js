@@ -101,7 +101,7 @@ const weather = /* glsl */ `
     colour *= 1.0 + tracers * tracerContrast;
     float cloudlets = methaneCloudlet(uv, vec2(.46 + time * .009, .58), vec2(.075, .036), 2.1)
       + methaneCloudlet(uv, vec2(.76 - time * .007, .39), vec2(.075, .034), 5.7);
-    colour *= 1.0 + cloudlets * .22 * (.38 + .62 * uNeptuneDetail);
+    colour *= 1.0 + cloudlets * .38 * (.38 + .62 * uNeptuneDetail);
 
     // A soft southern dark spot and its northern methane-bright companion. The
     // location, size and lifetime are illustrative; they are not current weather.
