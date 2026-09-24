@@ -96,7 +96,7 @@ const weather = /* glsl */ `
 
     // Latitudinal shear filaments and turbulent zonal ripples:
     float filaments = neptuneCloud(air * vec3(56.0, 180.0, 56.0) + eddy * 1.2);
-    float shearStrength = (.042 + activity * .024) * (.35 + .65 * uNeptuneDetail);
+    float shearStrength = (.042 + activity * .010) * (.35 + .65 * uNeptuneDetail);
     colour *= 1.0 + filaments * shearStrength;
 
     // Great Dark Spot (GDS) anticyclonic vortex (~22°S):
@@ -115,7 +115,7 @@ const weather = /* glsl */ `
     vec2 rotatedGds = rot * gdsCoord;
     float gdsSwirl = neptuneCloud(vec3(rotatedGds * 3.4, time * .08));
     float gdsMask = (1.0 - smoothstep(0.35, 1.25, gdsRadius + gdsSwirl * .18));
-    float gdsDarkening = gdsMask * (.28 + activity * .14) * (.4 + .6 * uNeptuneDetail);
+    float gdsDarkening = gdsMask * (.28 + activity * .06) * (.4 + .6 * uNeptuneDetail);
     colour *= 1.0 - gdsDarkening;
 
     // Companion bright methane cirrus clouds:
@@ -124,7 +124,7 @@ const weather = /* glsl */ `
     float cirrusNoise = neptuneCloud(vec3(gdsCoord * vec2(8.0, 16.0) - vec2(time * 0.42, 0.0), time * 0.12));
     float cirrusBright = smoothstep(0.08, 0.72, cirrusNoise + northFlank * 0.85) * northFlank;
     vec3 cirrusColor = vec3(0.92, 0.96, 1.12);
-    colour = mix(colour, cirrusColor, cirrusBright * (.52 + activity * .32) * (.35 + .65 * uNeptuneDetail));
+    colour = mix(colour, cirrusColor, cirrusBright * (.52 + activity * .065) * (.35 + .65 * uNeptuneDetail));
 
     // "Scooter" high-speed irregular bright cloud (~42°S):
     // In observations, Scooter swept around Neptune in ~16.8 hours, faster than GDS (~18.3 hours).
@@ -136,12 +136,12 @@ const weather = /* glsl */ `
     float scooterDist = length(scooterCoord);
     float scooterDetail = neptuneCloud(vec3(scooterCoord * 5.2, time * 0.15));
     float scooterMask = (1.0 - smoothstep(0.3, 1.2, scooterDist + scooterDetail * 0.25)) * smoothstep(-0.1, 0.5, scooterDetail + 0.3);
-    colour = mix(colour, vec3(0.95, 0.98, 1.15), scooterMask * (.55 + activity * .28) * (.35 + .65 * uNeptuneDetail));
+    colour = mix(colour, vec3(0.95, 0.98, 1.15), scooterMask * (.55 + activity * .060) * (.35 + .65 * uNeptuneDetail));
 
     // Sheared mid-latitude high-altitude cirrus streamers:
     float cirrusBand = exp(-pow((absLat - 0.56) / 0.14, 2.0));
     float cirrusStreamers = smoothstep(0.38, 0.85, neptuneCloud(air * vec3(28.0, 110.0, 28.0)));
-    colour = mix(colour, vec3(0.90, 0.94, 1.10), cirrusStreamers * cirrusBand * (.12 + activity * .10) * (.35 + .65 * uNeptuneDetail));
+    colour = mix(colour, vec3(0.90, 0.94, 1.10), cirrusStreamers * cirrusBand * (.15 + activity * .010) * (.35 + .65 * uNeptuneDetail));
 
     // South polar warm collar and vortex (~70°-90°S):
     float southPole = smoothstep(0.78, 0.96, -sphere.y);
