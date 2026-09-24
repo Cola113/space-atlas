@@ -29,8 +29,8 @@
 ## 2. 当前进度与下一步
 - [x] 复现基线测试数据（`capture.cjs` 首末 14.3%，相邻帧 1.6%）；
 - [x] 深度发散 3 个角度并确定最终融合实施方案；
-- [ ] 创建 `solar-system/src/neptune-weather.js` 专用气象模块；
-- [ ] 在 `solar-system/src/dynamics.js` 与 `SurfaceSky.js` 中接线；
-- [ ] 编写测试脚本 `scripts/verify-neptune-weather.mjs` 与 `scripts/verify-neptune-weather-render.mjs`；
+- [x] 创建 `solar-system/src/neptune-weather.js` 专用气象模块；
+- [x] 在 `solar-system/src/dynamics.js` 与 `SurfaceSky.js` 中接线；
+- [x] 编写测试脚本 `scripts/verify-neptune-weather.mjs` 与 `scripts/verify-neptune-weather-render.mjs`；
 - [ ] 运行测试验证（npm test + 专属验证 + capture.cjs 前后对比）；
 - [ ] 更新 `solar-system/BODY_MODELS.md` 文档。
