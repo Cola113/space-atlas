@@ -100,11 +100,6 @@ const weather = /* glsl */ `
     float spotNoise = neptuneCloud(vec3(spotQ * vec2(3.0, 4.5), time * .035));
     float spot = 1.0 - smoothstep(.42, 1.34, spotRadius + spotNoise * .16);
     float spotLife = .40 + .60 * activity;
-    if (uNeptuneProgress >= 0.0) {
-      float grow = smoothstep(0.0, .25, uNeptuneProgress);
-      float fade = 1.0 - smoothstep(.78, 1.0, uNeptuneProgress);
-      spotLife *= mix(.55, 1.0, grow) * fade;
-    }
     colour *= 1.0 - spot * (.105 + .17 * activity) * spotLife;
 
     float companion = exp(-pow((spotQ.y - .86) / .34, 2.0))
