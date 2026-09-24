@@ -16,6 +16,7 @@ import { createRingScatteringTexture, SCATTERING_ROW_BASE, shippedScatteringTabl
 import { createRingSurfaceMaterial } from '../ring-photometry.js';
 import { patchEarthNightMaterial } from '../earth-night.js';
 import { createSaturnWeatherUniforms, patchSaturnWeather } from '../saturn-weather.js';
+import { createSaturnRingShadowUniforms, patchSaturnRingShadow } from '../saturn-ring-shadow.js';
 import { createVenusWeatherUniforms, patchVenusWeather } from '../venus-weather.js';
 
 const { smoothstep, clamp, degToRad } = THREE.MathUtils;
@@ -169,7 +170,10 @@ export function createSurfaceSky({scene,renderer,site,parentMap,cloudMap,groundM
     if(name==='Jupiter'&&map)windMaterial(material,.0001);
     // The same haze and polar morphology as the overview. Surface skies show the
     // representative baseline; demonstration weather events belong to the overview.
-    if(id==='saturn')patchSaturnWeather(material,createSaturnWeatherUniforms());
+    if(id==='saturn'){
+      patchSaturnRingShadow(material,createSaturnRingShadowUniforms());
+      patchSaturnWeather(material,createSaturnWeatherUniforms());
+    }
     if(id==='venus')patchVenusWeather(material,createVenusWeatherUniforms());
     const sunlight=new THREE.Vector3();
     bindPhysicalSun(material,sunlight);
@@ -258,9 +262,14 @@ export function createSurfaceSky({scene,renderer,site,parentMap,cloudMap,groundM
           colour+=vec3(.16,.24,.32)*pow(alignment,90.)*day;opacity=mix(.06,.96,day);}
         else if(kind<2.5){colour=mix(vec3(.24,.11,.03),vec3(.48,.26,.09),h)*(.04+.96*day);
           colour+=vec3(.16,.095,.028)*pow(alignment,18.)*day;opacity=1.;}
-        else if(kind<3.5){colour=mix(vec3(.30,.23,.12),vec3(.60,.51,.29),h)*(.05+.95*day);
-          colour+=vec3(.17,.14,.08)*pow(alignment,6.)*day;opacity=1.;}
-        else{colour=vec3(.08,.13,.22)*day;opacity=.12*exp(-abs(d.y)*18.)*day;}
+        else if(kind<3.5){float haze=exp(-max(d.y,0.)*9.);
+          colour=(vec3(.14,.28,.46)*haze+vec3(.18,.35,.50)*pow(alignment,16.))*day;
+          opacity=clamp((.08*haze+.22*pow(alignment,16.))*day,0.,.35);}
+        else{
+          vec3 ochre=mix(vec3(.42,.26,.08),vec3(.64,.44,.18),exp(-max(d.y,0.)*1.5));
+          colour=(ochre+vec3(.32,.25,.10)*pow(alignment,2.5))*(.02+.98*day);
+          opacity=mix(.1,1.,day);
+        }
         gl_FragColor=vec4(colour,opacity);
         #include <colorspace_fragment>
       }`,side:THREE.BackSide,transparent:true,depthWrite:false,depthTest:false

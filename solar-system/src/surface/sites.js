@@ -157,7 +157,7 @@ export const additionalLandingSites = Object.freeze({
     source:'https://www.nasa.gov/missions/new-horizons/plutos-big-moon-charon-reveals-a-colorful-and-violent-history/',
     description:'断裂的冰质峡谷从脚下延伸，冥王星几乎固定在头顶。',
     notes:'落点在朝冥王星的一侧：冥王星高度角 88.4°、视直径 7.2°，一个自转周期内几乎不动（互相潮汐锁定）。赤道峡谷带依据新视野号影像的地貌描述重建，崖高、走向与宽度不是测量值。冥卫一北半球的暗红色极冠（Mordor Macula）不在本落点视野内。1900—2100 年位置采用 JPL PLU060。',
-    atmosphere:'pluto', solarDay:6.388, initialPitch:10, referenceSolarAltitude:20,
+    solarDay:6.388, initialPitch:10, referenceSolarAltitude:20,
   },
   venus: {
     ...common, id:'venus', body:'Venus', name:'金星', title:'金星 13 号着陆区 · 腓比区东侧', english:'VENERA 13 · EAST OF PHOEBE REGIO',
