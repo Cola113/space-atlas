@@ -10,6 +10,7 @@ import { ringSystems, ringSystemFor } from './ring-systems.js';
 import { createRingScatteringTexture, SCATTERING_ROW_BASE, shippedScatteringTable } from './ring-multiple-scattering.js';
 import { createSaturnWeatherUniforms, patchSaturnWeather, saturnStormUv, SATURN_STORM_DURATION } from './saturn-weather.js';
 import { createVenusWeatherUniforms, patchVenusWeather, VENUS_WAVE_DURATION } from './venus-weather.js';
+import { createNeptuneWeatherUniforms, patchNeptuneWeather, neptuneVortexOrigin, neptuneVortexUv, NEPTUNE_VORTEX_DURATION } from './neptune-weather.js';
 import { shapeSurfacePoint, shapeSurfaceNormal } from './body-geometry.js';
 import { saturnShadowFunctions, saturnDirectLighting } from './saturn-ring-shadow.js';
 export { saturnShadowFunctions, saturnDirectLighting };
@@ -95,13 +96,13 @@ export const activityProfiles = {
     interval: 46,
   },
   neptune: {
-    title: "高速云流与风暴",
-    text: "高空云系沿纬度流动，局部旋涡不断改变周围云带的形态。",
-    trigger: "增强风暴",
-    idle: "高空云系流动",
-    active: "局部风暴发展",
-    duration: 16,
-    interval: 36,
+    title: "高速风带与暗斑涡旋",
+    text: "太阳系最快的大气风场：赤道云带逆着自转向西奔流，中高纬急流反向向东，亮云条纹显出差速。新暗斑会在不同半球生成——伴生的高空甲烷冰卷云先于暗斑出现，暗斑西移、偏向赤道并消散后卷云仍短暂残留，南纬 42° 附近的“Scooter”亮云跑得比暗斑更快。贴图中的大暗斑为旅行者 2 号影像的示意重现；演示频率与速度经过加速，非实时观测或当前天气。",
+    trigger: "模拟新暗斑",
+    idle: "差速云流",
+    active: "暗斑涡旋演变",
+    duration: NEPTUNE_VORTEX_DURATION,
+    interval: 41,
   },
   ...Object.fromEntries(
     additionalBodies.map((body) => [
@@ -380,15 +381,6 @@ function gasMap(id) {
       swirl: 0.08,
       cloud: 0.055,
     },
-    neptune: {
-      bands: 20,
-      drift: 0.0024,
-      warp: 0.002,
-      center: [".23", ".42"],
-      size: [".065", ".055"],
-      swirl: 0.1,
-      cloud: 0.065,
-    },
   }[id];
   const num = (value) => value.toFixed(5);
   return /* glsl */ `
@@ -416,7 +408,6 @@ function gasMap(id) {
       float movingCloud = smoothstep(-.10, .60, turbulence);
       gasColor.rgb += vec3(${num(settings.cloud)}) * flowAmount * movingCloud
         * (.25 + uActivityEvent * .75) * (.24 + stormMask * .76);
-      ${id === "neptune" ? "gasColor.rgb *= 1.0 - stormMask * uActivityEvent * .24;" : ""}
       diffuseColor *= gasColor;
     #endif
   `;
@@ -1029,8 +1020,12 @@ export function createDynamics(objects, { defer = false } = {}) {
         body.id,
       )
     ) {
+      // Venus, Saturn and Neptune own their map stage through dedicated weather
+      // modules; the remaining gas giants keep the shared gasMap flow.
+      const dedicated =
+        body.id === 'saturn' || body.id === 'venus' || body.id === 'neptune';
       patchMaterial(body.mesh.material, body.id, record.uniforms, {
-        map_fragment: (body.id === 'saturn' || body.id === 'venus') ? '#include <map_fragment>' : gasMap(body.id),
+        map_fragment: dedicated ? '#include <map_fragment>' : gasMap(body.id),
         ...(body.id === "saturn"
           ? { lights_fragment_begin: saturnDirectLighting(
               // Origin the shadow ray at the real surface point. Re-normalising it would
@@ -1046,6 +1041,11 @@ export function createDynamics(objects, { defer = false } = {}) {
       if (body.id === 'venus') {
         record.weather = createVenusWeatherUniforms();
         patchVenusWeather(body.mesh.material, record.weather);
+      }
+      if (body.id === 'neptune') {
+        record.weather = createNeptuneWeatherUniforms();
+        record.vortexOrigin = neptuneVortexOrigin(0);
+        patchNeptuneWeather(body.mesh.material, record.weather);
       }
     }
     if (body.ring && ringSystems[body.id]) attachRingSurface(record);
@@ -1097,6 +1097,13 @@ export function createDynamics(objects, { defer = false } = {}) {
     }
     if (id === 'venus' && record.weather) {
       record.weather.uVenusProgress.value = 0;
+    }
+    if (id === 'neptune' && record.weather) {
+      // Birthplace alternates hemispheres and steps the meridian per event; the drift
+      // from there is shared with the landmark marker so both never disagree.
+      record.vortexOrigin = neptuneVortexOrigin(record.eventCount);
+      record.weather.uNeptuneProgress.value = 0;
+      record.weather.uNeptuneSpot.value.fromArray(neptuneVortexUv(0, record.vortexOrigin));
     }
     return true;
   }
@@ -1226,6 +1233,15 @@ export function createDynamics(objects, { defer = false } = {}) {
         record.weather.uVenusActivity.value = enabled && layerAvailable ? (inEvent ? envelope : 0) : 0;
         record.weather.uVenusDetail.value = active ? 1 : 0.12;
       }
+      if (id === 'neptune' && record.weather) {
+        record.weather.uNeptuneTime.value = record.time;
+        record.weather.uNeptuneProgress.value = enabled && inEvent ? progress : -1;
+        record.weather.uNeptuneActivity.value = enabled && layerAvailable ? (inEvent ? envelope : 0) : 0;
+        record.weather.uNeptuneDetail.value = active ? 1 : 0.12;
+        record.weather.uNeptuneSpot.value.fromArray(
+          neptuneVortexUv(inEvent ? record.time - record.eventStart : 0, record.vortexOrigin),
+        );
+      }
       if (id === "titan" && record.body.clouds) {
         // A second, slower haze layer gives Titan's generated atmospheric map
         // visible motion without changing the dated body rotation.
@@ -1259,6 +1275,10 @@ export function createDynamics(objects, { defer = false } = {}) {
       let point;
       if (kind === 'saturn-storm' && record.weather?.uSaturnProgress.value >= 0 && record.weather.uSaturnProgress.value < .98) {
         const local = shapeSurfacePoint(record.body, uvDirection(record.weather.uSaturnStorm.value.toArray()));
+        return { point: local.clone().multiplyScalar(1.017), viewDirection: shapeSurfaceNormal(record.body, local.clone()), extent: 1 };
+      }
+      if (kind === 'neptune-vortex' && record.weather?.uNeptuneProgress.value >= 0 && record.weather.uNeptuneProgress.value < .96) {
+        const local = shapeSurfacePoint(record.body, uvDirection(record.weather.uNeptuneSpot.value.toArray()));
         return { point: local.clone().multiplyScalar(1.017), viewDirection: shapeSurfaceNormal(record.body, local.clone()), extent: 1 };
       }
       if (kind === 'prominence' && record.prominenceAnchor) {
@@ -1346,7 +1366,8 @@ export function createDynamics(objects, { defer = false } = {}) {
         mars: [0.225, 0.46],
         jupiter: [0.365, 0.39],
         uranus: [0.24, 0.54],
-        neptune: [0.23, 0.42],
+        // The dark oval baked into the texture, measured on 2k_neptune.jpg.
+        neptune: [0.563, 0.409],
       }[id];
       if (!uv) return null;
       const record = records.get(id);
@@ -1372,6 +1393,11 @@ export function createDynamics(objects, { defer = false } = {}) {
         if (venus?.weather) {
           venus.eventStart = -1000;
           venus.weather.uVenusProgress.value = -1;
+        }
+        const neptune = records.get('neptune');
+        if (neptune?.weather) {
+          neptune.eventStart = -1000;
+          neptune.weather.uNeptuneProgress.value = -1;
         }
       }
     },
@@ -1412,6 +1438,8 @@ export function createDynamics(objects, { defer = false } = {}) {
             stormUv: r.weather.uSaturnStorm.value.toArray() } } : {}),
           ...(id === 'venus' && r.weather ? { weather: { time: r.weather.uVenusTime.value, progress: r.weather.uVenusProgress.value,
             cloudVisible: r.weather.uVenusCloudVisible.value } } : {}),
+          ...(id === 'neptune' && r.weather ? { weather: { time: r.weather.uNeptuneTime.value, progress: r.weather.uNeptuneProgress.value,
+            activity: r.weather.uNeptuneActivity.value, spotUv: r.weather.uNeptuneSpot.value.toArray() } } : {}),
           sunDirection: r.uniforms.uSurfaceSun.value.toArray(),
           cloudTransform: r.uniforms.uSurfaceToCloud.value.toArray(),
           observedClouds: r.uniforms.uObservedClouds.value,
