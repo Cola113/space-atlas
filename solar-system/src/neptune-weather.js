@@ -64,6 +64,16 @@ const weather = /* glsl */ `
     return band * smoothstep(-.18, .48, broad + filament * .18);
   }
 
+  float methaneCloudlet(vec2 uv, vec2 center, vec2 size, float seed) {
+    vec2 delta = uv - center;
+    delta.x -= floor(delta.x + .5);
+    vec2 q = delta / size;
+    float bent = q.y + .22 * sin(q.x * 1.7 + seed);
+    float envelope = exp(-pow(q.x, 4.0)) * exp(-pow(bent, 2.0));
+    float breakup = neptuneCloud(vec3(q.x * 2.7, bent * 3.6, seed));
+    return envelope * smoothstep(-.48, .46, breakup + .28);
+  }
+
   vec3 neptuneAtmosphere(sampler2D image, vec2 uv) {
     float time = uNeptuneTime;
     float activity = uNeptuneActivity;
@@ -87,8 +97,11 @@ const weather = /* glsl */ `
     float east = zonalTracer(neptuneSphere(uv - vec2(-.0017 * time, 0.0)), .08, .090, -.0044, 8.0, 4.1);
     float north = zonalTracer(neptuneSphere(uv - vec2(.0010 * time, 0.0)), .43, .075, .0032, 9.0, 8.6);
     float tracers = west * .62 + east * .46 + north * .34;
-    float tracerContrast = .045 * (.38 + .62 * uNeptuneDetail);
+    float tracerContrast = .12 * (.38 + .62 * uNeptuneDetail);
     colour *= 1.0 + tracers * tracerContrast;
+    float cloudlets = methaneCloudlet(uv, vec2(.46 + time * .009, .58), vec2(.075, .036), 2.1)
+      + methaneCloudlet(uv, vec2(.76 - time * .007, .39), vec2(.075, .034), 5.7);
+    colour *= 1.0 + cloudlets * .22 * (.38 + .62 * uNeptuneDetail);
 
     // A soft southern dark spot and its northern methane-bright companion. The
     // location, size and lifetime are illustrative; they are not current weather.
@@ -99,14 +112,14 @@ const weather = /* glsl */ `
     float spotRadius = length(spotQ);
     float spotNoise = neptuneCloud(vec3(spotQ * vec2(3.0, 4.5), time * .035));
     float spot = 1.0 - smoothstep(.42, 1.34, spotRadius + spotNoise * .16);
-    float spotLife = .40 + .60 * activity;
-    colour *= 1.0 - spot * (.105 + .17 * activity) * spotLife;
+    float spotLife = .65 + .35 * activity;
+    colour *= 1.0 - spot * (.16 + .115 * activity) * spotLife;
 
     float companion = exp(-pow((spotQ.y - .86) / .34, 2.0))
       * exp(-pow(spotQ.x / 1.38, 2.0));
     float companionTexture = companion * smoothstep(.10, .68,
       neptuneCloud(vec3(spotQ * vec2(7.0, 12.0) - vec2(time * .36, 0.0), time * .06)) + companion * .72);
-    float companionAmount = companionTexture * (.11 + .19 * activity) * spotLife;
+    float companionAmount = companionTexture * (.18 + .12 * activity) * spotLife;
     colour = mix(colour, vec3(.82, .91, 1.07), companionAmount);
 
     // Keep limb haze in the diffuse path. Lighting, including the night side,
