@@ -1,0 +1,15 @@
+{
+  "passed": true,
+  "errors": [],
+  "visibleRingPixels": 3749,
+  "pausedDate": 1790337625300,
+  "checks": [
+    "normal camera transitions",
+    "shared shader cache",
+    "artistic disclosure",
+    "activity toggle",
+    "play/pause",
+    "close view and return",
+    "canvas pixels"
+  ]
+}

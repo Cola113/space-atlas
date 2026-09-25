@@ -204,7 +204,7 @@ export const bodies = [
     radius: 1.58,
     orbit: 51,
     description:
-      "几乎侧躺着绕太阳运行的冰巨行星。大气中的甲烷吸收红光，让它呈现淡淡的蓝绿色。",
+      "几乎侧躺着绕太阳运行的冰巨行星。大气中的甲烷吸收红光，让它呈现淡淡的蓝绿色。环系的位置沿用观测资料；银蓝色、亮度与细环可见度经过艺术增强。",
     facts: [
       ["physical:radius"],
       ["physical:orbit", "年"],
@@ -215,7 +215,7 @@ export const bodies = [
     featureText:
       "可见光下的云层对比较低。淡青色的外观来自高层大气，并非冰冻的固体表面。",
     caption: "天王星大气",
-    detail: "甲烷大气 / 低对比云层",
+    detail: "甲烷大气 / 环系艺术增强",
     closeName: "观测大气",
     source: "uranus",
   },

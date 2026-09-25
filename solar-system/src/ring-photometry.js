@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { RING_PHASE_G, RING_SURGE_SCALE_RAD } from './ring-optical-depth.js';
+import { createRingDisplayUniforms, RING_DISPLAY_GLSL } from './ring-display.js';
 
 // Ring photometry, shared by the solar-system view and the landing sky.
 //
@@ -110,12 +111,13 @@ export const RING_DISPLAY_LEVEL = 0.85;
 
 // The landing sky lights its globes with a directional light of this intensity, so the ring
 // is scaled by the same number to stay commensurate with the planet beside it.
-export function createRingSurfaceMaterial({ scattering, rowBase = 0, rows, phaseG = RING_PHASE_G, lightIntensity = 1 }) {
+export function createRingSurfaceMaterial({ scattering, rowBase = 0, rows, phaseG = RING_PHASE_G, lightIntensity = 1, bodyId = 'saturn' }) {
   return new THREE.ShaderMaterial({
     transparent: true,
     side: THREE.DoubleSide,
     depthWrite: false,
     uniforms: {
+      ...createRingDisplayUniforms(bodyId),
       uRingSurgeScale: { value: RING_SURGE_SCALE_RAD }, uRingScattering: { value: scattering },
       uRingScatteringRow: { value: rowBase }, uRingScatteringRows: { value: rows },
       uRingPhaseG: { value: phaseG }, uRingSun: { value: new THREE.Vector3() },
@@ -150,6 +152,7 @@ export function createRingSurfaceMaterial({ scattering, rowBase = 0, rows, phase
       uniform float uRingPhaseG;
       uniform float uRingSurgeScale;
       ${RING_PHOTOMETRY_GLSL}
+      ${RING_DISPLAY_GLSL}
       void main() {
         vec3 sunLocal = normalize(uRingSun);
         vec3 viewLocal = normalize(uRingCamera - vRingLocal);
@@ -162,10 +165,12 @@ export function createRingSurfaceMaterial({ scattering, rowBase = 0, rows, phase
         float radiance = sunLocal.z * viewLocal.z > 0.0
           ? ringSlabReflectance(tau, albedo, mu, mu0, cosAlpha, vRingRegion, uRingPhaseG) * ringOppositionSurge(cosAlpha, surge)
           : ringSlabTransmittance(tau, albedo, mu, mu0, cosAlpha, vRingRegion, uRingPhaseG);
-        vec3 colour = ringParticleColour(vRingProfile.a);
+        vec3 colour = ringDisplayColour(ringParticleColour(vRingProfile.a));
+        radiance = ringDisplayRadiance(radiance, tau, mu0, sunLocal.z * viewLocal.z);
         // Opacity follows the same optical depth, so a gap lets the background through and
         // cannot disagree with the region whose depth it uses.
-        gl_FragColor = vec4(colour * radiance * uRingDisplayLevel * uRingLight, 1.0 - exp(-tau / mu));
+        gl_FragColor = vec4(colour * radiance * uRingDisplayLevel * uRingLight,
+          ringDisplayOpacity(1.0 - exp(-tau / mu), 1.0, tau));
         #include <colorspace_fragment>
       }`,
   });
