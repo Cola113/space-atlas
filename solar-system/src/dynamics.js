@@ -5,6 +5,7 @@ import { solarEruptionAxis, volcanicAxis, icePlumeAxis, tritonPlumeAxis, plumeVi
 import { createRingOpticalDepthTexture, RING_INNER, RING_OUTER, RING_SURGE_SCALE_RAD } from './ring-optical-depth.js';
 import { EARTH_NIGHT_GLSL } from './earth-night.js';
 import { RING_PHOTOMETRY_GLSL, RING_DISPLAY_LEVEL } from './ring-photometry.js';
+import { createRingDisplayUniforms, RING_DISPLAY_GLSL } from './ring-display.js';
 import {marsPolarFrostEdges, marsSolarLongitude} from './mars-seasons.js';
 import { ringSystems, ringSystemFor } from './ring-systems.js';
 import { createRingScatteringTexture, SCATTERING_ROW_BASE, shippedScatteringTable } from './ring-multiple-scattering.js';
@@ -300,7 +301,7 @@ function patchMaterial(material, key, uniforms, snippets) {
         "#include <common>\nvarying vec3 vActivityDir; varying vec2 vActivityUv; varying vec3 vActivityPosition;" +
           (saturnShadow ? "\nvarying mat3 vActivityViewToLocal;" : "") +
           (ringSurface ? "\nattribute vec4 aRingProfile; attribute float aRingRegion; attribute float aRingEdge; attribute float aRingHalfWidth; attribute float aRingRoom;"
-            + "\nuniform float uRingPixelScale;\nvarying vec4 vRingProfile; varying float vRingRegion; varying float vRingCoverage;"
+            + "\nuniform float uRingPixelScale; uniform float uRingPresentation;\nvarying vec4 vRingProfile; varying float vRingRegion; varying float vRingCoverage;"
             + `\n#define RING_MIN_PIXELS ${RING_MIN_PIXELS.toFixed(1)}` : ""),
       )
       .replace(
@@ -317,12 +318,25 @@ function patchMaterial(material, key, uniforms, snippets) {
               vec4 ringView = modelViewMatrix * vec4(position, 1.0);
               float ringPixel = 2.0 * max(-ringView.z, .0001)
                 / (uRingPixelScale * projectionMatrix[1][1] * ringBodyScale);
+              vec2 ringOutward = normalize(position.xy + vec2(.000001, 0.0));
+              if (uRingPresentation > .5) {
+                // Use width perpendicular to the projected ring tangent. A radial
+                // world-space pixel alone collapses into speckles in an edge-on view.
+                vec4 clip = projectionMatrix * ringView;
+                vec4 radial = projectionMatrix * modelViewMatrix * vec4(ringOutward, 0.0, 0.0);
+                vec4 tangent = projectionMatrix * modelViewMatrix * vec4(-ringOutward.y, ringOutward.x, 0.0, 0.0);
+                vec2 aspect = vec2(projectionMatrix[1][1] / projectionMatrix[0][0], 1.0);
+                vec2 dr = (radial.xy * clip.w - clip.xy * radial.w) / (clip.w * clip.w) * aspect;
+                vec2 dt = (tangent.xy * clip.w - clip.xy * tangent.w) / (clip.w * clip.w) * aspect;
+                float pixelsPerRadius = abs(dr.x * dt.y - dr.y * dt.x) / max(length(dt), .000001)
+                  * uRingPixelScale * .5;
+                ringPixel = 1.0 / max(pixelsPerRadius, .0001);
+              }
               float ringWiden = max(0.0, RING_MIN_PIXELS * ringPixel * 0.5 - aRingHalfWidth);
               // Only into the gap beside this edge. Two annuli that abut would otherwise
               // overlap once widened, and overlapping translucent strips composite to less
               // light than their sum, which dims the whole band rather than one ring.
               ringWiden = min(ringWiden, aRingRoom);
-              vec2 ringOutward = normalize(position.xy + vec2(.000001, 0.0));
               transformed = position + vec3(ringOutward * ringWiden * aRingEdge, 0.0);
               vRingCoverage = aRingHalfWidth / (aRingHalfWidth + ringWiden);
             }
@@ -480,6 +494,7 @@ function attachEarthSurface(record) {
 // the ring surface material, because a fragment varying with no matching vertex
 // declaration fails program validation on every other material that shares `common`.
 const ringSurfaceVaryings = /* glsl */ `
+  ${RING_DISPLAY_GLSL}
   varying vec4 vRingProfile;
   varying float vRingRegion;
   // Fraction of the drawn band that is the ring itself. A ring narrower than a pixel is
@@ -499,15 +514,17 @@ const ringSurfaceVaryings = /* glsl */ `
 // deterministic, and dividing the opacity by the same factor keeps the total light
 // correct, so the ring appears as the faint line it is.
 //
-// This is antialiasing, not a visibility boost. Nothing is brightened: a ring covering a
+// This base coverage is antialiasing, not a visibility boost. A ring covering a
 // thousandth of a pixel still contributes a thousandth of a pixel of light, it just
 // contributes it along the whole line instead of at scattered points.
+// Uranus then applies the separate, labelled presentation in ring-display.js.
 const RING_MIN_PIXELS = 1.5;
 
 
 
 
 function attachRingSurface(record) {
+  Object.assign(record.uniforms, createRingDisplayUniforms(record.body.id));
   patchMaterial(record.body.ring.material, "ring-surface", record.uniforms, {
     // Opacity and reflectance both read the region the fragment belongs to, carried
     // as a vertex attribute from the ring geometry, so a gap that lets sunlight
@@ -525,9 +542,9 @@ function attachRingSurface(record) {
       float ringTau = vRingProfile.r;
       float ringAlbedoW = vRingProfile.g;
       float ringSurge = vRingProfile.b;
-      vec3 ringColour = ringParticleColour(vRingProfile.a);
+      vec3 ringColour = ringDisplayColour(ringParticleColour(vRingProfile.a));
       float ringCosAlpha = dot(ringSunLocal, ringViewLocal);
-      diffuseColor.a = (1.0 - exp(-ringTau / ringMu)) * vRingCoverage;
+      diffuseColor.a = ringDisplayOpacity(1.0 - exp(-ringTau / ringMu), vRingCoverage, ringTau);
     `,
     lights_fragment_end: /* glsl */ `
       #include <lights_fragment_end>
@@ -556,6 +573,7 @@ function attachRingSurface(record) {
           // measured surge in transmission, and the coherent forward peak is not modelled.
           * ringOppositionSurge(ringCosAlpha, ringSurge)
         : ringSlabTransmittance(ringTau, ringAlbedoW, ringMu, ringMu0, ringCosAlpha, vRingRegion, uRingPhaseG);
+      ringRadiance = ringDisplayRadiance(ringRadiance, ringTau, ringMu0, ringFacing);
       ringRadiance *= ringOcclusion * RING_DISPLAY_LEVEL;
       reflectedLight.directDiffuse = ringColour * ringRadiance;
       reflectedLight.directSpecular = vec3(0.0);

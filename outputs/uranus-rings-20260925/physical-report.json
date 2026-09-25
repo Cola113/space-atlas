@@ -1,0 +1,115 @@
+[
+  {
+    "name": "default",
+    "errors": [],
+    "body": {
+      "id": "uranus",
+      "meshId": "74a19f5c-6d01-458a-8a4c-3086f27fe653",
+      "radius": 1.58,
+      "radiusKm": 25362,
+      "renderRadius": 1.58,
+      "parent": null,
+      "position": [
+        139.44510612475855,
+        -0.581550279843455,
+        176.0959536896284
+      ],
+      "orbit": 221.70000000000002,
+      "orbitVisible": false,
+      "visible": true,
+      "x": 885.599999999997,
+      "y": 492.00000000000006,
+      "radiusPx": 168.40206128555155,
+      "inView": true,
+      "occluded": false,
+      "labelVisible": false,
+      "rotation": 0.023051895219613587,
+      "orientation": [
+        -0.28897850141568326,
+        0.6687547371594981,
+        -0.5910497970152089,
+        -0.3462927442129807
+      ],
+      "physicalPositionKm": [
+        1338918144.3470507,
+        2371973080.139706,
+        1019989495.7225156
+      ],
+      "physicalOrientation": [
+        0.7918598362348461,
+        -0.06198421304169831,
+        -0.08679261407274488,
+        0.6013177190422246
+      ],
+      "physicalAvailable": true,
+      "physicalModel": "Astronomy Engine 2.1.19",
+      "sunDirection": [
+        -0.6207988597091028,
+        0.0025890170019112757,
+        -0.7839656068826243
+      ],
+      "ringVisible": true,
+      "ringOuterRadius": 6.565045580813021,
+      "detailReady": true,
+      "textureWidth": 2048,
+      "layerVisible": true
+    }
+  },
+  {
+    "name": "edge",
+    "errors": [],
+    "date": 1790337600000,
+    "body": {
+      "id": "uranus",
+      "meshId": "c1437545-c84f-4da2-b6b2-503e1b0e1f37",
+      "radius": 1.58,
+      "radiusKm": 25362,
+      "renderRadius": 1.58,
+      "parent": null,
+      "position": [
+        139.44510612475855,
+        -0.581550279843455,
+        176.0959536896284
+      ],
+      "orbit": 221.70000000000002,
+      "orbitVisible": false,
+      "visible": true,
+      "x": 553.5,
+      "y": 442.00000000000125,
+      "radiusPx": 90.17615993170845,
+      "inView": true,
+      "occluded": false,
+      "labelVisible": false,
+      "rotation": 0.023051895219613587,
+      "orientation": [
+        -0.28897850141568326,
+        0.6687547371594981,
+        -0.5910497970152089,
+        -0.3462927442129807
+      ],
+      "physicalPositionKm": [
+        1338918144.3470507,
+        2371973080.139706,
+        1019989495.7225156
+      ],
+      "physicalOrientation": [
+        0.7918598362348461,
+        -0.06198421304169831,
+        -0.08679261407274488,
+        0.6013177190422246
+      ],
+      "physicalAvailable": true,
+      "physicalModel": "Astronomy Engine 2.1.19",
+      "sunDirection": [
+        -0.6207988597091028,
+        0.0025890170019112757,
+        -0.7839656068826243
+      ],
+      "ringVisible": true,
+      "ringOuterRadius": 6.565045580813021,
+      "detailReady": true,
+      "textureWidth": 2048,
+      "layerVisible": true
+    }
+  }
+]
