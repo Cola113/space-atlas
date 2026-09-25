@@ -1659,6 +1659,12 @@ function triggerActivity() {
     updateActivityUi();
     return;
   }
+  if (body.id === 'neptune') {
+    dynamics.trigger();
+    selectLandmark('neptune-vortex');
+    updateActivityUi();
+    return;
+  }
   if (body.id === "sun") {
     if (state.close) toggleClose();
     else flyTo(body.root.position, focusedOffset(body), 850);

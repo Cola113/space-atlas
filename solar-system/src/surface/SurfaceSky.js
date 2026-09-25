@@ -18,6 +18,7 @@ import { patchEarthNightMaterial } from '../earth-night.js';
 import { createSaturnWeatherUniforms, patchSaturnWeather } from '../saturn-weather.js';
 import { createSaturnRingShadowUniforms, patchSaturnRingShadow } from '../saturn-ring-shadow.js';
 import { createVenusWeatherUniforms, patchVenusWeather } from '../venus-weather.js';
+import { createNeptuneWeatherUniforms, patchNeptuneWeather } from '../neptune-weather.js';
 
 const { smoothstep, clamp, degToRad } = THREE.MathUtils;
 const HOURS = 3600000;
@@ -175,6 +176,7 @@ export function createSurfaceSky({scene,renderer,site,parentMap,cloudMap,groundM
       patchSaturnWeather(material,createSaturnWeatherUniforms());
     }
     if(id==='venus')patchVenusWeather(material,createVenusWeatherUniforms());
+    if(id==='neptune')patchNeptuneWeather(material,createNeptuneWeatherUniforms());
     const sunlight=new THREE.Vector3();
     bindPhysicalSun(material,sunlight);
     const physicalScale={value:1};
