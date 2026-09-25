@@ -20,7 +20,11 @@ for (const [siteId, site] of Object.entries(landingSites)) {
   }
   for (const date of dates) requests.push({siteId, id:site.id, parent:site.parent.toLowerCase(), date,
     tdbSeconds:physicalTime(new Date(date)).tdbSeconds, latitude:site.latitude, longitude:site.longitude,
-    radiusKm:site.radiusKm, parentRadiusKm:site.parentRadiusKm});
+    radiusKm:site.radiusKm, parentRadiusKm:site.parentRadiusKm,
+    // The Earth viewer stands on the Moon's parent: the Moon is what that site is
+    // for, so its sky geometry gets an independent sample beside the Sun's.
+    ...(site.id === 'earth' ? {extraTargets:['moon'],
+      targetRadiiKm:{moon:physicalDefinitions.bodies.moon.radius.value}} : {})});
 }
 const root = fileURLToPath(new URL('../', import.meta.url));
 await mkdir(root + 'data/science-audit', {recursive:true});

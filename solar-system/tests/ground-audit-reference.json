@@ -24499,6 +24499,1761 @@
       }
     },
     {
+      "siteId": "earth",
+      "id": "earth",
+      "parent": "sun",
+      "date": "1900-01-01T00:00:00Z",
+      "tdbSeconds": -3155716802.7589946,
+      "latitude": 19.8207,
+      "longitude": 204.5319,
+      "radiusKm": 6371.0084,
+      "parentRadiusKm": 695700,
+      "extraTargets": [
+        "moon"
+      ],
+      "targetRadiiKm": {
+        "moon": 1737.4
+      },
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.367993590103428,
+            0.6604633394046633,
+            0.6544989648160113
+          ],
+          "distanceKm": 147090328.48591194,
+          "angularDiameter": 0.009459528726971301,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "moon": {
+          "direction": [
+            -0.49559553303723913,
+            0.5980593739315561,
+            0.629849230281446
+          ],
+          "distanceKm": 364544.18800917134,
+          "angularDiameter": 0.009531939526225233,
+          "illuminatedFraction": 0.0052217461465305925,
+          "sunDirection": [
+            -0.367667043229466,
+            0.6606012852936916,
+            0.654543266095699
+          ]
+        }
+      }
+    },
+    {
+      "siteId": "earth",
+      "id": "earth",
+      "parent": "sun",
+      "date": "1900-12-31T23:59:59Z",
+      "tdbSeconds": -3124180802.4052444,
+      "latitude": 19.8207,
+      "longitude": 204.5319,
+      "radiusKm": 6371.0084,
+      "parentRadiusKm": 695700,
+      "extraTargets": [
+        "moon"
+      ],
+      "targetRadiiKm": {
+        "moon": 1737.4
+      },
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.3683039866404237,
+            0.6601078696583214,
+            0.6546829567354899
+          ],
+          "distanceKm": 147080760.52640912,
+          "angularDiameter": 0.00946014409680237,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "moon": {
+          "direction": [
+            0.929793797463833,
+            -0.0822145910532354,
+            -0.3587816260843549
+          ],
+          "distanceKm": 370855.29418859526,
+          "angularDiameter": 0.009369726589507665,
+          "illuminatedFraction": 0.8165587171552227,
+          "sunDirection": [
+            -0.37005836146464083,
+            0.6592639968177251,
+            0.6545439569731157
+          ]
+        }
+      }
+    },
+    {
+      "siteId": "earth",
+      "id": "earth",
+      "parent": "sun",
+      "date": "1971-08-01T17:00:00Z",
+      "tdbSeconds": -896813958.2280614,
+      "latitude": 19.8207,
+      "longitude": 204.5319,
+      "radiusKm": 6371.0084,
+      "parentRadiusKm": 695700,
+      "extraTargets": [
+        "moon"
+      ],
+      "targetRadiiKm": {
+        "moon": 1737.4
+      },
+      "targets": {
+        "sun": {
+          "direction": [
+            0.9417404640299397,
+            0.2277451969116777,
+            -0.24750156300988319
+          ],
+          "distanceKm": 151833035.68355054,
+          "angularDiameter": 0.009164045640481526,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "moon": {
+          "direction": [
+            -0.18674295758540993,
+            -0.9761399988989511,
+            0.11080510070303565
+          ],
+          "distanceKm": 398546.5874598172,
+          "angularDiameter": 0.008718707210618579,
+          "illuminatedFraction": 0.7138724345389487,
+          "sunDirection": [
+            0.9411765534260902,
+            0.2300498175626784,
+            -0.24751520502862934
+          ]
+        }
+      }
+    },
+    {
+      "siteId": "earth",
+      "id": "earth",
+      "parent": "sun",
+      "date": "2000-01-01T12:00:00Z",
+      "tdbSeconds": 64.18392728473108,
+      "latitude": 19.8207,
+      "longitude": 204.5319,
+      "radiusKm": 6371.0084,
+      "parentRadiusKm": 695700,
+      "extraTargets": [
+        "moon"
+      ],
+      "targetRadiiKm": {
+        "moon": 1737.4
+      },
+      "targets": {
+        "sun": {
+          "direction": [
+            0.3692722376780057,
+            -0.9256732239533818,
+            0.08226236646262279
+          ],
+          "distanceKm": 147109623.59576288,
+          "angularDiameter": 0.009458287992325537,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "moon": {
+          "direction": [
+            0.9705711880567112,
+            -0.20007454845687303,
+            0.13402143102490272
+          ],
+          "distanceKm": 403676.966040507,
+          "angularDiameter": 0.008607899434942305,
+          "illuminatedFraction": 0.2236353539725574,
+          "sunDirection": [
+            0.36716678568699734,
+            -0.9265319202416799,
+            0.08201921885475409
+          ]
+        }
+      }
+    },
+    {
+      "siteId": "earth",
+      "id": "earth",
+      "parent": "sun",
+      "date": "2100-12-31T23:59:59Z",
+      "tdbSeconds": 3187252868.183877,
+      "latitude": 19.8207,
+      "longitude": 204.5319,
+      "radiusKm": 6371.0084,
+      "parentRadiusKm": 695700,
+      "extraTargets": [
+        "moon"
+      ],
+      "targetRadiiKm": {
+        "moon": 1737.4
+      },
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.36690171045178116,
+            0.6614348965775533,
+            0.6541307304025693
+          ],
+          "distanceKm": 147113171.48866,
+          "angularDiameter": 0.009458059887373372,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "moon": {
+          "direction": [
+            -0.13438773957872965,
+            0.7002860023954821,
+            0.7010987450422902
+          ],
+          "distanceKm": 363041.9534215144,
+          "angularDiameter": 0.009571382125631163,
+          "illuminatedFraction": 0.014515052648875204,
+          "sunDirection": [
+            -0.3674505967043786,
+            0.6612914072407946,
+            0.6539676855098314
+          ]
+        }
+      }
+    },
+    {
+      "siteId": "earth",
+      "id": "earth",
+      "parent": "sun",
+      "date": "2026-09-27T05:30:00Z",
+      "tdbSeconds": 843759069.1823604,
+      "latitude": 19.8207,
+      "longitude": 204.5319,
+      "radiusKm": 6371.0084,
+      "parentRadiusKm": 695700,
+      "extraTargets": [
+        "moon"
+      ],
+      "targetRadiiKm": {
+        "moon": 1737.4
+      },
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.9441418592659174,
+            -0.3185790937674633,
+            -0.08428232671324476
+          ],
+          "distanceKm": 149956394.28744447,
+          "angularDiameter": 0.009278730646816587,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "moon": {
+          "direction": [
+            0.9648902869276634,
+            0.2598355144599144,
+            -0.03836977479740053
+          ],
+          "distanceKm": 375746.80238196306,
+          "angularDiameter": 0.009247749708049119,
+          "illuminatedFraction": 0.9952922994722844,
+          "sunDirection": [
+            -0.9442159947093863,
+            -0.3184397800856717,
+            -0.08397774582562524
+          ]
+        }
+      }
+    },
+    {
+      "siteId": "earth",
+      "id": "earth",
+      "parent": "sun",
+      "date": "2026-09-27T05:30:00.000Z",
+      "tdbSeconds": 843759069.1823604,
+      "latitude": 19.8207,
+      "longitude": 204.5319,
+      "radiusKm": 6371.0084,
+      "parentRadiusKm": 695700,
+      "extraTargets": [
+        "moon"
+      ],
+      "targetRadiiKm": {
+        "moon": 1737.4
+      },
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.9441418592659174,
+            -0.3185790937674633,
+            -0.08428232671324476
+          ],
+          "distanceKm": 149956394.28744447,
+          "angularDiameter": 0.009278730646816587,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "moon": {
+          "direction": [
+            0.9648902869276634,
+            0.2598355144599144,
+            -0.03836977479740053
+          ],
+          "distanceKm": 375746.80238196306,
+          "angularDiameter": 0.009247749708049119,
+          "illuminatedFraction": 0.9952922994722844,
+          "sunDirection": [
+            -0.9442159947093863,
+            -0.3184397800856717,
+            -0.08397774582562524
+          ]
+        }
+      }
+    },
+    {
+      "siteId": "earth",
+      "id": "earth",
+      "parent": "sun",
+      "date": "2026-11-11T21:16:08.637Z",
+      "tdbSeconds": 847703837.8196745,
+      "latitude": 19.8207,
+      "longitude": 204.5319,
+      "radiusKm": 6371.0084,
+      "parentRadiusKm": 695700,
+      "extraTargets": [
+        "moon"
+      ],
+      "targetRadiiKm": {
+        "moon": 1737.4
+      },
+      "targets": {
+        "sun": {
+          "direction": [
+            0.20698763778639515,
+            0.7727412382203541,
+            0.60002258003952
+          ],
+          "distanceKm": 148102030.32574615,
+          "angularDiameter": 0.009394909131742693,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "moon": {
+          "direction": [
+            0.6036237243902246,
+            0.44556869023788925,
+            0.6611406368035216
+          ],
+          "distanceKm": 401105.1592676596,
+          "angularDiameter": 0.008663091923913194,
+          "illuminatedFraction": 0.06736427628146457,
+          "sunDirection": [
+            0.20583538979518218,
+            0.7733474917932098,
+            0.5996377650257002
+          ]
+        }
+      }
+    },
+    {
+      "siteId": "earth",
+      "id": "earth",
+      "parent": "sun",
+      "date": "2026-12-27T13:02:17.275Z",
+      "tdbSeconds": 851648606.458784,
+      "latitude": 19.8207,
+      "longitude": 204.5319,
+      "radiusKm": 6371.0084,
+      "parentRadiusKm": 695700,
+      "extraTargets": [
+        "moon"
+      ],
+      "targetRadiiKm": {
+        "moon": 1737.4
+      },
+      "targets": {
+        "sun": {
+          "direction": [
+            0.5872096553360315,
+            -0.7984624490725931,
+            0.1328252163602064
+          ],
+          "distanceKm": 147125196.85132968,
+          "angularDiameter": 0.009457286821640968,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "moon": {
+          "direction": [
+            0.1833744965934712,
+            0.9764722934565936,
+            0.11347093949867071
+          ],
+          "distanceKm": 359669.2893130102,
+          "angularDiameter": 0.009661134873072371,
+          "illuminatedFraction": 0.829155848390288,
+          "sunDirection": [
+            0.585819578142313,
+            -0.7995641629291859,
+            0.1323350717856481
+          ]
+        }
+      }
+    },
+    {
+      "siteId": "earth",
+      "id": "earth",
+      "parent": "sun",
+      "date": "2027-02-11T04:48:25.913Z",
+      "tdbSeconds": 855593375.0980251,
+      "latitude": 19.8207,
+      "longitude": 204.5319,
+      "radiusKm": 6371.0084,
+      "parentRadiusKm": 695700,
+      "extraTargets": [
+        "moon"
+      ],
+      "targetRadiiKm": {
+        "moon": 1737.4
+      },
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.9685361414277062,
+            -0.13037892216913582,
+            0.21198839449919157
+          ],
+          "distanceKm": 147638651.89150992,
+          "angularDiameter": 0.00942439619627145,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "moon": {
+          "direction": [
+            -0.7248777740803067,
+            0.6844317959057113,
+            0.07813660728277425
+          ],
+          "distanceKm": 384774.4407342654,
+          "angularDiameter": 0.009030776059838394,
+          "illuminatedFraction": 0.18608937375141715,
+          "sunDirection": [
+            -0.9682332082807403,
+            -0.13237955644067087,
+            0.21213228754472102
+          ]
+        }
+      }
+    },
+    {
+      "siteId": "earth",
+      "id": "earth",
+      "parent": "sun",
+      "date": "2027-03-28T20:34:34.551Z",
+      "tdbSeconds": 859538143.7366468,
+      "latitude": 19.8207,
+      "longitude": 204.5319,
+      "radiusKm": 6371.0084,
+      "parentRadiusKm": 695700,
+      "extraTargets": [
+        "moon"
+      ],
+      "targetRadiiKm": {
+        "moon": 1737.4
+      },
+      "targets": {
+        "sun": {
+          "direction": [
+            0.4713940192774545,
+            0.8466870431517709,
+            0.24679693990882096
+          ],
+          "distanceKm": 149312186.6376537,
+          "angularDiameter": 0.009318764032981762,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "moon": {
+          "direction": [
+            -0.8562818525665309,
+            0.04715782969944743,
+            0.5143515607668239
+          ],
+          "distanceKm": 400846.407332893,
+          "angularDiameter": 0.008668684105327774,
+          "illuminatedFraction": 0.6196547581909797,
+          "sunDirection": [
+            0.47339028649220616,
+            0.8460197868036253,
+            0.2452593667764296
+          ]
+        }
+      }
+    },
+    {
+      "siteId": "earth",
+      "id": "earth",
+      "parent": "sun",
+      "date": "2027-05-13T12:20:43.188Z",
+      "tdbSeconds": 863482912.3732989,
+      "latitude": 19.8207,
+      "longitude": 204.5319,
+      "radiusKm": 6371.0084,
+      "parentRadiusKm": 695700,
+      "extraTargets": [
+        "moon"
+      ],
+      "targetRadiiKm": {
+        "moon": 1737.4
+      },
+      "targets": {
+        "sun": {
+          "direction": [
+            0.48195770495702306,
+            -0.6618999868974372,
+            -0.574112513343623
+          ],
+          "distanceKm": 151154078.2967248,
+          "angularDiameter": 0.009205209202778938,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "moon": {
+          "direction": [
+            -0.9027598428938253,
+            -0.29378501075055236,
+            -0.3141894866423987
+          ],
+          "distanceKm": 373845.82547923474,
+          "angularDiameter": 0.009294774132674852,
+          "illuminatedFraction": 0.5313596948828704,
+          "sunDirection": [
+            0.4841168571441569,
+            -0.66107284211521,
+            -0.573248258651156
+          ]
+        }
+      }
+    },
+    {
+      "siteId": "earth",
+      "id": "earth",
+      "parent": "sun",
+      "date": "2027-06-28T04:06:51.826Z",
+      "tdbSeconds": 867427681.0102091,
+      "latitude": 19.8207,
+      "longitude": 204.5319,
+      "radiusKm": 6371.0084,
+      "parentRadiusKm": 695700,
+      "extraTargets": [
+        "moon"
+      ],
+      "targetRadiiKm": {
+        "moon": 1737.4
+      },
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.9155314830728791,
+            0.20394377307700376,
+            -0.34671175481297034
+          ],
+          "distanceKm": 152076256.3866554,
+          "angularDiameter": 0.009149389169852343,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "moon": {
+          "direction": [
+            -0.20474662168604732,
+            -0.8400393213327069,
+            -0.5024069660375302
+          ],
+          "distanceKm": 393263.8232220985,
+          "angularDiameter": 0.008835827498848398,
+          "illuminatedFraction": 0.4060862689147896,
+          "sunDirection": [
+            -0.9154496162418336,
+            0.20621691293566638,
+            -0.34558151707225776
+          ]
+        }
+      }
+    },
+    {
+      "siteId": "earth",
+      "id": "earth",
+      "parent": "sun",
+      "date": "2027-08-12T19:53:00.464Z",
+      "tdbSeconds": 871372449.6470019,
+      "latitude": 19.8207,
+      "longitude": 204.5319,
+      "radiusKm": 6371.0084,
+      "parentRadiusKm": 695700,
+      "extraTargets": [
+        "moon"
+      ],
+      "targetRadiiKm": {
+        "moon": 1737.4
+      },
+      "targets": {
+        "sun": {
+          "direction": [
+            0.6026838840803057,
+            0.7978347686087511,
+            0.015225566291508091
+          ],
+          "distanceKm": 151582270.90527478,
+          "angularDiameter": 0.009179205962211391,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "moon": {
+          "direction": [
+            0.18939999170401176,
+            -0.9735527400924086,
+            0.1277603436168028
+          ],
+          "distanceKm": 409186.48119855736,
+          "angularDiameter": 0.008491997171439843,
+          "illuminatedFraction": 0.8310789465288841,
+          "sunDirection": [
+            0.6010994045294821,
+            0.7990362067274109,
+            0.01485416483590854
+          ]
+        }
+      }
+    },
+    {
+      "siteId": "earth",
+      "id": "earth",
+      "parent": "sun",
+      "date": "2027-09-27T11:39:09.102Z",
+      "tdbSeconds": 875317218.2843604,
+      "latitude": 19.8207,
+      "longitude": 204.5319,
+      "radiusKm": 6371.0084,
+      "parentRadiusKm": 695700,
+      "extraTargets": [
+        "moon"
+      ],
+      "targetRadiiKm": {
+        "moon": 1737.4
+      },
+      "targets": {
+        "sun": {
+          "direction": [
+            0.3657095655318122,
+            -0.88493821380632,
+            -0.2883415880926869
+          ],
+          "distanceKm": 149967216.1834838,
+          "angularDiameter": 0.009278061072616679,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "moon": {
+          "direction": [
+            0.8024739521822429,
+            -0.47652934973289723,
+            -0.3591035155942551
+          ],
+          "distanceKm": 366532.15327173227,
+          "angularDiameter": 0.009480240632135399,
+          "illuminatedFraction": 0.09104616930140058,
+          "sunDirection": [
+            0.36447721594319715,
+            -0.8855446458237183,
+            -0.28803999602701225
+          ]
+        }
+      }
+    },
+    {
+      "siteId": "earth",
+      "id": "earth",
+      "parent": "sun",
+      "date": "2027-11-12T03:25:17.740Z",
+      "tdbSeconds": 879261986.9226744,
+      "latitude": 19.8207,
+      "longitude": 204.5319,
+      "radiusKm": 6371.0084,
+      "parentRadiusKm": 695700,
+      "extraTargets": [
+        "moon"
+      ],
+      "targetRadiiKm": {
+        "moon": 1737.4
+      },
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.9379330836998373,
+            0.05702069889734956,
+            0.3420967266703552
+          ],
+          "distanceKm": 148094607.90940145,
+          "angularDiameter": 0.00939538000263418,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "moon": {
+          "direction": [
+            0.9382973336493923,
+            0.31523440305555317,
+            -0.14221597939981945
+          ],
+          "distanceKm": 385379.2176419418,
+          "angularDiameter": 0.009016603936379918,
+          "illuminatedFraction": 0.9555895545751574,
+          "sunDirection": [
+            -0.9381508428385622,
+            0.05606746987157813,
+            0.3416568964670476
+          ]
+        }
+      }
+    },
+    {
+      "siteId": "earth",
+      "id": "earth",
+      "parent": "sun",
+      "date": "2027-12-27T19:11:26.377Z",
+      "tdbSeconds": 883206755.560784,
+      "latitude": 19.8207,
+      "longitude": 204.5319,
+      "radiusKm": 6371.0084,
+      "parentRadiusKm": 695700,
+      "extraTargets": [
+        "moon"
+      ],
+      "targetRadiiKm": {
+        "moon": 1737.4
+      },
+      "targets": {
+        "sun": {
+          "direction": [
+            0.6821656182278418,
+            0.4442683437178292,
+            0.5807544300976474
+          ],
+          "distanceKm": 147123898.74963483,
+          "angularDiameter": 0.009457370265674598,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "moon": {
+          "direction": [
+            0.6692588902125898,
+            0.41170128960466307,
+            0.6185423073721557
+          ],
+          "distanceKm": 395619.3774718257,
+          "angularDiameter": 0.008783217828026123,
+          "illuminatedFraction": 0.0006673619683069676,
+          "sunDirection": [
+            0.6821979697971235,
+            0.4443545585231457,
+            0.580650459678095
+          ]
+        }
+      }
+    },
+    {
+      "siteId": "earth",
+      "id": "earth",
+      "parent": "sun",
+      "date": "2028-02-11T10:57:35.015Z",
+      "tdbSeconds": 887151524.200025,
+      "latitude": 19.8207,
+      "longitude": 204.5319,
+      "radiusKm": 6371.0084,
+      "parentRadiusKm": 695700,
+      "extraTargets": [
+        "moon"
+      ],
+      "targetRadiiKm": {
+        "moon": 1737.4
+      },
+      "targets": {
+        "sun": {
+          "direction": [
+            0.08936236870411385,
+            -0.9911337198005445,
+            -0.09832759802784612
+          ],
+          "distanceKm": 147637812.2200817,
+          "angularDiameter": 0.009424449796732392,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "moon": {
+          "direction": [
+            0.08863047432211951,
+            0.972157295253698,
+            0.21692125830920844
+          ],
+          "distanceKm": 350878.5280876708,
+          "angularDiameter": 0.009903182786130728,
+          "illuminatedFraction": 0.9885274653329095,
+          "sunDirection": [
+            0.08894520106563647,
+            -0.9911427742103709,
+            -0.09861415891221437
+          ]
+        }
+      }
+    },
+    {
+      "siteId": "earth",
+      "id": "earth",
+      "parent": "sun",
+      "date": "2028-03-28T02:43:43.653Z",
+      "tdbSeconds": 891096292.8386467,
+      "latitude": 19.8207,
+      "longitude": 204.5319,
+      "radiusKm": 6371.0084,
+      "parentRadiusKm": 695700,
+      "extraTargets": [
+        "moon"
+      ],
+      "targetRadiiKm": {
+        "moon": 1737.4
+      },
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.8983294764581197,
+            0.4286992898789572,
+            0.09602640565885238
+          ],
+          "distanceKm": 149321767.65357012,
+          "angularDiameter": 0.009318166103597614,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "moon": {
+          "direction": [
+            -0.6957172627439698,
+            0.7175642935846758,
+            -0.03284775323159093
+          ],
+          "distanceKm": 392702.43079039466,
+          "angularDiameter": 0.008848458943520847,
+          "illuminatedFraction": 0.03545546947281747,
+          "sunDirection": [
+            -0.8986961200797854,
+            0.4278578001510201,
+            0.0963482568782107
+          ]
+        }
+      }
+    },
+    {
+      "siteId": "earth",
+      "id": "earth",
+      "parent": "sun",
+      "date": "2028-05-12T18:29:52.291Z",
+      "tdbSeconds": 895041061.476299,
+      "latitude": 19.8207,
+      "longitude": 204.5319,
+      "radiusKm": 6371.0084,
+      "parentRadiusKm": 695700,
+      "extraTargets": [
+        "moon"
+      ],
+      "targetRadiiKm": {
+        "moon": 1737.4
+      },
+      "targets": {
+        "sun": {
+          "direction": [
+            0.7974348863458635,
+            0.5908073465766518,
+            -0.12265513144428881
+          ],
+          "distanceKm": 151145726.34209052,
+          "angularDiameter": 0.009205717864415996,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "moon": {
+          "direction": [
+            -0.861667961717303,
+            0.1333429423592865,
+            0.48964066770736697
+          ],
+          "distanceKm": 390726.4296966077,
+          "angularDiameter": 0.008893208103468626,
+          "illuminatedFraction": 0.8349137610814683,
+          "sunDirection": [
+            0.7982815726268403,
+            0.5894430663671721,
+            -0.1237069210516709
+          ]
+        }
+      }
+    },
+    {
+      "siteId": "earth",
+      "id": "earth",
+      "parent": "sun",
+      "date": "2028-06-27T10:16:00.928Z",
+      "tdbSeconds": 898985830.1122091,
+      "latitude": 19.8207,
+      "longitude": 204.5319,
+      "radiusKm": 6371.0084,
+      "parentRadiusKm": 695700,
+      "extraTargets": [
+        "moon"
+      ],
+      "targetRadiiKm": {
+        "moon": 1737.4
+      },
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.037787744745559675,
+            -0.7293720980813138,
+            -0.6830727844728605
+          ],
+          "distanceKm": 152084763.71031275,
+          "angularDiameter": 0.009148877367381271,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "moon": {
+          "direction": [
+            -0.8919243365015178,
+            -0.39232118304396507,
+            -0.22484454027463222
+          ],
+          "distanceKm": 369725.051230254,
+          "angularDiameter": 0.009398369888892408,
+          "illuminatedFraction": 0.2642261409636831,
+          "sunDirection": [
+            -0.03566039707607748,
+            -0.7292560087041253,
+            -0.6833110637544991
+          ]
+        }
+      }
+    },
+    {
+      "siteId": "earth",
+      "id": "earth",
+      "parent": "sun",
+      "date": "2028-08-12T02:02:09.566Z",
+      "tdbSeconds": 902930598.7490019,
+      "latitude": 19.8207,
+      "longitude": 204.5319,
+      "radiusKm": 6371.0084,
+      "parentRadiusKm": 695700,
+      "extraTargets": [
+        "moon"
+      ],
+      "targetRadiiKm": {
+        "moon": 1737.4
+      },
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.779268314185136,
+            0.6249215055135224,
+            -0.04705323000357217
+          ],
+          "distanceKm": 151583043.51578283,
+          "angularDiameter": 0.009179159175970574,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "moon": {
+          "direction": [
+            -0.22482203105945642,
+            -0.7742550318929396,
+            -0.5915946246702752
+          ],
+          "distanceKm": 404476.53114926524,
+          "angularDiameter": 0.008590883321794083,
+          "illuminatedFraction": 0.6416353298420142,
+          "sunDirection": [
+            -0.7780828325179473,
+            0.6265159783888793,
+            -0.045440450749011804
+          ]
+        }
+      }
+    },
+    {
+      "siteId": "earth",
+      "id": "earth",
+      "parent": "sun",
+      "date": "2028-09-26T17:48:18.204Z",
+      "tdbSeconds": 906875367.3863606,
+      "latitude": 19.8207,
+      "longitude": 204.5319,
+      "radiusKm": 6371.0084,
+      "parentRadiusKm": 695700,
+      "extraTargets": [
+        "moon"
+      ],
+      "targetRadiiKm": {
+        "moon": 1737.4
+      },
+      "targets": {
+        "sun": {
+          "direction": [
+            0.9149732346487547,
+            0.3688277962133478,
+            0.16367662208391298
+          ],
+          "distanceKm": 149949555.68880624,
+          "angularDiameter": 0.009279153815593322,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "moon": {
+          "direction": [
+            0.1276036686835958,
+            -0.9906673971113221,
+            0.04791045855724015
+          ],
+          "distanceKm": 401013.5834005167,
+          "angularDiameter": 0.00866507024871617,
+          "illuminatedFraction": 0.6216533680625826,
+          "sunDirection": [
+            0.9140403077751815,
+            0.3712368533105944,
+            0.16344269486978985
+          ]
+        }
+      }
+    },
+    {
+      "siteId": "earth",
+      "id": "earth",
+      "parent": "sun",
+      "date": "2028-11-11T09:34:26.842Z",
+      "tdbSeconds": 910820136.0246744,
+      "latitude": 19.8207,
+      "longitude": 204.5319,
+      "radiusKm": 6371.0084,
+      "parentRadiusKm": 695700,
+      "extraTargets": [
+        "moon"
+      ],
+      "targetRadiiKm": {
+        "moon": 1737.4
+      },
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.13214466594085172,
+            -0.9905967847266796,
+            -0.0354372311636354
+          ],
+          "distanceKm": 148103167.0950316,
+          "angularDiameter": 0.0093948370203699,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "moon": {
+          "direction": [
+            0.8555407888212373,
+            -0.4595131861214562,
+            -0.23853215809119463
+          ],
+          "distanceKm": 371238.6648056127,
+          "angularDiameter": 0.009360050592787614,
+          "illuminatedFraction": 0.3258056839292961,
+          "sunDirection": [
+            -0.13440692904810014,
+            -0.9903125111249834,
+            -0.03486986855708758
+          ]
+        }
+      }
+    },
+    {
+      "siteId": "earth",
+      "id": "earth",
+      "parent": "sun",
+      "date": "2028-12-27T01:20:35.480Z",
+      "tdbSeconds": 914764904.6637838,
+      "latitude": 19.8207,
+      "longitude": 204.5319,
+      "radiusKm": 6371.0084,
+      "parentRadiusKm": 695700,
+      "extraTargets": [
+        "moon"
+      ],
+      "targetRadiiKm": {
+        "moon": 1737.4
+      },
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.6415476984772184,
+            0.4840504588716737,
+            0.5950728559132118
+          ],
+          "distanceKm": 147116931.24392992,
+          "angularDiameter": 0.009457818173144556,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "moon": {
+          "direction": [
+            0.9189798297312954,
+            0.31603486381848483,
+            -0.23579236077165722
+          ],
+          "distanceKm": 396039.1917004022,
+          "angularDiameter": 0.00877390727603657,
+          "illuminatedFraction": 0.7893490380435624,
+          "sunDirection": [
+            -0.6430214091249558,
+            0.48244926793207604,
+            0.5947824571040746
+          ]
+        }
+      }
+    },
+    {
+      "siteId": "earth",
+      "id": "earth",
+      "parent": "sun",
+      "date": "2029-02-10T17:06:44.117Z",
+      "tdbSeconds": 918709673.302025,
+      "latitude": 19.8207,
+      "longitude": 204.5319,
+      "radiusKm": 6371.0084,
+      "parentRadiusKm": 695700,
+      "extraTargets": [
+        "moon"
+      ],
+      "targetRadiiKm": {
+        "moon": 1737.4
+      },
+      "targets": {
+        "sun": {
+          "direction": [
+            0.9614515462240147,
+            0.03762700959529296,
+            0.27238783455280574
+          ],
+          "distanceKm": 147644179.69590318,
+          "angularDiameter": 0.009424043343863844,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "moon": {
+          "direction": [
+            0.7241997398213401,
+            0.42336231344461217,
+            0.5443336186545242
+          ],
+          "distanceKm": 388339.15595193853,
+          "angularDiameter": 0.008947878520049765,
+          "illuminatedFraction": 0.07010119026007289,
+          "sunDirection": [
+            0.961722504722071,
+            0.03659626085846802,
+            0.2715705020842378
+          ]
+        }
+      }
+    },
+    {
+      "siteId": "earth",
+      "id": "earth",
+      "parent": "sun",
+      "date": "2029-03-28T08:52:52.755Z",
+      "tdbSeconds": 922654441.9406466,
+      "latitude": 19.8207,
+      "longitude": 204.5319,
+      "radiusKm": 6371.0084,
+      "parentRadiusKm": 695700,
+      "extraTargets": [
+        "moon"
+      ],
+      "targetRadiiKm": {
+        "moon": 1737.4
+      },
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.39967099343557677,
+            -0.8421100615149826,
+            -0.36209631495149425
+          ],
+          "distanceKm": 149324611.0008867,
+          "angularDiameter": 0.009317988671531241,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "moon": {
+          "direction": [
+            -0.015486482787330991,
+            0.9525600886633258,
+            0.30395632307388276
+          ],
+          "distanceKm": 353991.79786330374,
+          "angularDiameter": 0.009816086055355678,
+          "illuminatedFraction": 0.9532278137951261,
+          "sunDirection": [
+            -0.39877756309694284,
+            -0.8425581006402499,
+            -0.3620390893480395
+          ]
+        }
+      }
+    },
+    {
+      "siteId": "earth",
+      "id": "earth",
+      "parent": "sun",
+      "date": "2029-05-13T00:39:01.393Z",
+      "tdbSeconds": 926599210.5782989,
+      "latitude": 19.8207,
+      "longitude": 204.5319,
+      "radiusKm": 6371.0084,
+      "parentRadiusKm": 695700,
+      "extraTargets": [
+        "moon"
+      ],
+      "targetRadiiKm": {
+        "moon": 1737.4
+      },
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.5456566377063071,
+            0.8373242763895652,
+            -0.03386576288435265
+          ],
+          "distanceKm": 151151491.09231788,
+          "angularDiameter": 0.009205366766067402,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "moon": {
+          "direction": [
+            -0.639218761357466,
+            0.7630484749399091,
+            -0.09568907994387589
+          ],
+          "distanceKm": 398308.4576752781,
+          "angularDiameter": 0.008723919746263556,
+          "illuminatedFraction": 0.0045470463309190134,
+          "sunDirection": [
+            -0.5453963648125533,
+            0.8375004517634549,
+            -0.03370161042533863
+          ]
+        }
+      }
+    },
+    {
+      "siteId": "earth",
+      "id": "earth",
+      "parent": "sun",
+      "date": "2029-06-27T16:25:10.031Z",
+      "tdbSeconds": 930543979.2152094,
+      "latitude": 19.8207,
+      "longitude": 204.5319,
+      "radiusKm": 6371.0084,
+      "parentRadiusKm": 695700,
+      "extraTargets": [
+        "moon"
+      ],
+      "targetRadiiKm": {
+        "moon": 1737.4
+      },
+      "targets": {
+        "sun": {
+          "direction": [
+            0.9185514667166085,
+            0.1329507376948314,
+            -0.37227315823084506
+          ],
+          "distanceKm": 152071671.40262106,
+          "angularDiameter": 0.009149665027252578,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "moon": {
+          "direction": [
+            -0.8864385677463108,
+            0.18915618861118474,
+            0.4224294046606593
+          ],
+          "distanceKm": 378749.582765344,
+          "angularDiameter": 0.009174431721089183,
+          "illuminatedFraction": 0.9733046378225021,
+          "sunDirection": [
+            0.918593826877012,
+            0.13216806540413312,
+            -0.37244728984216685
+          ]
+        }
+      }
+    },
+    {
+      "siteId": "earth",
+      "id": "earth",
+      "parent": "sun",
+      "date": "2029-08-12T08:11:18.668Z",
+      "tdbSeconds": 934488747.851002,
+      "latitude": 19.8207,
+      "longitude": 204.5319,
+      "radiusKm": 6371.0084,
+      "parentRadiusKm": 695700,
+      "extraTargets": [
+        "moon"
+      ],
+      "targetRadiiKm": {
+        "moon": 1737.4
+      },
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.5404447883856813,
+            -0.6671629234419598,
+            -0.5126529667242096
+          ],
+          "distanceKm": 151596875.65646183,
+          "angularDiameter": 0.009178321636859933,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "moon": {
+          "direction": [
+            -0.8644734856601881,
+            -0.4785668006300897,
+            -0.15381615625546066
+          ],
+          "distanceKm": 370013.9160881848,
+          "angularDiameter": 0.009391032654737282,
+          "illuminatedFraction": 0.06763926387087632,
+          "sunDirection": [
+            -0.539473816675908,
+            -0.6674039675852582,
+            -0.5133614176899003
+          ]
+        }
+      }
+    },
+    {
+      "siteId": "earth",
+      "id": "earth",
+      "parent": "sun",
+      "date": "2029-09-26T23:57:27.306Z",
+      "tdbSeconds": 938433516.4883605,
+      "latitude": 19.8207,
+      "longitude": 204.5319,
+      "radiusKm": 6371.0084,
+      "parentRadiusKm": 695700,
+      "extraTargets": [
+        "moon"
+      ],
+      "targetRadiiKm": {
+        "moon": 1737.4
+      },
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.4387885880035074,
+            0.8350908210346517,
+            0.3317949602714895
+          ],
+          "distanceKm": 149945051.65285712,
+          "angularDiameter": 0.009279432543979466,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "moon": {
+          "direction": [
+            -0.28750821080215155,
+            -0.7197657665235312,
+            -0.6318831142403939
+          ],
+          "distanceKm": 409918.7098917152,
+          "angularDiameter": 0.008476828014460954,
+          "illuminatedFraction": 0.8430093318933498,
+          "sunDirection": [
+            -0.4371835565120585,
+            0.8354932527554603,
+            0.3328987271161727
+          ]
+        }
+      }
+    },
+    {
+      "siteId": "earth",
+      "id": "earth",
+      "parent": "sun",
+      "date": "2029-11-11T15:43:35.944Z",
+      "tdbSeconds": 942378285.1266744,
+      "latitude": 19.8207,
+      "longitude": 204.5319,
+      "radiusKm": 6371.0084,
+      "parentRadiusKm": 695700,
+      "extraTargets": [
+        "moon"
+      ],
+      "targetRadiiKm": {
+        "moon": 1737.4
+      },
+      "targets": {
+        "sun": {
+          "direction": [
+            0.9484171399865333,
+            -0.1914778209676448,
+            0.25266810771691534
+          ],
+          "distanceKm": 148097730.34222472,
+          "angularDiameter": 0.009395181912773946,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "moon": {
+          "direction": [
+            0.11131616776411773,
+            -0.9921910983054171,
+            -0.05626308947970162
+          ],
+          "distanceKm": 387665.9616833381,
+          "angularDiameter": 0.008963416899547607,
+          "illuminatedFraction": 0.3605361191520672,
+          "sunDirection": [
+            0.9488215168970586,
+            -0.18901923182593444,
+            0.25300090725746066
+          ]
+        }
+      }
+    },
+    {
+      "siteId": "earth",
+      "id": "earth",
+      "parent": "sun",
+      "date": "2029-12-27T07:29:44.582Z",
+      "tdbSeconds": 946323053.7657837,
+      "latitude": 19.8207,
+      "longitude": 204.5319,
+      "radiusKm": 6371.0084,
+      "parentRadiusKm": 695700,
+      "extraTargets": [
+        "moon"
+      ],
+      "targetRadiiKm": {
+        "moon": 1737.4
+      },
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.6310009479941846,
+            -0.7619277089218923,
+            0.14595879558106925
+          ],
+          "distanceKm": 147125834.21659455,
+          "angularDiameter": 0.0094572458513309,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "moon": {
+          "direction": [
+            0.8806556257677847,
+            -0.4558219938248066,
+            -0.12912001684142424
+          ],
+          "distanceKm": 379812.8974767449,
+          "angularDiameter": 0.009148747031544413,
+          "illuminatedFraction": 0.6148417086932818,
+          "sunDirection": [
+            -0.6329011313199784,
+            -0.760302567414347,
+            0.14620589576704562
+          ]
+        }
+      }
+    },
+    {
+      "siteId": "earth",
+      "id": "earth",
+      "parent": "sun",
+      "date": "2030-02-10T23:15:53.220Z",
+      "tdbSeconds": 950267822.4050249,
+      "latitude": 19.8207,
+      "longitude": 204.5319,
+      "radiusKm": 6371.0084,
+      "parentRadiusKm": 695700,
+      "extraTargets": [
+        "moon"
+      ],
+      "targetRadiiKm": {
+        "moon": 1737.4
+      },
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.1660226513666017,
+            0.8164615085264327,
+            0.5530163508685307
+          ],
+          "distanceKm": 147632371.06856617,
+          "angularDiameter": 0.009424797147645372,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "moon": {
+          "direction": [
+            0.918626839636352,
+            0.2614342274678768,
+            -0.2962716223467954
+          ],
+          "distanceKm": 402239.7219620083,
+          "angularDiameter": 0.008638656539765489,
+          "illuminatedFraction": 0.5527997699413613,
+          "sunDirection": [
+            -0.1684776900533777,
+            0.8155175588744201,
+            0.5536663066521068
+          ]
+        }
+      }
+    },
+    {
+      "siteId": "earth",
+      "id": "earth",
+      "parent": "sun",
+      "date": "2030-03-28T15:02:01.857Z",
+      "tdbSeconds": 954212591.0426466,
+      "latitude": 19.8207,
+      "longitude": 204.5319,
+      "radiusKm": 6371.0084,
+      "parentRadiusKm": 695700,
+      "extraTargets": [
+        "moon"
+      ],
+      "targetRadiiKm": {
+        "moon": 1737.4
+      },
+      "targets": {
+        "sun": {
+          "direction": [
+            0.9302001667470225,
+            -0.32266412143298195,
+            -0.17497289654027434
+          ],
+          "distanceKm": 149323153.15419105,
+          "angularDiameter": 0.00931807964400937,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "moon": {
+          "direction": [
+            0.7576362049618022,
+            0.4665189584221512,
+            0.45645091999446075
+          ],
+          "distanceKm": 379433.12713282835,
+          "angularDiameter": 0.009157903973383952,
+          "illuminatedFraction": 0.2638074789926552,
+          "sunDirection": [
+            0.9293929162282893,
+            -0.3242395663295257,
+            -0.17634486352348724
+          ]
+        }
+      }
+    },
+    {
+      "siteId": "earth",
+      "id": "earth",
+      "parent": "sun",
+      "date": "2030-05-13T06:48:10.495Z",
+      "tdbSeconds": 958157359.680299,
+      "latitude": 19.8207,
+      "longitude": 204.5319,
+      "radiusKm": 6371.0084,
+      "parentRadiusKm": 695700,
+      "extraTargets": [
+        "moon"
+      ],
+      "targetRadiiKm": {
+        "moon": 1737.4
+      },
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.7539033344385305,
+            -0.4348638408891804,
+            -0.4924664478008375
+          ],
+          "distanceKm": 151147737.02047074,
+          "angularDiameter": 0.00920559540232053,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "moon": {
+          "direction": [
+            -0.08078700745056593,
+            0.9185705046644355,
+            0.38691302302676045
+          ],
+          "distanceKm": 366546.2686744183,
+          "angularDiameter": 0.009479875552941565,
+          "illuminatedFraction": 0.7654160227410198,
+          "sunDirection": [
+            -0.7527399964562305,
+            -0.4365304238716266,
+            -0.492771434611963
+          ]
+        }
+      }
+    },
+    {
+      "siteId": "earth",
+      "id": "earth",
+      "parent": "sun",
+      "date": "2030-06-27T22:34:19.133Z",
+      "tdbSeconds": 962102128.3172094,
+      "latitude": 19.8207,
+      "longitude": 204.5319,
+      "radiusKm": 6371.0084,
+      "parentRadiusKm": 695700,
+      "extraTargets": [
+        "moon"
+      ],
+      "targetRadiiKm": {
+        "moon": 1737.4
+      },
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.03538996047336816,
+            0.9975316217190076,
+            -0.06064828413352272
+          ],
+          "distanceKm": 152073750.49305236,
+          "angularDiameter": 0.009149539935883057,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "moon": {
+          "direction": [
+            -0.5701356235629526,
+            0.8148429697814448,
+            -0.10476786407214242
+          ],
+          "distanceKm": 400616.1298279552,
+          "angularDiameter": 0.008673666968746604,
+          "illuminatedFraction": 0.08070913219357645,
+          "sunDirection": [
+            -0.0339630848256674,
+            0.9975898610692415,
+            -0.06050601590731282
+          ]
+        }
+      }
+    },
+    {
+      "siteId": "earth",
+      "id": "earth",
+      "parent": "sun",
+      "date": "2030-08-12T14:20:27.771Z",
+      "tdbSeconds": 966046896.9540021,
+      "latitude": 19.8207,
+      "longitude": 204.5319,
+      "radiusKm": 6371.0084,
+      "parentRadiusKm": 695700,
+      "extraTargets": [
+        "moon"
+      ],
+      "targetRadiiKm": {
+        "moon": 1737.4
+      },
+      "targets": {
+        "sun": {
+          "direction": [
+            0.8223339056450684,
+            -0.39128236432753444,
+            -0.4131162778114439
+          ],
+          "distanceKm": 151591656.16771775,
+          "angularDiameter": 0.00917863766007659,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "moon": {
+          "direction": [
+            -0.9181240691975109,
+            0.20422193849399886,
+            0.33961977768963586
+          ],
+          "distanceKm": 369203.6564716312,
+          "angularDiameter": 0.009411642501068034,
+          "illuminatedFraction": 0.9876671298844901,
+          "sunDirection": [
+            0.822616053306169,
+            -0.39085136207830506,
+            -0.4129625184015076
+          ]
+        }
+      }
+    },
+    {
+      "siteId": "earth",
+      "id": "earth",
+      "parent": "sun",
+      "date": "2030-09-27T06:06:36.408Z",
+      "tdbSeconds": 969991665.5903605,
+      "latitude": 19.8207,
+      "longitude": 204.5319,
+      "radiusKm": 6371.0084,
+      "parentRadiusKm": 695700,
+      "extraTargets": [
+        "moon"
+      ],
+      "targetRadiiKm": {
+        "moon": 1737.4
+      },
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.8799079478729442,
+            -0.4560226431142409,
+            -0.13343669749032863
+          ],
+          "distanceKm": 149968094.79336658,
+          "angularDiameter": 0.009278006715357293,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "moon": {
+          "direction": [
+            -0.8361520417069855,
+            -0.5402820846511676,
+            -0.09457818011691724
+          ],
+          "distanceKm": 376368.85190527124,
+          "angularDiameter": 0.009232465236010064,
+          "illuminatedFraction": 0.0026442751377888096,
+          "sunDirection": [
+            -0.8800063566559573,
+            -0.4558045988845494,
+            -0.13353269217986544
+          ]
+        }
+      }
+    },
+    {
       "siteId": "enceladus",
       "id": "enceladus",
       "parent": "saturn",

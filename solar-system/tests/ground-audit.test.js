@@ -39,9 +39,18 @@ test('every landing sky and its physical illumination agree with independent DE4
         // its advertised geocentric accuracy is not a surface-satellite bound.
         // Parent geometry that comes from the JPL satellite kernels (not AE's planetary theory)
         // is held to the tighter gate; charon's parent is Pluto, which the same kernel carries.
+        // Earth is the one landing whose observer frame itself carries a model
+        // difference: AE's GAST-of-date realization of Earth rotation (UT1≈UTC)
+        // and CSPICE's IAU_EARTH polynomial fed TDB disagree by a few arcminutes,
+        // growing with distance from J2000. Sun and moon directions inherit that
+        // frame rotation almost equally (2.6′ at J2000, 14.3′ by 2100), so the
+        // earth gate bounds the two realizations, not a body-position error.
         const jplParent=['enceladus','titan','miranda','pluto','charon'].includes(sample.id)&&name!=='sun';
-        assert.ok(directionError<(jplParent ? .001 : name==='sun' ? 1 : 6),`${sample.siteId}/${name}/${sample.date}: ${directionError} arcmin`);
-        assert.ok(diameterError<(jplParent ? .01 : name==='sun' ? 1 : 10),`${sample.siteId}/${name}: ${diameterError} arcsec`);
+        const earthSite=sample.siteId==='earth';
+        const directionGate=jplParent ? .001 : earthSite ? 16 : name==='sun' ? 1 : 6;
+        const diameterGate=jplParent ? .01 : earthSite ? 1 : name==='sun' ? 1 : 10;
+        assert.ok(directionError<directionGate,`${sample.siteId}/${name}/${sample.date}: ${directionError} arcmin`);
+        assert.ok(diameterError<diameterGate,`${sample.siteId}/${name}: ${diameterError} arcsec`);
         const metrics=maxima[sample.siteId]??={sunArcmin:0,parentArcmin:0,phaseFraction:0};
         const key=name==='sun'?'sunArcmin':'parentArcmin';
         metrics[key]=Math.max(metrics[key],directionError);
@@ -50,7 +59,9 @@ test('every landing sky and its physical illumination agree with independent DE4
           const lightError=light.angleTo(new Vector3().fromArray(reference.sunDirection))*180/Math.PI*60;
           const illuminated=(1+light.dot(target.direction.clone().negate()))/2;
           const phaseError=Math.abs(illuminated-reference.illuminatedFraction);
-          assert.ok(lightError<1,`${sample.id}: incident light ${lightError} arcmin`);
+          // The incident light is also expressed in the observer's local frame, so at
+          // the earth site it inherits the same frame-rotation difference as above.
+          assert.ok(lightError<(earthSite?16:1),`${sample.id}: incident light ${lightError} arcmin`);
           assert.ok(phaseError<.001,`${sample.id}: illuminated fraction ${phaseError}`);
           metrics.phaseFraction=Math.max(metrics.phaseFraction,phaseError);
         }

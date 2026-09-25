@@ -181,6 +181,18 @@ export const additionalLandingSites = Object.freeze({
     notes:'落点取奥卡托撞击坑中央的 Cerealia Facula（亮斑），坐标 19.7°N / 239.6°E 出自 JPL 对该拼图的说明（坑本身约 20°N / 239°E）。亮斑是钠碳酸盐与氯化铵的盐壳，按反光材质表现，因此随日照变化，不设为自发光。地面形态依据黎明号低高度轨道拼图参考重绘（PIA21924 提供盐壳材质与碎裂结构，PIA24021 用于核对暗色坑底与盐壳的反差），整幅为新画面、未逐像素保留输入，也未沿用其俯视视角、取景与假彩色处理。谷神星没有可分辨的主星：太阳视直径约 0.199°，仅为地球所见的 0.37 倍，天空中没有可分辨的其它天体（火星、木星在此距离下视直径均小于 0.02°），也没有大气。一个自转周期约 9.074 小时，落点处太阳高度角在此周期内于 −73.35° 与 +67.24° 之间变化；默认资料的太阳高度角约 21.7°。1900—2100 年位置取随站发布的 Horizons 谷神星年历（201 个年份包），范围外回退到 JPL SBDB 的固定平均椭圆——那条约在历元外偏差数百角分，只作范围外近似。',
     solarDay:0.378083, referenceSolarAltitude:22, initialHeading:180, panoramaCenter:180,
   },
+  earth: {
+    ...common, id:'earth', body:'Earth', name:'地球', title:'冒纳凯阿 · 云海之上', english:'MAUNA KEA SUMMIT',
+    radiusKm:physicalData.earth.radiusKm, latitude:19.8207, longitude:204.5319,
+    parent:'Sun', parentName:'太阳', parentRadiusKm:physicalData.sun.radiusKm, texture:'/surface/earth.webp',
+    date:'2026-09-27T05:30:00Z',
+    provenance:'云海火山顶 · AI 艺术重建', credit:'地貌依据冒纳凯阿山顶火山地貌与天文台区公开资料 · 地表艺术重建 gpt-image-2.5-sunburst',
+    source:'https://www.usgs.gov/volcanoes/mauna-kea',
+    description:'站在海拔约 4207 米的死火山顶上，红褐色的火山渣锥之间望向东方，满月正从云海上升起。',
+    notes:'落点在冒纳凯阿山顶（Puʻu Wekiu 附近，约 19.82°N / 155.47°W，海拔约 4207 米）——山顶常年在信风逆温层之上、云海铺在脚下约两公里处的世界级天文台址。这是地球第一个地表落点，与月面哈德利-亚平宁落点互为镜像：从那里看地球，从这里看月亮。按本项目星历与 IAU 姿态复算：月亮每月两次从天顶附近掠过（赤纬过 +19.8° 时中天即过顶），交点周期内中天高度最低约 40.7°；2025—2027 年 37 次满月的中天高度 41.7°—88.0°，其中 2026-02-01 与 2026-11-24 的满月中天都超过 84°；月亮视直径 28.9′—34.1′，顶心视角下近地点满月比地心值更大。默认资料时刻取 2026 年中秋满月窗口：夏威夷当地 9 月 26 日 19:30，月亮高度 15.1°、方位 87.7°，亮度比例 99.5%，太阳已在 −18.7°。夜间地面亮度按月亮高度与月相加成，是展示近似而不是测光——新月夜与满月夜的地面明暗差异是渲染结果，不是天气。云海是全景的一部分，不随时间流动；天文台圆顶与远处火山岛影的位置为艺术摆放。',
+    atmosphere:'earth', solarDay:1, moonlight:.15, initialHeading:88,
+    coordinateNote:'坐标定位冒纳凯阿山顶附近；全景朝向、圆顶与云海形态为艺术重建，不能用于测量。',
+  },
 });
 
 // A body is landable when it owns at least one site; several sites may share one.

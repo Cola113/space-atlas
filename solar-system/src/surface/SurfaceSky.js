@@ -99,8 +99,21 @@ export function surfaceLight(frame, site, referenceAltitude) {
   const direct = smoothstep(altitude,-.3,3) * Math.max(0,Math.sin(degToRad(altitude)));
   const reference = Math.max(.05,Math.sin(degToRad(referenceAltitude)));
   const eclipse = solarVisibility(frame,site.parentRadiusKm,site.parent);
-  return { altitude, eclipse, brightness:(site.nightFloor??.008)+clamp(direct/reference,0,1.5)*eclipse,
-    stars:THREE.MathUtils.lerp(1.25,.35,smoothstep(direct*eclipse,0,.15)) };
+  // Moonlight is a display term, not photometry: where the Moon is a resolvable
+  // neighbour (the Earth viewer), a full moon high in the sky lifts the ground
+  // well above the night floor, while a new moon or a lunar-set night stays
+  // dark. Sites opt in through a numeric gain; every other site is unchanged.
+  const moon = site.moonlight ? frame.targets.Moon : null;
+  let moonlight = 0;
+  if (moon) {
+    const moonAltitude = horizonAngles(moon.direction).altitude;
+    const up = smoothstep(moonAltitude,-.3,2) * Math.max(0,Math.sin(degToRad(moonAltitude)));
+    const phase = (1 - Math.cos(moon.direction.angleTo(frame.targets.Sun.direction))) / 2;
+    moonlight = up * phase * site.moonlight;
+  }
+  return { altitude, eclipse,
+    brightness: clamp((site.nightFloor??.008) + moonlight + clamp(direct/reference,0,1.5)*eclipse, 0, 1.5),
+    stars:THREE.MathUtils.lerp(1.25,.35,smoothstep(direct*eclipse+moonlight,0,.15)) };
 }
 
 // The globe outline for a body, from the same model the solar-system view builds its mesh
@@ -255,9 +268,10 @@ export function createSurfaceSky({scene,renderer,site,parentMap,cloudMap,groundM
   if(objects.has('Earth'))enableEarthNight(objects.get('Earth').globe);
 
   const atmosphere=site.atmosphere?new THREE.Mesh(new THREE.SphereGeometry(1800,48,32),new THREE.ShaderMaterial({
-    uniforms:{sun:{value:frame.targets.Sun.direction.clone()},day:{value:1},kind:{value:{mars:1,titan:2,pluto:3,venus:4}[site.atmosphere]}},
+    uniforms:{sun:{value:frame.targets.Sun.direction.clone()},day:{value:1},kind:{value:{mars:1,titan:2,pluto:3,venus:4,earth:5}[site.atmosphere]},
+      sunAlt:{value:horizonAngles(frame.targets.Sun.direction).altitude}},
     vertexShader:'varying vec3 direction;void main(){direction=position;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}',
-    fragmentShader:`varying vec3 direction;uniform vec3 sun;uniform float day;uniform float kind;
+    fragmentShader:`varying vec3 direction;uniform vec3 sun;uniform float day;uniform float kind;uniform float sunAlt;
       void main(){vec3 d=normalize(direction);float h=exp(-max(d.y,0.)*3.);float alignment=max(0.,dot(d,sun));
         vec3 colour;float opacity;
         if(kind<1.5){colour=mix(vec3(.18,.11,.08),vec3(.53,.34,.23),h)*day;
@@ -267,10 +281,21 @@ export function createSurfaceSky({scene,renderer,site,parentMap,cloudMap,groundM
         else if(kind<3.5){float haze=exp(-max(d.y,0.)*9.);
           colour=(vec3(.14,.28,.46)*haze+vec3(.18,.35,.50)*pow(alignment,16.))*day;
           opacity=clamp((.08*haze+.22*pow(alignment,16.))*day,0.,.35);}
-        else{
+        else if(kind<4.5){
           vec3 ochre=mix(vec3(.42,.26,.08),vec3(.64,.44,.18),exp(-max(d.y,0.)*1.5));
           colour=(ochre+vec3(.32,.25,.10)*pow(alignment,2.5))*(.02+.98*day);
           opacity=mix(.1,1.,day);
+        }
+        else{
+          // Earth keys its sky to the Sun's altitude, not to ground brightness:
+          // moonlight lifts the ground at night without painting the sky blue.
+          float dayness=smoothstep(-1.,8.,sunAlt);
+          float up=clamp(d.y,0.,1.);
+          vec3 blue=mix(vec3(.60,.73,.88),vec3(.17,.35,.68),pow(up,.5))*dayness;
+          float dusk=exp(-pow(abs(sunAlt)/6.,1.5));
+          vec3 warm=(vec3(.98,.52,.20)*exp(-up*3.5)+vec3(.55,.25,.10))*pow(alignment,2.)*dusk;
+          colour=blue+warm;
+          opacity=clamp(1.05*dayness+.3*pow(alignment,2.)*dusk,0.,1.);
         }
         gl_FragColor=vec4(colour,opacity);
         #include <colorspace_fragment>
@@ -343,7 +368,8 @@ export function createSurfaceSky({scene,renderer,site,parentMap,cloudMap,groundM
         .applyMatrix3(new THREE.Matrix3().setFromMatrix4(ring.matrixWorld).invert()).normalize();
     }
     illumination=surfaceLight(frame,site,referenceAltitude);
-    if(atmosphere){atmosphere.material.uniforms.sun.value.copy(frame.targets.Sun.direction);}
+    if(atmosphere){atmosphere.material.uniforms.sun.value.copy(frame.targets.Sun.direction);
+      atmosphere.material.uniforms.sunAlt.value=illumination.altitude;}
     if(resetExposure||!exposure.value)exposure.reset(illumination);
     advanceExposure(0);
     stars.material.uniforms.rotation.value.copy(frame.rotation);

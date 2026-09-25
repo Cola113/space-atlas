@@ -398,7 +398,31 @@
         "NASA/JPL-Caltech/UCLA/MPS/DLR/IDA PIA24021 (salt/regolith contrast, false colour)"
       ],
       "requestedSizeAccepted": true
+    },
+    {
+      "id": "earth",
+      "generatedOn": "2026-09-25",
+      "mode": "text-to-image",
+      "sourceFile": "earth-maunakea.png",
+      "sourceDimensions": [
+        3840,
+        1920
+      ],
+      "deliveredDimensions": [
+        3840,
+        1920
+      ],
+      "sourceSha256": "1937b4b5cb54cde6a4a4c8248f10a32864a06dcf4105ed596055d40acfa41cda",
+      "file": "earth.webp",
+      "sha256": "648ea63fd8187b8fde5cd8a9e096891685f0fc3636e5d83312f21a0f25663721",
+      "bytes": 1630438,
+      "processing": "Source frame is native 3840x1920, the requested 2:1, so it is NOT reparameterized from 16:9. The provider kept a thin blue atmospheric band between the black sky and the cloud deck, so the transparent sky region is traced per column (through black and blue-dominant pixels, stopping at the first cloud or terrain pixel) instead of the black flood fill alone; distant bluish summit silhouettes inside that band are removed with the sky. Wrap blend; nadir smoothing; WebP encoding. New drawing of the Mauna Kea summit cinder-cone plateau above the trade-wind cloud inversion; no reference image was supplied.",
+      "model": "gpt-image-2.5-sunburst",
+      "requestedQuality": "high",
+      "requestedSize": "3840x1920",
+      "qualityExecutionVerified": false,
+      "requestedSizeAccepted": true
     }
   ],
-  "updatedOn": "2026-09-19"
+  "updatedOn": "2026-09-25"
 }

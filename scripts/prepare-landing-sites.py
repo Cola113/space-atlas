@@ -14,7 +14,7 @@ import json
 from datetime import date
 from pathlib import Path
 from PIL import Image
-from landing_texture_lib import panorama_from_frame, sha256
+from landing_texture_lib import panorama_from_frame, panorama_with_traced_skyline, sha256
 
 MODEL_NOTE = {
     'model': 'gpt-image-2.5-sunburst',
@@ -105,6 +105,17 @@ SITES = [
       # This batch was generated on 2026-09-19; the earlier sites keep 2026-09-16.
       'generatedOn': '2026-09-19',
       'requestedSizeAccepted': True}),
+    ('earth', 'earth-maunakea.png',
+     'text-to-image',
+     'Source frame is native 3840x1920, the requested 2:1, so it is NOT reparameterized from 16:9. '
+     'The provider kept a thin blue atmospheric band between the black sky and the cloud deck, so the '
+     'transparent sky region is traced per column (through black and blue-dominant pixels, stopping at '
+     'the first cloud or terrain pixel) instead of the black flood fill alone; distant bluish summit '
+     'silhouettes inside that band are removed with the sky. Wrap blend; nadir smoothing; WebP encoding. '
+     'New drawing of the Mauna Kea summit cinder-cone plateau above the trade-wind cloud inversion; no '
+     'reference image was supplied.',
+     {'generatedOn': '2026-09-25',
+      'requestedSizeAccepted': True}),
 ]
 
 parser = argparse.ArgumentParser()
@@ -130,7 +141,9 @@ for site_id, filename, mode, processing, extra in SITES:
     if selected is not None and site_id not in selected:
         continue
     source = args.sources / 'raw' / filename
-    image = panorama_from_frame(source)
+    # The earth sky carries an atmospheric band the black flood fill would keep;
+    # its transparent region needs the per-column skyline trace instead.
+    image = panorama_with_traced_skyline(source) if site_id == 'earth' else panorama_from_frame(source)
     dest = args.output / f'{site_id}.webp'
     image.save(dest, quality=91, method=6, exact=True)
     entry = {
