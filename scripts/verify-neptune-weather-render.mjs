@@ -41,6 +41,10 @@ try {
     map.colorSpace = THREE.SRGBColorSpace;
     map.wrapS = THREE.RepeatWrapping;
     map.anisotropy = 4;
+    // Neutral albedo isolates procedural shape and seam continuity from map features.
+    const neutral = new THREE.DataTexture(new Uint8Array([52, 101, 174, 255]), 1, 1);
+    neutral.colorSpace = THREE.SRGBColorSpace;
+    neutral.needsUpdate = true;
 
     const uniforms = createNeptuneWeatherUniforms();
     const sun = new THREE.Vector3(), light = new THREE.DirectionalLight('white', 2.2);
@@ -71,12 +75,13 @@ try {
 
     const spot = neptuneVortexUv(0);
     window.neptuneProbe = {
-      render({ time = 0, progress = -1, spotUv = spot, activity = 0, detail = 1, night = false, lambert = false, aim = [.563, .409] } = {}) {
+      render({ time = 0, progress = -1, spotUv = spot, activity = 0, detail = 1, seed = 0, flat = false, night = false, lambert = false, aim = [.563, .409] } = {}) {
         uniforms.uNeptuneTime.value = time;
         uniforms.uNeptuneProgress.value = progress;
         uniforms.uNeptuneSpot.value.set(spotUv[0], spotUv[1]);
         uniforms.uNeptuneActivity.value = activity;
         uniforms.uNeptuneDetail.value = detail;
+        uniforms.uNeptuneSeed.value = seed;
 
         const dir = aimDirection(aim[0], aim[1]);
         camera.position.copy(dir).multiplyScalar(4);
@@ -86,6 +91,7 @@ try {
         sun.copy(dir).multiplyScalar(night ? -1 : 1);
         light.position.copy(sun);
         mesh.material = materials[lambert ? 1 : 0];
+        mesh.material.map = flat ? neutral : map;
         renderer.render(scene, camera);
       },
     };
@@ -98,10 +104,10 @@ try {
     return sharp(png).removeAlpha().raw().toBuffer();
   }
 
-  function difference(a, b) {
+  function difference(a, b, inset = 100) {
     let changed = 0, total = 0, sum = 0, largest = 0;
-    for (let y = 100; y < 700; y++) {
-      for (let x = 100; x < 700; x++) {
+    for (let y = inset; y < 800 - inset; y++) {
+      for (let x = inset; x < 800 - inset; x++) {
         const i = (y * 800 + x) * 3;
         const delta = Math.max(...[0, 1, 2].map(c => Math.abs(a[i + c] - b[i + c])));
         if (delta > 2) changed++;
@@ -137,7 +143,7 @@ try {
   // 2. Fixed weather determinism check
   assert.ok((await render('flow-0-repeated', { time: 0 })).equals(start), 'fixed weather state is not deterministic');
 
-  // 3. Mid-high latitude tracer motion: aim at 50°S where the prograde jets blow
+  // 3. Mid-high latitude tracer motion: aim at 50°N where the prograde jets blow
   const midLat = [0.563, 0.5 + 50 / 180];
   const lat0 = await render('midlat-0', { time: 0, aim: midLat });
   const lat8 = await render('midlat-8', { time: 8, aim: midLat });
@@ -183,8 +189,61 @@ try {
   // 9. Observation-sky shared Lambert material compilation
   await render('observation-shared-material', { time: 0, lambert: true, aim: midLat });
 
+  // 10. The baked GDS must still occupy its catalogue landmark after long runs.
+  // Compare its centre with clear sky at the same latitude and identical illumination.
+  const anchoring = [];
+  for (const time of [0, 26, 300, 3600]) {
+    const gds = await render(`anchor-${time}`, { time });
+    const clear = await render(`clear-${time}`, { time, aim: [.80, .409] });
+    const ratio = coreMean(gds) / coreMean(clear);
+    anchoring.push({ time, ratio });
+    assert.ok(ratio < .94, `GDS has drifted off its landmark at ${time}s: ${ratio}`);
+  }
+
+  // 11. Isolate an event on uniform albedo. Distinct births must not be copies,
+  // while returning to a given birth and age must exactly reproduce the same frame.
+  const isolated = { time: 11, progress: .5, activity: 0, detail: 0, flat: true,
+    spotUv: [.21, .315], aim: [.21, .315] };
+  const shape0 = await render('shape-seed-0', isolated);
+  const shape1 = await render('shape-seed-1', { ...isolated, seed: 1 });
+  const variation = difference(shape0, shape1);
+  assert.ok(variation.changed > 1500, 'successive vortices repeat the same silhouette/clouds');
+  assert.ok((await render('shape-repeat', isolated)).equals(shape0), 'vortex shape depends on render history');
+  // Temporal continuity during formation, erosion and the end of the event.
+  const continuity = [];
+  for (const progress of [.14, .36, .58, .78, .94, 1]) {
+    const before = await render(`stage-${progress}-before`, { ...isolated, progress: progress - .0005 });
+    const after = await render(`stage-${progress}-after`, { ...isolated, progress: progress + .0005 });
+    const delta = difference(before, after);
+    continuity.push({ progress, ...delta });
+    assert.ok(delta.mean < .15 && delta.max < 12, `vortex jumps at phase ${progress}`);
+  }
+  // Match relative view/spot geometry across the longitude seam. A constant map and
+  // disabled global details mean longitude alone cannot change the visible storm.
+  const seam = await render('event-seam', { ...isolated, spotUv: [.999, .315], aim: [.999, .315] });
+  // Exclude the faceted sphere silhouette: camera longitude changes edge coverage
+  // there by a few pixels independently of the shader. The full storm is in this ROI.
+  const seamDifference = difference(shape0, seam, 220);
+  assert.ok(seamDifference.mean < .1 && seamDifference.max < 8, 'vortex tears at the longitude seam');
+  await render('event-northern', { ...isolated, seed: 1, spotUv: [.76, .685], aim: [.76, .685], detail: 1, flat: false });
+
+  // Save a temporal contact sheet for visual review, not just pixel-change assertions.
+  const frames = [];
+  for (const [row, type] of ['gds', 'vortex'].entries()) {
+    for (const [column, time] of [0, 4, 8, 12, 16, 20].entries()) {
+      const options = type === 'gds' ? { time } : {
+        time, progress: time / 22, spotUv: [.21, .315], aim: [.21, .315], activity: 0,
+      };
+      await render(`sequence-${type}-${time}`, options);
+      const input = await sharp(fileURLToPath(new URL(`sequence-${type}-${time}.png`, output))).resize(320, 320).toBuffer();
+      frames.push({ input, left: column * 320, top: row * 320 });
+    }
+  }
+  await sharp({ create: { width: 1920, height: 640, channels: 3, background: '#000' } })
+    .composite(frames).png().toFile(fileURLToPath(new URL('sequence.png', output)));
+
   assert.deepEqual(errors, []);
-  report.push({ cloudMotion, polarMotion, wrap, earlyDiff, peakDiff, lateDiff, night });
+  report.push({ cloudMotion, polarMotion, wrap, earlyDiff, peakDiff, lateDiff, night, anchoring, variation, continuity, seamDifference });
   await writeFile(new URL('report.json', output), JSON.stringify(report, null, 2));
   console.log(JSON.stringify(report));
 } finally {

@@ -1102,6 +1102,7 @@ export function createDynamics(objects, { defer = false } = {}) {
       // Birthplace alternates hemispheres and steps the meridian per event; the drift
       // from there is shared with the landmark marker so both never disagree.
       record.vortexOrigin = neptuneVortexOrigin(record.eventCount);
+      record.weather.uNeptuneSeed.value = record.eventCount;
       record.weather.uNeptuneProgress.value = 0;
       record.weather.uNeptuneSpot.value.fromArray(neptuneVortexUv(0, record.vortexOrigin));
     }

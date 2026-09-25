@@ -76,7 +76,7 @@ export const landmarks = {
     { id: 'saturn-storm', name: '白色风暴', dynamic: 'saturn-storm', location: '北半球约 35°N / 经度与演变为示意', text: '参考卡西尼记录的 2010—2011 年巨大风暴：明亮对流云团膨胀，被急流拉成长尾。这里自动间歇演示，也可手动触发；演示频率不代表真实发生周期或当前天气。', source: 'https://science.nasa.gov/resource/spotting-saturns-northern-storm/' },
   ],
   neptune: [
-    { id: 'dark-spot', name: '大暗斑', uv: [0.563, 0.409], location: '南半球约 16°S / 云顶暗斑（示意位置）', text: '旅行者 2 号 1989 年拍到的地球尺寸暗斑，是上层云盖的空洞，周围伴有高空甲烷冰卷云。这里定位的是当前贴图中的示意暗斑；真实暗斑会生成、漂移并在数年内消失，位置不代表实时经度。', source: 'https://science.nasa.gov/neptune/neptune-facts/' },
+    { id: 'dark-spot', name: '大暗斑', uv: [0.563, 0.409], location: '南半球约 16°S / 贴图示意位置', text: '旅行者 2 号在 1989 年拍到的巨大大气涡旋，周围伴有快速变化的甲烷冰卷云。后续光谱观测支持深层气溶胶变暗的解释。这里保留贴图中的示意位置，演示暗斑的拉伸、边缘扰动与云丝流动；不代表当前天气或实测运动速度。', source: 'https://www.eso.org/public/news/eso2314/' },
     { id: 'neptune-vortex', name: '新生暗斑涡旋', dynamic: 'neptune-vortex', location: '南北半球交替生成 / 经度与演变为示意', text: '参考哈勃 2016 与 2018 年拍到的短期暗斑：伴生卷云先于暗核出现，暗核西移、偏向赤道并消散后卷云仍短暂残留。这里自动间歇演示，也可手动触发；位置、时刻与频率均为示意。', source: 'https://news.agu.org/press-release/hubble-captures-birth-of-giant-storm-on-neptune/' },
   ],
   io: [

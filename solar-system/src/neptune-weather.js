@@ -11,7 +11,8 @@ import { Vector2 } from 'three';
 //    (retrograde, opposite the planet's rotation) at ~400 m/s along the equator, while
 //    narrow PROGRADE jets blow eastward at high latitudes (~300 m/s near 70°S, Voyager 2;
 //    tracked features span ~20 m/s eastward to ~325 m/s westward).
-// 2. Dark spots are transient tropospheric vortices — holes in the upper cloud deck.
+// 2. Dark spots are transient tropospheric vortices. VLT/MUSE spectra (2023) favour
+//    darkening in a deep aerosol layer, not a hole in the upper cloud deck.
 //    Voyager 2 saw two at once in 1989 (the Earth-sized Great Dark Spot near 22°S plus a
 //    Small Dark Spot); Hubble saw more in 2016 (~4,800 km across) and 2018, where bright
 //    companion methane clouds appeared BEFORE the dark core and outlived it
@@ -21,7 +22,7 @@ import { Vector2 } from 'three';
 //    in 1989 time-lapses of the Voyager encounter.
 // 4. The shipped texture already carries an artistically enhanced Great Dark Spot with
 //    companion clouds (data.js: "蓝色贴图经过增强，风暴并非实时观测"). The shader keeps that
-//    oval where it is and only churns it gently, so no second dark oval is ever painted
+//    feature at its landmark and deforms its outline, so no second dark oval is painted
 //    on top of it; triggered events instead grow a NEW vortex elsewhere, the way 1989
 //    had two spots at once and Hubble kept finding short-lived ones.
 //
@@ -57,6 +58,7 @@ export function createNeptuneWeatherUniforms() {
     uNeptuneSpot: { value: new Vector2(...neptuneVortexUv()) },
     uNeptuneActivity: { value: 0 },
     uNeptuneDetail: { value: 1 },
+    uNeptuneSeed: { value: 0 },
   };
 }
 
@@ -66,8 +68,12 @@ const weather = /* glsl */ `
   uniform vec2 uNeptuneSpot;
   uniform float uNeptuneActivity;
   uniform float uNeptuneDetail;
+  uniform float uNeptuneSeed;
   varying vec3 vNeptuneView;
   varying vec3 vNeptuneNormal;
+
+  // GLSL pow(x, 2.0) is undefined for negative x on some GPU drivers.
+  float neptuneSquare(float x) { return x * x; }
 
   float neptuneHash(vec3 p) {
     p = fract(p * .1031);
@@ -104,20 +110,60 @@ const weather = /* glsl */ `
     return textureGrad(image, uv, dx, dy);
   }
 
-  // Replace an offset with its rotated version, fading the rotation out by ~1.6 radii.
-  // Same bounded churn the Jupiter path applies around its storm oval.
-  vec2 neptuneChurn(vec2 p, vec2 center, vec2 size, float angle) {
+  vec2 neptuneRotate(vec2 p, float a) {
+    return mat2(cos(a), sin(a), -sin(a), cos(a)) * p;
+  }
+
+  vec2 neptuneDelta(vec2 p, vec2 center) {
     vec2 d = p - center;
     d.x -= floor(d.x + .5);
-    vec2 q = d / size;
-    float a = angle * (1.0 - smoothstep(.3, 1.6, length(q)));
-    q = mat2(cos(a), -sin(a), sin(a), cos(a)) * q;
-    return p + q * size - d;
+    return d;
   }
 
   // The dark oval baked into the global texture, measured on 2k_neptune.jpg (~16°S).
   const vec2 gdsCenter = vec2(.563, .409);
   const vec2 gdsSize = vec2(.070, .046);
+
+  // Deform the EXISTING dark feature, keeping its centre at the catalogue landmark.
+  // Area-preserving strain and travelling edge billows change its aspect and tilt.
+  // No unbounded longitude offset, rigid spinning oval or phase-crossfaded double spot.
+  vec2 neptuneGdsMap(vec2 uv, float time) {
+    vec2 d = neptuneDelta(uv, gdsCenter), q = d / gdsSize;
+    float r = length(q);
+    float influence = 1.0 - smoothstep(.65, 1.9, r);
+    float strain = .13 * sin(time * .21) + .065 * sin(time * .37 + .8);
+    vec2 shaped = neptuneRotate(q, .13 * sin(time * .17));
+    shaped *= vec2(exp(strain), exp(-strain));
+    shaped.x += .16 * sin(q.y * 2.8 + time * .34) * q.y;
+    shaped.y += .10 * sin(q.x * 3.3 - time * .42) * q.x;
+    vec2 moving = neptuneRotate(q, -time * .14 / (1.0 + r * .65));
+    vec2 billow = vec2(neptuneNoise(vec3(moving * 3.1, 2.7)),
+      neptuneNoise(vec3(moving * 3.1 + 8.4, 6.1)));
+    shaped += billow * .13 * smoothstep(.25, .85, r);
+    return uv + (shaped - q) * gdsSize * influence;
+  }
+
+  // Broken, stretched methane-ice filaments, carried along the rim at a different
+  // speed from the dark material. The envelope is deliberately one-sided and open.
+  // This is a morphology model, not a resolved fluid simulation.
+  float neptuneCompanions(vec2 q, float time, float seed) {
+    float edge = neptuneNoise(vec3(q.x * 2.7 - time * .22, q.y * 2.1, seed));
+    float bend = .15 * sin(q.x * 2.4 - time * .31 + seed) + edge * .16;
+    float north = q.y - (.86 - .22 * q.x * q.x + .12 * q.x + bend);
+    float south = q.y - (-.91 + .17 * q.x * q.x + .10 * sin(q.x * 3.0 + time * .27));
+    float upper = exp(-neptuneSquare(north / .16) - neptuneSquare(neptuneSquare((q.x + .23) / 1.10)));
+    float lower = exp(-neptuneSquare(south / .12) - neptuneSquare((q.x - .50) / .65)) * .48;
+    // Multiple lengths, with holes rather than a continuous bright outline.
+    float wisps = neptuneCloud(vec3(q.x * 5.2 - time * .46,
+      (q.y - bend) * 23.0 + edge * 2.4, seed + time * .035));
+    float patches = smoothstep(-.42, .38,
+      neptuneNoise(vec3(q.x * 3.8 - time * .28, q.y * 5.0, seed + 9.0)));
+    float strands = smoothstep(-.40, .55, wisps);
+    float tailY = q.y - (.45 + .24 * (q.x + 1.0) + bend);
+    float tail = exp(-neptuneSquare(tailY / .13))
+      * smoothstep(-2.7, -1.4, q.x) * (1.0 - smoothstep(-1.1, -.65, q.x));
+    return (upper + lower + tail * .42) * patches * (.14 + .86 * strands);
+  }
 
   vec3 neptuneAtmosphere(sampler2D image, vec2 uv) {
     float time = uNeptuneTime;
@@ -131,8 +177,8 @@ const weather = /* glsl */ `
     // eastward lobes at mid-high latitudes. Positive drift moves features toward +u,
     // the prograde direction of the shared body rotation. The coefficient stays fixed
     // while detail only scales the tracers, so focus changes never jump the texture.
-    float jet = -.0019 * exp(-pow(lat / .34, 2.0))
-      + .0011 * exp(-pow((abs(lat) - 1.05) / .36, 2.0))
+    float jet = -.0019 * exp(-neptuneSquare(lat / .34))
+      + .0011 * exp(-neptuneSquare((abs(lat) - 1.05) / .36))
       + .00026 * sin(lat * 23.0);
 
     // Bounded two-phase advection (26 s): each latitude row shifts rigidly, adjacent rows
@@ -140,14 +186,23 @@ const weather = /* glsl */ `
     float phase = fract(time / 26.0);
     vec2 ages = (vec2(phase, fract(phase + .5)) - .5) * 26.0;
     float blend = .5 - .5 * cos(phase * 6.2831853);
-    float churn = .045 + activity * .04;
     vec2 advected = uv - vec2(jet * time, 0.0);
     vec3 air = neptuneSphere(advected);
     float eddy = neptuneCloud(air * vec3(11.0, 56.0, 11.0));
     vec2 warp = vec2(0.0, eddy * .0017 * poleFade * detail);
-    vec2 uvA = neptuneChurn(advected + warp - vec2(jet * ages.x, 0.0), gdsCenter, gdsSize, ages.x * churn);
-    vec2 uvB = neptuneChurn(advected + warp - vec2(jet * ages.y, 0.0), gdsCenter, gdsSize, ages.y * churn);
+    vec2 gdsQ = neptuneDelta(uv, gdsCenter) / gdsSize;
+    float gdsRadius = length(gdsQ);
+    float outsideGds = smoothstep(1.25, 2.1, gdsRadius);
+    vec2 baseUv = neptuneGdsMap(uv, time) + warp * outsideGds;
+    vec2 uvA = baseUv - vec2(jet * ages.x * outsideGds, 0.0);
+    vec2 uvB = baseUv - vec2(jet * ages.y * outsideGds, 0.0);
     vec3 colour = mix(neptuneMap(image, uvB).rgb, neptuneMap(image, uvA).rgb, blend);
+
+    // Fine clouds form and dissolve over the existing rim; the baked dark core itself
+    // is only resampled, never painted a second time. Use the same deformed outline.
+    vec2 gdsCloudQ = neptuneDelta(baseUv, gdsCenter) / gdsSize;
+    float gdsCloud = neptuneCompanions(gdsCloudQ, time, 4.7);
+    colour = mix(colour, vec3(.72, .82, .96), gdsCloud * .24 * detail);
 
     // Fine bright methane-ice cirrus streaks ride the prograde jets at mid-high
     // latitudes; they are what makes the differential flow readable on screen.
@@ -161,7 +216,7 @@ const weather = /* glsl */ `
     scooterDU -= floor(scooterDU + .5);
     float scooterDV = uv.y - .267;
     float scooterWisp = neptuneCloud(vec3(scooterDU * 60.0, scooterDV * 240.0, time * .05));
-    float scooter = exp(-pow(scooterDU / .020, 2.0) - pow(scooterDV / .011, 2.0));
+    float scooter = exp(-neptuneSquare(scooterDU / .020) - neptuneSquare(scooterDV / .011));
     colour += vec3(.050, .058, .070) * scooter * (.55 + .45 * scooterWisp)
       * (.65 + activity * .95) * detail;
 
@@ -179,39 +234,43 @@ const weather = /* glsl */ `
     // drifts westward and equatorward on the CPU-driven uNeptuneSpot, then dissipates.
     if (uNeptuneProgress >= 0.0 && uNeptuneProgress < 1.0) {
       float progress = uNeptuneProgress;
-      vec2 delta = uv - uNeptuneSpot;
-      delta.x -= floor(delta.x + .5);
-      float grow = smoothstep(0.0, .45, progress);
-      vec2 size = mix(vec2(.012, .008), vec2(.052, .034), grow);
-      vec2 q = delta / size;
-      float radius = length(q);
-
-      // Companions lead by roughly a seventh of the event and linger past the core,
-      // the compressed stand-in for their years-long lead over the 2018 spot. Noise
-      // breaks each flank band into discrete wisps so no uniform bright bar appears;
-      // the stronger field rides the equatorward edge, as in the Voyager imagery.
+      vec2 delta = neptuneDelta(uv, uNeptuneSpot);
+      float seed = uNeptuneSeed * 3.71 + 1.4;
+      // Use event age for local circulation; a new event never inherits a random
+      // global-time phase. Its seed is fixed at birth, not derived from drifting UV.
+      float age = progress * ${NEPTUNE_VORTEX_DURATION.toFixed(1)};
+      float grow = smoothstep(.02, .48, progress);
+      float erode = smoothstep(.58, .94, progress);
+      vec2 size = mix(vec2(.019, .013), vec2(.046, .037), grow);
+      size *= vec2(1.0 + .22 * erode, 1.0 - .18 * erode);
       float eqSign = sign(.5 - uNeptuneSpot.y);
-      float companion = smoothstep(.02, .15, progress) * (1.0 - smoothstep(.78, .97, progress));
-      float wisp = neptuneCloud(vec3(delta.x * 170.0, delta.y * 420.0, time * .06));
-      vec2 primary = vec2(delta.x / (size.x * .72),
-        (delta.y - eqSign * size.y * 1.10) / (size.y * .34));
-      float primaryGlow = exp(-pow(primary.x, 2.0) - pow(primary.y, 2.0))
-        * (.40 + .60 * smoothstep(-.1, .8, wisp));
-      vec2 secondary = vec2(delta.x / (size.x * .95),
-        (delta.y + eqSign * size.y * 1.15) / (size.y * .40));
-      float secondaryGlow = exp(-pow(secondary.x, 2.0) - pow(secondary.y, 2.0))
-        * (.36 + .64 * smoothstep(-.6, .5, -wisp));
-      colour = mix(colour, vec3(.94, .97, 1.06),
-        (primaryGlow + secondaryGlow * .55) * companion * .42);
+      vec2 q = delta / size * vec2(1.0, eqSign);
+      q = neptuneRotate(q, .10 * sin(age * .19 + seed));
+      q.x += (.18 + .10 * sin(age * .23 + seed)) * q.y;
+      q.y += .15 * sin(q.x * 2.6 - age * .28 + seed) * smoothstep(.05, .8, abs(q.x));
+      q.y *= 1.0 + .16 * tanh(q.x * 1.5);
+      float radius = length(q);
+      // Differential circulation winds the texture, not the entire silhouette.
+      // Mirroring the local latitude reverses circulation in the other hemisphere.
+      vec2 rolled = neptuneRotate(q, -age * .23 / (1.0 + radius * radius * .8));
+      float billow = neptuneCloud(vec3(rolled * 2.5, seed));
+      float small = neptuneNoise(vec3(rolled * 7.0, seed + 8.3));
+      float contour = radius + billow * .32 + small * .055;
+      float core = smoothstep(.14, .36, progress) * (1.0 - smoothstep(.69, .94, progress));
+      float dark = 1.0 - smoothstep(.56, 1.10, contour + erode * .24 * (billow + .4));
+      // A westward, equatorward protrusion is inspired by PIA01992. It stretches
+      // and breaks away as the vortex decays rather than shrinking as a neat oval.
+      float tongueY = q.y - (.21 + .35 * (-q.x - .65) + .13 * billow);
+      float tongue = exp(-neptuneSquare(tongueY / (.20 + erode * .10)))
+        * smoothstep(-2.15 - erode * .5, -1.05, q.x) * (1.0 - smoothstep(-.75, -.35, q.x));
+      dark = max(dark, tongue * (.58 + billow * .28) * smoothstep(.24, .52, progress));
+      // A diffuse, blue-grey depression without a hurricane eye or luminous rim.
+      // This is RGB morphology, not a spectral retrieval of aerosol composition.
+      colour *= 1.0 - dark * core * (.38 + billow * .07) * vec3(.94, 1.0, 1.06);
 
-      float core = smoothstep(.14, .34, progress) * (1.0 - smoothstep(.70, .92, progress));
-      float spin = time * .22 + 2.2 * exp(-radius * .9);
-      vec2 rolled = mat2(cos(spin), -sin(spin), sin(spin), cos(spin)) * q;
-      float mottle = neptuneCloud(vec3(rolled * 2.4, time * .06 + progress * 1.7));
-      float oval = 1.0 - smoothstep(.50, 1.20, radius + mottle * .20);
-      // Red darkens most so the oval reads deeper blue, the way dark vortices show best
-      // at blue wavelengths.
-      colour *= 1.0 - oval * core * (.33 + .07 * mottle) * vec3(1.13, 1.0, .86);
+      float companion = smoothstep(.02, .15, progress) * (1.0 - smoothstep(.78, .99, progress));
+      float clouds = neptuneCompanions(q, age, seed);
+      colour = mix(colour, vec3(.78, .87, .98), clouds * companion * .53);
     }
 
     // Slant-path haze at the cloud tops, in the albedo path so real sunlight still
@@ -239,6 +298,6 @@ export function patchNeptuneWeather(material, uniforms) {
         diffuseColor.rgb *= neptuneAtmosphere(map, vMapUv);
       #endif`);
   };
-  material.customProgramCacheKey = () => key + '-neptune-weather-v1';
+  material.customProgramCacheKey = () => key + '-neptune-weather-v2';
   material.needsUpdate = true;
 }
