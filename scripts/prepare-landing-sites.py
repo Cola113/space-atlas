@@ -14,7 +14,7 @@ import json
 from datetime import date
 from pathlib import Path
 from PIL import Image
-from landing_texture_lib import panorama_from_frame, panorama_with_traced_skyline, sha256
+from landing_texture_lib import dynamic_cloud_sea, panorama_from_frame, panorama_with_traced_skyline, sha256
 
 MODEL_NOTE = {
     'model': 'gpt-image-2.5-sunburst',
@@ -110,7 +110,9 @@ SITES = [
      'Source frame is native 3840x1920, the requested 2:1, so it is NOT reparameterized from 16:9. '
      'The provider kept a thin blue atmospheric band between the black sky and the cloud deck, so the '
      'transparent sky region is traced per column (through black and blue-dominant pixels, stopping at '
-     'the first cloud or terrain pixel) instead of the black flood fill alone; distant bluish summit '
+     'the first cloud or terrain pixel) instead of the black flood fill alone; the skyline now has a '
+     'four-pixel coverage feather and a continuous cloud-deck horizon to avoid cutout stair steps. A separate translucent cloud-sea layer '
+     'is extracted from the same frame for slow simulated drift; distant bluish summit '
      'silhouettes inside that band are removed with the sky. Wrap blend; nadir smoothing; WebP encoding. '
      'New drawing of the Mauna Kea summit cinder-cone plateau above the trade-wind cloud inversion; no '
      'reference image was supplied.',
@@ -160,6 +162,13 @@ for site_id, filename, mode, processing, extra in SITES:
         'processing': processing,
         **MODEL_NOTE, **extra,
     }
+    if site_id == 'earth':
+        cloud_dest = args.output / 'earth-cloud-sea.webp'
+        cloud = dynamic_cloud_sea(source, ground=image)
+        cloud.save(cloud_dest, quality=91, method=6, exact=True)
+        entry['cloudLayerFile'] = cloud_dest.name
+        entry['cloudLayerSha256'] = sha256(cloud_dest)
+        entry['cloudLayerBytes'] = cloud_dest.stat().st_size
     if site_id in by_id:
         records[by_id[site_id]] = entry
     else:

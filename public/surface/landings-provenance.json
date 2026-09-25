@@ -402,8 +402,8 @@
     {
       "id": "earth",
       "generatedOn": "2026-09-25",
-      "mode": "text-to-image",
-      "sourceFile": "earth-maunakea.png",
+      "mode": "multi-reference redraw: silhouette guide plus volcanic material reference",
+      "sourceFile": "earth-finish-20260925/terrain-original.png",
       "sourceDimensions": [
         3840,
         1920
@@ -412,16 +412,47 @@
         3840,
         1920
       ],
-      "sourceSha256": "1937b4b5cb54cde6a4a4c8248f10a32864a06dcf4105ed596055d40acfa41cda",
+      "sourceSha256": "7d04e8be8775008a727eaf0dc2bd50f169e57eb8bb5789dc87ac57ca7080ff91",
       "file": "earth.webp",
-      "sha256": "648ea63fd8187b8fde5cd8a9e096891685f0fc3636e5d83312f21a0f25663721",
-      "bytes": 1630438,
-      "processing": "Source frame is native 3840x1920, the requested 2:1, so it is NOT reparameterized from 16:9. The provider kept a thin blue atmospheric band between the black sky and the cloud deck, so the transparent sky region is traced per column (through black and blue-dominant pixels, stopping at the first cloud or terrain pixel) instead of the black flood fill alone; distant bluish summit silhouettes inside that band are removed with the sky. Wrap blend; nadir smoothing; WebP encoding. New drawing of the Mauna Kea summit cinder-cone plateau above the trade-wind cloud inversion; no reference image was supplied.",
+      "sha256": "3f73fff67bda88d53361994614ca9307d43a606bb7963431a3131c9d79a5d050",
+      "bytes": 1811138,
+      "processing": "Native 3840x1920 terrain; no upscaling. Black-matte skyline coverage with 3-pixel ramp, subpixel feather and edge colour bleed; longitude seam blend; nadir smoothing; WebP encoding. No clouds, stars, Sun or Moon are baked into terrain. The generated terrain is artistic, not surveyed.",
       "model": "gpt-image-2.5-sunburst",
       "requestedQuality": "high",
-      "requestedSize": "3840x1920",
+      "requestedSize": "4096x2048",
       "qualityExecutionVerified": false,
-      "requestedSizeAccepted": true
+      "requestedSizeAccepted": false,
+      "cloudLayerFile": "earth-cloud-sea.webp",
+      "cloudLayerSha256": "b3ad2f1731eba1cb8cf864fead91d5540fa001422af2532e29bc485971437014",
+      "cloudLayerBytes": 214834,
+      "assetVersion": "earth-separated-open-20260925",
+      "references": [
+        {
+          "role": "composition and low silhouette; local diagram",
+          "sha256": "0355c2a6cae55577f89f8db6fb29e72c0a0efa268160948da9ec1387537ff184"
+        },
+        {
+          "role": "volcanic material only; previous AI candidate; no preserved pixels",
+          "sha256": "7015805c00aeb17e0ffea5aa298cb34915734ff95a4fe0eccc3de020d82d765e"
+        }
+      ],
+      "cloudLayerDimensions": [
+        3840,
+        1920
+      ],
+      "cloudSourceSha256": "1937b4b5cb54cde6a4a4c8248f10a32864a06dcf4105ed596055d40acfa41cda",
+      "cloudProcessing": "Reuses cloud pixels from the original AI panorama, rows 944:1092. Missing terrain-covered areas completed from a clean same-image cloud patch at (1740,950)-(2160,1055); colour mask eroded and feathered. Rotated 90 degrees, resampled vertically to a 330-pixel band, extended below opaque ground. No new generated detail; independent opaque back layer with a shader horizon fade, depth-dependent drift and twilight tint. Not volumetric clouds or observed weather.",
+      "sourceHistory": [
+        {
+          "sourceFile": "earth-maunakea.png",
+          "sourceSha256": "1937b4b5cb54cde6a4a4c8248f10a32864a06dcf4105ed596055d40acfa41cda",
+          "sourceDimensions": [
+            3840,
+            1920
+          ],
+          "mode": "text-to-image"
+        }
+      ]
     }
   ],
   "updatedOn": "2026-09-25"
