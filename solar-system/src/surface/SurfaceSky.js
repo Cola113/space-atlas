@@ -19,6 +19,7 @@ import { createSaturnWeatherUniforms, patchSaturnWeather } from '../saturn-weath
 import { createSaturnRingShadowUniforms, patchSaturnRingShadow } from '../saturn-ring-shadow.js';
 import { createVenusWeatherUniforms, patchVenusWeather } from '../venus-weather.js';
 import { createNeptuneWeatherUniforms, patchNeptuneWeather } from '../neptune-weather.js';
+import { earthAtmosphereGLSL, earthCloudFragment } from './earth-atmosphere.js';
 
 const { smoothstep, clamp, degToRad } = THREE.MathUtils;
 const HOURS = 3600000;
@@ -99,8 +100,22 @@ export function surfaceLight(frame, site, referenceAltitude) {
   const direct = smoothstep(altitude,-.3,3) * Math.max(0,Math.sin(degToRad(altitude)));
   const reference = Math.max(.05,Math.sin(degToRad(referenceAltitude)));
   const eclipse = solarVisibility(frame,site.parentRadiusKm,site.parent);
-  return { altitude, eclipse, brightness:(site.nightFloor??.008)+clamp(direct/reference,0,1.5)*eclipse,
-    stars:THREE.MathUtils.lerp(1.25,.35,smoothstep(direct*eclipse,0,.15)) };
+  // Moonlight is a display term, not photometry: where the Moon is a resolvable
+  // neighbour (the Earth viewer), a full moon high in the sky lifts the ground
+  // well above the night floor, while a new moon or a lunar-set night stays
+  // dark. Sites opt in through a numeric gain; every other site is unchanged.
+  const moon = site.moonlight ? frame.targets.Moon : null;
+  let moonlight = 0;
+  if (moon) {
+    const moonAltitude = horizonAngles(moon.direction).altitude;
+    const up = smoothstep(moonAltitude,-.3,2) * Math.max(0,Math.sin(degToRad(moonAltitude)));
+    const phase = (1 - Math.cos(moon.direction.angleTo(frame.targets.Sun.direction))) / 2;
+    moonlight = up * phase * site.moonlight;
+  }
+  return { altitude, eclipse,
+    brightness: clamp((site.nightFloor??.008) + moonlight + clamp(direct/reference,0,1.5)*eclipse
+      + (site.atmosphere==='earth'?.09*smoothstep(altitude,-9,0)*(1-smoothstep(altitude,0,10))*eclipse:0), 0, 1.5),
+    stars:THREE.MathUtils.lerp(1.25,.35,smoothstep(direct*eclipse+moonlight,0,.15)) };
 }
 
 // The globe outline for a body, from the same model the solar-system view builds its mesh
@@ -110,9 +125,9 @@ export function skyGlobeGeometry(id, detailed) {
   return createBodyGeometry(bodyModels[id] || {}, sphere);
 }
 
-export function createSurfaceSky({scene,renderer,site,parentMap,cloudMap,groundMaterial,onCatalogueError,onCatalogueReady,signal,provider=physicalState,initialFrame}) {
+export function createSurfaceSky({scene,renderer,site,parentMap,cloudMap,cloudLayerMap,groundMaterial,onCatalogueError,onCatalogueReady,signal,provider=physicalState,initialFrame}) {
   const epoch=Date.parse(site.date), objects=new Map();
-  let frame=initialFrame || surfaceFrame(site,new Date(site.date),provider), stars, clouds;
+  let frame=initialFrame || surfaceFrame(site,new Date(site.date),provider), stars, clouds, cloudLayer;
   const referenceAltitude=site.referenceSolarAltitude??horizonAngles(frame.targets.Sun.direction).altitude;
   const exposure=new SurfaceExposure();
   let illumination;
@@ -223,6 +238,20 @@ export function createSurfaceSky({scene,renderer,site,parentMap,cloudMap,groundM
     bindSkyDepth(material,objects.get(site.parent).physicalScale,depthRange);
     clouds=new THREE.Mesh(globe.geometry,material);clouds.scale.setScalar(1.003);globe.add(clouds);
   }
+  if(cloudLayerMap){
+    cloudLayerMap.wrapS=THREE.RepeatWrapping;
+    cloudLayerMap.wrapT=THREE.ClampToEdgeWrapping;
+    const material=new THREE.ShaderMaterial({
+      uniforms:{panorama:{value:cloudLayerMap},center:{value:degToRad(site.panoramaCenter??0)},wind:windCycle,daylight:{value:1},
+        sun:{value:frame.targets.Sun.direction.clone()},sunAlt:{value:0}},
+      vertexShader:'varying vec3 direction;void main(){direction=position;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}',
+      fragmentShader:earthCloudFragment,
+      side:THREE.BackSide,transparent:true,depthWrite:false,depthTest:false,
+    });
+    cloudLayer=new THREE.Mesh(new THREE.SphereGeometry(100,128,64),material);
+    cloudLayer.name='surface-cloud-sea';
+    cloudLayer.renderOrder=15;scene.add(cloudLayer);
+  }
   const resolvable=target=>target&&target.angularDiameter>THREE.MathUtils.degToRad(.08);
   for(const name of ['Mercury','Venus','Earth','Mars','Jupiter','Saturn','Uranus','Neptune'])
     if(name!==site.parent&&frame.targets[name]){
@@ -255,9 +284,11 @@ export function createSurfaceSky({scene,renderer,site,parentMap,cloudMap,groundM
   if(objects.has('Earth'))enableEarthNight(objects.get('Earth').globe);
 
   const atmosphere=site.atmosphere?new THREE.Mesh(new THREE.SphereGeometry(1800,48,32),new THREE.ShaderMaterial({
-    uniforms:{sun:{value:frame.targets.Sun.direction.clone()},day:{value:1},kind:{value:{mars:1,titan:2,pluto:3,venus:4}[site.atmosphere]}},
+    uniforms:{sun:{value:frame.targets.Sun.direction.clone()},day:{value:1},kind:{value:{mars:1,titan:2,pluto:3,venus:4,earth:5}[site.atmosphere]},
+      sunAlt:{value:horizonAngles(frame.targets.Sun.direction).altitude}},
     vertexShader:'varying vec3 direction;void main(){direction=position;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}',
-    fragmentShader:`varying vec3 direction;uniform vec3 sun;uniform float day;uniform float kind;
+    fragmentShader:`varying vec3 direction;uniform vec3 sun;uniform float day;uniform float kind;uniform float sunAlt;
+      ${earthAtmosphereGLSL}
       void main(){vec3 d=normalize(direction);float h=exp(-max(d.y,0.)*3.);float alignment=max(0.,dot(d,sun));
         vec3 colour;float opacity;
         if(kind<1.5){colour=mix(vec3(.18,.11,.08),vec3(.53,.34,.23),h)*day;
@@ -267,14 +298,24 @@ export function createSurfaceSky({scene,renderer,site,parentMap,cloudMap,groundM
         else if(kind<3.5){float haze=exp(-max(d.y,0.)*9.);
           colour=(vec3(.14,.28,.46)*haze+vec3(.18,.35,.50)*pow(alignment,16.))*day;
           opacity=clamp((.08*haze+.22*pow(alignment,16.))*day,0.,.35);}
-        else{
+        else if(kind<4.5){
           vec3 ochre=mix(vec3(.42,.26,.08),vec3(.64,.44,.18),exp(-max(d.y,0.)*1.5));
           colour=(ochre+vec3(.32,.25,.10)*pow(alignment,2.5))*(.02+.98*day);
           opacity=mix(.1,1.,day);
         }
+        else{
+          // Earth keys its sky to the Sun's altitude, not to ground brightness:
+          // moonlight lifts the ground at night without painting the sky blue.
+          colour=earthSkyColour(d,sun,sunAlt);
+          opacity=1.;
+        }
         gl_FragColor=vec4(colour,opacity);
         #include <colorspace_fragment>
-      }`,side:THREE.BackSide,transparent:true,depthWrite:false,depthTest:false
+      }`,side:THREE.BackSide,transparent:true,depthWrite:false,depthTest:false,
+      // Scattered daylight adds radiance to the Earth sky and the lunar night
+      // side, while the direct solar disk stays visible. Dense atmospheres keep
+      // their existing obscuring blend.
+      blending:site.atmosphere==='earth'?THREE.AdditiveBlending:THREE.NormalBlending,
   })):null;
   if(atmosphere){atmosphere.renderOrder=10;scene.add(atmosphere);}
   const plume=site.activity==='ice'?new THREE.Mesh(new THREE.PlaneGeometry(155,450),new THREE.ShaderMaterial({
@@ -343,7 +384,11 @@ export function createSurfaceSky({scene,renderer,site,parentMap,cloudMap,groundM
         .applyMatrix3(new THREE.Matrix3().setFromMatrix4(ring.matrixWorld).invert()).normalize();
     }
     illumination=surfaceLight(frame,site,referenceAltitude);
-    if(atmosphere){atmosphere.material.uniforms.sun.value.copy(frame.targets.Sun.direction);}
+    if(atmosphere){atmosphere.material.uniforms.sun.value.copy(frame.targets.Sun.direction);
+      atmosphere.material.uniforms.sunAlt.value=illumination.altitude;}
+    if(cloudLayer){cloudLayer.material.uniforms.sun.value.copy(frame.targets.Sun.direction);
+      cloudLayer.material.uniforms.sunAlt.value=illumination.altitude;}
+    if(groundMaterial.uniforms.sunAlt)groundMaterial.uniforms.sunAlt.value=illumination.altitude;
     if(resetExposure||!exposure.value)exposure.reset(illumination);
     advanceExposure(0);
     stars.material.uniforms.rotation.value.copy(frame.rotation);
@@ -359,7 +404,9 @@ export function createSurfaceSky({scene,renderer,site,parentMap,cloudMap,groundM
     const display=exposure.update(illumination,elapsedSeconds);
     groundMaterial.uniforms.daylight.value=display.brightness;
     stars.material.uniforms.exposure.value=display.stars*(site.atmosphere==='mars'?1-smoothstep(display.brightness,.025,.12):1);
+    if(site.atmosphere==='earth')stars.material.uniforms.exposure.value*=1-smoothstep(illumination.altitude,-8,2);
     if(atmosphere)atmosphere.material.uniforms.day.value=smoothstep(display.brightness,0,1);
+    if(cloudLayer)cloudLayer.material.uniforms.daylight.value=display.brightness;
     if(plume){plume.material.uniforms.time.value=((frame.date.getTime()-epoch)/3600000)%72;plume.material.uniforms.light.value=clamp(display.brightness,.035,1);}
     if(groundMaterial.uniforms.activityTime)groundMaterial.uniforms.activityTime.value=THREE.MathUtils.euclideanModulo((frame.date.getTime()-epoch)/1000,86400);
   }

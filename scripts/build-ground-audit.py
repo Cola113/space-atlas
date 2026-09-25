@@ -171,12 +171,12 @@ for item in inputs:
     # Ordered and de-duplicated: iterating a set here made the key order of every written
     # fixture depend on the process hash seed, so two runs on identical input produced
     # different bytes for equal numbers.
-    for name in dict.fromkeys(('sun', item['parent'])):
+    for name in dict.fromkeys(('sun', item['parent'], *(item.get('extraTargets') or []))):
         target = position(name, t)
         relative = target - observer
         distance = np.linalg.norm(relative)
         direction = local @ relative / distance
-        radius = 695700 if name == 'sun' else item['parentRadiusKm']
+        radius = 695700 if name == 'sun' else (item.get('targetRadiiKm') or {}).get(name, item['parentRadiusKm'])
         # The phase angle is defined at the illuminated body, not the observer.
         lit_fraction = 1 if name == 'sun' else (1 + spice.vdot(
             spice.vhat(-target), spice.vhat(observer - target))) / 2

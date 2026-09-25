@@ -3,7 +3,7 @@ import {prepareSurfaceTests} from './physical-fixture.js';
 before(prepareSurfaceTests);
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
-import { MathUtils } from 'three';
+import { MathUtils, Vector3 } from 'three';
 import { landingSites,sitesForBody,defaultSiteId,surfaceFrame,angularDiameter,horizonAngles,bodyBasis,nextDaylight,sunHiddenByParent } from '../src/surface/geometry.js';
 import { landableBodyIds } from '../src/surface/sites.js';
 import { solarVisibility,surfaceLight } from '../src/surface/SurfaceSky.js';
@@ -12,8 +12,8 @@ const altitudeOf=(site,target,offsetMs=0)=>
   horizonAngles(surfaceFrame(site,new Date(Date.parse(site.date)+offsetMs)).targets[target].direction).altitude;
 
 test('every landing site has a decodable local image and never draws the observer body in the sky',async()=>{
-  assert.equal(landableBodyIds.length,12);
-  assert.equal(Object.keys(landingSites).length,18);
+  assert.equal(landableBodyIds.length,13);
+  assert.equal(Object.keys(landingSites).length,19);
   for(const [siteId,site] of Object.entries(landingSites)){
     assert.equal(site.siteId,siteId,'a site id must match its key');
     const frame=surfaceFrame(site);
@@ -106,6 +106,37 @@ test('the Phoenix site is in polar day at its own landing date',()=>{
   for(let n=0;n<48;n++)altitudes.push(horizonAngles(surfaceFrame(site,new Date(start+n*sol/48)).targets.Sun.direction).altitude);
   assert.ok(Math.min(...altitudes)>0,`the Sun sets at the polar site: ${Math.min(...altitudes).toFixed(1)} degrees`);
   assert.ok(Math.max(...altitudes)<60,'the polar Sun must stay low');
+});
+
+test('the moon-viewer site on Earth lands at night with a half-degree Moon already up',()=>{
+  const site=landingSites.earth,frame=surfaceFrame(site);
+  const moon=frame.targets.Moon;
+  assert.ok(moon,'the Moon must be a computed neighbour from the ground');
+  const diameter=MathUtils.radToDeg(moon.angularDiameter);
+  assert.ok(diameter>.45&&diameter<.62,`the Moon spans ${diameter.toFixed(3)} degrees`);
+  assert.ok(horizonAngles(moon.direction).altitude>8,'the default instant has the Moon above the cloud sea');
+  assert.ok(horizonAngles(frame.targets.Sun.direction).altitude<-8,'the default instant is night');
+  // 满月窗口：月亮几乎正对太阳的反方向，亮度比例接近 1。
+  const elongation=moon.direction.angleTo(frame.targets.Sun.direction);
+  assert.ok(elongation>2.9&&elongation<3.4,'the default instant is near full moon');
+});
+
+test('moonlight lifts the ground only where the site opts in',()=>{
+  // Pure geometry fixture: the Sun sits 30 degrees below the horizon; the full
+  // Moon is its exact opposite (30 degrees up, azimuth 180 away), the new Moon
+  // sits at the Sun's position where a night side puts it anyway.
+  const direction=(azimuth,altitude)=>new Vector3(Math.sin(azimuth)*Math.cos(altitude),Math.sin(altitude),-Math.cos(azimuth)*Math.cos(altitude));
+  const frame=(moonAzimuth,moonAltitude)=>({targets:{
+    Sun:{direction:direction(0,-30*Math.PI/180),distanceKm:1.496e8},
+    Moon:{direction:direction(moonAzimuth,moonAltitude),distanceKm:3.844e8}}});
+  const viewer={nightFloor:.025,moonlight:.15,parent:'Sun',parentRadiusKm:695700};
+  const plain={nightFloor:.025,parent:'Sun',parentRadiusKm:695700};
+  const full=surfaceLight(frame(Math.PI,30*Math.PI/180),viewer,25).brightness;
+  const dark=surfaceLight(frame(0,-30*Math.PI/180),viewer,25).brightness;
+  assert.ok(full>.09,`a full moon high in the sky lifts the ground, got ${full.toFixed(3)}`);
+  assert.ok(Math.abs(dark-.025)<1e-9,`a new moon leaves the night floor, got ${dark.toFixed(4)}`);
+  assert.ok(Math.abs(surfaceLight(frame(Math.PI,30*Math.PI/180),plain,25).brightness-.025)<1e-9,'sites without the opt-in stay at the floor');
+  assert.ok(surfaceLight(frame(Math.PI,30*Math.PI/180),viewer,25).stars<1.2,'the full moon also dims the star field');
 });
 
 test('daylight jump advances a night landing to an actually illuminated time',()=>{

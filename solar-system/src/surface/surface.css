@@ -87,3 +87,4 @@
 .surface-clock-actions {display:flex;flex-wrap:wrap;gap:8px;}
 .surface-clock-actions button {flex:1 0 130px;}
 .surface-view .surface-time-toggle {font-variant-numeric:tabular-nums;}
+@media(max-width:600px){.surface-actions:has(.surface-moon){grid-template-columns:repeat(4,minmax(0,1fr))}.surface-actions:has(.surface-moon) .surface-pause{grid-column:span 2}}

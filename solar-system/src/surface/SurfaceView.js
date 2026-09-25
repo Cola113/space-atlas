@@ -5,6 +5,7 @@ import { SurfaceClock } from './SurfaceClock.js';
 import { simulationRates, formatSimulationRate, simulationRateEquivalent, simulationDirectionLabel } from '../simulation-time.js';
 import { SurfaceJourney } from './SurfaceJourney.js';
 import { createSurfaceSky, surfaceCameraRange } from './SurfaceSky.js';
+import { earthAtmosphereGLSL } from './earth-atmosphere.js';
 import './surface.css';
 import { SURFACE_FOV_DEGREES, TELESCOPE_MAGNIFICATIONS, telescopeFieldOfView } from './lens.js';
 import { physicalState } from '../physics/state.js';
@@ -68,6 +69,7 @@ export function createSurfaceView(siteId, {renderOrbit,onClosed,initialDate,init
     </section>
     <footer class="surface-footer"><div class="surface-bearing"><span>朝向</span><strong></strong><small>眼高 1.65 m</small></div>
       <div class="surface-actions" role="toolbar" aria-label="地表观测"><button type="button" class="surface-parent"><span>望向${site.parentName}</span><i data-lucide="arrow-up-right"></i></button>
+        ${site.id==='earth'?'<button type="button" class="surface-moon" aria-label="望远镜赏月，定位月亮并放大至至少 4 倍">赏月 4×</button>':''}
         <button type="button" class="surface-daylight" aria-label="前往下一次日照" title="前往下一次日照"><i data-lucide="sunrise"></i><span>寻找日照</span></button>
         <button type="button" class="surface-reset" aria-label="恢复着陆视角" title="恢复着陆视角"><i data-lucide="rotate-ccw"></i><span>重置朝向</span></button>
         <button type="button" class="surface-photo" aria-label="留张照片" title="留张照片"><i data-lucide="camera"></i><span>留张照片</span></button>
@@ -174,14 +176,15 @@ export function createSurfaceView(siteId, {renderOrbit,onClosed,initialDate,init
   listen($('.surface-skip'),'click',()=>{journey.skip();invalidate();});
   listen($('.surface-time-toggle'),'click',()=>setClockPanel($('.surface-clock-panel').hidden));
   listen($('.surface-clock-close'),'click',()=>setClockPanel(false));
-  listen($('.surface-telescope'),'click',()=>{
-    magnification=TELESCOPE_MAGNIFICATIONS[(TELESCOPE_MAGNIFICATIONS.indexOf(magnification)+1)%TELESCOPE_MAGNIFICATIONS.length];
+  function setMagnification(value) {
+    magnification=value;
     camera.zoom=magnification;camera.updateProjectionMatrix();
     const button=$('.surface-telescope');button.querySelector('span').textContent=`望远镜 ${magnification}×`;
     button.setAttribute('aria-label',`望远镜 ${magnification} 倍，点击切换倍率`);
     $('.surface-angle-scale').textContent=`纵向视场 ${telescopeFieldOfView(magnification).toFixed(1)}°`;
     root.dataset.magnification=String(magnification);invalidate();
-  });
+  }
+  listen($('.surface-telescope'),'click',()=>setMagnification(TELESCOPE_MAGNIFICATIONS[(TELESCOPE_MAGNIFICATIONS.indexOf(magnification)+1)%TELESCOPE_MAGNIFICATIONS.length]));
   listen($('.surface-rate'),'input',event=>{
     clock.tick(performance.now(),journey.phase==='landed'&&!document.hidden);
     clock.setRate(simulationRates[Number(event.target.value)]);
@@ -320,6 +323,16 @@ export function createSurfaceView(siteId, {renderOrbit,onClosed,initialDate,init
     if(angles.altitude<0){notice(`${site.parentName}目前位于地平线下。`);return;}
     aim(angles.azimuth,angles.altitude);
   });
+  if(site.id==='earth')listen($('.surface-moon'),'click',()=>{
+    const moon=frame?.targets.Moon;
+    if(!moon)return;
+    const angles=horizonAngles(moon.direction);
+    if(angles.altitude<0){notice('月亮目前位于地平线下。');return;}
+    const u=THREE.MathUtils.euclideanModulo((angles.azimuth-site.panoramaCenter)/360+.5,1);
+    const v=THREE.MathUtils.clamp(.5-angles.altitude/180,0,.999);
+    if(groundMask?.[(Math.floor(v*256)*512+Math.floor(u*512))*4+3]>128){notice('月亮目前被山体或云海挡住。');return;}
+    setMagnification(Math.max(4,magnification));aim(angles.azimuth,angles.altitude);
+  });
   listen($('.surface-daylight'),'click',async()=>{
     const button=$('.surface-daylight');button.disabled=true;
     const wasPlaying=clock.playing;clock.playing=false;clock.suspend();
@@ -335,7 +348,7 @@ export function createSurfaceView(siteId, {renderOrbit,onClosed,initialDate,init
       if(!disposed){clock.playing=wasPlaying;clock.suspend();button.disabled=false;invalidate();}
     }
   });
-  listen($('.surface-reset'),'click',()=>aim(site.initialHeading,initialPitch()));
+  listen($('.surface-reset'),'click',()=>{setMagnification(1);aim(site.initialHeading,initialPitch());});
   listen(root,'keydown',event=>{
     if(event.key==='Escape') {event.preventDefault();event.stopPropagation();dismiss();return;}
     if (journey.phase!=='landed'||!$('.surface-details').hidden||/INPUT|TEXTAREA|SELECT/.test(event.target.tagName)) return;
@@ -368,18 +381,21 @@ export function createSurfaceView(siteId, {renderOrbit,onClosed,initialDate,init
       // starts from, so one world cannot be drawn from two different images.
       const parentUrl=bodyTexturePath(site.parent);
       const pending=await Promise.allSettled([texture(groundUrl),parentUrl?texture(parentUrl):Promise.resolve(null),
-        site.parentClouds?texture(site.parentClouds):Promise.resolve(null)]);
+        site.parentClouds?texture(site.parentClouds):Promise.resolve(null),site.cloudLayer?texture(site.cloudLayer):Promise.resolve(null)]);
       if(disposed)return;
       for(const result of pending)if(result.status==='rejected')throw new Error('全景或天体纹理未能加载，请返回轨道后重试。');
-      const [ground,parentMap,cloudMap]=pending.map(x=>x.value);
+      const [ground,parentMap,cloudMap,cloudLayerMap]=pending.map(x=>x.value);
       const mask=document.createElement('canvas');mask.width=512;mask.height=256;
       const maskContext=mask.getContext('2d',{willReadFrequently:true});maskContext.drawImage(ground.image,0,0,512,256);
       groundMask=maskContext.getImageData(0,0,512,256).data;
       ground.wrapS=THREE.RepeatWrapping;
       const dome=new THREE.Mesh(new THREE.SphereGeometry(100,128,64),new THREE.ShaderMaterial({
-        uniforms:{panorama:{value:ground},center:{value:rad(site.panoramaCenter)},daylight:{value:1},activityTime:{value:0},lava:{value:site.activity==='lava'?1:0}},
+        uniforms:{panorama:{value:ground},center:{value:rad(site.panoramaCenter)},daylight:{value:1},activityTime:{value:0},lava:{value:site.activity==='lava'?1:0},
+          earth:{value:site.atmosphere==='earth'?1:0},sunAlt:{value:0}},
         vertexShader:'varying vec3 direction; void main(){direction=position;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}',
-        fragmentShader:`uniform sampler2D panorama;uniform float center;uniform float daylight;uniform float activityTime;uniform float lava;varying vec3 direction;
+        fragmentShader:`uniform sampler2D panorama;uniform float center;uniform float daylight;uniform float activityTime;uniform float lava;
+          uniform float earth;uniform float sunAlt;varying vec3 direction;
+          ${earthAtmosphereGLSL}
           void main(){vec3 d=normalize(direction);vec2 uv=vec2((atan(d.x,-d.z)-center)/6.28318530718+.5,.5+asin(clamp(d.y,-1.,1.))/3.14159265359);
           // Correct the longitude derivative across the wrap, avoiding a
           // full-texture mip sample that would draw a vertical seam in the sky.
@@ -387,12 +403,13 @@ export function createSurfaceView(siteId, {renderOrbit,onClosed,initialDate,init
           vec4 c=textureGrad(panorama,uv,dx,dy);if(c.a<.03)discard;
           float hot=lava*step(c.g*3.,c.r)*step(c.b*2.,c.g)*step(.12,c.r)*(1.-step(.18,c.g));
           vec3 emission=hot*c.rgb*(.7+.2*sin(mod(activityTime,86400.)*.0007+uv.x*31.));
-          c.rgb*=daylight*mix(vec3(.7,.79,1.),vec3(1.),smoothstep(.015,.25,daylight));c.rgb+=emission;gl_FragColor=c;
+          vec3 tint=earth>.5?earthLightTint(sunAlt,daylight):mix(vec3(.7,.79,1.),vec3(1.),smoothstep(.015,.25,daylight));
+          c.rgb*=daylight*tint;c.rgb+=emission;gl_FragColor=c;
           #include <colorspace_fragment>
           }`,
         side:THREE.BackSide,transparent:true,depthWrite:false,depthTest:false,
       }));dome.renderOrder=20;scene.add(dome);
-      sky=createSurfaceSky({scene,renderer,site,parentMap,cloudMap,groundMaterial:dome.material,signal:events.signal,provider,initialFrame:frame,
+      sky=createSurfaceSky({scene,renderer,site,parentMap,cloudMap,cloudLayerMap,groundMaterial:dome.material,signal:events.signal,provider,initialFrame:frame,
         onCatalogueReady:()=>{lastSkyUpdate=-Infinity;invalidate();},
         onCatalogueError:()=>{notice('完整星表暂未加载，已显示主要亮星。');invalidate();}});
       listen(canvas,'pointerdown',event=>{
