@@ -2,7 +2,11 @@ import * as THREE from 'three';
 import { physicalData } from './physical-scale.js';
 import { physicalDefinitions } from './physics/definitions.js';
 
-export const MOON_TRANSIT_SYSTEMS = Object.freeze({ jupiter: Object.freeze(['io', 'europa', 'ganymede', 'callisto']) });
+export const MOON_TRANSIT_SYSTEMS = Object.freeze({
+  jupiter: Object.freeze(['io', 'europa', 'ganymede', 'callisto']),
+  // Titan is SAT441. The other three retain the catalogue's labelled mean orbits.
+  saturn: Object.freeze(['tethys', 'dione', 'rhea', 'titan']),
+});
 export const MOON_TRANSIT_SLOTS = 5;
 const vec = value => value instanceof THREE.Vector3 ? value.clone() : new THREE.Vector3().fromArray(value);
 export function physicalAxes(id) {
@@ -129,4 +133,3 @@ export function createMoonTransitSystem(objects) {
   }
   return {update,setEnabled,snapshot};
 }
-
