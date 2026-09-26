@@ -1,5 +1,5 @@
 {
-  "source": "JPL SAT441 / URA184 / PLU060 yearly polynomial bundles and the Horizons-generated Ceres bundle; see public/ephemeris/manifest.json",
+  "source": "JPL SAT441 / URA184 / PLU060 yearly polynomial bundles and the Horizons-generated Ceres bundle; see public/ephemeris/manifest.json; Phobos: original MAR099 yearly records",
   "gmSource": "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/gm_de440.tpc",
   "frame": "J2000",
   "units": "km, s",
@@ -14,7 +14,8 @@
         "saturn": "6f84c566e18bdc0f2c3c4221a913c7ba8fe398a02776203c521e347c3ad14345",
         "uranus": "89dc848c28154ecc764edaef3eb3ec785bcfb33c3d38ea91b78c42dcd41be518",
         "pluto": "81cb1a69a4de1658a924661f4ff0eec0199adaa1b7cdbb277ada19e0d5398ac2",
-        "ceres": "0f897dc1f9b443bf691dedf07c46b5ade857d5b106244afcf37f1da5742b5e01"
+        "ceres": "0f897dc1f9b443bf691dedf07c46b5ade857d5b106244afcf37f1da5742b5e01",
+        "phobos": "3260a08480facc483192b13e880431a4ed5e2865ee6f8a24236367bccf03cc5f"
       },
       "elements": {
         "enceladus": {
@@ -129,7 +130,25 @@
           -3.361902225055246,
           -3.2261210152646527,
           -0.6035265562764494
-        ]
+        ],
+        "phobos": {
+          "aKm": 9377.87436752721,
+          "e": 0.014716132341760096,
+          "p": [
+            0.8856390692061615,
+            0.3655265780503596,
+            -0.2864153624274339
+          ],
+          "q": [
+            -0.17501140234410584,
+            0.8340259090264969,
+            0.5232320633543737
+          ],
+          "meanAnomaly": -2.6638831661605216,
+          "meanMotion": 0.00022788156164379032,
+          "epochTdbSeconds": -3155716802.7589946,
+          "gmKm3S2": 42828.3758157561
+        }
       }
     },
     "last": {
@@ -138,7 +157,8 @@
         "saturn": "0f2de4f937fb2836face60beafb55caf703af6cc748508c4cf37e959f879f4ef",
         "uranus": "264f805cea5388e1a8bc2bcd6f68ab7172ae9d3f82f5688bf75e937df1c7a453",
         "pluto": "5aefac35fefd1cf4d88253a5c0918ffa4357cd698145eb72a5816a63ae2df9ea",
-        "ceres": "92eccb76808c63bacb412d37cd17a46945adbc3fbe587392679839fc6f223d7c"
+        "ceres": "92eccb76808c63bacb412d37cd17a46945adbc3fbe587392679839fc6f223d7c",
+        "phobos": "be8b15761a8659e4155e8d62ab4cec3e5d093f4cc7bc6196954eaaf53c91c49a"
       },
       "elements": {
         "enceladus": {
@@ -253,7 +273,25 @@
           -1.9506133852626135,
           -2.3676134259817445,
           -3.655022006714944
-        ]
+        ],
+        "phobos": {
+          "aKm": 9378.701737556723,
+          "e": 0.014902410843401681,
+          "p": [
+            0.13283258978621876,
+            -0.8413088907177192,
+            -0.5239798216439321
+          ],
+          "q": [
+            0.888846067020987,
+            0.3350233848147575,
+            -0.3125891885023953
+          ],
+          "meanAnomaly": -2.2729942101271194,
+          "meanMotion": 0.0002278514074356615,
+          "epochTdbSeconds": 3187252869.183877,
+          "gmKm3S2": 42828.3758157561
+        }
       }
     }
   }

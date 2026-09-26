@@ -31,6 +31,7 @@ SOURCES = {
     'saturn': ('sat441.bsp', {602, 606, 699}),
     'uranus': ('ura184_part-3.bsp', {705, 799}),
     'pluto': ('plu060.bsp', {9, 10, 901, 999}),
+    'phobos': ('mar099.bsp', {401, 499}),
 }
 J2000 = datetime(2000, 1, 1, 12, tzinfo=timezone.utc)
 
@@ -94,6 +95,8 @@ def excerpt(system, filename, targets):
         return path
     print(f'Extracting {filename}: targets {sorted(targets)}', flush=True)
     remote = RangeFile(BASE + filename)
+    if system == 'phobos':
+        remote.BLOCK = 4 * 1024 * 1024
     source = SPK(DAF(remote))
     summaries = [summary for summary, segment in zip(source.daf.summaries(), source.segments) if segment.target in targets]
     found = {descriptor[2] for _, descriptor in summaries}
@@ -183,6 +186,7 @@ def build(system, filename, path, first, last):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--download-only', action='store_true')
+    parser.add_argument('--merge', action='store_true', help='merge selected systems into the shared manifest and reference fixtures')
     parser.add_argument('--system', choices=list(SOURCES))
     parser.add_argument('--first', type=int, default=1900)
     parser.add_argument('--last', type=int, default=2100)
@@ -198,6 +202,15 @@ def main():
             sources[system], reference = build(system, filename, path, args.first, args.last)
             fixtures.extend(reference)
     if not args.download_only:
+        if args.merge:
+            manifest_path = DEST / 'manifest.json'
+            manifest = json.loads(manifest_path.read_text(encoding='utf-8'))
+            manifest['sources'].update(sources)
+            manifest_path.write_text(json.dumps(manifest, indent=2), encoding='utf-8')
+            fixture_path = ROOT / 'solar-system' / 'tests' / 'ephemeris-reference.json'
+            kept = [r for r in json.loads(fixture_path.read_text(encoding='utf-8')) if r['system'] not in sources]
+            fixture_path.write_text(json.dumps(kept + fixtures, separators=(',', ':')), encoding='utf-8')
+            return
         suffix = f'-{args.system}' if args.system else ''
         (DEST / f'manifest{suffix}.json').write_text(json.dumps({'version': 1, 'fromYear': args.first, 'throughYear': args.last, 'generatedWith': 'jplephem 2.24', 'sources': sources}, indent=2), encoding='utf-8')
         (ROOT / 'solar-system' / 'tests' / f'ephemeris-reference{suffix}.json').write_text(json.dumps(fixtures, separators=(',', ':')), encoding='utf-8')
