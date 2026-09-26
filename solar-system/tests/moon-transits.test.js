@@ -6,6 +6,7 @@ import { updateDisplayState } from '../src/orbits.js';
 import { bodies } from '../src/data.js';
 import { localPhysics } from './physical-fixture.js';
 import { observerTransit, createMoonTransitDiscs } from '../src/moon-transit-discs.js';
+import { createBodyGeometry } from '../src/body-geometry.js';
 const base={sunPositionKm:[0,0,0],parentPositionKm:[1e8,0,0],moonPositionKm:[1e8-400000,0,0],
   parentAxesKm:[70000,60000,70000],moonRadiusKm:1800,sunRadiusKm:696340};
 
@@ -56,16 +57,17 @@ test('ellipsoid pole and nontrivial orientation are not treated as a sphere',()=
   assert.ok(Math.abs(g.hitLocalKm.x)<1e-7);
 });
 function objectsFor(ids){return new Map(bodies.filter(b=>ids.includes(b.id)).map(b=>{
-  const root=new THREE.Group(),tilted=new THREE.Group(),mesh=new THREE.Mesh(new THREE.SphereGeometry(1,8,4),new THREE.MeshStandardMaterial());
+  const root=new THREE.Group(),tilted=new THREE.Group(),mesh=new THREE.Mesh(createBodyGeometry(b,new THREE.SphereGeometry(1,24,16)),new THREE.MeshStandardMaterial());
   root.add(tilted);tilted.add(mesh);mesh.scale.setScalar(b.radius);
   return [b.id,{...b,root,tilted,mesh,orbitCenter:new THREE.Vector3()}];
 }));}
 test('changing actual orbit display scales cannot move a physical shadow or change its diameter',()=>{
-  const provider=localPhysics(),frame=provider.frame(new Date('2026-01-01T00:00:00Z'));
+  const provider=localPhysics(),frame=provider.frame(new Date('2026-01-02T13:00:00Z'));
   const objects=objectsFor(['jupiter','io','europa','ganymede','callisto']);
   updateDisplayState(objects,frame,{guides:false});
   const transits=createMoonTransitSystem(objects);transits.update(frame);
   const a=transits.snapshot(),before=objects.get('io').root.position.clone();
+  assert.equal(a.jupiter[0].active,true,'scale invariance must exercise a real active Io shadow');
   for(const b of objects.values())b.orbit*=23;
   updateDisplayState(objects,frame,{guides:false});transits.update(frame);
   assert.ok(before.distanceTo(objects.get('io').root.position)>1);
@@ -79,6 +81,18 @@ test('changing actual orbit display scales cannot move a physical shadow or chan
   assert.ok(rotated.distanceTo(expected)<1e-7);
   provider.dispose();
 });
+
+test('forward motion, pause and rewind retain the dated shadow with no activity-clock dependency',()=>{
+  const provider=localPhysics(),objects=objectsFor(['jupiter','io','europa','ganymede','callisto']),system=createMoonTransitSystem(objects);
+  const at=date=>{system.update(provider.frame(new Date(date)));return system.snapshot().jupiter[0];};
+  const first=at('2026-01-02T13:00:00Z'),later=at('2026-01-02T13:10:00Z');
+  assert.ok(first.active&&later.active);assert.ok(vector(first.center).distanceTo(vector(later.center))>.001,'shadow moves more than 70 km in body coordinates');
+  assert.deepEqual(at('2026-01-02T13:10:00Z'),later,'paused date is deterministic');
+  assert.deepEqual(at('2026-01-02T13:00:00Z'),first,'rewind returns the same physical state');
+  assert.equal(at('2026-01-02T19:00:00Z').active,false,'shadow leaves the disk');
+  provider.dispose();
+});
+const vector=a=>new THREE.Vector3().fromArray(a);
 test('sparse available moons compact slots and clear stale state',()=>{
   const provider=localPhysics(),frame=provider.frame(new Date('2026-01-01T00:00:00Z'));
   const objects=objectsFor(['jupiter','io','europa','ganymede','callisto']),system=createMoonTransitSystem(objects);

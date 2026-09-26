@@ -552,6 +552,7 @@ function bodiesForTexture(key) {
 
 function usefulToUpload(body) {
   if (!body) return false;
+  if (body.transitVisible) return true;
   if (body.id === state.selected || (state.system && body.parent === state.selected)) return true;
   const projected = projectBody(body);
   return projected.onScreen && !projected.occluded && projected.radius >= 2;

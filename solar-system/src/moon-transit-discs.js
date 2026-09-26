@@ -25,6 +25,7 @@ export function createMoonTransitDiscs(objects) {
     return {mesh,sourceGeometry:moon.mesh.geometry,sourceMap:moon.mesh.material.map,moon,parent};
   }
   function update(frame,camera,{selected=null}={}) {
+    for(const ids of Object.values(MOON_TRANSIT_SYSTEMS))for(const id of ids){const moon=objects.get(id);if(moon)moon.transitVisible=false;}
     for(const r of records.values()){r.mesh.visible=false;r.transit=null;}
     if(!frame || !camera)return;
     const rotation=skyRotation(frame.time.astronomy);
@@ -41,6 +42,7 @@ export function createMoonTransitDiscs(objects) {
         const relativeLocal=relativeWorld.clone().applyQuaternion(inverseDisplay);
         const moonAxes=physicalAxes(id),transit=observerTransit(relativeLocal,localToward,axes,Math.max(...moonAxes));
         if(!transit)continue;
+        moon.transitVisible=true;
         let r=records.get(id);if(!r){r=proxy(parent,moon);records.set(id,r);}
         if(r.sourceGeometry!==moon.mesh.geometry){r.mesh.geometry.dispose();r.mesh.geometry=moon.mesh.geometry.clone();r.sourceGeometry=moon.mesh.geometry;}
         if(r.sourceMap!==moon.mesh.material.map){r.mesh.material.map=moon.mesh.material.map;r.sourceMap=moon.mesh.material.map;r.mesh.material.needsUpdate=true;}
@@ -73,4 +75,3 @@ export function createMoonTransitDiscs(objects) {
   function dispose(){for(const r of records.values()){r.mesh.removeFromParent();r.mesh.geometry.dispose();r.mesh.material.dispose();}records.clear();}
   return {update,snapshot,dispose};
 }
-
