@@ -49,6 +49,7 @@ import { landableBodyIds } from './surface/sites.js';
 import { catalogSections, dockCatalogs, dockCatalogFor, matchesCatalog, proximityCatalog, satelliteSystems, systemMembers, systemName } from './catalog.js';
 import { baseTextureKey } from './body-textures.js';
 import { createBodyGeometry, createNarrowRing } from './body-geometry.js';
+import { createMoonTransitSystem, createMoonTransitUniforms } from './moon-transits.js';
 import { createRingSystemGeometry, ringSystemFor, ringSpan } from './ring-systems.js';
 import { createObservedClouds } from "./observed-clouds.js";
 import { physicalSubsolarPoint } from './earth-observation.js';
@@ -136,6 +137,7 @@ let scene,
   fillLight,
   ambientLight,
   dynamics,
+  moonTransits,
   landmarkView;
 const rotationFollow = new RotationFollow();
 let observationGate = null, observationKey = null, sharedFrame = null, pendingArrival = null;
@@ -793,6 +795,7 @@ function createBodies(textures) {
     objects.set(body.id, {
       ...body, root, tilted, mesh, clouds: null, ring: null, orbitLine: null,
       sunDirection: new THREE.Vector3(1,0,0), physicalAvailable: false,
+      moonTransitUniforms: createMoonTransitUniforms(),
       orbitCenter: new THREE.Vector3(), lowMap: map, nightMap: null, surfaceMap: null,
       layerVisible: true, detailReady: false, placeholderGeometry: sphere,
       label: document.querySelector(`[data-label="${body.id}"]`),
@@ -899,6 +902,7 @@ function attachBodyDetails(body, textures) {
 
 function updatePositions() {
   sharedFrame = updateDisplayState(objects, physicalState.frame(new Date(state.date)));
+  moonTransits?.update(sharedFrame);
   if(state.selected) $('physics-accuracy').textContent = (sharedFrame.bodies.get(state.selected)?.accuracy || '等待当前年份星历。') + ' ' + sharedFrame.accuracy;
 }
 
@@ -2586,6 +2590,7 @@ async function init() {
       preparedCount++; preparationProgress();
     }
     createBodies(textures);
+    moonTransits = createMoonTransitSystem(objects);
     dynamics = createDynamics(objects, { defer: true });
     // Prepare one main body per frame; secondary bodies retain small meshes.
     for (const id of firstScreenIds) {
@@ -2672,6 +2677,7 @@ async function init() {
           cameraLightsVisible: keyLight.visible || fillLight.visible,
         },
         dynamics: dynamics.snapshot(),
+        moonTransits: moonTransits?.snapshot() || null,
         renderCalls: renderer.info.render.calls,
         programCount: renderer.info.programs.length,
         camera: camera.position.toArray(),
