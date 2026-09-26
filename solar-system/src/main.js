@@ -50,6 +50,7 @@ import { catalogSections, dockCatalogs, dockCatalogFor, matchesCatalog, proximit
 import { baseTextureKey } from './body-textures.js';
 import { createBodyGeometry, createNarrowRing } from './body-geometry.js';
 import { createMoonTransitSystem, createMoonTransitUniforms } from './moon-transits.js';
+import { createMoonTransitDiscs } from './moon-transit-discs.js';
 import { createRingSystemGeometry, ringSystemFor, ringSpan } from './ring-systems.js';
 import { createObservedClouds } from "./observed-clouds.js";
 import { physicalSubsolarPoint } from './earth-observation.js';
@@ -138,6 +139,7 @@ let scene,
   ambientLight,
   dynamics,
   moonTransits,
+  moonTransitDiscs,
   landmarkView;
 const rotationFollow = new RotationFollow();
 let observationGate = null, observationKey = null, sharedFrame = null, pendingArrival = null;
@@ -250,6 +252,7 @@ function disposeScene() {
   starfield?.dispose();
   controls?.dispose();
   dynamics?.dispose();
+  moonTransitDiscs?.dispose();
   const textures = new Set(highTextures.values());
   scene?.traverse(object => {
     object.geometry?.dispose();
@@ -2487,6 +2490,7 @@ function animate(now) {
   dynamics.updateLighting(state, camera.position);
   moonTransits?.setEnabled(state.shadows);
   camera.updateMatrixWorld();
+  moonTransitDiscs?.update(sharedFrame, camera, { selected: state.selected });
   starfield.update({ camera, date: state.date, physicalTime: sharedFrame.time, dt, brightOccupancy: brightSkyOccupancy() });
   frameWork.drainOne();
   renderer.render(scene, camera);
@@ -2592,6 +2596,7 @@ async function init() {
     }
     createBodies(textures);
     moonTransits = createMoonTransitSystem(objects);
+    moonTransitDiscs = createMoonTransitDiscs(objects);
     dynamics = createDynamics(objects, { defer: true });
     // Prepare one main body per frame; secondary bodies retain small meshes.
     for (const id of firstScreenIds) {
@@ -2679,6 +2684,9 @@ async function init() {
         },
         dynamics: dynamics.snapshot(),
         moonTransits: moonTransits?.snapshot({ camera, width: innerWidth, height: innerHeight }) || null,
+        moonTransitDiscs: moonTransitDiscs?.snapshot({ camera, width: innerWidth, height: innerHeight }) || [],
+        cameraWorldMatrix: camera.matrixWorld.toArray(),
+        cameraProjectionMatrix: camera.projectionMatrix.toArray(),
         renderCalls: renderer.info.render.calls,
         programCount: renderer.info.programs.length,
         camera: camera.position.toArray(),
