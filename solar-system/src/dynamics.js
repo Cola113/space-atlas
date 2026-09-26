@@ -14,6 +14,7 @@ import { createVenusWeatherUniforms, patchVenusWeather, VENUS_WAVE_DURATION } fr
 import { createNeptuneWeatherUniforms, patchNeptuneWeather, neptuneVortexOrigin, neptuneVortexUv, NEPTUNE_VORTEX_DURATION } from './neptune-weather.js';
 import { shapeSurfacePoint, shapeSurfaceNormal } from './body-geometry.js';
 import { saturnShadowFunctions, saturnDirectLighting } from './saturn-ring-shadow.js';
+import { MOON_TRANSIT_GLSL, moonTransitDirectLighting } from './moon-transits.js';
 export { saturnShadowFunctions, saturnDirectLighting };
 
 const simplex = simplexSource.replace("#pragma glslify: export(snoise)", "");
@@ -209,6 +210,7 @@ const common = /* glsl */ `
   // ring geometry are both built in, so the scene's own radius scale never enters.
   uniform float uBodyPolarRatio;
   uniform float uSunAngularRadius;
+  ${MOON_TRANSIT_GLSL}
   varying vec3 vActivityDir;
   varying vec2 vActivityUv;
   varying vec3 vActivityPosition;
@@ -1002,6 +1004,7 @@ export function createDynamics(objects, { defer = false } = {}) {
         uShadowEnabled: { value: 1 },
         uBodyPolarRatio: { value: body.shape?.[1] || 1 },
         uSunAngularRadius: { value: 0.0005 },
+        ...(body.moonTransitUniforms || {}),
       },
     };
     records.set(body.id, record);
@@ -1045,12 +1048,12 @@ export function createDynamics(objects, { defer = false } = {}) {
       patchMaterial(body.mesh.material, body.id, record.uniforms, {
         map_fragment: dedicated ? '#include <map_fragment>' : gasMap(body.id),
         ...(body.id === "saturn"
-          ? { lights_fragment_begin: saturnDirectLighting(
+          ? { lights_fragment_begin: moonTransitDirectLighting(saturnDirectLighting(
               // Origin the shadow ray at the real surface point. Re-normalising it would
               // lift the ray off a flattened globe and slide the band in latitude.
               "ringTransmission(vActivityPosition,normalize(vActivityViewToLocal * directLight.direction))",
-            ) }
-          : {}),
+            )) }
+          : body.id === 'jupiter' ? { lights_fragment_begin: moonTransitDirectLighting() } : {}),
       });
       if (body.id === 'saturn') {
         record.weather = createSaturnWeatherUniforms();

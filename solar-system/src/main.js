@@ -49,6 +49,8 @@ import { landableBodyIds } from './surface/sites.js';
 import { catalogSections, dockCatalogs, dockCatalogFor, matchesCatalog, proximityCatalog, satelliteSystems, systemMembers, systemName } from './catalog.js';
 import { baseTextureKey } from './body-textures.js';
 import { createBodyGeometry, createNarrowRing } from './body-geometry.js';
+import { createMoonTransitSystem, createMoonTransitUniforms } from './moon-transits.js';
+import { createMoonTransitDiscs } from './moon-transit-discs.js';
 import { createRingSystemGeometry, ringSystemFor, ringSpan } from './ring-systems.js';
 import { createObservedClouds } from "./observed-clouds.js";
 import { physicalSubsolarPoint } from './earth-observation.js';
@@ -136,6 +138,8 @@ let scene,
   fillLight,
   ambientLight,
   dynamics,
+  moonTransits,
+  moonTransitDiscs,
   landmarkView;
 const rotationFollow = new RotationFollow();
 let observationGate = null, observationKey = null, sharedFrame = null, pendingArrival = null;
@@ -248,6 +252,7 @@ function disposeScene() {
   starfield?.dispose();
   controls?.dispose();
   dynamics?.dispose();
+  moonTransitDiscs?.dispose();
   const textures = new Set(highTextures.values());
   scene?.traverse(object => {
     object.geometry?.dispose();
@@ -547,6 +552,7 @@ function bodiesForTexture(key) {
 
 function usefulToUpload(body) {
   if (!body) return false;
+  if (body.transitVisible) return true;
   if (body.id === state.selected || (state.system && body.parent === state.selected)) return true;
   const projected = projectBody(body);
   return projected.onScreen && !projected.occluded && projected.radius >= 2;
@@ -793,6 +799,7 @@ function createBodies(textures) {
     objects.set(body.id, {
       ...body, root, tilted, mesh, clouds: null, ring: null, orbitLine: null,
       sunDirection: new THREE.Vector3(1,0,0), physicalAvailable: false,
+      moonTransitUniforms: createMoonTransitUniforms(),
       orbitCenter: new THREE.Vector3(), lowMap: map, nightMap: null, surfaceMap: null,
       layerVisible: true, detailReady: false, placeholderGeometry: sphere,
       label: document.querySelector(`[data-label="${body.id}"]`),
@@ -899,6 +906,7 @@ function attachBodyDetails(body, textures) {
 
 function updatePositions() {
   sharedFrame = updateDisplayState(objects, physicalState.frame(new Date(state.date)));
+  moonTransits?.update(sharedFrame);
   if(state.selected) $('physics-accuracy').textContent = (sharedFrame.bodies.get(state.selected)?.accuracy || '等待当前年份星历。') + ' ' + sharedFrame.accuracy;
 }
 
@@ -2481,7 +2489,9 @@ function animate(now) {
   });
   objects.get("sun").root.getWorldPosition(sunLight.position);
   dynamics.updateLighting(state, camera.position);
+  moonTransits?.setEnabled(state.shadows);
   camera.updateMatrixWorld();
+  moonTransitDiscs?.update(sharedFrame, camera, { selected: state.selected });
   starfield.update({ camera, date: state.date, physicalTime: sharedFrame.time, dt, brightOccupancy: brightSkyOccupancy() });
   frameWork.drainOne();
   renderer.render(scene, camera);
@@ -2586,6 +2596,8 @@ async function init() {
       preparedCount++; preparationProgress();
     }
     createBodies(textures);
+    moonTransits = createMoonTransitSystem(objects);
+    moonTransitDiscs = createMoonTransitDiscs(objects);
     dynamics = createDynamics(objects, { defer: true });
     // Prepare one main body per frame; secondary bodies retain small meshes.
     for (const id of firstScreenIds) {
@@ -2672,6 +2684,10 @@ async function init() {
           cameraLightsVisible: keyLight.visible || fillLight.visible,
         },
         dynamics: dynamics.snapshot(),
+        moonTransits: moonTransits?.snapshot({ camera, width: innerWidth, height: innerHeight }) || null,
+        moonTransitDiscs: moonTransitDiscs?.snapshot({ camera, width: innerWidth, height: innerHeight }) || [],
+        cameraWorldMatrix: camera.matrixWorld.toArray(),
+        cameraProjectionMatrix: camera.projectionMatrix.toArray(),
         renderCalls: renderer.info.render.calls,
         programCount: renderer.info.programs.length,
         camera: camera.position.toArray(),
