@@ -11,7 +11,7 @@
 - 速度沿用共享层 ±1 秒差分，样本最大差 0.276639 米/秒；只用于轨道导线和范围外锚点，天空位置直接解算原始多项式。1900—2100 外采用最近边界二体外推并标注近似；缺失范围内年份时隐藏/阻止依赖观察，不退回平均椭圆。
 - 本轮没有新增落点：三条候选只读数值报告在 outputs/landing-candidates/phobos-20260926.md，十九个已登记落点及其 749 个参考样本不变。
 
-状态：已接入九个地表观景点并通过编码、姿态和独立地平天空数值验证；总览与地表已读取同一物理帧，全部科学及发布验收仍在进行。年份加载/失败重试及范围外二体外推由共享物理层提供，详见 [地表计算](../surface/README.md)。
+状态：已接入十九个地表观景点并通过编码、姿态和独立地平天空数值验证；总览与地表已读取同一物理帧，全部科学及发布验收仍在进行。年份加载/失败重试及范围外二体外推由共享物理层提供，详见 [地表计算](../surface/README.md)。
 
 | 系统 | JPL 原始来源 | 保留的 NAIF 目标 | 用途 |
 | --- | --- | --- | --- |
@@ -19,6 +19,7 @@
 | 天王星 | [URA184 第3部分](https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/ura184_part-3.bsp) | 705、799，相对7 | 米兰达相对天王星的位置 |
 | 冥王星 | [PLU060](https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/plu060.bsp) | 9、10相对0；901、999相对9 | 冥王星系统相对太阳、冥王星与卡戎相对系统质心的位置 |
 | 谷神星 | [Horizons 生成的 SPK](https://ssd-api.jpl.nasa.gov/doc/horizons.html)（`EPHEM_TYPE=SPK`，目标 1 Ceres） | 20000001 相对 10 | 谷神星相对太阳的位置 |
+| 火卫一 | [MAR099](https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/mar099.bsp) | 401、499，相对 4 | 两者相减，得到相对火星中心的位置 |
 
 前三个系统保留原始 J2000 赤道坐标、公里单位、TDB 秒及原生 Chebyshev 多项式阶数和时间段，没有从少量位置点重新拟合。谷神星不同：它没有覆盖 1900—2100 的现行 NAIF 原始多项式内核（`ceres_1900_2100.bsp` 已归档、止于 2100-01-01，且早于黎明号的轨道解），Horizons 能生成的 SPK 又是 MDA 记录（数据类型 1 与 21），本项目与 jplephem 的解算器都不读。因此它是**换一种表示**而非重新拟合轨道：由 CSPICE 在源文件上密集采样，再按与 NAIF 小行星星历相同的 32 天窗口、19 阶 Chebyshev 重新表达，逐窗记录源残差（最大 0.000063 公里）。数据说明与适用范围见各源同目录 `.cmt` 及 [NAIF 汇总](https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/aa_summaries.txt)。年份按民用日历请求，文件两端多保留一天以覆盖时标偏移和边界计算。
 

@@ -1,0 +1,114 @@
+[
+  {
+    "name": "desktop-1900",
+    "date": "1900-01-01T00:00:00Z",
+    "physicalModel": "JPL MAR099 原始多项式；主星日心平移取 Astronomy Engine",
+    "positionErrorKm": 0,
+    "textureWidth": 3840,
+    "activePixels": 2409,
+    "landingCount": 19,
+    "errors": [],
+    "loadedPhobosYears": [
+      {
+        "year": 1900,
+        "status": 200
+      },
+      {
+        "year": 1901,
+        "status": 200
+      }
+    ]
+  },
+  {
+    "name": "desktop-2026",
+    "date": "2026-09-26T00:00:00Z",
+    "physicalModel": "JPL MAR099 原始多项式；主星日心平移取 Astronomy Engine",
+    "positionErrorKm": 0,
+    "textureWidth": 1920,
+    "activePixels": 2404,
+    "landingCount": 19,
+    "errors": [],
+    "loadedPhobosYears": [
+      {
+        "year": 2026,
+        "status": 200
+      },
+      {
+        "year": 2025,
+        "status": 200
+      },
+      {
+        "year": 2027,
+        "status": 200
+      }
+    ]
+  },
+  {
+    "name": "desktop-2100",
+    "date": "2100-12-31T00:00:00Z",
+    "physicalModel": "JPL MAR099 原始多项式；主星日心平移取 Astronomy Engine",
+    "positionErrorKm": 2.9802322387695312e-8,
+    "textureWidth": 1920,
+    "activePixels": 2403,
+    "landingCount": 19,
+    "errors": [],
+    "loadedPhobosYears": [
+      {
+        "year": 2100,
+        "status": 200
+      },
+      {
+        "year": 2099,
+        "status": 200
+      }
+    ]
+  },
+  {
+    "name": "phone",
+    "date": "2026-09-26T00:00:00Z",
+    "physicalModel": "JPL MAR099 原始多项式；主星日心平移取 Astronomy Engine",
+    "positionErrorKm": 0,
+    "textureWidth": 1920,
+    "activePixels": 3688,
+    "landingCount": 19,
+    "errors": [],
+    "loadedPhobosYears": [
+      {
+        "year": 2026,
+        "status": 200
+      },
+      {
+        "year": 2025,
+        "status": 200
+      },
+      {
+        "year": 2027,
+        "status": 200
+      }
+    ]
+  },
+  {
+    "name": "short",
+    "date": "2026-09-26T00:00:00Z",
+    "physicalModel": "JPL MAR099 原始多项式；主星日心平移取 Astronomy Engine",
+    "positionErrorKm": 0,
+    "textureWidth": 1920,
+    "activePixels": 2684,
+    "landingCount": 19,
+    "errors": [],
+    "loadedPhobosYears": [
+      {
+        "year": 2026,
+        "status": 200
+      },
+      {
+        "year": 2025,
+        "status": 200
+      },
+      {
+        "year": 2027,
+        "status": 200
+      }
+    ]
+  }
+]
