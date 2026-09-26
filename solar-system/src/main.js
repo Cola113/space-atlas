@@ -2485,6 +2485,7 @@ function animate(now) {
   });
   objects.get("sun").root.getWorldPosition(sunLight.position);
   dynamics.updateLighting(state, camera.position);
+  moonTransits?.setEnabled(state.shadows);
   camera.updateMatrixWorld();
   starfield.update({ camera, date: state.date, physicalTime: sharedFrame.time, dt, brightOccupancy: brightSkyOccupancy() });
   frameWork.drainOne();
@@ -2677,7 +2678,7 @@ async function init() {
           cameraLightsVisible: keyLight.visible || fillLight.visible,
         },
         dynamics: dynamics.snapshot(),
-        moonTransits: moonTransits?.snapshot() || null,
+        moonTransits: moonTransits?.snapshot({ camera, width: innerWidth, height: innerHeight }) || null,
         renderCalls: renderer.info.render.calls,
         programCount: renderer.info.programs.length,
         camera: camera.position.toArray(),

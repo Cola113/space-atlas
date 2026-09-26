@@ -14,7 +14,7 @@ import { createVenusWeatherUniforms, patchVenusWeather, VENUS_WAVE_DURATION } fr
 import { createNeptuneWeatherUniforms, patchNeptuneWeather, neptuneVortexOrigin, neptuneVortexUv, NEPTUNE_VORTEX_DURATION } from './neptune-weather.js';
 import { shapeSurfacePoint, shapeSurfaceNormal } from './body-geometry.js';
 import { saturnShadowFunctions, saturnDirectLighting } from './saturn-ring-shadow.js';
-import { moonTransitMapFragment } from './moon-transits.js';
+import { MOON_TRANSIT_GLSL, moonTransitDirectLighting } from './moon-transits.js';
 export { saturnShadowFunctions, saturnDirectLighting };
 
 const simplex = simplexSource.replace("#pragma glslify: export(snoise)", "");
@@ -210,33 +210,7 @@ const common = /* glsl */ `
   // ring geometry are both built in, so the scene's own radius scale never enters.
   uniform float uBodyPolarRatio;
   uniform float uSunAngularRadius;
-  uniform float uMoonTransitEnabled;
-  uniform float uMoonTransitCount;
-  uniform vec3 uMoonShadowCenter0;
-  uniform vec3 uMoonShadowCenter1;
-  uniform vec3 uMoonShadowCenter2;
-  uniform vec3 uMoonShadowCenter3;
-  uniform vec3 uMoonShadowCenter4;
-  uniform vec3 uMoonShadowMetricA0;
-  uniform vec3 uMoonShadowMetricA1;
-  uniform vec3 uMoonShadowMetricA2;
-  uniform vec3 uMoonShadowMetricA3;
-  uniform vec3 uMoonShadowMetricA4;
-  uniform vec3 uMoonShadowMetricB0;
-  uniform vec3 uMoonShadowMetricB1;
-  uniform vec3 uMoonShadowMetricB2;
-  uniform vec3 uMoonShadowMetricB3;
-  uniform vec3 uMoonShadowMetricB4;
-  uniform float uMoonShadowUmbra0;
-  uniform float uMoonShadowUmbra1;
-  uniform float uMoonShadowUmbra2;
-  uniform float uMoonShadowUmbra3;
-  uniform float uMoonShadowUmbra4;
-  uniform float uMoonShadowPenumbra0;
-  uniform float uMoonShadowPenumbra1;
-  uniform float uMoonShadowPenumbra2;
-  uniform float uMoonShadowPenumbra3;
-  uniform float uMoonShadowPenumbra4;
+  ${MOON_TRANSIT_GLSL}
   varying vec3 vActivityDir;
   varying vec2 vActivityUv;
   varying vec3 vActivityPosition;
@@ -1071,16 +1045,15 @@ export function createDynamics(objects, { defer = false } = {}) {
       // modules; the remaining gas giants keep the shared gasMap flow.
       const dedicated =
         body.id === 'saturn' || body.id === 'venus' || body.id === 'neptune';
-      const transit = body.id === 'jupiter' || body.id === 'saturn' ? moonTransitMapFragment() : '';
       patchMaterial(body.mesh.material, body.id, record.uniforms, {
-        map_fragment: dedicated ? `#include <map_fragment>\n${transit}` : `${gasMap(body.id)}\n${transit}`,
+        map_fragment: dedicated ? '#include <map_fragment>' : gasMap(body.id),
         ...(body.id === "saturn"
-          ? { lights_fragment_begin: saturnDirectLighting(
+          ? { lights_fragment_begin: moonTransitDirectLighting(saturnDirectLighting(
               // Origin the shadow ray at the real surface point. Re-normalising it would
               // lift the ray off a flattened globe and slide the band in latitude.
               "ringTransmission(vActivityPosition,normalize(vActivityViewToLocal * directLight.direction))",
-            ) }
-          : {}),
+            )) }
+          : body.id === 'jupiter' ? { lights_fragment_begin: moonTransitDirectLighting() } : {}),
       });
       if (body.id === 'saturn') {
         record.weather = createSaturnWeatherUniforms();
