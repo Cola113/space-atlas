@@ -55,6 +55,7 @@ import { createRingSystemGeometry, ringSystemFor, ringSpan } from './ring-system
 import { createObservedClouds } from "./observed-clouds.js";
 import { physicalSubsolarPoint } from './earth-observation.js';
 import { createStarfield } from "./starfield.js";
+import { bindTitanGlint } from './titan-glint.js';
 import { FrameWorkQueue } from './resource-queue.js';
 import { createTextureResources, firstScreenTextures, firstScreenIds, textureRoot } from './texture-resources.js';
 import { simulationElapsed, simulationRates, defaultSimulationRate, restoreSimulationRate,
@@ -491,7 +492,23 @@ async function loadBaseTextures() {
       $('loading-text').textContent = `首屏纹理 ${loaded} / ${firstScreenTextures.length}`;
     }
   }));
+  try {
+    await loadTitanLakeMask();
+  } catch { recordTextureFailure('titan-north-lakes-mask.png', loadTitanLakeMask); }
   return textureMap;
+}
+
+async function loadTitanLakeMask() {
+  const lakeMask = await textureResources.texture('/surface/titan-north-lakes-mask.png',
+    { priority: 80, timeout: 15000, longitude: true });
+  textureMap.set('titan-north-lakes-mask.png', lakeMask);
+  const titan = objects.get('titan');
+  if (titan?.detailReady) {
+    titan.titanLakeMask = lakeMask;
+    titan.titanGlintUniforms = bindTitanGlint(titan.mesh.material, lakeMask, titan.sunDirection);
+  }
+  clearTextureFailure('titan-north-lakes-mask.png');
+  return lakeMask;
 }
 
 async function loadPreview(item) {
@@ -547,6 +564,7 @@ function bodiesForTexture(key) {
   if (key === '2k_venus_surface.jpg') return [objects.get('venus')];
   if (key === '2k_saturn_ring_alpha.png') return [objects.get('saturn')];
   if (key === '2k_titan-haze.png') return [objects.get('titan')];
+  if (key === 'titan-north-lakes-mask.png') return [objects.get('titan')];
   return [...objects.values()].filter(body => baseKey(body) === key);
 }
 
@@ -634,6 +652,8 @@ function prepareBody(body, priority = 0) {
     if (oldGeometry !== body.placeholderGeometry) oldGeometry.dispose();
     attachBodyDetails(body, textureMap);
     dynamics.activate(body.id);
+    // Weather owns the initial material hook; compose glint after it.
+    if (body.id === 'titan') body.titanGlintUniforms = bindTitanGlint(body.mesh.material, body.titanLakeMask, body.sunDirection);
     body.tilted.traverse(child => { if(child.material) bindPhysicalSun(child.material,body.sunDirection); });
     if(sharedFrame) updateDisplayState(objects,sharedFrame);
     body.detailReady = true;
@@ -842,6 +862,7 @@ function attachBodyDetails(body, textures) {
     );
     clouds.scale.setScalar(body.radius * 1.028);
     tilted.add(clouds);
+    body.titanLakeMask = textures.get('titan-north-lakes-mask.png');
   }
   if (body.id === "sun") {
     const corona = new THREE.Mesh(
@@ -2638,8 +2659,28 @@ async function init() {
     });
     document.addEventListener('visibilitychange', () => textureResources.queue.setPaused(document.hidden));
     requestAnimationFrame(animate);
-    // Read-only diagnostics for verifying camera framing and rendered asset state.
+    // Diagnostics for verifying camera framing and rendered asset state.
     window.solarAtlas = {
+      titanGlintProbe: (latitude = 73, longitude = 25, offsetRadii = null) => {
+        const body = objects.get('titan');
+        if (!body?.titanGlintUniforms) return null;
+        const lat = THREE.MathUtils.degToRad(latitude), lon = THREE.MathUtils.degToRad(longitude);
+        const localNormal = new THREE.Vector3(Math.cos(lat) * Math.cos(lon), Math.sin(lat), -Math.cos(lat) * Math.sin(lon));
+        const uv = [THREE.MathUtils.euclideanModulo(longitude / 360, 1), 0.5 + latitude / 180];
+        body.mesh.updateWorldMatrix(true, false);
+        const worldNormal = localNormal.clone().transformDirection(body.mesh.matrixWorld);
+        const surface = body.root.position.clone().addScaledVector(worldNormal, body.radius);
+        const reflected = body.sunDirection.clone().negate().reflect(worldNormal).normalize();
+        flight = null; pendingArrival = null;
+        controls.enableDamping = false; controls.update();
+        camera.position.copy(surface).addScaledVector(reflected, body.radius * 4.2);
+        if (offsetRadii) camera.position.copy(body.root.position).add(new THREE.Vector3(...offsetRadii).multiplyScalar(body.radius));
+        controls.target.copy(body.root.position);
+        controls.update(); controls.enableDamping = true; camera.updateMatrixWorld();
+        const projected = surface.clone().project(camera);
+        return { latitude, longitude, uv, worldNormal: worldNormal.toArray(), solarAltitudeDegrees: THREE.MathUtils.radToDeg(Math.asin(worldNormal.dot(body.sunDirection))), pointPixel: [(projected.x+1)*width/2,(1-projected.y)*height/2], sunDirection: body.sunDirection.toArray(), reflected: reflected.toArray(),
+          camera: camera.position.toArray(), mask: body.titanLakeMask?.image?.width || 0 };
+      },
       snapshot: () => ({
         ready: state.ready,
         loading: { firstFrameAt, interactiveAt, renderedFrames, backgroundStarted,
