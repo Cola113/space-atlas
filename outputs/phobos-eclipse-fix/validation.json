@@ -1,0 +1,110 @@
+{
+  "date": "2026-09-27",
+  "sourceCommit": "6181174",
+  "baseline": "d28842d",
+  "nodeVersion": "v24.19.0",
+  "tests": {
+    "command": "npm test",
+    "exitCode": 0,
+    "total": 166.0,
+    "passed": 166.0,
+    "failed": 0.0,
+    "skipped": 0.0,
+    "cancelled": 0.0,
+    "durationMs": 128629.3161,
+    "log": "test-results/phobos-eclipse-npm-test.log"
+  },
+  "build": {
+    "command": "npm run build",
+    "exitCode": 0,
+    "modules": 1825,
+    "seconds": 3.47,
+    "warning": "Existing chunks larger than 500 kB",
+    "log": "test-results/phobos-eclipse-build.log"
+  },
+  "targeted": {
+    "total": 20.0,
+    "passed": 20.0,
+    "failed": 0.0,
+    "log": "test-results/phobos-eclipse-targeted.log"
+  },
+  "render": {
+    "command": "npx tsx scripts/verify-phobos-render.mjs",
+    "exitCode": 0,
+    "scope": "Overview only; not surface default-moment panorama acceptance",
+    "cases": [
+      {
+        "name": "desktop-1900",
+        "date": "1900-01-01T00:00:00Z",
+        "positionErrorKm": 0,
+        "activePixels": 2412,
+        "landingCount": 21,
+        "errors": []
+      },
+      {
+        "name": "desktop-2026",
+        "date": "2026-09-26T00:00:00Z",
+        "positionErrorKm": 0,
+        "activePixels": 2407,
+        "landingCount": 21,
+        "errors": []
+      },
+      {
+        "name": "desktop-2100",
+        "date": "2100-12-31T00:00:00Z",
+        "positionErrorKm": 2.9802322387695312e-08,
+        "activePixels": 2406,
+        "landingCount": 21,
+        "errors": []
+      },
+      {
+        "name": "phone",
+        "date": "2026-09-26T00:00:00Z",
+        "positionErrorKm": 0,
+        "activePixels": 3602,
+        "landingCount": 21,
+        "errors": []
+      },
+      {
+        "name": "short",
+        "date": "2026-09-26T00:00:00Z",
+        "positionErrorKm": 0,
+        "activePixels": 2652,
+        "landingCount": 21,
+        "errors": []
+      }
+    ],
+    "log": "test-results/phobos-eclipse-render.log"
+  },
+  "mutation": {
+    "mutation": "Only sunHiddenByParent: angularDiameter(r,d)/2 -> atan(r/d)",
+    "exitCode": 1,
+    "tests": 3,
+    "failed": 3,
+    "liveGeometryUnchanged": true,
+    "limitation": "New safe default moments also pass the narrower old predicate; the independent boundary and rejected moment tests detect the bug."
+  },
+  "scopeChecks": {
+    "other19SiteDataUnchanged": true,
+    "onlyTwoPhobosDatesChanged": true,
+    "protectedPathsChanged": []
+  },
+  "baselineChangedDefaults": [
+    "phobos-60e",
+    "phobos-311e"
+  ],
+  "otherSitesChanged": [],
+  "preview": {
+    "pid": 22336,
+    "port": 5197,
+    "closed": true
+  },
+  "pushed": false,
+  "sha256": {
+    "solar-system/src/surface/geometry.js": "c804f785dc9edd54a2b42fcf33478d93db6387a72719cc84c8f8d1359f1c6480",
+    "solar-system/src/surface/sites.js": "21caee9a08dbdcab3ae0839ab5403eaba7f81806a9d7610bb1ca92e373daa679",
+    "solar-system/tests/surface-eclipse.test.js": "d91bbe19cf2d08b395e210ba279eb3e944b07373cb0008e2d9addaf13d96348c",
+    "solar-system/tests/phobos-landings.test.js": "a5a63ded957b4e55028285e62dfe94c64ad3880d84a16447287648beed75bec3",
+    "solar-system/tests/phobos-eclipse-reference.json": "c79a2bfba0b28cd9d48c1ad5f01cd77258724df3e31c0c13e90c663764863a05"
+  }
+}
