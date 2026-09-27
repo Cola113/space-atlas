@@ -1,0 +1,52 @@
+{
+  "scan": "2014-08-01..2014-08-31 UTC, hourly at the conservative Kraken interior nearest 63.1N/42E (broad surviving mask core); maximize Sun altitude. Camera aimed along reflected ray at 4.2 displayed radii from that surface point; then hold its center-relative display offset fixed and advance hourly.",
+  "seaTexels": 496,
+  "on": {
+    "date": "2014-08-19T14:00:00.000Z",
+    "solarAltitudeDegrees": 49.71950173101322,
+    "latitude": 63.10546875,
+    "longitude": 42.01171875,
+    "sun": [
+      0.4769737266542724,
+      -0.037902292918722325,
+      0.8780999261320086
+    ],
+    "normal": [
+      0.5022170609407649,
+      0.6008173130378535,
+      0.6219297227613376
+    ],
+    "viewDirection": [
+      0.28929744661244194,
+      0.9546154498115988,
+      0.07082605710132939
+    ],
+    "cameraOffsetRadii": [
+      1.717266336713021,
+      4.610202202246569,
+      0.9193991625869211
+    ],
+    "expectedIntensity": 1
+  },
+  "off": {
+    "date": "2014-08-20T06:00:00.000Z",
+    "maximumSeaIntensity": 0,
+    "minimumReflectionMismatchDegrees": 4.0777383914553385,
+    "solarAltitudeDegrees": 48.50947037882265
+  },
+  "independent": {
+    "analyticNormal": [
+      0.5022170609407648,
+      0.6008173130378534,
+      0.6219297227613376
+    ],
+    "numericNormal": [
+      0.5022170822790543,
+      0.6008173063280934,
+      0.6219297120123524
+    ],
+    "differenceDegrees": 0.0000014787793334710982,
+    "coordinateConvention": "display axes for reference normals; site latitude north/east longitude"
+  },
+  "limits": "The camera is a freely placed observer, not Cassini reconstruction. 2 degree reflection support and radiance 12 are visual enhancement. PIA17655 mask intentionally omits uncertain coastline and label pixels."
+}
