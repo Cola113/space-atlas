@@ -7,21 +7,21 @@
       "date": "2014-08-19T14:00:00.000Z",
       "area": 51,
       "peakDelta": 97.49059999999996,
-      "meanGlint": 217.89579607843137,
-      "meanSamePixelsWithoutGlint": 126.66077254901954,
+      "meanGlint": 217.63211764705878,
+      "meanSamePixelsWithoutGlint": 126.64134509803918,
       "centroid": [
-        797.1176470588235,
-        566.3529411764706
+        796.4705882352941,
+        543.2745098039215
       ],
       "bounds": [
-        793,
-        563,
-        801,
-        570
+        792,
+        540,
+        800,
+        547
       ],
       "body": {
         "id": "titan",
-        "meshId": "60577c9a-f4ec-47f2-8ea1-7ec8c9348e6c",
+        "meshId": "087e157c-8138-4761-ad4a-2deab5fe484b",
         "radius": 0.57,
         "radiusKm": 2574.76,
         "renderRadius": 0.57,
@@ -34,9 +34,9 @@
         "orbit": 18.4,
         "orbitVisible": false,
         "visible": true,
-        "x": 885.6,
-        "y": 442,
-        "radiusPx": 234.2320307903272,
+        "x": 885.6000000000059,
+        "y": 417.9999999999882,
+        "radiusPx": 235.93517644646886,
         "inView": true,
         "occluded": false,
         "labelVisible": false,
@@ -73,8 +73,8 @@
         "cloudRotation": -0.3332938618222609,
         "layerVisible": true
       },
-      "surroundingMean": 126.45621726618717,
-      "relativeLuminance": 1.723092788864356
+      "surroundingMean": 126.4476925659473,
+      "relativeLuminance": 1.7211236775519276
     },
     "off": {
       "date": "2014-08-20T06:00:00.000Z",
@@ -86,7 +86,7 @@
       "bounds": null,
       "body": {
         "id": "titan",
-        "meshId": "bffce0ed-fa96-4e7b-87a6-d82c42ad1a2e",
+        "meshId": "77570441-6157-4441-846e-b3c4dae75638",
         "radius": 0.57,
         "radiusKm": 2574.76,
         "renderRadius": 0.57,
@@ -99,9 +99,9 @@
         "orbit": 18.4,
         "orbitVisible": false,
         "visible": true,
-        "x": 885.6000000000059,
-        "y": 441.99999999998835,
-        "radiusPx": 234.23203079032663,
+        "x": 885.5999999999942,
+        "y": 418,
+        "radiusPx": 235.93517644646826,
         "inView": true,
         "occluded": false,
         "labelVisible": false,
@@ -146,23 +146,23 @@
     "height": 844,
     "on": {
       "date": "2014-08-19T14:00:00.000Z",
-      "area": 47,
-      "peakDelta": 97.49059999999996,
-      "meanGlint": 215.60158723404248,
-      "meanSamePixelsWithoutGlint": 126.70517021276592,
+      "area": 44,
+      "peakDelta": 97.41839999999995,
+      "meanGlint": 216.6765045454545,
+      "meanSamePixelsWithoutGlint": 126.61294090909088,
       "centroid": [
-        111.93617021276596,
-        480.1063829787234
+        111.43181818181819,
+        449.0681818181818
       ],
       "bounds": [
         108,
-        477,
+        446,
         115,
-        484
+        453
       ],
       "body": {
         "id": "titan",
-        "meshId": "bf2c390c-df84-49ab-a814-e2fec65681e3",
+        "meshId": "32d0643d-5cfb-457f-9be9-6e28a893db89",
         "radius": 0.57,
         "radiusKm": 2574.76,
         "renderRadius": 0.57,
@@ -175,9 +175,9 @@
         "orbit": 18.4,
         "orbitVisible": false,
         "visible": true,
-        "x": 195,
-        "y": 363.5,
-        "radiusPx": 219.65759331892906,
+        "x": 195.00000000000549,
+        "y": 331.4999999999889,
+        "radiusPx": 221.25476546757744,
         "inView": true,
         "occluded": false,
         "labelVisible": false,
@@ -214,8 +214,8 @@
         "cloudRotation": -0.3332938618222609,
         "layerVisible": true
       },
-      "surroundingMean": 126.56011170731712,
-      "relativeLuminance": 1.7035508607375651
+      "surroundingMean": 126.45521626794267,
+      "relativeLuminance": 1.7134643468272932
     },
     "off": {
       "date": "2014-08-20T06:00:00.000Z",
@@ -227,7 +227,7 @@
       "bounds": null,
       "body": {
         "id": "titan",
-        "meshId": "c22cd7c0-7afe-4c76-8301-ba93f94d85df",
+        "meshId": "c42f70d2-ee38-47bd-93a9-a204822e39bd",
         "radius": 0.57,
         "radiusKm": 2574.76,
         "renderRadius": 0.57,
@@ -240,9 +240,9 @@
         "orbit": 18.4,
         "orbitVisible": false,
         "visible": true,
-        "x": 195.00000000000546,
-        "y": 363.49999999998903,
-        "radiusPx": 219.65759331892852,
+        "x": 194.9999999999945,
+        "y": 331.5,
+        "radiusPx": 221.2547654675769,
         "inView": true,
         "occluded": false,
         "labelVisible": false,
@@ -287,23 +287,23 @@
     "height": 450,
     "on": {
       "date": "2014-08-19T14:00:00.000Z",
-      "area": 12,
-      "peakDelta": 55.64760000000001,
-      "meanGlint": 126.27876666666667,
-      "meanSamePixelsWithoutGlint": 75.88098333333333,
+      "area": 13,
+      "peakDelta": 55.14499999999997,
+      "meanGlint": 125.79961538461538,
+      "meanSamePixelsWithoutGlint": 75.26227692307694,
       "centroid": [
-        391.8333333333333,
-        280.9166666666667
+        391.0769230769231,
+        281.38461538461536
       ],
       "bounds": [
-        390,
-        279,
+        389,
+        280,
         393,
         283
       ],
       "body": {
         "id": "titan",
-        "meshId": "6792cbc9-ea8f-4dab-b0d6-a2f5b948ee7a",
+        "meshId": "4b6bec6e-af7f-481e-8b69-f8847e85a67e",
         "radius": 0.57,
         "radiusKm": 2574.76,
         "renderRadius": 0.57,
@@ -316,9 +316,9 @@
         "orbit": 18.4,
         "orbitVisible": false,
         "visible": true,
-        "x": 436.00000000000006,
-        "y": 219,
-        "radiusPx": 117.1160153951636,
+        "x": 436.00000000000296,
+        "y": 218.99999999999415,
+        "radiusPx": 117.96758822323443,
         "inView": true,
         "occluded": false,
         "labelVisible": false,
@@ -355,8 +355,8 @@
         "cloudRotation": -0.3332938618222609,
         "layerVisible": true
       },
-      "surroundingMean": 75.50493543689316,
-      "relativeLuminance": 1.6724571173524165
+      "surroundingMean": 75.0161196172248,
+      "relativeLuminance": 1.6769677774126022
     },
     "off": {
       "date": "2014-08-20T06:00:00.000Z",
@@ -368,7 +368,7 @@
       "bounds": null,
       "body": {
         "id": "titan",
-        "meshId": "5e0b44c2-fe2e-47bb-bcba-e869841e8c2e",
+        "meshId": "e6df1499-61be-4568-96c4-219fabb16e47",
         "radius": 0.57,
         "radiusKm": 2574.76,
         "renderRadius": 0.57,
@@ -381,9 +381,9 @@
         "orbit": 18.4,
         "orbitVisible": false,
         "visible": true,
-        "x": 436.00000000000296,
-        "y": 218.99999999999417,
-        "radiusPx": 117.11601539516332,
+        "x": 435.9999999999971,
+        "y": 219,
+        "radiusPx": 117.96758822323413,
         "inView": true,
         "occluded": false,
         "labelVisible": false,

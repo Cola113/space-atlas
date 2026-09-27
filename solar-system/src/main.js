@@ -2659,28 +2659,7 @@ async function init() {
     });
     document.addEventListener('visibilitychange', () => textureResources.queue.setPaused(document.hidden));
     requestAnimationFrame(animate);
-    // Diagnostics for verifying camera framing and rendered asset state.
     window.solarAtlas = {
-      titanGlintProbe: (latitude = 73, longitude = 25, offsetRadii = null) => {
-        const body = objects.get('titan');
-        if (!body?.titanGlintUniforms) return null;
-        const lat = THREE.MathUtils.degToRad(latitude), lon = THREE.MathUtils.degToRad(longitude);
-        const localNormal = new THREE.Vector3(Math.cos(lat) * Math.cos(lon), Math.sin(lat), -Math.cos(lat) * Math.sin(lon));
-        const uv = [THREE.MathUtils.euclideanModulo(longitude / 360, 1), 0.5 + latitude / 180];
-        body.mesh.updateWorldMatrix(true, false);
-        const worldNormal = localNormal.clone().transformDirection(body.mesh.matrixWorld);
-        const surface = body.root.position.clone().addScaledVector(worldNormal, body.radius);
-        const reflected = body.sunDirection.clone().negate().reflect(worldNormal).normalize();
-        flight = null; pendingArrival = null;
-        controls.enableDamping = false; controls.update();
-        camera.position.copy(surface).addScaledVector(reflected, body.radius * 4.2);
-        if (offsetRadii) camera.position.copy(body.root.position).add(new THREE.Vector3(...offsetRadii).multiplyScalar(body.radius));
-        controls.target.copy(body.root.position);
-        controls.update(); controls.enableDamping = true; camera.updateMatrixWorld();
-        const projected = surface.clone().project(camera);
-        return { latitude, longitude, uv, worldNormal: worldNormal.toArray(), solarAltitudeDegrees: THREE.MathUtils.radToDeg(Math.asin(worldNormal.dot(body.sunDirection))), pointPixel: [(projected.x+1)*width/2,(1-projected.y)*height/2], sunDirection: body.sunDirection.toArray(), reflected: reflected.toArray(),
-          camera: camera.position.toArray(), mask: body.titanLakeMask?.image?.width || 0 };
-      },
       snapshot: () => ({
         ready: state.ready,
         loading: { firstFrameAt, interactiveAt, renderedFrames, backgroundStarted,

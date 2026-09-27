@@ -18,9 +18,17 @@ for(const [name,width,height] of [['desktop',1440,900],['phone',390,844],['short
     await page.goto(base+'/solar-system/');
     await page.waitForFunction(()=>window.solarAtlas?.snapshot().bodies?.find(b=>b.id==='titan')?.textureWidth===3840 && !window.solarAtlas.snapshot().flight,null,{timeout:90000});
     await page.waitForTimeout(900);
-    await page.evaluate(g=>window.solarAtlas.titanGlintProbe(g.on.latitude,g.on.longitude,g.on.cameraOffsetRadii),geometry);
+    const targetDistance=Math.hypot(...geometry.on.cameraOffsetRadii.map(value=>value*.57));
+    for(let i=0;i<80;i++) {
+      const distance=await page.evaluate(()=>window.solarAtlas.snapshot().distance);
+      if(Math.abs(distance-targetDistance)<0.01) break;
+      await page.mouse.move(width/2,height/2);
+      await page.mouse.wheel(0,distance>targetDistance?-10:10);
+      await page.waitForTimeout(30);
+    }
     await page.waitForTimeout(200);
     const snap=await page.evaluate(()=>window.solarAtlas.snapshot());const body=snap.bodies.find(b=>b.id==='titan');
+    if(Math.abs(snap.distance-targetDistance)>=0.05) throw new Error(`${name}: camera distance ${snap.distance} did not reach ${targetDistance}`);
     const png=await page.locator('canvas').first().screenshot();
     await writeFile('test-results/titan-glint/'+name+'-'+epoch+(enabled?'':'-baseline')+'.png',png);
     pairs[epoch+(enabled?'':'Base')]={body,...await sharp(png).removeAlpha().raw().toBuffer({resolveWithObject:true})};
