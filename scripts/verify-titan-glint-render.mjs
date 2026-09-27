@@ -18,7 +18,13 @@ for(const [name,width,height] of [['desktop',1440,900],['phone',390,844],['short
     await page.goto(base+'/solar-system/');
     await page.waitForFunction(()=>window.solarAtlas?.snapshot().bodies?.find(b=>b.id==='titan')?.textureWidth===3840 && !window.solarAtlas.snapshot().flight,null,{timeout:90000});
     await page.waitForTimeout(900);
-    const targetDistance=Math.hypot(...geometry.on.cameraOffsetRadii.map(value=>value*.57));
+    const targetOffset=geometry.on.cameraOffsetRadii.map(value=>value*.57);
+    const targetDistance=Math.hypot(...targetOffset);
+    const seed=await page.evaluate(()=>window.solarAtlas.snapshot());
+    const seedOffset=seed.camera.map((value,index)=>value-seed.target[index]);
+    const seedDistance=Math.hypot(...seedOffset);
+    const directionError=Math.hypot(...seedOffset.map((value,index)=>value/seedDistance-targetOffset[index]/targetDistance));
+    assert.ok(directionError<1e-4,`${name}: session offset direction changed by ${directionError}`);
     for(let i=0;i<80;i++) {
       const distance=await page.evaluate(()=>window.solarAtlas.snapshot().distance);
       if(Math.abs(distance-targetDistance)<0.01) break;
