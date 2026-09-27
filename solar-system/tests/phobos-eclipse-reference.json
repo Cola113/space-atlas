@@ -1,0 +1,3782 @@
+{
+  "source": "Independent Horizons geometric vectors (MAR099/DE441) plus CSPICE PCK00011 and NAIF0012",
+  "sources": [
+    "https://ssd.jpl.nasa.gov/api/horizons.api",
+    "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/pck00011.tpc",
+    "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/lsk/naif0012.tls"
+  ],
+  "timeScale": "UTC input; explicit Horizons TIME_TYPE=UT; CSPICE str2et for PCK",
+  "frame": "ICRF/J2000 equatorial, no light-time or aberration correction",
+  "radiiKm": {
+    "marsPckEquatorial": 3396.19,
+    "marsProjectMean": 3389.5,
+    "sunPck": 695700.0,
+    "observerSphereIncludingEye": 11.08165
+  },
+  "limitations": "Sphere overlap, not an oblate limb or terrain profile; equatorial sphere is a conservative Mars bound. Fixed observer on a mean Phobos sphere.",
+  "kernelsSha256": {
+    "pck00011.tpc": "3dff7b1dbeceaa01f25467767d3fa25816051c85d162d1edf04acb310ee28bb1",
+    "naif0012.tls": "678e32bdb5a744117a467cd9601cd6b373f0e9bc9bbde1371d5eee39600a039b"
+  },
+  "queries": [
+    {
+      "query": {
+        "format": "json",
+        "COMMAND": "401",
+        "CENTER": "500@499",
+        "MAKE_EPHEM": "YES",
+        "EPHEM_TYPE": "VECTORS",
+        "TIME_TYPE": "UT",
+        "REF_PLANE": "FRAME",
+        "REF_SYSTEM": "ICRF",
+        "VEC_CORR": "NONE",
+        "VEC_TABLE": "2",
+        "OUT_UNITS": "KM-S",
+        "CSV_FORMAT": "YES",
+        "TIME_DIGITS": "FRACSEC",
+        "START_TIME": "2026-09-27 00:00:00",
+        "STOP_TIME": "2026-09-27 06:00:00",
+        "STEP_SIZE": "1 m"
+      },
+      "sha256": "932ec303e5c5e7af84505529ce6796cb0354fb3041ce63d85157960ebc40d333",
+      "header": "*******************************************************************************\n Revised: Jun 02, 2025             Phobos / (Mars)                          401\n\n SATELLITE PHYSICAL PROPERTIES:\n  Radius (km)             = 13.1 x11.1 x9.3 Density (g cm^-3)   =  1.90 +- 0.08\n  Mass (10^20 kg )        =  1.08 (10^-4)   Geometric Albedo    =  0.06 \n                                 (+- 0.1)   V(1,0)              = +11.8\n\n SATELLITE ORBITAL DATA:\n  Semi-major axis, a (km) = 9.3772(10^3)    Orbital period      = 0.319 d\n  Eccentricity, e         = 0.0151          Rotational period   = Synchronous\n  Inclination, i  (deg)   = 1.082\n*******************************************************************************\n\n\n*******************************************************************************\nEphemeris / API_USER Sat Sep 26 19:56:08 2026 Pasadena, USA      / Horizons\n*******************************************************************************\nTarget body name: Phobos (401)                    {source: mar099}\nCenter body name: Mars (499)                      {source: mar099}\nCenter-site name: BODY CENTER\n*******************************************************************************\nStart time      : A.D. 2026-Sep-27 00:00:00.0000 UT \nStop  time      : A.D. 2026-Sep-27 06:00:00.0000 UT \nStep-size       : 1 minutes\n*******************************************************************************\nCenter geodetic : 0.0, 0.0, 0.0                   {W-lon(deg),Lat(deg),Alt(km)}\nCenter cylindric: 0.0, 0.0, 0.0                   {W-lon(deg),Dxy(km),Dz(km)}\nCenter radii    : 3396.19, 3396.19, 3376.2 km     {Equator_a, b, pole_c}\nOutput units    : KM-S\nCalendar mode   : Mixed Julian/Gregorian\nOutput type     : GEOMETRIC cartesian states\nOutput format   : 2 (position and velocity)\nEOP file        : eop.260925.p261222\nEOP coverage    : DATA-BASED 1962-JAN-20 TO 2026-SEP-25. PREDICTS-> 2026-DEC-21\nReference frame : ICRF\n*******************************************************************************\n            JDUT ,            Calendar Date (UT ),                      X,                      Y,                      Z,                     VX,                     VY,                     VZ,\n**************************************************************************************************************************************************************************************************\n"
+    },
+    {
+      "query": {
+        "format": "json",
+        "COMMAND": "10",
+        "CENTER": "500@401",
+        "MAKE_EPHEM": "YES",
+        "EPHEM_TYPE": "VECTORS",
+        "TIME_TYPE": "UT",
+        "REF_PLANE": "FRAME",
+        "REF_SYSTEM": "ICRF",
+        "VEC_CORR": "NONE",
+        "VEC_TABLE": "2",
+        "OUT_UNITS": "KM-S",
+        "CSV_FORMAT": "YES",
+        "TIME_DIGITS": "FRACSEC",
+        "START_TIME": "2026-09-27 00:00:00",
+        "STOP_TIME": "2026-09-27 06:00:00",
+        "STEP_SIZE": "1 m"
+      },
+      "sha256": "8985b274cd4c2f08c713124bc947913855e262a061ed972de136b291e1324a41",
+      "header": "*******************************************************************************\n Revised: July 31, 2013                  Sun                                 10\n\n PHYSICAL PROPERTIES (updated 2024-Oct-30):\n  GM, km^3/s^2          = 132712440041.93938  Mass, 10^24 kg        = ~1988410\n  Vol. mean radius, km  = 695700              Volume, 10^12 km^3    = 1412000\n  Solar radius (IAU2015)= 695700 km           Mean density, g/cm^3  = 1.408\n  Radius (photosphere)  = 696500 km           Angular diam at 1 AU  = 1919.3\"\n  Photosphere temp., K  = 6600 (bottom)       Photosphere temp., K  = 4400(top)\n  Photospheric depth    = ~500 km             Chromospheric depth   = ~2500 km\n  Flatness, f           = 0.00005             Adopted sid. rot. per.= 25.38 d\n  Surface gravity       =  274.0 m/s^2        Escape speed, km/s    =  617.7\n  Pole (RA,DEC), deg.   = (286.13, 63.87)     Obliquity to ecliptic = 7.25 deg.\n  Solar constant (1 AU) = 1367.6 W/m^2        Luminosity, 10^24 J/s = 382.8\n  Mass-energy conv rate = 4.260 x 10^9 kg/s   Effective temp, K     = 5772\n  Sunspot cycle         = 11.4 yr             Cycle 24 sunspot min. = 2008 A.D.\n\n  Motion relative to nearby stars = apex : R.A.= 271 deg.; DEC.= +30 deg.\n                                    speed: 19.4 km/s (0.0112 au/day)\n  Motion relative to 2.73K BB/CBR = apex : l= 264.7 +- 0.8; b= 48.2 +- 0.5 deg.\n                                    speed: 369 +-11 km/s\n*******************************************************************************\n\n\n*******************************************************************************\nEphemeris / API_USER Sat Sep 26 19:56:10 2026 Pasadena, USA      / Horizons\n*******************************************************************************\nTarget body name: Sun (10)                        {source: DE441}\nCenter body name: Phobos (401)                    {source: mar099}\nCenter-site name: BODY CENTER\n*******************************************************************************\nStart time      : A.D. 2026-Sep-27 00:00:00.0000 UT \nStop  time      : A.D. 2026-Sep-27 06:00:00.0000 UT \nStep-size       : 1 minutes\n*******************************************************************************\nCenter geodetic : 0.0, 0.0, 0.0                   {W-lon(deg),Lat(deg),Alt(km)}\nCenter cylindric: 0.0, 0.0, 0.0                   {W-lon(deg),Dxy(km),Dz(km)}\nCenter radii    : 13.0, 11.4, 9.1 km              {Equator_a, b, pole_c}\nOutput units    : KM-S\nCalendar mode   : Mixed Julian/Gregorian\nOutput type     : GEOMETRIC cartesian states\nOutput format   : 2 (position and velocity)\nEOP file        : eop.260925.p261222\nEOP coverage    : DATA-BASED 1962-JAN-20 TO 2026-SEP-25. PREDICTS-> 2026-DEC-21\nReference frame : ICRF\n*******************************************************************************\n            JDUT ,            Calendar Date (UT ),                      X,                      Y,                      Z,                     VX,                     VY,                     VZ,\n**************************************************************************************************************************************************************************************************\n"
+    },
+    {
+      "query": {
+        "format": "json",
+        "COMMAND": "401",
+        "CENTER": "500@499",
+        "MAKE_EPHEM": "YES",
+        "EPHEM_TYPE": "VECTORS",
+        "TIME_TYPE": "UT",
+        "REF_PLANE": "FRAME",
+        "REF_SYSTEM": "ICRF",
+        "VEC_CORR": "NONE",
+        "VEC_TABLE": "2",
+        "OUT_UNITS": "KM-S",
+        "CSV_FORMAT": "YES",
+        "TIME_DIGITS": "FRACSEC",
+        "START_TIME": "2026-09-27 00:38:00",
+        "STOP_TIME": "2026-09-27 00:41:00",
+        "STEP_SIZE": "180"
+      },
+      "sha256": "cb6cad0e5464e96d5380342807aa6383ed9e099bb33cc23013a32728ee89e61c",
+      "header": "*******************************************************************************\n Revised: Jun 02, 2025             Phobos / (Mars)                          401\n\n SATELLITE PHYSICAL PROPERTIES:\n  Radius (km)             = 13.1 x11.1 x9.3 Density (g cm^-3)   =  1.90 +- 0.08\n  Mass (10^20 kg )        =  1.08 (10^-4)   Geometric Albedo    =  0.06 \n                                 (+- 0.1)   V(1,0)              = +11.8\n\n SATELLITE ORBITAL DATA:\n  Semi-major axis, a (km) = 9.3772(10^3)    Orbital period      = 0.319 d\n  Eccentricity, e         = 0.0151          Rotational period   = Synchronous\n  Inclination, i  (deg)   = 1.082\n*******************************************************************************\n\n\n*******************************************************************************\nEphemeris / API_USER Sat Sep 26 19:56:56 2026 Pasadena, USA      / Horizons\n*******************************************************************************\nTarget body name: Phobos (401)                    {source: mar099}\nCenter body name: Mars (499)                      {source: mar099}\nCenter-site name: BODY CENTER\n*******************************************************************************\nStart time      : A.D. 2026-Sep-27 00:38:00.0000 UT \nStop  time      : A.D. 2026-Sep-27 00:41:00.0000 UT \nStep-size       : 180 steps\n*******************************************************************************\nCenter geodetic : 0.0, 0.0, 0.0                   {W-lon(deg),Lat(deg),Alt(km)}\nCenter cylindric: 0.0, 0.0, 0.0                   {W-lon(deg),Dxy(km),Dz(km)}\nCenter radii    : 3396.19, 3396.19, 3376.2 km     {Equator_a, b, pole_c}\nOutput units    : KM-S\nCalendar mode   : Mixed Julian/Gregorian\nOutput type     : GEOMETRIC cartesian states\nOutput format   : 2 (position and velocity)\nEOP file        : eop.260925.p261222\nEOP coverage    : DATA-BASED 1962-JAN-20 TO 2026-SEP-25. PREDICTS-> 2026-DEC-21\nReference frame : ICRF\n*******************************************************************************\n            JDUT ,            Calendar Date (UT ),                      X,                      Y,                      Z,                     VX,                     VY,                     VZ,\n**************************************************************************************************************************************************************************************************\n"
+    },
+    {
+      "query": {
+        "format": "json",
+        "COMMAND": "10",
+        "CENTER": "500@401",
+        "MAKE_EPHEM": "YES",
+        "EPHEM_TYPE": "VECTORS",
+        "TIME_TYPE": "UT",
+        "REF_PLANE": "FRAME",
+        "REF_SYSTEM": "ICRF",
+        "VEC_CORR": "NONE",
+        "VEC_TABLE": "2",
+        "OUT_UNITS": "KM-S",
+        "CSV_FORMAT": "YES",
+        "TIME_DIGITS": "FRACSEC",
+        "START_TIME": "2026-09-27 00:38:00",
+        "STOP_TIME": "2026-09-27 00:41:00",
+        "STEP_SIZE": "180"
+      },
+      "sha256": "2f64a4a97f5b160656bab2d242bad97ef30944bddf13d5ef3af104f55215b965",
+      "header": "*******************************************************************************\n Revised: July 31, 2013                  Sun                                 10\n\n PHYSICAL PROPERTIES (updated 2024-Oct-30):\n  GM, km^3/s^2          = 132712440041.93938  Mass, 10^24 kg        = ~1988410\n  Vol. mean radius, km  = 695700              Volume, 10^12 km^3    = 1412000\n  Solar radius (IAU2015)= 695700 km           Mean density, g/cm^3  = 1.408\n  Radius (photosphere)  = 696500 km           Angular diam at 1 AU  = 1919.3\"\n  Photosphere temp., K  = 6600 (bottom)       Photosphere temp., K  = 4400(top)\n  Photospheric depth    = ~500 km             Chromospheric depth   = ~2500 km\n  Flatness, f           = 0.00005             Adopted sid. rot. per.= 25.38 d\n  Surface gravity       =  274.0 m/s^2        Escape speed, km/s    =  617.7\n  Pole (RA,DEC), deg.   = (286.13, 63.87)     Obliquity to ecliptic = 7.25 deg.\n  Solar constant (1 AU) = 1367.6 W/m^2        Luminosity, 10^24 J/s = 382.8\n  Mass-energy conv rate = 4.260 x 10^9 kg/s   Effective temp, K     = 5772\n  Sunspot cycle         = 11.4 yr             Cycle 24 sunspot min. = 2008 A.D.\n\n  Motion relative to nearby stars = apex : R.A.= 271 deg.; DEC.= +30 deg.\n                                    speed: 19.4 km/s (0.0112 au/day)\n  Motion relative to 2.73K BB/CBR = apex : l= 264.7 +- 0.8; b= 48.2 +- 0.5 deg.\n                                    speed: 369 +-11 km/s\n*******************************************************************************\n\n\n*******************************************************************************\nEphemeris / API_USER Sat Sep 26 19:56:58 2026 Pasadena, USA      / Horizons\n*******************************************************************************\nTarget body name: Sun (10)                        {source: DE441}\nCenter body name: Phobos (401)                    {source: mar099}\nCenter-site name: BODY CENTER\n*******************************************************************************\nStart time      : A.D. 2026-Sep-27 00:38:00.0000 UT \nStop  time      : A.D. 2026-Sep-27 00:41:00.0000 UT \nStep-size       : 180 steps\n*******************************************************************************\nCenter geodetic : 0.0, 0.0, 0.0                   {W-lon(deg),Lat(deg),Alt(km)}\nCenter cylindric: 0.0, 0.0, 0.0                   {W-lon(deg),Dxy(km),Dz(km)}\nCenter radii    : 13.0, 11.4, 9.1 km              {Equator_a, b, pole_c}\nOutput units    : KM-S\nCalendar mode   : Mixed Julian/Gregorian\nOutput type     : GEOMETRIC cartesian states\nOutput format   : 2 (position and velocity)\nEOP file        : eop.260925.p261222\nEOP coverage    : DATA-BASED 1962-JAN-20 TO 2026-SEP-25. PREDICTS-> 2026-DEC-21\nReference frame : ICRF\n*******************************************************************************\n            JDUT ,            Calendar Date (UT ),                      X,                      Y,                      Z,                     VX,                     VY,                     VZ,\n**************************************************************************************************************************************************************************************************\n"
+    },
+    {
+      "query": {
+        "format": "json",
+        "COMMAND": "401",
+        "CENTER": "500@499",
+        "MAKE_EPHEM": "YES",
+        "EPHEM_TYPE": "VECTORS",
+        "REF_PLANE": "FRAME",
+        "REF_SYSTEM": "ICRF",
+        "VEC_CORR": "NONE",
+        "VEC_TABLE": "2",
+        "OUT_UNITS": "KM-S",
+        "CSV_FORMAT": "YES",
+        "TIME_DIGITS": "FRACSEC",
+        "START_TIME": "2026-09-27 00:39:00",
+        "STOP_TIME": "2026-09-27 00:39:01",
+        "STEP_SIZE": "1"
+      },
+      "sha256": "eb0f993d28983ef1bef377199c8146774af9cb878f028bcf2aedd11c0114b3b2",
+      "header": "*******************************************************************************\n Revised: Jun 02, 2025             Phobos / (Mars)                          401\n\n SATELLITE PHYSICAL PROPERTIES:\n  Radius (km)             = 13.1 x11.1 x9.3 Density (g cm^-3)   =  1.90 +- 0.08\n  Mass (10^20 kg )        =  1.08 (10^-4)   Geometric Albedo    =  0.06 \n                                 (+- 0.1)   V(1,0)              = +11.8\n\n SATELLITE ORBITAL DATA:\n  Semi-major axis, a (km) = 9.3772(10^3)    Orbital period      = 0.319 d\n  Eccentricity, e         = 0.0151          Rotational period   = Synchronous\n  Inclination, i  (deg)   = 1.082\n*******************************************************************************\n\n\n*******************************************************************************\nEphemeris / API_USER Sat Sep 26 19:59:35 2026 Pasadena, USA      / Horizons\n*******************************************************************************\nTarget body name: Phobos (401)                    {source: mar099}\nCenter body name: Mars (499)                      {source: mar099}\nCenter-site name: BODY CENTER\n*******************************************************************************\nStart time      : A.D. 2026-Sep-27 00:39:00.0000 TDB\nStop  time      : A.D. 2026-Sep-27 00:39:01.0000 TDB\nStep-size       : 1 steps\n*******************************************************************************\nCenter geodetic : 0.0, 0.0, 0.0                   {W-lon(deg),Lat(deg),Alt(km)}\nCenter cylindric: 0.0, 0.0, 0.0                   {W-lon(deg),Dxy(km),Dz(km)}\nCenter radii    : 3396.19, 3396.19, 3376.2 km     {Equator_a, b, pole_c}\nOutput units    : KM-S\nCalendar mode   : Mixed Julian/Gregorian\nOutput type     : GEOMETRIC cartesian states\nOutput format   : 2 (position and velocity)\nReference frame : ICRF\n*******************************************************************************\n            JDTDB,            Calendar Date (TDB),                      X,                      Y,                      Z,                     VX,                     VY,                     VZ,\n**************************************************************************************************************************************************************************************************\n"
+    },
+    {
+      "query": {
+        "format": "json",
+        "COMMAND": "10",
+        "CENTER": "500@401",
+        "MAKE_EPHEM": "YES",
+        "EPHEM_TYPE": "VECTORS",
+        "REF_PLANE": "FRAME",
+        "REF_SYSTEM": "ICRF",
+        "VEC_CORR": "NONE",
+        "VEC_TABLE": "2",
+        "OUT_UNITS": "KM-S",
+        "CSV_FORMAT": "YES",
+        "TIME_DIGITS": "FRACSEC",
+        "START_TIME": "2026-09-27 00:39:00",
+        "STOP_TIME": "2026-09-27 00:39:01",
+        "STEP_SIZE": "1"
+      },
+      "sha256": "4c27c4a543e94271c3ea8f3910a65e227d157c2946c0b32016d59fb37d73bac9",
+      "header": "*******************************************************************************\n Revised: July 31, 2013                  Sun                                 10\n\n PHYSICAL PROPERTIES (updated 2024-Oct-30):\n  GM, km^3/s^2          = 132712440041.93938  Mass, 10^24 kg        = ~1988410\n  Vol. mean radius, km  = 695700              Volume, 10^12 km^3    = 1412000\n  Solar radius (IAU2015)= 695700 km           Mean density, g/cm^3  = 1.408\n  Radius (photosphere)  = 696500 km           Angular diam at 1 AU  = 1919.3\"\n  Photosphere temp., K  = 6600 (bottom)       Photosphere temp., K  = 4400(top)\n  Photospheric depth    = ~500 km             Chromospheric depth   = ~2500 km\n  Flatness, f           = 0.00005             Adopted sid. rot. per.= 25.38 d\n  Surface gravity       =  274.0 m/s^2        Escape speed, km/s    =  617.7\n  Pole (RA,DEC), deg.   = (286.13, 63.87)     Obliquity to ecliptic = 7.25 deg.\n  Solar constant (1 AU) = 1367.6 W/m^2        Luminosity, 10^24 J/s = 382.8\n  Mass-energy conv rate = 4.260 x 10^9 kg/s   Effective temp, K     = 5772\n  Sunspot cycle         = 11.4 yr             Cycle 24 sunspot min. = 2008 A.D.\n\n  Motion relative to nearby stars = apex : R.A.= 271 deg.; DEC.= +30 deg.\n                                    speed: 19.4 km/s (0.0112 au/day)\n  Motion relative to 2.73K BB/CBR = apex : l= 264.7 +- 0.8; b= 48.2 +- 0.5 deg.\n                                    speed: 369 +-11 km/s\n*******************************************************************************\n\n\n*******************************************************************************\nEphemeris / API_USER Sat Sep 26 19:59:37 2026 Pasadena, USA      / Horizons\n*******************************************************************************\nTarget body name: Sun (10)                        {source: DE441}\nCenter body name: Phobos (401)                    {source: mar099}\nCenter-site name: BODY CENTER\n*******************************************************************************\nStart time      : A.D. 2026-Sep-27 00:39:00.0000 TDB\nStop  time      : A.D. 2026-Sep-27 00:39:01.0000 TDB\nStep-size       : 1 steps\n*******************************************************************************\nCenter geodetic : 0.0, 0.0, 0.0                   {W-lon(deg),Lat(deg),Alt(km)}\nCenter cylindric: 0.0, 0.0, 0.0                   {W-lon(deg),Dxy(km),Dz(km)}\nCenter radii    : 13.0, 11.4, 9.1 km              {Equator_a, b, pole_c}\nOutput units    : KM-S\nCalendar mode   : Mixed Julian/Gregorian\nOutput type     : GEOMETRIC cartesian states\nOutput format   : 2 (position and velocity)\nReference frame : ICRF\n*******************************************************************************\n            JDTDB,            Calendar Date (TDB),                      X,                      Y,                      Z,                     VX,                     VY,                     VZ,\n**************************************************************************************************************************************************************************************************\n"
+    }
+  ],
+  "search": {
+    "start": "2026-09-27T00:00:00Z",
+    "end": "2026-09-27T06:00:00Z",
+    "stepSeconds": 60,
+    "contactStepSeconds": 1,
+    "minimumSunAltitudeDeg": 8,
+    "minimumMinutesAfterEgress": 10,
+    "selectionMarginMinutes": 12
+  },
+  "omittedTimeTypeComparison": {
+    "inputCalendar": "2026-09-27 00:39:00",
+    "interpretedTimeScale": "TDB",
+    "correspondingUtc": "2026-09-27T00:37:50.818Z",
+    "marsDistanceKm": 9412.457334272074,
+    "sunDistanceKm": 232383827.90034595,
+    "marsDirection": [
+      0.2021389437515044,
+      -0.8236476976651292,
+      -0.5298531094085961
+    ],
+    "sunDirection": [
+      -0.11617246523377128,
+      -0.903973510192103,
+      -0.41150437566625697
+    ],
+    "separationDeg": 20.097442006453136,
+    "marsRadiusDeg": 21.150479661249495,
+    "sunRadiusDeg": 0.1715297217966597,
+    "thresholdDeg": 21.322009383046154,
+    "oldThresholdDeg": 20.011917385884555,
+    "clearanceDeg": -1.2245673765930185,
+    "eclipsed": true,
+    "totalEclipse": true,
+    "oldEclipsed": false
+  },
+  "egress": {
+    "centerEquatorialSphere": [
+      "2026-09-27T00:39:24Z",
+      "2026-09-27T00:39:25Z"
+    ],
+    "sites": {
+      "phobos-60e": {
+        "meanSphere": [
+          "2026-09-27T00:39:26Z",
+          "2026-09-27T00:39:27Z"
+        ],
+        "equatorialSphere": [
+          "2026-09-27T00:39:30Z",
+          "2026-09-27T00:39:31Z"
+        ]
+      },
+      "phobos-311e": {
+        "meanSphere": [
+          "2026-09-27T00:39:18Z",
+          "2026-09-27T00:39:19Z"
+        ],
+        "equatorialSphere": [
+          "2026-09-27T00:39:22Z",
+          "2026-09-27T00:39:23Z"
+        ]
+      }
+    }
+  },
+  "candidates": [
+    {
+      "siteId": "phobos-60e",
+      "date": "2026-09-27T04:52:00Z",
+      "minimumMinutesAfterEgress": 252.48333333333332,
+      "meanSphere": {
+        "marsDistanceKm": 9293.014690160588,
+        "sunDistanceKm": 232400447.15797502,
+        "marsDirection": [
+          -0.4379576034886868,
+          0.6835428194866898,
+          0.5839198159633159
+        ],
+        "sunDirection": [
+          -0.11467089070084503,
+          -0.9041229830751867,
+          -0.4115971553607978
+        ],
+        "separationDeg": 143.9131918475681,
+        "marsRadiusDeg": 21.391356424452535,
+        "sunRadiusDeg": 0.17151745544696848,
+        "thresholdDeg": 21.562873879899502,
+        "oldThresholdDeg": 20.210266167890406,
+        "clearanceDeg": 122.3503179676686,
+        "eclipsed": false,
+        "totalEclipse": false,
+        "oldEclipsed": false,
+        "sunAltitudeDeg": 8.547863823821372
+      },
+      "equatorialSphere": {
+        "marsDistanceKm": 9293.014690160588,
+        "sunDistanceKm": 232400447.15797502,
+        "marsDirection": [
+          -0.4379576034886868,
+          0.6835428194866898,
+          0.5839198159633159
+        ],
+        "sunDirection": [
+          -0.11467089070084503,
+          -0.9041229830751867,
+          -0.4115971553607978
+        ],
+        "separationDeg": 143.9131918475681,
+        "marsRadiusDeg": 21.435661814375955,
+        "sunRadiusDeg": 0.17151745544696848,
+        "thresholdDeg": 21.60717926982292,
+        "oldThresholdDeg": 20.246661780626205,
+        "clearanceDeg": 122.30601257774518,
+        "eclipsed": false,
+        "totalEclipse": false,
+        "oldEclipsed": false,
+        "sunAltitudeDeg": 8.547863823821372
+      }
+    },
+    {
+      "siteId": "phobos-311e",
+      "date": "2026-09-27T00:52:00Z",
+      "minimumMinutesAfterEgress": 12.616666666666667,
+      "meanSphere": {
+        "marsDistanceKm": 9430.830288865269,
+        "sunDistanceKm": 232384898.59092525,
+        "marsDirection": [
+          0.36680059010433386,
+          -0.7338447248343715,
+          -0.5717772703875855
+        ],
+        "sunDirection": [
+          -0.11608064659306898,
+          -0.9039811286527999,
+          -0.4115135508414578
+        ],
+        "separationDeg": 31.118813840467446,
+        "marsRadiusDeg": 21.06374052897195,
+        "sunRadiusDeg": 0.171528931487965,
+        "thresholdDeg": 21.235269460459918,
+        "oldThresholdDeg": 19.940286028531816,
+        "clearanceDeg": 9.883544380007528,
+        "eclipsed": false,
+        "totalEclipse": false,
+        "oldEclipsed": false,
+        "sunAltitudeDeg": 69.45368179348442
+      },
+      "equatorialSphere": {
+        "marsDistanceKm": 9430.830288865269,
+        "sunDistanceKm": 232384898.59092525,
+        "marsDirection": [
+          0.36680059010433386,
+          -0.7338447248343715,
+          -0.5717772703875855
+        ],
+        "sunDirection": [
+          -0.11608064659306898,
+          -0.9039811286527999,
+          -0.4115135508414578
+        ],
+        "separationDeg": 31.118813840467446,
+        "marsRadiusDeg": 21.107301392832447,
+        "sunRadiusDeg": 0.171528931487965,
+        "thresholdDeg": 21.278830324320413,
+        "oldThresholdDeg": 19.976272583109186,
+        "clearanceDeg": 9.839983516147033,
+        "eclipsed": false,
+        "totalEclipse": false,
+        "oldEclipsed": false,
+        "sunAltitudeDeg": 69.45368179348442
+      }
+    }
+  ],
+  "samples": [
+    {
+      "date": "2026-09-27T00:30:00Z",
+      "center": {
+        "marsDistanceKm": 9397.762443261197,
+        "sunDistanceKm": 232383089.37935883,
+        "marsDirection": [
+          0.10726890264496396,
+          -0.860474465411325,
+          -0.4980733649779313
+        ],
+        "sunDirection": [
+          -0.11622358080889017,
+          -0.9039692995562253,
+          -0.41149919164414756
+        ],
+        "separationDeg": 13.991380221241783,
+        "marsRadiusDeg": 21.18514473895045,
+        "sunRadiusDeg": 0.17153026692530163,
+        "thresholdDeg": 21.35667500587575,
+        "oldThresholdDeg": 20.04051514652212,
+        "clearanceDeg": -7.365294784633967,
+        "eclipsed": true,
+        "totalEclipse": true,
+        "oldEclipsed": true
+      },
+      "sites": {
+        "phobos-60e": {
+          "meanSphere": {
+            "marsDistanceKm": 9391.762443691425,
+            "sunDistanceKm": 232383085.80452424,
+            "marsDirection": [
+              0.10637082774395609,
+              -0.8607630122643264,
+              -0.4977672987679172
+            ],
+            "sunDirection": [
+              -0.11622362166211984,
+              -0.9039693029069761,
+              -0.4114991727447532
+            ],
+            "separationDeg": 13.934568058228,
+            "marsRadiusDeg": 21.15556299850615,
+            "sunRadiusDeg": 0.17153026956402276,
+            "thresholdDeg": 21.327093268070172,
+            "oldThresholdDeg": 20.016112534875077,
+            "clearanceDeg": -7.392525209842171,
+            "eclipsed": true,
+            "totalEclipse": true,
+            "oldEclipsed": true,
+            "sunAltitudeDeg": 18.819656323243503
+          },
+          "equatorialSphere": {
+            "marsDistanceKm": 9391.762443691425,
+            "sunDistanceKm": 232383085.80452424,
+            "marsDirection": [
+              0.10637082774395609,
+              -0.8607630122643264,
+              -0.4977672987679172
+            ],
+            "sunDirection": [
+              -0.11622362166211984,
+              -0.9039693029069761,
+              -0.4114991727447532
+            ],
+            "separationDeg": 13.934568058228,
+            "marsRadiusDeg": 21.199332200055803,
+            "sunRadiusDeg": 0.17153026956402276,
+            "thresholdDeg": 21.370862469619826,
+            "oldThresholdDeg": 20.052214295532938,
+            "clearanceDeg": -7.436294411391826,
+            "eclipsed": true,
+            "totalEclipse": true,
+            "oldEclipsed": true,
+            "sunAltitudeDeg": 18.819656323243503
+          }
+        },
+        "phobos-311e": {
+          "meanSphere": {
+            "marsDistanceKm": 9390.916863313587,
+            "sunDistanceKm": 232383080.63019603,
+            "marsDirection": [
+              0.10809176391931574,
+              -0.8601874313992721,
+              -0.4983911650857522
+            ],
+            "sunDirection": [
+              -0.11622355509167821,
+              -0.9039692966429981,
+              -0.4114992053073917
+            ],
+            "separationDeg": 14.044441723122986,
+            "marsRadiusDeg": 21.15755947284667,
+            "sunRadiusDeg": 0.17153027338339102,
+            "thresholdDeg": 21.32908974623006,
+            "oldThresholdDeg": 20.01775986307209,
+            "clearanceDeg": -7.284648023107074,
+            "eclipsed": true,
+            "totalEclipse": true,
+            "oldEclipsed": true,
+            "sunAltitudeDeg": 52.140495505205045
+          },
+          "equatorialSphere": {
+            "marsDistanceKm": 9390.916863313587,
+            "sunDistanceKm": 232383080.63019603,
+            "marsDirection": [
+              0.10809176391931574,
+              -0.8601874313992721,
+              -0.4983911650857522
+            ],
+            "sunDirection": [
+              -0.11622355509167821,
+              -0.9039692966429981,
+              -0.4114992053073917
+            ],
+            "separationDeg": 14.044441723122986,
+            "marsRadiusDeg": 21.20133320710999,
+            "sunRadiusDeg": 0.17153027338339102,
+            "thresholdDeg": 21.37286348049338,
+            "oldThresholdDeg": 20.05386412380593,
+            "clearanceDeg": -7.328421757370393,
+            "eclipsed": true,
+            "totalEclipse": true,
+            "oldEclipsed": true,
+            "sunAltitudeDeg": 52.140495505205045
+          }
+        }
+      }
+    },
+    {
+      "date": "2026-09-27T00:35:00Z",
+      "center": {
+        "marsDistanceKm": 9407.169330480046,
+        "sunDistanceKm": 232383571.7922655,
+        "marsDirection": [
+          0.16796264524954693,
+          -0.8381015412503164,
+          -0.5190128672341553
+        ],
+        "sunDirection": [
+          -0.11619099607784529,
+          -0.9039719816669957,
+          -0.41150250156163437
+        ],
+        "separationDeg": 17.88410069434883,
+        "marsRadiusDeg": 21.162940592080076,
+        "sunRadiusDeg": 0.17152991083876235,
+        "thresholdDeg": 21.33447050291884,
+        "oldThresholdDeg": 20.022199271137183,
+        "clearanceDeg": -3.4503698085700094,
+        "eclipsed": true,
+        "totalEclipse": true,
+        "oldEclipsed": true
+      },
+      "sites": {
+        "phobos-60e": {
+          "meanSphere": {
+            "marsDistanceKm": 9401.175362943992,
+            "sunDistanceKm": 232383568.94487458,
+            "marsDirection": [
+              0.1670743438353089,
+              -0.838447184245658,
+              -0.518741248468375
+            ],
+            "sunDirection": [
+              -0.11619103777047117,
+              -0.9039719851089714,
+              -0.4115024822281959
+            ],
+            "separationDeg": 17.827317404297162,
+            "marsRadiusDeg": 21.133364503150013,
+            "sunRadiusDeg": 0.17152991294052097,
+            "thresholdDeg": 21.304894416090534,
+            "oldThresholdDeg": 19.997792028927346,
+            "clearanceDeg": -3.4775770117933718,
+            "eclipsed": true,
+            "totalEclipse": true,
+            "oldEclipsed": true,
+            "sunAltitudeDeg": 14.888952284883386
+          },
+          "equatorialSphere": {
+            "marsDistanceKm": 9401.175362943992,
+            "sunDistanceKm": 232383568.94487458,
+            "marsDirection": [
+              0.1670743438353089,
+              -0.838447184245658,
+              -0.518741248468375
+            ],
+            "sunDirection": [
+              -0.11619103777047117,
+              -0.9039719851089714,
+              -0.4115024822281959
+            ],
+            "separationDeg": 17.827317404297162,
+            "marsRadiusDeg": 21.177083314404268,
+            "sunRadiusDeg": 0.17152991294052097,
+            "thresholdDeg": 21.34861322734479,
+            "oldThresholdDeg": 20.033865977791216,
+            "clearanceDeg": -3.521295823047627,
+            "eclipsed": true,
+            "totalEclipse": true,
+            "oldEclipsed": true,
+            "sunAltitudeDeg": 14.888952284883386
+          }
+        },
+        "phobos-311e": {
+          "meanSphere": {
+            "marsDistanceKm": 9400.318102639822,
+            "sunDistanceKm": 232383562.59773445,
+            "marsDirection": [
+              0.16877556707725988,
+              -0.8377614467586249,
+              -0.5192981477750958
+            ],
+            "sunDirection": [
+              -0.1161909727429259,
+              -0.9039719789670518,
+              -0.41150251408156013
+            ],
+            "separationDeg": 17.937103113924994,
+            "marsRadiusDeg": 21.135384203287586,
+            "sunRadiusDeg": 0.17152991762556682,
+            "thresholdDeg": 21.306914120913152,
+            "oldThresholdDeg": 19.999459155934538,
+            "clearanceDeg": -3.369811006988158,
+            "eclipsed": true,
+            "totalEclipse": true,
+            "oldEclipsed": true,
+            "sunAltitudeDeg": 56.06872923032933
+          },
+          "equatorialSphere": {
+            "marsDistanceKm": 9400.318102639822,
+            "sunDistanceKm": 232383562.59773445,
+            "marsDirection": [
+              0.16877556707725988,
+              -0.8377614467586249,
+              -0.5192981477750958
+            ],
+            "sunDirection": [
+              -0.1161909727429259,
+              -0.9039719789670518,
+              -0.41150251408156013
+            ],
+            "separationDeg": 17.937103113924994,
+            "marsRadiusDeg": 21.17910759860836,
+            "sunRadiusDeg": 0.17152991762556682,
+            "thresholdDeg": 21.350637516233927,
+            "oldThresholdDeg": 20.035535636266275,
+            "clearanceDeg": -3.413534402308933,
+            "eclipsed": true,
+            "totalEclipse": true,
+            "oldEclipsed": true,
+            "sunAltitudeDeg": 56.06872923032933
+          }
+        }
+      }
+    },
+    {
+      "date": "2026-09-27T00:39:00Z",
+      "center": {
+        "marsDistanceKm": 9414.582574208862,
+        "sunDistanceKm": 232383927.8470521,
+        "marsDirection": [
+          0.21588670849497163,
+          -0.8174472498208717,
+          -0.5340158451352361
+        ],
+        "sunDirection": [
+          -0.11616496537265016,
+          -0.9039741295915806,
+          -0.41150513222694474
+        ],
+        "separationDeg": 20.9931994875527,
+        "marsRadiusDeg": 21.145475872371396,
+        "sunRadiusDeg": 0.17152964802270265,
+        "thresholdDeg": 21.317005520394098,
+        "oldThresholdDeg": 20.007787994493686,
+        "clearanceDeg": -0.32380603284139653,
+        "eclipsed": true,
+        "totalEclipse": false,
+        "oldEclipsed": false
+      },
+      "sites": {
+        "phobos-60e": {
+          "meanSphere": {
+            "marsDistanceKm": 9408.594953189708,
+            "sunDistanceKm": 232383925.5921514,
+            "marsDirection": [
+              0.21500902407692576,
+              -0.8178373236928832,
+              -0.5337726403070413
+            ],
+            "sunDirection": [
+              -0.11616500759745299,
+              -0.9039741330937789,
+              -0.4115051126137249
+            ],
+            "separationDeg": 20.936435110898003,
+            "marsRadiusDeg": 21.115900518323905,
+            "sunRadiusDeg": 0.17152964968711845,
+            "thresholdDeg": 21.287430168011024,
+            "oldThresholdDeg": 19.983374051929083,
+            "clearanceDeg": -0.35099505711302115,
+            "eclipsed": true,
+            "totalEclipse": true,
+            "oldEclipsed": false,
+            "sunAltitudeDeg": 11.740567379267503
+          },
+          "equatorialSphere": {
+            "marsDistanceKm": 9408.594953189708,
+            "sunDistanceKm": 232383925.5921514,
+            "marsDirection": [
+              0.21500902407692576,
+              -0.8178373236928832,
+              -0.5337726403070413
+            ],
+            "sunDirection": [
+              -0.11616500759745299,
+              -0.9039741330937789,
+              -0.4115051126137249
+            ],
+            "separationDeg": 20.936435110898003,
+            "marsRadiusDeg": 21.1595796972032,
+            "sunRadiusDeg": 0.17152964968711845,
+            "thresholdDeg": 21.33110934689032,
+            "oldThresholdDeg": 20.019426102883454,
+            "clearanceDeg": -0.39467423599231566,
+            "eclipsed": true,
+            "totalEclipse": true,
+            "oldEclipsed": false,
+            "sunAltitudeDeg": 11.740567379267503
+          }
+        },
+        "phobos-311e": {
+          "meanSphere": {
+            "marsDistanceKm": 9407.725411984145,
+            "sunDistanceKm": 232383918.3269263,
+            "marsDirection": [
+              0.21668888990315677,
+              -0.8170660301777568,
+              -0.5342742997020338
+            ],
+            "sunDirection": [
+              -0.11616494402682215,
+              -0.9039741270706201,
+              -0.41150514379064057
+            ],
+            "separationDeg": 21.046141720243078,
+            "marsRadiusDeg": 21.117945684195742,
+            "sunRadiusDeg": 0.17152965504981843,
+            "thresholdDeg": 21.289475339245563,
+            "oldThresholdDeg": 19.985062704533416,
+            "clearanceDeg": -0.24333361900248462,
+            "eclipsed": true,
+            "totalEclipse": false,
+            "oldEclipsed": false,
+            "sunAltitudeDeg": 59.2144706552096
+          },
+          "equatorialSphere": {
+            "marsDistanceKm": 9407.725411984145,
+            "sunDistanceKm": 232383918.3269263,
+            "marsDirection": [
+              0.21668888990315677,
+              -0.8170660301777568,
+              -0.5342742997020338
+            ],
+            "sunDirection": [
+              -0.11616494402682215,
+              -0.9039741270706201,
+              -0.41150514379064057
+            ],
+            "separationDeg": 21.046141720243078,
+            "marsRadiusDeg": 21.161629503844395,
+            "sunRadiusDeg": 0.17152965504981843,
+            "thresholdDeg": 21.33315915889421,
+            "oldThresholdDeg": 20.021117320711998,
+            "clearanceDeg": -0.2870174386511337,
+            "eclipsed": true,
+            "totalEclipse": false,
+            "oldEclipsed": false,
+            "sunAltitudeDeg": 59.2144706552096
+          }
+        }
+      }
+    },
+    {
+      "date": "2026-09-27T00:40:00Z",
+      "center": {
+        "marsDistanceKm": 9416.417457593981,
+        "sunDistanceKm": 232384012.77978095,
+        "marsDirection": [
+          0.2277621130748934,
+          -0.8119100587339688,
+          -0.5375188149025696
+        ],
+        "sunDirection": [
+          -0.11615846355742482,
+          -0.9039746669509583,
+          -0.41150578714628366
+        ],
+        "separationDeg": 21.769755368351262,
+        "marsRadiusDeg": 21.141157668633703,
+        "sunRadiusDeg": 0.17152958533110677,
+        "thresholdDeg": 21.31268725396481,
+        "oldThresholdDeg": 20.00422410047213,
+        "clearanceDeg": 0.4570681143864519,
+        "eclipsed": false,
+        "totalEclipse": false,
+        "oldEclipsed": false
+      },
+      "sites": {
+        "phobos-60e": {
+          "meanSphere": {
+            "marsDistanceKm": 9410.431632029171,
+            "sunDistanceKm": 232384010.67423636,
+            "marsDirection": [
+              0.22688746623505937,
+              -0.8123110528583544,
+              -0.5372828222357258
+            ],
+            "sunDirection": [
+              -0.11615850589564493,
+              -0.90397467046641,
+              -0.4115057674726283
+            ],
+            "separationDeg": 21.712994949209435,
+            "marsRadiusDeg": 21.111581974135518,
+            "sunRadiusDeg": 0.17152958688527684,
+            "thresholdDeg": 21.283111561020796,
+            "oldThresholdDeg": 19.97980807050879,
+            "clearanceDeg": 0.4298833881886388,
+            "eclipsed": false,
+            "totalEclipse": false,
+            "oldEclipsed": false,
+            "sunAltitudeDeg": 10.952946611187464
+          },
+          "equatorialSphere": {
+            "marsDistanceKm": 9410.431632029171,
+            "sunDistanceKm": 232384010.67423636,
+            "marsDirection": [
+              0.22688746623505937,
+              -0.8123110528583544,
+              -0.5372828222357258
+            ],
+            "sunDirection": [
+              -0.11615850589564493,
+              -0.90397467046641,
+              -0.4115057674726283
+            ],
+            "separationDeg": 21.712994949209435,
+            "marsRadiusDeg": 21.155251354051646,
+            "sunRadiusDeg": 0.17152958688527684,
+            "thresholdDeg": 21.326780940936924,
+            "oldThresholdDeg": 20.015854704063308,
+            "clearanceDeg": 0.3862140082725105,
+            "eclipsed": false,
+            "totalEclipse": false,
+            "oldEclipsed": false,
+            "sunAltitudeDeg": 10.952946611187464
+          }
+        },
+        "phobos-311e": {
+          "meanSphere": {
+            "marsDistanceKm": 9409.558617801977,
+            "sunDistanceKm": 232384003.1826632,
+            "marsDirection": [
+              0.2285612289734709,
+              -0.8115187578297729,
+              -0.5377704624656869
+            ],
+            "sunDirection": [
+              -0.11615844271968416,
+              -0.9039746644758375,
+              -0.4115057984655075
+            ],
+            "separationDeg": 21.822681186601788,
+            "marsRadiusDeg": 21.11363444816447,
+            "sunRadiusDeg": 0.17152959241504767,
+            "thresholdDeg": 21.285164040579517,
+            "oldThresholdDeg": 19.98150288267329,
+            "clearanceDeg": 0.537517146022271,
+            "eclipsed": false,
+            "totalEclipse": false,
+            "oldEclipsed": false,
+            "sunAltitudeDeg": 60.00131625083561
+          },
+          "equatorialSphere": {
+            "marsDistanceKm": 9409.558617801977,
+            "sunDistanceKm": 232384003.1826632,
+            "marsDirection": [
+              0.2285612289734709,
+              -0.8115187578297729,
+              -0.5377704624656869
+            ],
+            "sunDirection": [
+              -0.11615844271968416,
+              -0.9039746644758375,
+              -0.4115057984655075
+            ],
+            "separationDeg": 21.822681186601788,
+            "marsRadiusDeg": 21.157308485161394,
+            "sunRadiusDeg": 0.17152959241504767,
+            "thresholdDeg": 21.328838077576442,
+            "oldThresholdDeg": 20.01755209107461,
+            "clearanceDeg": 0.49384310902534523,
+            "eclipsed": false,
+            "totalEclipse": false,
+            "oldEclipsed": false,
+            "sunAltitudeDeg": 60.00131625083561
+          }
+        }
+      }
+    },
+    {
+      "date": "2026-09-27T00:41:00Z",
+      "center": {
+        "marsDistanceKm": 9418.244298786372,
+        "sunDistanceKm": 232384096.09813708,
+        "marsDirection": [
+          0.2395910251786267,
+          -0.8062257512654067,
+          -0.5409216012051886
+        ],
+        "sunDirection": [
+          -0.11615196425447692,
+          -0.9039752044776468,
+          -0.41150644088449384
+        ],
+        "separationDeg": 22.546022977803535,
+        "marsRadiusDeg": 21.136860187809997,
+        "sunRadiusDeg": 0.1715295238311762,
+        "thresholdDeg": 21.308389711641173,
+        "oldThresholdDeg": 20.00067704846489,
+        "clearanceDeg": 1.2376332661623621,
+        "eclipsed": false,
+        "totalEclipse": false,
+        "oldEclipsed": false
+      },
+      "sites": {
+        "phobos-60e": {
+          "meanSphere": {
+            "marsDistanceKm": 9412.260351551522,
+            "sunDistanceKm": 232384094.14238608,
+            "marsDirection": [
+              0.2387195678672148,
+              -0.8066375872825501,
+              -0.5406928617064191
+            ],
+            "sunDirection": [
+              -0.11615200669820575,
+              -0.9039752080056244,
+              -0.41150642115423686
+            ],
+            "separationDeg": 22.489266185490322,
+            "marsRadiusDeg": 21.107283943779517,
+            "sunRadiusDeg": 0.17152952527477774,
+            "thresholdDeg": 21.278813469054295,
+            "oldThresholdDeg": 19.976258767223612,
+            "clearanceDeg": 1.210452716436027,
+            "eclipsed": false,
+            "totalEclipse": false,
+            "oldEclipsed": false,
+            "sunAltitudeDeg": 10.165117721191468
+          },
+          "equatorialSphere": {
+            "marsDistanceKm": 9412.260351551522,
+            "sunDistanceKm": 232384094.14238608,
+            "marsDirection": [
+              0.2387195678672148,
+              -0.8066375872825501,
+              -0.5406928617064191
+            ],
+            "sunDirection": [
+              -0.11615200669820575,
+              -0.9039752080056244,
+              -0.41150642115423686
+            ],
+            "separationDeg": 22.489266185490322,
+            "marsRadiusDeg": 21.15094357184744,
+            "sunRadiusDeg": 0.17152952527477774,
+            "thresholdDeg": 21.322473097122217,
+            "oldThresholdDeg": 20.012300008158306,
+            "clearanceDeg": 1.166793088368106,
+            "eclipsed": false,
+            "totalEclipse": false,
+            "oldEclipsed": false,
+            "sunAltitudeDeg": 10.165117721191468
+          }
+        },
+        "phobos-311e": {
+          "meanSphere": {
+            "marsDistanceKm": 9411.383704573835,
+            "sunDistanceKm": 232384086.42582262,
+            "marsDirection": [
+              0.240386925236665,
+              -0.8058244528743644,
+              -0.5411664044681572
+            ],
+            "sunDirection": [
+              -0.11615194392896418,
+              -0.9039752020487868,
+              -0.4115064519571692
+            ],
+            "separationDeg": 22.598931895544204,
+            "marsRadiusDeg": 21.109344098827027,
+            "sunRadiusDeg": 0.17152953097061713,
+            "thresholdDeg": 21.280873629797643,
+            "oldThresholdDeg": 19.977960047133834,
+            "clearanceDeg": 1.3180582657465614,
+            "eclipsed": false,
+            "totalEclipse": false,
+            "oldEclipsed": false,
+            "sunAltitudeDeg": 60.788317432522206
+          },
+          "equatorialSphere": {
+            "marsDistanceKm": 9411.383704573835,
+            "sunDistanceKm": 232384086.42582262,
+            "marsDirection": [
+              0.240386925236665,
+              -0.8058244528743644,
+              -0.5411664044681572
+            ],
+            "sunDirection": [
+              -0.11615194392896418,
+              -0.9039752020487868,
+              -0.4115064519571692
+            ],
+            "separationDeg": 22.598931895544204,
+            "marsRadiusDeg": 21.15300840113261,
+            "sunRadiusDeg": 0.17152953097061713,
+            "thresholdDeg": 21.324537932103226,
+            "oldThresholdDeg": 20.014003873006804,
+            "clearanceDeg": 1.2743939634409784,
+            "eclipsed": false,
+            "totalEclipse": false,
+            "oldEclipsed": false,
+            "sunAltitudeDeg": 60.788317432522206
+          }
+        }
+      }
+    },
+    {
+      "date": "2026-09-27T00:42:00Z",
+      "center": {
+        "marsDistanceKm": 9420.062765378207,
+        "sunDistanceKm": 232384177.81162557,
+        "marsDirection": [
+          0.2513713436751137,
+          -0.8003955342402417,
+          -0.5442237006482226
+        ],
+        "sunDirection": [
+          -0.11614546754677484,
+          -0.9039757421795778,
+          -0.41150709340085806
+        ],
+        "separationDeg": 23.32200245953836,
+        "marsRadiusDeg": 21.132584186556503,
+        "sunRadiusDeg": 0.17152946351589238,
+        "thresholdDeg": 21.304113650072395,
+        "oldThresholdDeg": 19.997147466853296,
+        "clearanceDeg": 2.0178888094659655,
+        "eclipsed": false,
+        "totalEclipse": false,
+        "oldEclipsed": false
+      },
+      "sites": {
+        "phobos-60e": {
+          "meanSphere": {
+            "marsDistanceKm": 9414.080778998585,
+            "sunDistanceKm": 232384176.00607747,
+            "marsDirection": [
+              0.25050322711836914,
+              -0.800818132131183,
+              -0.5440022540883502
+            ],
+            "sunDirection": [
+              -0.11614551008807752,
+              -0.9039757457193506,
+              -0.411507073617847
+            ],
+            "separationDeg": 23.26524895595703,
+            "marsRadiusDeg": 21.103007184259063,
+            "sunRadiusDeg": 0.1715294648486235,
+            "thresholdDeg": 21.274536649107688,
+            "oldThresholdDeg": 19.972726771018074,
+            "clearanceDeg": 1.9907123068493426,
+            "eclipsed": false,
+            "totalEclipse": false,
+            "oldEclipsed": false,
+            "sunAltitudeDeg": 9.377081613976314
+          },
+          "equatorialSphere": {
+            "marsDistanceKm": 9414.080778998585,
+            "sunDistanceKm": 232384176.00607747,
+            "marsDirection": [
+              0.25050322711836914,
+              -0.800818132131183,
+              -0.5440022540883502
+            ],
+            "sunDirection": [
+              -0.11614551008807752,
+              -0.9039757457193506,
+              -0.411507073617847
+            ],
+            "separationDeg": 23.26524895595703,
+            "marsRadiusDeg": 21.146657109302883,
+            "sunRadiusDeg": 0.1715294648486235,
+            "thresholdDeg": 21.318186574151508,
+            "oldThresholdDeg": 20.00876264507663,
+            "clearanceDeg": 1.947062381805523,
+            "eclipsed": false,
+            "totalEclipse": false,
+            "oldEclipsed": false,
+            "sunAltitudeDeg": 9.377081613976314
+          }
+        },
+        "phobos-311e": {
+          "meanSphere": {
+            "marsDistanceKm": 9413.200340285604,
+            "sunDistanceKm": 232384168.0659254,
+            "marsDirection": [
+              0.2521638785281302,
+              -0.7999843239740714,
+              -0.5444616237728773
+            ],
+            "sunDirection": [
+              -0.11614544773753624,
+              -0.9039757397973911,
+              -0.4115071042249535
+            ],
+            "separationDeg": 23.374894013969406,
+            "marsRadiusDeg": 21.105075391171898,
+            "sunRadiusDeg": 0.17152947070949653,
+            "thresholdDeg": 21.276604861881395,
+            "oldThresholdDeg": 19.97443482523477,
+            "clearanceDeg": 2.098289152088011,
+            "eclipsed": false,
+            "totalEclipse": false,
+            "oldEclipsed": false,
+            "sunAltitudeDeg": 61.57546920217356
+          },
+          "equatorialSphere": {
+            "marsDistanceKm": 9413.200340285604,
+            "sunDistanceKm": 232384168.0659254,
+            "marsDirection": [
+              0.2521638785281302,
+              -0.7999843239740714,
+              -0.5444616237728773
+            ],
+            "sunDirection": [
+              -0.11614544773753624,
+              -0.9039757397973911,
+              -0.4115071042249535
+            ],
+            "separationDeg": 23.374894013969406,
+            "marsRadiusDeg": 21.148730008451007,
+            "sunRadiusDeg": 0.17152947070949653,
+            "thresholdDeg": 21.320259479160505,
+            "oldThresholdDeg": 20.010473294789584,
+            "clearanceDeg": 2.0546345348089012,
+            "eclipsed": false,
+            "totalEclipse": false,
+            "oldEclipsed": false,
+            "sunAltitudeDeg": 61.57546920217356
+          }
+        }
+      }
+    },
+    {
+      "date": "2026-09-27T00:43:00Z",
+      "center": {
+        "marsDistanceKm": 9421.872526867593,
+        "sunDistanceKm": 232384257.9300327,
+        "marsDirection": [
+          0.26310098098234586,
+          -0.7944206376105487,
+          -0.5474246289166907
+        ],
+        "sunDirection": [
+          -0.1161389735167188,
+          -0.903976280064637,
+          -0.41150774465492584
+        ],
+        "separationDeg": 24.097694188591117,
+        "marsRadiusDeg": 21.128330415895213,
+        "sunRadiusDeg": 0.1715294043780292,
+        "thresholdDeg": 21.29985982027324,
+        "oldThresholdDeg": 19.993635979530584,
+        "clearanceDeg": 2.7978343683178757,
+        "eclipsed": false,
+        "totalEclipse": false,
+        "oldEclipsed": false
+      },
+      "sites": {
+        "phobos-60e": {
+          "meanSphere": {
+            "marsDistanceKm": 9415.892583503457,
+            "sunDistanceKm": 232384256.27506843,
+            "marsDirection": [
+              0.26223635566394815,
+              -0.7948539157124921,
+              -0.547210513828645
+            ],
+            "sunDirection": [
+              -0.11613901614763579,
+              -0.9039762836154718,
+              -0.41150772482302156
+            ],
+            "separationDeg": 24.040943629701957,
+            "marsRadiusDeg": 21.098752446976903,
+            "sunRadiusDeg": 0.17152940559960886,
+            "thresholdDeg": 21.270281852576513,
+            "oldThresholdDeg": 19.969212706374552,
+            "clearanceDeg": 2.7706617771254436,
+            "eclipsed": false,
+            "totalEclipse": false,
+            "oldEclipsed": false,
+            "sunAltitudeDeg": 8.588839236400037
+          },
+          "equatorialSphere": {
+            "marsDistanceKm": 9415.892583503457,
+            "sunDistanceKm": 232384256.27506843,
+            "marsDirection": [
+              0.26223635566394815,
+              -0.7948539157124921,
+              -0.547210513828645
+            ],
+            "sunDirection": [
+              -0.11613901614763579,
+              -0.9039762836154718,
+              -0.41150772482302156
+            ],
+            "separationDeg": 24.040943629701957,
+            "marsRadiusDeg": 21.142392719516817,
+            "sunRadiusDeg": 0.17152940559960886,
+            "thresholdDeg": 21.313922125116427,
+            "oldThresholdDeg": 20.005243240257872,
+            "clearanceDeg": 2.7270215045855295,
+            "eclipsed": false,
+            "totalEclipse": false,
+            "oldEclipsed": false,
+            "sunAltitudeDeg": 8.588839236400037
+          }
+        },
+        "phobos-311e": {
+          "meanSphere": {
+            "marsDistanceKm": 9415.008194845244,
+            "sunDistanceKm": 232384248.1127732,
+            "marsDirection": [
+              0.2638900022608356,
+              -0.7939996028926445,
+              -0.5476556375251688
+            ],
+            "sunDirection": [
+              -0.11613895422770541,
+              -0.9039762777295277,
+              -0.4115077552284559
+            ],
+            "separationDeg": 24.150567937268157,
+            "marsRadiusDeg": 21.100829074523883,
+            "sunRadiusDeg": 0.1715294116244485,
+            "thresholdDeg": 21.27235848614833,
+            "oldThresholdDeg": 19.970927839780103,
+            "clearanceDeg": 2.878209451119826,
+            "eclipsed": false,
+            "totalEclipse": false,
+            "oldEclipsed": false,
+            "sunAltitudeDeg": 62.36276603895586
+          },
+          "equatorialSphere": {
+            "marsDistanceKm": 9415.008194845244,
+            "sunDistanceKm": 232384248.1127732,
+            "marsDirection": [
+              0.2638900022608356,
+              -0.7939996028926445,
+              -0.5476556375251688
+            ],
+            "sunDirection": [
+              -0.11613895422770541,
+              -0.9039762777295277,
+              -0.4115077552284559
+            ],
+            "separationDeg": 24.150567937268157,
+            "marsRadiusDeg": 21.144474058132687,
+            "sunRadiusDeg": 0.1715294116244485,
+            "thresholdDeg": 21.316003469757135,
+            "oldThresholdDeg": 20.006960980181706,
+            "clearanceDeg": 2.834564467511022,
+            "eclipsed": false,
+            "totalEclipse": false,
+            "oldEclipsed": false,
+            "sunAltitudeDeg": 62.36276603895586
+          }
+        }
+      }
+    },
+    {
+      "date": "2026-09-27T00:44:00Z",
+      "center": {
+        "marsDistanceKm": 9423.673254713354,
+        "sunDistanceKm": 232384336.46342292,
+        "marsDirection": [
+          0.27477786336278737,
+          -0.7883023141332482,
+          -0.5505239207681596
+        ],
+        "sunDirection": [
+          -0.11613248224612804,
+          -0.9039768181406626,
+          -0.41150839460652144
+        ],
+        "separationDeg": 24.873098742859803,
+        "marsRadiusDeg": 21.124099621111263,
+        "sunRadiusDeg": 0.17152934641015538,
+        "thresholdDeg": 21.29562896752142,
+        "oldThresholdDeg": 19.99014320581312,
+        "clearanceDeg": 3.5774697753383826,
+        "eclipsed": false,
+        "totalEclipse": false,
+        "oldEclipsed": false
+      },
+      "sites": {
+        "phobos-60e": {
+          "meanSphere": {
+            "marsDistanceKm": 9417.695436147227,
+            "sunDistanceKm": 232384334.9593952,
+            "marsDirection": [
+              0.27391687900532025,
+              -0.7887461891551577,
+              -0.5503171744450659
+            ],
+            "sunDirection": [
+              -0.11613252495867639,
+              -0.9039768217018224,
+              -0.4115083747295965
+            ],
+            "separationDeg": 24.816350779859796,
+            "marsRadiusDeg": 21.09452047762814,
+            "sunRadiusDeg": 0.17152934752032342,
+            "thresholdDeg": 21.266049825148464,
+            "oldThresholdDeg": 19.965717193220723,
+            "clearanceDeg": 3.5503009547113322,
+            "eclipsed": false,
+            "totalEclipse": false,
+            "oldEclipsed": false,
+            "sunAltitudeDeg": 7.800391565962146
+          },
+          "equatorialSphere": {
+            "marsDistanceKm": 9417.695436147227,
+            "sunDistanceKm": 232384334.9593952,
+            "marsDirection": [
+              0.27391687900532025,
+              -0.7887461891551577,
+              -0.5503171744450659
+            ],
+            "sunDirection": [
+              -0.11613252495867639,
+              -0.9039768217018224,
+              -0.4115083747295965
+            ],
+            "separationDeg": 24.816350779859796,
+            "marsRadiusDeg": 21.138151149867138,
+            "sunRadiusDeg": 0.17152934752032342,
+            "thresholdDeg": 21.30968049738746,
+            "oldThresholdDeg": 20.001742414580367,
+            "clearanceDeg": 3.506670282472335,
+            "eclipsed": false,
+            "totalEclipse": false,
+            "oldEclipsed": false,
+            "sunAltitudeDeg": 7.800391565962146
+          }
+        },
+        "phobos-311e": {
+          "meanSphere": {
+            "marsDistanceKm": 9416.806940135702,
+            "sunDistanceKm": 232384326.57644564,
+            "marsDirection": [
+              0.27556322372017955,
+              -0.787871544172664,
+              -0.5507479819444863
+            ],
+            "sunDirection": [
+              -0.11613246348119469,
+              -0.9039768158530257,
+              -0.411508404927547
+            ],
+            "separationDeg": 24.925954261292468,
+            "marsRadiusDeg": 21.09660589244611,
+            "sunRadiusDeg": 0.1715293537080306,
+            "thresholdDeg": 21.26813524615414,
+            "oldThresholdDeg": 19.967439708973135,
+            "clearanceDeg": 3.657819015138326,
+            "eclipsed": false,
+            "totalEclipse": false,
+            "oldEclipsed": false,
+            "sunAltitudeDeg": 63.15020184069976
+          },
+          "equatorialSphere": {
+            "marsDistanceKm": 9416.806940135702,
+            "sunDistanceKm": 232384326.57644564,
+            "marsDirection": [
+              0.27556322372017955,
+              -0.787871544172664,
+              -0.5507479819444863
+            ],
+            "sunDirection": [
+              -0.11613246348119469,
+              -0.9039768158530257,
+              -0.411508404927547
+            ],
+            "separationDeg": 24.925954261292468,
+            "marsRadiusDeg": 21.14024129541866,
+            "sunRadiusDeg": 0.1715293537080306,
+            "thresholdDeg": 21.311770649126693,
+            "oldThresholdDeg": 20.00346754833458,
+            "clearanceDeg": 3.6141836121657747,
+            "eclipsed": false,
+            "totalEclipse": false,
+            "oldEclipsed": false,
+            "sunAltitudeDeg": 63.15020184069976
+          }
+        }
+      }
+    },
+    {
+      "date": "2026-09-27T00:45:00Z",
+      "center": {
+        "marsDistanceKm": 9425.464622389145,
+        "sunDistanceKm": 232384413.42213738,
+        "marsDirection": [
+          0.2863999312133843,
+          -0.7820418390470427,
+          -0.5535211300220508
+        ],
+        "sunDirection": [
+          -0.11612599381622724,
+          -0.9039773564154429,
+          -0.4115090432157486
+        ],
+        "separationDeg": 25.64821687968312,
+        "marsRadiusDeg": 21.119892541652572,
+        "sunRadiusDeg": 0.17152928960463545,
+        "thresholdDeg": 21.291421831257207,
+        "oldThresholdDeg": 19.986669760353415,
+        "clearanceDeg": 4.356795048425912,
+        "eclipsed": false,
+        "totalEclipse": false,
+        "oldEclipsed": false
+      },
+      "sites": {
+        "phobos-60e": {
+          "meanSphere": {
+            "marsDistanceKm": 9419.48901001179,
+            "sunDistanceKm": 232384412.0693701,
+            "marsDirection": [
+              0.28554273676006586,
+              -0.7824962260852311,
+              -0.5533217885154558
+            ],
+            "sunDirection": [
+              -0.11612603660240237,
+              -0.9039773599861893,
+              -0.4115090232976877
+            ],
+            "separationDeg": 25.591471159971267,
+            "marsRadiusDeg": 21.090312016102864,
+            "sunRadiusDeg": 0.17152929060315295,
+            "thresholdDeg": 21.261841306706017,
+            "oldThresholdDeg": 19.962240846845013,
+            "clearanceDeg": 4.329629853265249,
+            "eclipsed": false,
+            "totalEclipse": false,
+            "oldEclipsed": false,
+            "sunAltitudeDeg": 7.011739619282258
+          },
+          "equatorialSphere": {
+            "marsDistanceKm": 9419.48901001179,
+            "sunDistanceKm": 232384412.0693701,
+            "marsDirection": [
+              0.28554273676006586,
+              -0.7824962260852311,
+              -0.5533217885154558
+            ],
+            "sunDirection": [
+              -0.11612603660240237,
+              -0.9039773599861893,
+              -0.4115090232976877
+            ],
+            "separationDeg": 25.591471159971267,
+            "marsRadiusDeg": 21.13393314191324,
+            "sunRadiusDeg": 0.17152929060315295,
+            "thresholdDeg": 21.305462432516393,
+            "oldThresholdDeg": 19.99826078427646,
+            "clearanceDeg": 4.286008727454874,
+            "eclipsed": false,
+            "totalEclipse": false,
+            "oldEclipsed": false,
+            "sunAltitudeDeg": 7.011739619282258
+          }
+        },
+        "phobos-311e": {
+          "meanSphere": {
+            "marsDistanceKm": 9418.596250070192,
+            "sunDistanceKm": 232384403.4672984,
+            "marsDirection": [
+              0.2871814843536454,
+              -0.7816014248121717,
+              -0.5537382123133822
+            ],
+            "sunDirection": [
+              -0.11612597557913179,
+              -0.9039773541756654,
+              -0.4115090532823773
+            ],
+            "separationDeg": 25.701053759356043,
+            "marsRadiusDeg": 21.092406582637206,
+            "sunRadiusDeg": 0.17152929695259655,
+            "thresholdDeg": 21.263935879589802,
+            "oldThresholdDeg": 19.963971046327373,
+            "clearanceDeg": 4.437117879766241,
+            "eclipsed": false,
+            "totalEclipse": false,
+            "oldEclipsed": false,
+            "sunAltitudeDeg": 63.93776983255566
+          },
+          "equatorialSphere": {
+            "marsDistanceKm": 9418.596250070192,
+            "sunDistanceKm": 232384403.4672984,
+            "marsDirection": [
+              0.2871814843536454,
+              -0.7816014248121717,
+              -0.5537382123133822
+            ],
+            "sunDirection": [
+              -0.11612597557913179,
+              -0.9039773541756654,
+              -0.4115090532823773
+            ],
+            "separationDeg": 25.701053759356043,
+            "marsRadiusDeg": 21.136032459671817,
+            "sunRadiusDeg": 0.17152929695259655,
+            "thresholdDeg": 21.307561756624413,
+            "oldThresholdDeg": 19.999993613703015,
+            "clearanceDeg": 4.39349200273163,
+            "eclipsed": false,
+            "totalEclipse": false,
+            "oldEclipsed": false,
+            "sunAltitudeDeg": 63.93776983255566
+          }
+        }
+      }
+    },
+    {
+      "date": "2026-09-27T00:46:00Z",
+      "center": {
+        "marsDistanceKm": 9427.246305436867,
+        "sunDistanceKm": 232384488.81678998,
+        "marsDirection": [
+          0.29796513935019125,
+          -0.7756405097485674,
+          -0.556415829545677
+        ],
+        "sunDirection": [
+          -0.11611950830763414,
+          -0.9039778948967174,
+          -0.4115096904429988
+        ],
+        "separationDeg": 26.423049516481537,
+        "marsRadiusDeg": 21.115709911031836,
+        "sunRadiusDeg": 0.17152923395363268,
+        "thresholdDeg": 21.287239144985467,
+        "oldThresholdDeg": 19.983216253054962,
+        "clearanceDeg": 5.135810371496071,
+        "eclipsed": false,
+        "totalEclipse": false,
+        "oldEclipsed": false
+      },
+      "sites": {
+        "phobos-60e": {
+          "meanSphere": {
+            "marsDistanceKm": 9421.272980234899,
+            "sunDistanceKm": 232384487.61557856,
+            "marsDirection": [
+              0.2971118829466855,
+              -0.7761053223023694,
+              -0.5562239276638594
+            ],
+            "sunDirection": [
+              -0.1161195511594112,
+              -0.9039778984763089,
+              -0.411509670487697
+            ],
+            "separationDeg": 26.36630568444589,
+            "marsRadiusDeg": 21.08612779638421,
+            "sunRadiusDeg": 0.1715292348402817,
+            "thresholdDeg": 21.257657031224493,
+            "oldThresholdDeg": 19.95878427780821,
+            "clearanceDeg": 5.1086486532213975,
+            "eclipsed": false,
+            "totalEclipse": false,
+            "oldEclipsed": false,
+            "sunAltitudeDeg": 6.222884442232124
+          },
+          "equatorialSphere": {
+            "marsDistanceKm": 9421.272980234899,
+            "sunDistanceKm": 232384487.61557856,
+            "marsDirection": [
+              0.2971118829466855,
+              -0.7761053223023694,
+              -0.5562239276638594
+            ],
+            "sunDirection": [
+              -0.1161195511594112,
+              -0.9039778984763089,
+              -0.411509670487697
+            ],
+            "separationDeg": 26.36630568444589,
+            "marsRadiusDeg": 21.129739431293846,
+            "sunRadiusDeg": 0.1715292348402817,
+            "thresholdDeg": 21.301268666134128,
+            "oldThresholdDeg": 19.99479896084403,
+            "clearanceDeg": 5.065037018311763,
+            "eclipsed": false,
+            "totalEclipse": false,
+            "oldEclipsed": false,
+            "sunAltitudeDeg": 6.222884442232124
+          }
+        },
+        "phobos-311e": {
+          "meanSphere": {
+            "marsDistanceKm": 9420.375800643986,
+            "sunDistanceKm": 232384478.79595992,
+            "marsDirection": [
+              0.2987427400548682,
+              -0.7751905439406322,
+              -0.5566259029631447
+            ],
+            "sunDirection": [
+              -0.11611949060203648,
+              -0.903977892705177,
+              -0.4115097002533854
+            ],
+            "separationDeg": 26.47586736320262,
+            "marsRadiusDeg": 21.088231876837334,
+            "sunRadiusDeg": 0.17152924135029896,
+            "thresholdDeg": 21.259761118187633,
+            "oldThresholdDeg": 19.960522460584645,
+            "clearanceDeg": 5.216106245014988,
+            "eclipsed": false,
+            "totalEclipse": false,
+            "oldEclipsed": false,
+            "sunAltitudeDeg": 64.72546247841328
+          },
+          "equatorialSphere": {
+            "marsDistanceKm": 9420.375800643986,
+            "sunDistanceKm": 232384478.79595992,
+            "marsDirection": [
+              0.2987427400548682,
+              -0.7751905439406322,
+              -0.5566259029631447
+            ],
+            "sunDirection": [
+              -0.11611949060203648,
+              -0.903977892705177,
+              -0.4115097002533854
+            ],
+            "separationDeg": 26.47586736320262,
+            "marsRadiusDeg": 21.131848284282714,
+            "sunRadiusDeg": 0.17152924135029896,
+            "thresholdDeg": 21.303377525633014,
+            "oldThresholdDeg": 19.996539785963222,
+            "clearanceDeg": 5.172489837569607,
+            "eclipsed": false,
+            "totalEclipse": false,
+            "oldEclipsed": false,
+            "sunAltitudeDeg": 64.72546247841328
+          }
+        }
+      }
+    },
+    {
+      "date": "2026-09-27T00:47:00Z",
+      "center": {
+        "marsDistanceKm": 9429.017981519428,
+        "sunDistanceKm": 232384562.65826663,
+        "marsDirection": [
+          0.3094714572876423,
+          -0.7690996454678638,
+          -0.5592076112370693
+        ],
+        "sunDirection": [
+          -0.11611302580034616,
+          -0.9039784335921736,
+          -0.41151033624895533
+        ],
+        "separationDeg": 27.197597714645177,
+        "marsRadiusDeg": 21.111552456730617,
+        "sunRadiusDeg": 0.17152917944910956,
+        "thresholdDeg": 21.283081636179727,
+        "oldThresholdDeg": 19.979783288988777,
+        "clearanceDeg": 5.91451607846545,
+        "eclipsed": false,
+        "totalEclipse": false,
+        "oldEclipsed": false
+      },
+      "sites": {
+        "phobos-60e": {
+          "meanSphere": {
+            "marsDistanceKm": 9423.047024060259,
+            "sunDistanceKm": 232384561.60887763,
+            "marsDirection": [
+              0.30862228626420046,
+              -0.7695747954552534,
+              -0.5590231825434996
+            ],
+            "sunDirection": [
+              -0.11611306870968167,
+              -0.9039784371798665,
+              -0.4115103162603182
+            ],
+            "separationDeg": 27.140855412324726,
+            "marsRadiusDeg": 21.081968546458718,
+            "sunRadiusDeg": 0.1715291802236936,
+            "thresholdDeg": 21.25349772668241,
+            "oldThresholdDeg": 19.95534809186513,
+            "clearanceDeg": 5.887357685642314,
+            "eclipsed": false,
+            "totalEclipse": false,
+            "oldEclipsed": false,
+            "sunAltitudeDeg": 5.433827126736225
+          },
+          "equatorialSphere": {
+            "marsDistanceKm": 9423.047024060259,
+            "sunDistanceKm": 232384561.60887763,
+            "marsDirection": [
+              0.30862228626420046,
+              -0.7695747954552534,
+              -0.5590231825434996
+            ],
+            "sunDirection": [
+              -0.11611306870968167,
+              -0.9039784371798665,
+              -0.4115103162603182
+            ],
+            "separationDeg": 27.140855412324726,
+            "marsRadiusDeg": 21.125570747637113,
+            "sunRadiusDeg": 0.1715291802236936,
+            "thresholdDeg": 21.297099927860806,
+            "oldThresholdDeg": 19.99135755096794,
+            "clearanceDeg": 5.8437554844639195,
+            "eclipsed": false,
+            "totalEclipse": false,
+            "oldEclipsed": false,
+            "sunAltitudeDeg": 5.433827126736225
+          }
+        },
+        "phobos-311e": {
+          "meanSphere": {
+            "marsDistanceKm": 9422.145269989593,
+            "sunDistanceKm": 232384552.5733301,
+            "marsDirection": [
+              0.3102449614426349,
+              -0.7686402224940708,
+              -0.5594106472563096
+            ],
+            "sunDirection": [
+              -0.1161130086298074,
+              -0.9039784314492392,
+              -0.4115103458013024
+            ],
+            "separationDeg": 27.250396147176776,
+            "marsRadiusDeg": 21.084082500726844,
+            "sunRadiusDeg": 0.17152918689308996,
+            "thresholdDeg": 21.255611687619933,
+            "oldThresholdDeg": 19.95709455562713,
+            "clearanceDeg": 5.994784459556843,
+            "eclipsed": false,
+            "totalEclipse": false,
+            "oldEclipsed": false,
+            "sunAltitudeDeg": 65.51327134662723
+          },
+          "equatorialSphere": {
+            "marsDistanceKm": 9422.145269989593,
+            "sunDistanceKm": 232384552.5733301,
+            "marsDirection": [
+              0.3102449614426349,
+              -0.7686402224940708,
+              -0.5594106472563096
+            ],
+            "sunDirection": [
+              -0.1161130086298074,
+              -0.9039784314492392,
+              -0.4115103458013024
+            ],
+            "separationDeg": 27.250396147176776,
+            "marsRadiusDeg": 21.127689496568067,
+            "sunRadiusDeg": 0.17152918689308996,
+            "thresholdDeg": 21.299218683461156,
+            "oldThresholdDeg": 19.99310666992468,
+            "clearanceDeg": 5.95117746371562,
+            "eclipsed": false,
+            "totalEclipse": false,
+            "oldEclipsed": false,
+            "sunAltitudeDeg": 65.51327134662723
+          }
+        }
+      }
+    },
+    {
+      "date": "2026-09-27T00:48:00Z",
+      "center": {
+        "marsDistanceKm": 9430.779330472793,
+        "sunDistanceKm": 232384634.95772123,
+        "marsDirection": [
+          0.320916869512507,
+          -0.7624205869432724,
+          -0.561896086004671
+        ],
+        "sunDirection": [
+          -0.11610654637372803,
+          -0.9039789725094464,
+          -0.41151098059460217
+        ],
+        "separationDeg": 27.971862666034525,
+        "marsRadiusDeg": 21.10742090010579,
+        "sunRadiusDeg": 0.17152912608283094,
+        "thresholdDeg": 21.27895002618862,
+        "oldThresholdDeg": 19.976371468311765,
+        "clearanceDeg": 6.692912639845904,
+        "eclipsed": false,
+        "totalEclipse": false,
+        "oldEclipsed": false
+      },
+      "sites": {
+        "phobos-60e": {
+          "meanSphere": {
+            "marsDistanceKm": 9424.810820893423,
+            "sunDistanceKm": 232384634.06039253,
+            "marsDirection": [
+              0.32007193036605774,
+              -0.7629059847166321,
+              -0.5617191628165196
+            ],
+            "sunDirection": [
+              -0.11610658933256134,
+              -0.9039789761044943,
+              -0.41151096057654396
+            ],
+            "separationDeg": 27.915121533658603,
+            "marsRadiusDeg": 21.077834988213603,
+            "sunRadiusDeg": 0.1715291267451745,
+            "thresholdDeg": 21.249364114958777,
+            "oldThresholdDeg": 19.951932889875415,
+            "clearanceDeg": 6.665757418699826,
+            "eclipsed": false,
+            "totalEclipse": false,
+            "oldEclipsed": false,
+            "sunAltitudeDeg": 4.6445687875534825
+          },
+          "equatorialSphere": {
+            "marsDistanceKm": 9424.810820893423,
+            "sunDistanceKm": 232384634.06039253,
+            "marsDirection": [
+              0.32007193036605774,
+              -0.7629059847166321,
+              -0.5617191628165196
+            ],
+            "sunDirection": [
+              -0.11610658933256134,
+              -0.9039789761044943,
+              -0.41151096057654396
+            ],
+            "separationDeg": 27.915121533658603,
+            "marsRadiusDeg": 21.121427814457803,
+            "sunRadiusDeg": 0.1715291267451745,
+            "thresholdDeg": 21.292956941202977,
+            "oldThresholdDeg": 19.987937156430807,
+            "clearanceDeg": 6.622164592455626,
+            "eclipsed": false,
+            "totalEclipse": false,
+            "oldEclipsed": false,
+            "sunAltitudeDeg": 4.6445687875534825
+          }
+        },
+        "phobos-311e": {
+          "meanSphere": {
+            "marsDistanceKm": 9423.90433842517,
+            "sunDistanceKm": 232384624.81057656,
+            "marsDirection": [
+              0.32168613413413055,
+              -0.7619518028898792,
+              -0.56209205756593
+            ],
+            "sunDirection": [
+              -0.11610652974170962,
+              -0.9039789704154777,
+              -0.41151098988716006
+            ],
+            "separationDeg": 28.024641314928235,
+            "marsRadiusDeg": 21.07995917384148,
+            "sunRadiusDeg": 0.1715291335727243,
+            "thresholdDeg": 21.251488307414206,
+            "oldThresholdDeg": 19.95368793040288,
+            "clearanceDeg": 6.773153007514029,
+            "eclipsed": false,
+            "totalEclipse": false,
+            "oldEclipsed": false,
+            "sunAltitudeDeg": 66.30118699220179
+          },
+          "equatorialSphere": {
+            "marsDistanceKm": 9423.90433842517,
+            "sunDistanceKm": 232384624.81057656,
+            "marsDirection": [
+              0.32168613413413055,
+              -0.7619518028898792,
+              -0.56209205756593
+            ],
+            "sunDirection": [
+              -0.11610652974170962,
+              -0.9039789704154777,
+              -0.41151098988716006
+            ],
+            "separationDeg": 28.024641314928235,
+            "marsRadiusDeg": 21.12355681768572,
+            "sunRadiusDeg": 0.1715291335727243,
+            "thresholdDeg": 21.295085951258446,
+            "oldThresholdDeg": 19.989694865455544,
+            "clearanceDeg": 6.729555363669789,
+            "eclipsed": false,
+            "totalEclipse": false,
+            "oldEclipsed": false,
+            "sunAltitudeDeg": 66.30118699220179
+          }
+        }
+      }
+    },
+    {
+      "date": "2026-09-27T00:49:00Z",
+      "center": {
+        "marsDistanceKm": 9432.530034357394,
+        "sunDistanceKm": 232384705.726574,
+        "marsDirection": [
+          0.3322993757525601,
+          -0.7556046960958441,
+          -0.5644808837439634
+        ],
+        "sunDirection": [
+          -0.11610007010649952,
+          -0.9039795116561165,
+          -0.4115116234412279
+        ],
+        "separationDeg": 28.745845681597157,
+        "marsRadiusDeg": 21.10331595629803,
+        "sunRadiusDeg": 0.17152907384636515,
+        "thresholdDeg": 21.274845030144395,
+        "oldThresholdDeg": 19.97298138618671,
+        "clearanceDeg": 7.471000651452762,
+        "eclipsed": false,
+        "totalEclipse": false,
+        "oldEclipsed": false
+      },
+      "sites": {
+        "phobos-60e": {
+          "meanSphere": {
+            "marsDistanceKm": 9426.564052349688,
+            "sunDistanceKm": 232384704.9815143,
+            "marsDirection": [
+              0.33145881412916867,
+              -0.7561002504576495,
+              -0.5643114971307645
+            ],
+            "sunDirection": [
+              -0.11610011310675447,
+              -0.9039795152577718,
+              -0.411511603397672
+            ],
+            "separationDeg": 28.6891053580525,
+            "marsRadiusDeg": 21.073727837353513,
+            "sunRadiusDeg": 0.17152907439631435,
+            "thresholdDeg": 21.245256911749827,
+            "oldThresholdDeg": 19.94853926773038,
+            "clearanceDeg": 7.443848446302674,
+            "eclipsed": false,
+            "totalEclipse": false,
+            "oldEclipsed": false,
+            "sunAltitudeDeg": 3.855110584067056
+          },
+          "equatorialSphere": {
+            "marsDistanceKm": 9426.564052349688,
+            "sunDistanceKm": 232384704.9815143,
+            "marsDirection": [
+              0.33145881412916867,
+              -0.7561002504576495,
+              -0.5643114971307645
+            ],
+            "sunDirection": [
+              -0.11610011310675447,
+              -0.9039795152577718,
+              -0.411511603397672
+            ],
+            "separationDeg": 28.6891053580525,
+            "marsRadiusDeg": 21.11731134907373,
+            "sunRadiusDeg": 0.17152907439631435,
+            "thresholdDeg": 21.288840423470045,
+            "oldThresholdDeg": 19.984538374039627,
+            "clearanceDeg": 7.400264934582456,
+            "eclipsed": false,
+            "totalEclipse": false,
+            "oldEclipsed": false,
+            "sunAltitudeDeg": 3.855110584067056
+          }
+        },
+        "phobos-311e": {
+          "meanSphere": {
+            "marsDistanceKm": 9425.652688509097,
+            "sunDistanceKm": 232384695.5191328,
+            "marsDirection": [
+              0.3330642590133846,
+              -0.7551266487008802,
+              -0.5646697652519058
+            ],
+            "sunDirection": [
+              -0.1161000540163625,
+              -0.9039795096114646,
+              -0.41151163247229566
+            ],
+            "separationDeg": 28.798604188225276,
+            "marsRadiusDeg": 21.07586260947368,
+            "sunRadiusDeg": 0.17152908138076048,
+            "thresholdDeg": 21.247391690854442,
+            "oldThresholdDeg": 19.950303178839857,
+            "clearanceDeg": 7.551212497370834,
+            "eclipsed": false,
+            "totalEclipse": false,
+            "oldEclipsed": false,
+            "sunAltitudeDeg": 67.08919876487975
+          },
+          "equatorialSphere": {
+            "marsDistanceKm": 9425.652688509097,
+            "sunDistanceKm": 232384695.5191328,
+            "marsDirection": [
+              0.3330642590133846,
+              -0.7551266487008802,
+              -0.5646697652519058
+            ],
+            "sunDirection": [
+              -0.1161000540163625,
+              -0.9039795096114646,
+              -0.41151163247229566
+            ],
+            "separationDeg": 28.798604188225276,
+            "marsRadiusDeg": 21.119450962535765,
+            "sunRadiusDeg": 0.17152908138076048,
+            "thresholdDeg": 21.290980043916527,
+            "oldThresholdDeg": 19.986304967396542,
+            "clearanceDeg": 7.50762414430875,
+            "eclipsed": false,
+            "totalEclipse": false,
+            "oldEclipsed": false,
+            "sunAltitudeDeg": 67.08919876487975
+          }
+        }
+      }
+    },
+    {
+      "date": "2026-09-27T00:50:00Z",
+      "center": {
+        "marsDistanceKm": 9434.269777508833,
+        "sunDistanceKm": 232384774.97650844,
+        "marsDirection": [
+          0.34361699124000916,
+          -0.7486533557033662,
+          -0.5669616533110969
+        ],
+        "sunDirection": [
+          -0.11609359707672269,
+          -0.9039800510397104,
+          -0.41151226475043284
+        ],
+        "separationDeg": 29.519548181708863,
+        "marsRadiusDeg": 21.099238334142548,
+        "sunRadiusDeg": 0.17152902273108614,
+        "thresholdDeg": 21.270767356873634,
+        "oldThresholdDeg": 19.969613632704085,
+        "clearanceDeg": 8.24878082483523,
+        "eclipsed": false,
+        "totalEclipse": false,
+        "oldEclipsed": false
+      },
+      "sites": {
+        "phobos-60e": {
+          "meanSphere": {
+            "marsDistanceKm": 9428.306402307562,
+            "sunDistanceKm": 232384774.38389772,
+            "marsDirection": [
+              0.3427809519173419,
+              -0.7491589739219908,
+              -0.5667998330934748
+            ],
+            "sunDirection": [
+              -0.11609364011030904,
+              -0.9039800546472226,
+              -0.41151224468530984
+            ],
+            "separationDeg": 29.462808304926902,
+            "marsRadiusDeg": 21.069647803304697,
+            "sunRadiusDeg": 0.17152902316850827,
+            "thresholdDeg": 21.241176826473204,
+            "oldThresholdDeg": 19.94516781626931,
+            "clearanceDeg": 8.221631478453698,
+            "eclipsed": false,
+            "totalEclipse": false,
+            "oldEclipsed": false,
+            "sunAltitudeDeg": 3.065453703723243
+          },
+          "equatorialSphere": {
+            "marsDistanceKm": 9428.306402307562,
+            "sunDistanceKm": 232384774.38389772,
+            "marsDirection": [
+              0.3427809519173419,
+              -0.7491589739219908,
+              -0.5667998330934748
+            ],
+            "sunDirection": [
+              -0.11609364011030904,
+              -0.9039800546472226,
+              -0.41151224468530984
+            ],
+            "separationDeg": 29.462808304926902,
+            "marsRadiusDeg": 21.113222062509827,
+            "sunRadiusDeg": 0.17152902316850827,
+            "thresholdDeg": 21.284751085678334,
+            "oldThresholdDeg": 19.981161795541997,
+            "clearanceDeg": 8.178057219248569,
+            "eclipsed": false,
+            "totalEclipse": false,
+            "oldEclipsed": false,
+            "sunAltitudeDeg": 3.065453703723243
+          }
+        },
+        "phobos-311e": {
+          "meanSphere": {
+            "marsDistanceKm": 9427.390005088046,
+            "sunDistanceKm": 232384764.7106954,
+            "marsDirection": [
+              0.3443773524940571,
+              -0.7481661443292532,
+              -0.5671434206342194
+            ],
+            "sunDirection": [
+              -0.11609358153172676,
+              -0.9039800490447166,
+              -0.41151227351835823
+            ],
+            "separationDeg": 29.57228619743281,
+            "marsRadiusDeg": 21.07179351458967,
+            "sunRadiusDeg": 0.17152903030856287,
+            "thresholdDeg": 21.243322544898234,
+            "oldThresholdDeg": 19.946940889772918,
+            "clearanceDeg": 8.328963652534576,
+            "eclipsed": false,
+            "totalEclipse": false,
+            "oldEclipsed": false,
+            "sunAltitudeDeg": 67.87729461909588
+          },
+          "equatorialSphere": {
+            "marsDistanceKm": 9427.390005088046,
+            "sunDistanceKm": 232384764.7106954,
+            "marsDirection": [
+              0.3443773524940571,
+              -0.7481661443292532,
+              -0.5671434206342194
+            ],
+            "sunDirection": [
+              -0.11609358153172676,
+              -0.9039800490447166,
+              -0.41151227351835823
+            ],
+            "separationDeg": 29.57228619743281,
+            "marsRadiusDeg": 21.115372639677453,
+            "sunRadiusDeg": 0.17152903030856287,
+            "thresholdDeg": 21.286901669986015,
+            "oldThresholdDeg": 19.98293756548787,
+            "clearanceDeg": 8.285384527446794,
+            "eclipsed": false,
+            "totalEclipse": false,
+            "oldEclipsed": false,
+            "sunAltitudeDeg": 67.87729461909588
+          }
+        }
+      }
+    },
+    {
+      "date": "2026-09-27T00:51:00Z",
+      "center": {
+        "marsDistanceKm": 9435.998246587951,
+        "sunDistanceKm": 232384842.71946892,
+        "marsDirection": [
+          0.3548677469697154,
+          -0.7415679690740984,
+          -0.5693380624935902
+        ],
+        "sunDirection": [
+          -0.11608712736179005,
+          -0.9039805906676971,
+          -0.4115129044841352
+        ],
+        "separationDeg": 30.29297168792783,
+        "marsRadiusDeg": 21.095188736081838,
+        "sunRadiusDeg": 0.17152897272817555,
+        "thresholdDeg": 21.266717708810013,
+        "oldThresholdDeg": 19.9662687928054,
+        "clearanceDeg": 9.026253979117818,
+        "eclipsed": false,
+        "totalEclipse": false,
+        "oldEclipsed": false
+      },
+      "sites": {
+        "phobos-60e": {
+          "meanSphere": {
+            "marsDistanceKm": 9430.03755695724,
+            "sunDistanceKm": 232384842.27945775,
+            "marsDirection": [
+              0.3540363738397553,
+              -0.7420835568995905,
+              -0.569183837242107
+            ],
+            "sunDirection": [
+              -0.11608717042060523,
+              -0.9039805942803149,
+              -0.41151288440138334
+            ],
+            "separationDeg": 30.236231895222396,
+            "marsRadiusDeg": 21.065595589131473,
+            "sunRadiusDeg": 0.17152897305295958,
+            "thresholdDeg": 21.237124562184434,
+            "oldThresholdDeg": 19.94181912120595,
+            "clearanceDeg": 8.999107333037962,
+            "eclipsed": false,
+            "totalEclipse": false,
+            "oldEclipsed": false,
+            "sunAltitudeDeg": 2.2755993721409915
+          },
+          "equatorialSphere": {
+            "marsDistanceKm": 9430.03755695724,
+            "sunDistanceKm": 232384842.27945775,
+            "marsDirection": [
+              0.3540363738397553,
+              -0.7420835568995905,
+              -0.569183837242107
+            ],
+            "sunDirection": [
+              -0.11608717042060523,
+              -0.9039805942803149,
+              -0.41151288440138334
+            ],
+            "separationDeg": 30.236231895222396,
+            "marsRadiusDeg": 21.10916065941434,
+            "sunRadiusDeg": 0.17152897305295958,
+            "thresholdDeg": 21.2806896324673,
+            "oldThresholdDeg": 19.97780800755244,
+            "clearanceDeg": 8.955542262755095,
+            "eclipsed": false,
+            "totalEclipse": false,
+            "oldEclipsed": false,
+            "sunAltitudeDeg": 2.2755993721409915
+          }
+        },
+        "phobos-311e": {
+          "meanSphere": {
+            "marsDistanceKm": 9429.115975348454,
+            "sunDistanceKm": 232384832.39722127,
+            "marsDirection": [
+              0.355623446777304,
+              -0.7410716946800116,
+              -0.5695126929633137
+            ],
+            "sunDirection": [
+              -0.11608711236509288,
+              -0.903980588722694,
+              -0.4115129129873153
+            ],
+            "separationDeg": 30.345688873397567,
+            "marsRadiusDeg": 21.067752589739165,
+            "sunRadiusDeg": 0.1715289803473037,
+            "thresholdDeg": 21.23928157008647,
+            "oldThresholdDeg": 19.943601646864657,
+            "clearanceDeg": 9.106407303311098,
+            "eclipsed": false,
+            "totalEclipse": false,
+            "oldEclipsed": false,
+            "sunAltitudeDeg": 68.6654608514693
+          },
+          "equatorialSphere": {
+            "marsDistanceKm": 9429.115975348454,
+            "sunDistanceKm": 232384832.39722127,
+            "marsDirection": [
+              0.355623446777304,
+              -0.7410716946800116,
+              -0.5695126929633137
+            ],
+            "sunDirection": [
+              -0.11608711236509288,
+              -0.903980588722694,
+              -0.4115129129873153
+            ],
+            "separationDeg": 30.345688873397567,
+            "marsRadiusDeg": 21.111322551238697,
+            "sunRadiusDeg": 0.1715289803473037,
+            "thresholdDeg": 21.282851531586,
+            "oldThresholdDeg": 19.979593244289823,
+            "clearanceDeg": 9.062837341811566,
+            "eclipsed": false,
+            "totalEclipse": false,
+            "oldEclipsed": false,
+            "sunAltitudeDeg": 68.6654608514693
+          }
+        }
+      }
+    },
+    {
+      "date": "2026-09-27T00:52:00Z",
+      "center": {
+        "marsDistanceKm": 9437.715130630206,
+        "sunDistanceKm": 232384908.96765792,
+        "marsDirection": [
+          0.3660496899522519,
+          -0.7343499597203034,
+          -0.5716097979781743
+        ],
+        "sunDirection": [
+          -0.11608066103841262,
+          -0.9039811305474893,
+          -0.41151354260457623
+        ],
+        "separationDeg": 31.066117815913486,
+        "marsRadiusDeg": 21.091167858080613,
+        "sunRadiusDeg": 0.17152892382862434,
+        "thresholdDeg": 21.262696781909238,
+        "oldThresholdDeg": 19.962947446208354,
+        "clearanceDeg": 9.803421034004248,
+        "eclipsed": false,
+        "totalEclipse": false,
+        "oldEclipsed": false
+      },
+      "sites": {
+        "phobos-60e": {
+          "meanSphere": {
+            "marsDistanceKm": 9431.757204850554,
+            "sunDistanceKm": 232384908.68036795,
+            "marsDirection": [
+              0.3652231260041373,
+              -0.7348754214002112,
+              -0.5714631950122667
+            ],
+            "sunDirection": [
+              -0.11608070411434308,
+              -0.9039811341644589,
+              -0.4115135225081395
+            ],
+            "separationDeg": 31.00937774427088,
+            "marsRadiusDeg": 21.061571891449717,
+            "sunRadiusDeg": 0.17152892404068065,
+            "thresholdDeg": 21.233100815490396,
+            "oldThresholdDeg": 19.93849376305241,
+            "clearanceDeg": 9.776276928780483,
+            "eclipsed": false,
+            "totalEclipse": false,
+            "oldEclipsed": false,
+            "sunAltitudeDeg": 1.4855488498780152
+          },
+          "equatorialSphere": {
+            "marsDistanceKm": 9431.757204850554,
+            "sunDistanceKm": 232384908.68036795,
+            "marsDirection": [
+              0.3652231260041373,
+              -0.7348754214002112,
+              -0.5714631950122667
+            ],
+            "sunDirection": [
+              -0.11608070411434308,
+              -0.9039811341644589,
+              -0.4115135225081395
+            ],
+            "separationDeg": 31.00937774427088,
+            "marsRadiusDeg": 21.10512783797222,
+            "sunRadiusDeg": 0.17152892404068065,
+            "thresholdDeg": 21.276656762012898,
+            "oldThresholdDeg": 19.97447759147624,
+            "clearanceDeg": 9.73272098225798,
+            "eclipsed": false,
+            "totalEclipse": false,
+            "oldEclipsed": false,
+            "sunAltitudeDeg": 1.4855488498780152
+          }
+        },
+        "phobos-311e": {
+          "meanSphere": {
+            "marsDistanceKm": 9430.830288865269,
+            "sunDistanceKm": 232384898.59092525,
+            "marsDirection": [
+              0.36680059010433386,
+              -0.7338447248343715,
+              -0.5717772703875855
+            ],
+            "sunDirection": [
+              -0.11608064659306898,
+              -0.9039811286527999,
+              -0.4115135508414578
+            ],
+            "separationDeg": 31.118813840467446,
+            "marsRadiusDeg": 21.06374052897195,
+            "sunRadiusDeg": 0.171528931487965,
+            "thresholdDeg": 21.235269460459918,
+            "oldThresholdDeg": 19.940286028531816,
+            "clearanceDeg": 9.883544380007528,
+            "eclipsed": false,
+            "totalEclipse": false,
+            "oldEclipsed": false,
+            "sunAltitudeDeg": 69.45368179348442
+          },
+          "equatorialSphere": {
+            "marsDistanceKm": 9430.830288865269,
+            "sunDistanceKm": 232384898.59092525,
+            "marsDirection": [
+              0.36680059010433386,
+              -0.7338447248343715,
+              -0.5717772703875855
+            ],
+            "sunDirection": [
+              -0.11608064659306898,
+              -0.9039811286527999,
+              -0.4115135508414578
+            ],
+            "separationDeg": 31.118813840467446,
+            "marsRadiusDeg": 21.107301392832447,
+            "sunRadiusDeg": 0.171528931487965,
+            "thresholdDeg": 21.278830324320413,
+            "oldThresholdDeg": 19.976272583109186,
+            "clearanceDeg": 9.839983516147033,
+            "eclipsed": false,
+            "totalEclipse": false,
+            "oldEclipsed": false,
+            "sunAltitudeDeg": 69.45368179348442
+          }
+        }
+      }
+    },
+    {
+      "date": "2026-09-27T04:42:00Z",
+      "center": {
+        "marsDistanceKm": 9315.057666875357,
+        "sunDistanceKm": 232398450.59544185,
+        "marsDirection": [
+          -0.3253132529797734,
+          0.7598226680585102,
+          0.5628861346135337
+        ],
+        "sunDirection": [
+          -0.11472717403496185,
+          -0.9041168573925992,
+          -0.41159492673802733
+        ],
+        "separationDeg": 151.80289043127223,
+        "marsRadiusDeg": 21.382439485856324,
+        "sunRadiusDeg": 0.1715189289780845,
+        "thresholdDeg": 21.55395841483441,
+        "oldThresholdDeg": 20.20293925673489,
+        "clearanceDeg": 130.24893201643783,
+        "eclipsed": false,
+        "totalEclipse": false,
+        "oldEclipsed": false
+      },
+      "sites": {
+        "phobos-60e": {
+          "meanSphere": {
+            "marsDistanceKm": 9309.964628205742,
+            "sunDistanceKm": 232398450.44259316,
+            "marsDirection": [
+              -0.32443165051382344,
+              0.7603623891326098,
+              0.5626661011091978
+            ],
+            "sunDirection": [
+              -0.11472713166383229,
+              -0.9041168530174203,
+              -0.41159494815906833
+            ],
+            "separationDeg": 151.86340659800857,
+            "marsRadiusDeg": 21.350500059015925,
+            "sunRadiusDeg": 0.17151892909089297,
+            "thresholdDeg": 21.52201898810682,
+            "oldThresholdDeg": 20.17668057083001,
+            "clearanceDeg": 130.34138760990174,
+            "eclipsed": false,
+            "totalEclipse": false,
+            "oldEclipsed": false,
+            "sunAltitudeDeg": 0.7903017851135447
+          },
+          "equatorialSphere": {
+            "marsDistanceKm": 9309.964628205742,
+            "sunDistanceKm": 232398450.44259316,
+            "marsDirection": [
+              -0.32443165051382344,
+              0.7603623891326098,
+              0.5626661011091978
+            ],
+            "sunDirection": [
+              -0.11472713166383229,
+              -0.9041168530174203,
+              -0.41159494815906833
+            ],
+            "separationDeg": 151.86340659800857,
+            "marsRadiusDeg": 21.394712418883536,
+            "sunRadiusDeg": 0.17151892909089297,
+            "thresholdDeg": 21.56623134797443,
+            "oldThresholdDeg": 20.21302547227703,
+            "clearanceDeg": 130.29717525003414,
+            "eclipsed": false,
+            "totalEclipse": false,
+            "oldEclipsed": false,
+            "sunAltitudeDeg": 0.7903017851135447
+          }
+        },
+        "phobos-311e": {
+          "meanSphere": {
+            "marsDistanceKm": 9307.419574498923,
+            "sunDistanceKm": 232398461.12216774,
+            "marsDirection": [
+              -0.3260484323614225,
+              0.7593973014691652,
+              0.5630347753700555
+            ],
+            "sunDirection": [
+              -0.11472718758990866,
+              -0.904116858447988,
+              -0.41159492064146125
+            ],
+            "separationDeg": 151.75348626244707,
+            "marsRadiusDeg": 21.356624471065686,
+            "sunRadiusDeg": 0.17151892120893605,
+            "thresholdDeg": 21.52814339227462,
+            "oldThresholdDeg": 20.181716811364197,
+            "clearanceDeg": 130.22534287017245,
+            "eclipsed": false,
+            "totalEclipse": false,
+            "oldEclipsed": false,
+            "sunAltitudeDeg": -71.79119740420417
+          },
+          "equatorialSphere": {
+            "marsDistanceKm": 9307.419574498923,
+            "sunDistanceKm": 232398461.12216774,
+            "marsDirection": [
+              -0.3260484323614225,
+              0.7593973014691652,
+              0.5630347753700555
+            ],
+            "sunDirection": [
+              -0.11472718758990866,
+              -0.904116858447988,
+              -0.41159492064146125
+            ],
+            "separationDeg": 151.75348626244707,
+            "marsRadiusDeg": 21.400850772918076,
+            "sunRadiusDeg": 0.17151892120893605,
+            "thresholdDeg": 21.572369694127012,
+            "oldThresholdDeg": 20.21806931996119,
+            "clearanceDeg": 130.18111656832005,
+            "eclipsed": false,
+            "totalEclipse": false,
+            "oldEclipsed": false,
+            "sunAltitudeDeg": -71.79119740420417
+          }
+        }
+      }
+    },
+    {
+      "date": "2026-09-27T04:43:00Z",
+      "center": {
+        "marsDistanceKm": 9313.310854845291,
+        "sunDistanceKm": 232398643.5678967,
+        "marsDirection": [
+          -0.3369597740007054,
+          0.7527774951695297,
+          0.5654946095867602
+        ],
+        "sunDirection": [
+          -0.11472156591322528,
+          -0.9041174719373288,
+          -0.41159513997625263
+        ],
+        "separationDeg": 151.0092028423529,
+        "marsRadiusDeg": 21.38664723195118,
+        "sunRadiusDeg": 0.17151878655673836,
+        "thresholdDeg": 21.55816601850792,
+        "oldThresholdDeg": 20.20639739066,
+        "clearanceDeg": 129.45103682384496,
+        "eclipsed": false,
+        "totalEclipse": false,
+        "oldEclipsed": false
+      },
+      "sites": {
+        "phobos-60e": {
+          "meanSphere": {
+            "marsDistanceKm": 9308.214889212759,
+            "sunDistanceKm": 232398643.264876,
+            "marsDirection": [
+              -0.33608298574277573,
+              0.7533283154322964,
+              0.5652828282038644
+            ],
+            "sunDirection": [
+              -0.1147215235562399,
+              -0.9041174675609743,
+              -0.4115951613953517
+            ],
+            "separationDeg": 151.06972196688938,
+            "marsRadiusDeg": 21.354710240103,
+            "sunRadiusDeg": 0.17151878678037952,
+            "thresholdDeg": 21.526229026883378,
+            "oldThresholdDeg": 20.18014261693298,
+            "clearanceDeg": 129.543492940006,
+            "eclipsed": false,
+            "totalEclipse": false,
+            "oldEclipsed": false,
+            "sunAltitudeDeg": 1.5669106463948475
+          },
+          "equatorialSphere": {
+            "marsDistanceKm": 9308.214889212759,
+            "sunDistanceKm": 232398643.264876,
+            "marsDirection": [
+              -0.33608298574277573,
+              0.7533283154322964,
+              0.5652828282038644
+            ],
+            "sunDirection": [
+              -0.1147215235562399,
+              -0.9041174675609743,
+              -0.4115951613953517
+            ],
+            "separationDeg": 151.06972196688938,
+            "marsRadiusDeg": 21.39893218415776,
+            "sunRadiusDeg": 0.17151878678037952,
+            "thresholdDeg": 21.57045097093814,
+            "oldThresholdDeg": 20.216492748065573,
+            "clearanceDeg": 129.49927099595124,
+            "eclipsed": false,
+            "totalEclipse": false,
+            "oldEclipsed": false,
+            "sunAltitudeDeg": 1.5669106463948475
+          }
+        },
+        "phobos-311e": {
+          "meanSphere": {
+            "marsDistanceKm": 9305.675152186968,
+            "sunDistanceKm": 232398654.1405724,
+            "marsDirection": [
+              -0.3376913347497663,
+              0.7523428885949615,
+              0.5656365798067791
+            ],
+            "sunDirection": [
+              -0.11472157891600337,
+              -0.9041174729414305,
+              -0.41159513414643406
+            ],
+            "separationDeg": 150.95977561864146,
+            "marsRadiusDeg": 21.36082432828727,
+            "sunRadiusDeg": 0.17151877875369007,
+            "thresholdDeg": 21.53234310704096,
+            "oldThresholdDeg": 20.185170002513814,
+            "clearanceDeg": 129.4274325116005,
+            "eclipsed": false,
+            "totalEclipse": false,
+            "oldEclipsed": false,
+            "sunAltitudeDeg": -72.56749735516543
+          },
+          "equatorialSphere": {
+            "marsDistanceKm": 9305.675152186968,
+            "sunDistanceKm": 232398654.1405724,
+            "marsDirection": [
+              -0.3376913347497663,
+              0.7523428885949615,
+              0.5656365798067791
+            ],
+            "sunDirection": [
+              -0.11472157891600337,
+              -0.9041174729414305,
+              -0.41159513414643406
+            ],
+            "separationDeg": 150.95977561864146,
+            "marsRadiusDeg": 21.405060191626507,
+            "sunRadiusDeg": 0.17151877875369007,
+            "thresholdDeg": 21.576578970380197,
+            "oldThresholdDeg": 20.221527726649665,
+            "clearanceDeg": 129.38319664826128,
+            "eclipsed": false,
+            "totalEclipse": false,
+            "oldEclipsed": false,
+            "sunAltitudeDeg": -72.56749735516543
+          }
+        }
+      }
+    },
+    {
+      "date": "2026-09-27T04:44:00Z",
+      "center": {
+        "marsDistanceKm": 9311.575400316613,
+        "sunDistanceKm": 232398838.09437177,
+        "marsDirection": [
+          -0.34854590052287276,
+          0.7455850065195775,
+          0.5679953813913466
+        ],
+        "sunDirection": [
+          -0.11471595445145992,
+          -0.9041180861610874,
+          -0.4115953547729899
+        ],
+        "separationDeg": 150.2152125669487,
+        "marsRadiusDeg": 21.3908293031901,
+        "sunRadiusDeg": 0.17151864298870295,
+        "thresholdDeg": 21.5623479461788,
+        "oldThresholdDeg": 20.20983417231866,
+        "clearanceDeg": 128.65286462076992,
+        "eclipsed": false,
+        "totalEclipse": false,
+        "oldEclipsed": false
+      },
+      "sites": {
+        "phobos-60e": {
+          "meanSphere": {
+            "marsDistanceKm": 9306.476424185013,
+            "sunDistanceKm": 232398837.6412721,
+            "marsDirection": [
+              -0.347674103869657,
+              0.7461468234830441,
+              0.5677918943632377
+            ],
+            "sunDirection": [
+              -0.11471591211646132,
+              -0.9041180817842989,
+              -0.4115953761863321
+            ],
+            "separationDeg": 150.27573424190294,
+            "marsRadiusDeg": 21.35889498177143,
+            "sunRadiusDeg": 0.17151864332310768,
+            "thresholdDeg": 21.53041362509454,
+            "oldThresholdDeg": 20.18358349257058,
+            "clearanceDeg": 128.74532061680839,
+            "eclipsed": false,
+            "totalEclipse": false,
+            "oldEclipsed": false,
+            "sunAltitudeDeg": 2.34332649696094
+          },
+          "equatorialSphere": {
+            "marsDistanceKm": 9306.476424185013,
+            "sunDistanceKm": 232398837.6412721,
+            "marsDirection": [
+              -0.347674103869657,
+              0.7461468234830441,
+              0.5677918943632377
+            ],
+            "sunDirection": [
+              -0.11471591211646132,
+              -0.9041180817842989,
+              -0.4115953761863321
+            ],
+            "separationDeg": 150.27573424190294,
+            "marsRadiusDeg": 21.40312645264987,
+            "sunRadiusDeg": 0.17151864332310768,
+            "thresholdDeg": 21.57464509597298,
+            "oldThresholdDeg": 20.21993882088494,
+            "clearanceDeg": 128.70108914592996,
+            "eclipsed": false,
+            "totalEclipse": false,
+            "oldEclipsed": false,
+            "sunAltitudeDeg": 2.34332649696094
+          }
+        },
+        "phobos-311e": {
+          "meanSphere": {
+            "marsDistanceKm": 9303.942156616942,
+            "sunDistanceKm": 232398848.71104392,
+            "marsDirection": [
+              -0.3492737034765944,
+              0.7451412301095822,
+              0.5681306427667164
+            ],
+            "sunDirection": [
+              -0.11471596689988262,
+              -0.9041180871136599,
+              -0.4115953492110442
+            ],
+            "separationDeg": 150.16576194238883,
+            "marsRadiusDeg": 21.364998353315887,
+            "sunRadiusDeg": 0.17151863515319668,
+            "thresholdDeg": 21.536516988469085,
+            "oldThresholdDeg": 20.188601703685467,
+            "clearanceDeg": 128.62924495391974,
+            "eclipsed": false,
+            "totalEclipse": false,
+            "oldEclipsed": false,
+            "sunAltitudeDeg": -73.3435702478328
+          },
+          "equatorialSphere": {
+            "marsDistanceKm": 9303.942156616942,
+            "sunDistanceKm": 232398848.71104392,
+            "marsDirection": [
+              -0.3492737034765944,
+              0.7451412301095822,
+              0.5681306427667164
+            ],
+            "sunDirection": [
+              -0.11471596689988262,
+              -0.9041180871136599,
+              -0.4115953492110442
+            ],
+            "separationDeg": 150.16576194238883,
+            "marsRadiusDeg": 21.40924371987689,
+            "sunRadiusDeg": 0.17151863515319668,
+            "thresholdDeg": 21.58076235503009,
+            "oldThresholdDeg": 20.224964610381203,
+            "clearanceDeg": 128.58499958735874,
+            "eclipsed": false,
+            "totalEclipse": false,
+            "oldEclipsed": false,
+            "sunAltitudeDeg": -73.3435702478328
+          }
+        }
+      }
+    },
+    {
+      "date": "2026-09-27T04:45:00Z",
+      "center": {
+        "marsDistanceKm": 9309.851640546884,
+        "sunDistanceKm": 232399034.1633641,
+        "marsDirection": [
+          -0.3600693053714041,
+          0.7382464395428263,
+          0.5703878415882432
+        ],
+        "sunDirection": [
+          -0.11471033956581282,
+          -0.9041187000557259,
+          -0.4115955711693703
+        ],
+        "separationDeg": 149.4209218141633,
+        "marsRadiusDeg": 21.394984854455366,
+        "sunRadiusDeg": 0.17151849828247354,
+        "thresholdDeg": 21.56650335273784,
+        "oldThresholdDeg": 20.213248911815622,
+        "clearanceDeg": 127.85441846142547,
+        "eclipsed": false,
+        "totalEclipse": false,
+        "oldEclipsed": false
+      },
+      "sites": {
+        "phobos-60e": {
+          "meanSphere": {
+            "marsDistanceKm": 9304.749570956748,
+            "sunDistanceKm": 232399033.56030563,
+            "marsDirection": [
+              -0.3592026768795048,
+              0.7388191482576493,
+              0.5701926894396663
+            ],
+            "sunDirection": [
+              -0.11471029726063389,
+              -0.9041186956792447,
+              -0.41159559257314493
+            ],
+            "separationDeg": 149.4814456364955,
+            "marsRadiusDeg": 21.36305343861939,
+            "sunRadiusDeg": 0.17151849872755282,
+            "thresholdDeg": 21.534571937346943,
+            "oldThresholdDeg": 20.187002507188332,
+            "clearanceDeg": 127.94687369914855,
+            "eclipsed": false,
+            "totalEclipse": false,
+            "oldEclipsed": false,
+            "sunAltitudeDeg": 3.1195506071839576
+          },
+          "equatorialSphere": {
+            "marsDistanceKm": 9304.749570956748,
+            "sunDistanceKm": 232399033.56030563,
+            "marsDirection": [
+              -0.3592026768795048,
+              0.7388191482576493,
+              0.5701926894396663
+            ],
+            "sunDirection": [
+              -0.11471029726063389,
+              -0.9041186956792447,
+              -0.41159559257314493
+            ],
+            "separationDeg": 149.4814456364955,
+            "marsRadiusDeg": 21.407294377023447,
+            "sunRadiusDeg": 0.17151849872755282,
+            "thresholdDeg": 21.578812875751,
+            "oldThresholdDeg": 20.223362999147433,
+            "clearanceDeg": 127.9026327607445,
+            "eclipsed": false,
+            "totalEclipse": false,
+            "oldEclipsed": false,
+            "sunAltitudeDeg": 3.1195506071839576
+          }
+        },
+        "phobos-311e": {
+          "meanSphere": {
+            "marsDistanceKm": 9302.2209246675,
+            "sunDistanceKm": 232399044.82207265,
+            "marsDirection": [
+              -0.36079321165585165,
+              0.7377935652598144,
+              0.5705163568945836
+            ],
+            "sunDirection": [
+              -0.11471035145779604,
+              -0.9041187009565376,
+              -0.4115955658763733
+            ],
+            "separationDeg": 149.3714474468489,
+            "marsRadiusDeg": 21.369145702198658,
+            "sunRadiusDeg": 0.17151849041595604,
+            "thresholdDeg": 21.540664192614614,
+            "oldThresholdDeg": 20.192011225648034,
+            "clearanceDeg": 127.83078325423428,
+            "eclipsed": false,
+            "totalEclipse": false,
+            "oldEclipsed": false,
+            "sunAltitudeDeg": -74.11941218292742
+          },
+          "equatorialSphere": {
+            "marsDistanceKm": 9302.2209246675,
+            "sunDistanceKm": 232399044.82207265,
+            "marsDirection": [
+              -0.36079321165585165,
+              0.7377935652598144,
+              0.5705163568945836
+            ],
+            "sunDirection": [
+              -0.11471035145779604,
+              -0.9041187009565376,
+              -0.4115955658763733
+            ],
+            "separationDeg": 149.3714474468489,
+            "marsRadiusDeg": 21.413400511784765,
+            "sunRadiusDeg": 0.17151849041595604,
+            "thresholdDeg": 21.58491900220072,
+            "oldThresholdDeg": 20.228379280893744,
+            "clearanceDeg": 127.78652844464817,
+            "eclipsed": false,
+            "totalEclipse": false,
+            "oldEclipsed": false,
+            "sunAltitudeDeg": -74.11941218292742
+          }
+        }
+      }
+    },
+    {
+      "date": "2026-09-27T04:46:00Z",
+      "center": {
+        "marsDistanceKm": 9308.139910879618,
+        "sunDistanceKm": 232399231.7630568,
+        "marsDirection": [
+          -0.37152766899863954,
+          0.7307630641807948,
+          0.572671402461772
+        ],
+        "sunDirection": [
+          -0.11470472117300512,
+          -0.904119313613144,
+          -0.4115957892062556
+        ],
+        "separationDeg": 148.62633281313396,
+        "marsRadiusDeg": 21.399113044133664,
+        "sunRadiusDeg": 0.17151835244677718,
+        "thresholdDeg": 21.570631396580442,
+        "oldThresholdDeg": 20.21664092230646,
+        "clearanceDeg": 127.05570141655352,
+        "eclipsed": false,
+        "totalEclipse": false,
+        "oldEclipsed": false
+      },
+      "sites": {
+        "phobos-60e": {
+          "meanSphere": {
+            "marsDistanceKm": 9303.034665464287,
+            "sunDistanceKm": 232399231.01018697,
+            "marsDirection": [
+              -0.3706663843407898,
+              0.731346557255085,
+              0.572484623995143
+            ],
+            "sunDirection": [
+              -0.11470467890546754,
+              -0.9041193092377107,
+              -0.4115958105966563
+            ],
+            "separationDeg": 148.68685838356768,
+            "marsRadiusDeg": 21.367184768698785,
+            "sunRadiusDeg": 0.1715183530024218,
+            "thresholdDeg": 21.538703121701207,
+            "oldThresholdDeg": 20.190398973243152,
+            "clearanceDeg": 127.14815526186648,
+            "eclipsed": false,
+            "totalEclipse": false,
+            "oldEclipsed": false,
+            "sunAltitudeDeg": 3.895584274363365
+          },
+          "equatorialSphere": {
+            "marsDistanceKm": 9303.034665464287,
+            "sunDistanceKm": 232399231.01018697,
+            "marsDirection": [
+              -0.3706663843407898,
+              0.731346557255085,
+              0.572484623995143
+            ],
+            "sunDirection": [
+              -0.11470467890546754,
+              -0.9041193092377107,
+              -0.4115958105966563
+            ],
+            "separationDeg": 148.68685838356768,
+            "marsRadiusDeg": 21.411435113403297,
+            "sunRadiusDeg": 0.1715183530024218,
+            "thresholdDeg": 21.58295346640572,
+            "oldThresholdDeg": 20.226764594281665,
+            "clearanceDeg": 127.10390491716197,
+            "eclipsed": false,
+            "totalEclipse": false,
+            "oldEclipsed": false,
+            "sunAltitudeDeg": 3.895584274363365
+          }
+        },
+        "phobos-311e": {
+          "meanSphere": {
+            "marsDistanceKm": 9300.51179129182,
+            "sunDistanceKm": 232399242.46183553,
+            "marsDirection": [
+              -0.37224754005451804,
+              0.7303011657979059,
+              0.5727931355712806
+            ],
+            "sunDirection": [
+              -0.11470473250656756,
+              -0.9041193144619718,
+              -0.41159578418323345
+            ],
+            "separationDeg": 148.57683436541657,
+            "marsRadiusDeg": 21.373265534518026,
+            "sunRadiusDeg": 0.17151834455069986,
+            "thresholdDeg": 21.544783879068728,
+            "oldThresholdDeg": 20.195397882246866,
+            "clearanceDeg": 127.03205048634784,
+            "eclipsed": false,
+            "totalEclipse": false,
+            "oldEclipsed": false,
+            "sunAltitudeDeg": -74.89501822097341
+          },
+          "equatorialSphere": {
+            "marsDistanceKm": 9300.51179129182,
+            "sunDistanceKm": 232399242.46183553,
+            "marsDirection": [
+              -0.37224754005451804,
+              0.7303011657979059,
+              0.5727931355712806
+            ],
+            "sunDirection": [
+              -0.11470473250656756,
+              -0.9041193144619718,
+              -0.41159578418323345
+            ],
+            "separationDeg": 148.57683436541657,
+            "marsRadiusDeg": 21.41752972500868,
+            "sunRadiusDeg": 0.17151834455069986,
+            "thresholdDeg": 21.589048069559382,
+            "oldThresholdDeg": 20.231771051006707,
+            "clearanceDeg": 126.98778629585719,
+            "eclipsed": false,
+            "totalEclipse": false,
+            "oldEclipsed": false,
+            "sunAltitudeDeg": -74.89501822097341
+          }
+        }
+      }
+    },
+    {
+      "date": "2026-09-27T04:47:00Z",
+      "center": {
+        "marsDistanceKm": 9306.440544671847,
+        "sunDistanceKm": 232399430.88132122,
+        "marsDirection": [
+          -0.38291868003627827,
+          0.7231361827364157,
+          0.5748454972396317
+        ],
+        "sunDirection": [
+          -0.1146990991903502,
+          -0.9041199268252901,
+          -0.4115960089242293
+        ],
+        "separationDeg": 147.8314478178207,
+        "marsRadiusDeg": 21.403213034320924,
+        "sunRadiusDeg": 0.17151820549057104,
+        "thresholdDeg": 21.574731239811495,
+        "oldThresholdDeg": 20.220009520161653,
+        "clearanceDeg": 126.2567165780092,
+        "eclipsed": false,
+        "totalEclipse": false,
+        "oldEclipsed": false
+      },
+      "sites": {
+        "phobos-60e": {
+          "meanSphere": {
+            "marsDistanceKm": 9301.332041674388,
+            "sunDistanceKm": 232399429.97881457,
+            "marsDirection": [
+              -0.3820629139575735,
+              0.7237303503553711,
+              0.5746671295217254
+            ],
+            "sunDirection": [
+              -0.11469905696826312,
+              -0.9041199224516445,
+              -0.41159603029745495
+            ],
+            "separationDeg": 147.8919747403544,
+            "marsRadiusDeg": 21.37128813371783,
+            "sunRadiusDeg": 0.17151820615665175,
+            "thresholdDeg": 21.54280633987448,
+            "oldThresholdDeg": 20.19377220636568,
+            "clearanceDeg": 126.34916840047993,
+            "eclipsed": false,
+            "totalEclipse": false,
+            "oldEclipsed": false,
+            "sunAltitudeDeg": 4.67142882764498
+          },
+          "equatorialSphere": {
+            "marsDistanceKm": 9301.332041674388,
+            "sunDistanceKm": 232399429.97881457,
+            "marsDirection": [
+              -0.3820629139575735,
+              0.7237303503553711,
+              0.5746671295217254
+            ],
+            "sunDirection": [
+              -0.11469905696826312,
+              -0.9041199224516445,
+              -0.41159603029745495
+            ],
+            "separationDeg": 147.8919747403544,
+            "marsRadiusDeg": 21.4155478215785,
+            "sunRadiusDeg": 0.17151820615665175,
+            "thresholdDeg": 21.58706602773515,
+            "oldThresholdDeg": 20.230142920895116,
+            "clearanceDeg": 126.30490871261927,
+            "eclipsed": false,
+            "totalEclipse": false,
+            "oldEclipsed": false,
+            "sunAltitudeDeg": 4.67142882764498
+          }
+        },
+        "phobos-311e": {
+          "meanSphere": {
+            "marsDistanceKm": 9298.81508944443,
+            "sunDistanceKm": 232399441.618198,
+            "marsDirection": [
+              -0.38363437764497244,
+              0.7226653358352857,
+              0.5749604131338336
+            ],
+            "sunDirection": [
+              -0.11469910996361353,
+              -0.9041199276219211,
+              -0.41159600417215814
+            ],
+            "separationDeg": 147.78192495649182,
+            "marsRadiusDeg": 21.377357013598527,
+            "sunRadiusDeg": 0.1715181975663896,
+            "thresholdDeg": 21.548875211164916,
+            "oldThresholdDeg": 20.198760990569422,
+            "clearanceDeg": 126.23304974532691,
+            "eclipsed": false,
+            "totalEclipse": false,
+            "oldEclipsed": false,
+            "sunAltitudeDeg": -75.67038209897939
+          },
+          "equatorialSphere": {
+            "marsDistanceKm": 9298.81508944443,
+            "sunDistanceKm": 232399441.618198,
+            "marsDirection": [
+              -0.38363437764497244,
+              0.7226653358352857,
+              0.5749604131338336
+            ],
+            "sunDirection": [
+              -0.11469910996361353,
+              -0.9041199276219211,
+              -0.41159600417215814
+            ],
+            "separationDeg": 147.78192495649182,
+            "marsRadiusDeg": 21.421630520957404,
+            "sunRadiusDeg": 0.1715181975663896,
+            "thresholdDeg": 21.593148718523793,
+            "oldThresholdDeg": 20.235139236786843,
+            "clearanceDeg": 126.18877623796803,
+            "eclipsed": false,
+            "totalEclipse": false,
+            "oldEclipsed": false,
+            "sunAltitudeDeg": -75.67038209897939
+          }
+        }
+      }
+    },
+    {
+      "date": "2026-09-27T04:48:00Z",
+      "center": {
+        "marsDistanceKm": 9304.753873221825,
+        "sunDistanceKm": 232399631.5057181,
+        "marsDirection": [
+          -0.3942400358495497,
+          0.7153671297181445,
+          0.5769095803088808
+        ],
+        "sunDirection": [
+          -0.11469347353577185,
+          -0.904120539684164,
+          -0.41159623036358767
+        ],
+        "separationDeg": 147.03626911106096,
+        "marsRadiusDeg": 21.407283991027775,
+        "sunRadiusDeg": 0.1715180574230414,
+        "thresholdDeg": 21.578802048450818,
+        "oldThresholdDeg": 20.223354025131005,
+        "clearanceDeg": 125.45746706261014,
+        "eclipsed": false,
+        "totalEclipse": false,
+        "oldEclipsed": false
+      },
+      "sites": {
+        "phobos-60e": {
+          "meanSphere": {
+            "marsDistanceKm": 9299.642031511883,
+            "sunDistanceKm": 232399630.4537764,
+            "marsDirection": [
+              -0.393389962123746,
+              0.7159718596644613,
+              0.5767396586579517
+            ],
+            "sunDirection": [
+              -0.11469343136693043,
+              -0.9041205353130453,
+              -0.4115962517158429
+            ],
+            "separationDeg": 147.096796992554,
+            "marsRadiusDeg": 21.375362699246246,
+            "sunRadiusDeg": 0.171518058199409,
+            "thresholdDeg": 21.546880757445656,
+            "oldThresholdDeg": 20.197121525524633,
+            "clearanceDeg": 125.54991623510836,
+            "eclipsed": false,
+            "totalEclipse": false,
+            "oldEclipsed": false,
+            "sunAltitudeDeg": 5.44708562793508
+          },
+          "equatorialSphere": {
+            "marsDistanceKm": 9299.642031511883,
+            "sunDistanceKm": 232399630.4537764,
+            "marsDirection": [
+              -0.393389962123746,
+              0.7159718596644613,
+              0.5767396586579517
+            ],
+            "sunDirection": [
+              -0.11469343136693043,
+              -0.9041205353130453,
+              -0.4115962517158429
+            ],
+            "separationDeg": 147.096796992554,
+            "marsRadiusDeg": 21.419631665208048,
+            "sunRadiusDeg": 0.171518058199409,
+            "thresholdDeg": 21.591149723407458,
+            "oldThresholdDeg": 20.233497296938705,
+            "clearanceDeg": 125.50564726914655,
+            "eclipsed": false,
+            "totalEclipse": false,
+            "oldEclipsed": false,
+            "sunAltitudeDeg": 5.44708562793508
+          }
+        },
+        "phobos-311e": {
+          "meanSphere": {
+            "marsDistanceKm": 9297.131150008896,
+            "sunDistanceKm": 232399642.27871543,
+            "marsDirection": [
+              -0.39495142215943646,
+              0.7148874116862785,
+              0.5770176450913197
+            ],
+            "sunDirection": [
+              -0.11469348374696081,
+              -0.9041205404283945,
+              -0.4115962258833936
+            ],
+            "separationDeg": 146.98672150751528,
+            "marsRadiusDeg": 21.381419306712296,
+            "sunRadiusDeg": 0.17151804947221552,
+            "thresholdDeg": 21.55293735618451,
+            "oldThresholdDeg": 20.20209987110985,
+            "clearanceDeg": 125.43378415133077,
+            "eclipsed": false,
+            "totalEclipse": false,
+            "oldEclipsed": false,
+            "sunAltitudeDeg": -76.44549584349471
+          },
+          "equatorialSphere": {
+            "marsDistanceKm": 9297.131150008896,
+            "sunDistanceKm": 232399642.27871543,
+            "marsDirection": [
+              -0.39495142215943646,
+              0.7148874116862785,
+              0.5770176450913197
+            ],
+            "sunDirection": [
+              -0.11469348374696081,
+              -0.9041205404283945,
+              -0.4115962258833936
+            ],
+            "separationDeg": 146.98672150751528,
+            "marsRadiusDeg": 21.425702064995964,
+            "sunRadiusDeg": 0.17151804947221552,
+            "thresholdDeg": 21.59722011446818,
+            "oldThresholdDeg": 20.238483157713095,
+            "clearanceDeg": 125.38950139304711,
+            "eclipsed": false,
+            "totalEclipse": false,
+            "oldEclipsed": false,
+            "sunAltitudeDeg": -76.44549584349471
+          }
+        }
+      }
+    },
+    {
+      "date": "2026-09-27T04:49:00Z",
+      "center": {
+        "marsDistanceKm": 9303.0802256969,
+        "sunDistanceKm": 232399833.62350047,
+        "marsDirection": [
+          -0.40548944309322166,
+          0.7074572716740495,
+          0.5788631274277705
+        ],
+        "sunDirection": [
+          -0.11468784412782222,
+          -0.9041211521818183,
+          -0.4115964535643301
+        ],
+        "separationDeg": 146.2407990080068,
+        "marsRadiusDeg": 21.411325084385528,
+        "sunRadiusDeg": 0.17151790825360178,
+        "thresholdDeg": 21.58284299263913,
+        "oldThresholdDeg": 20.226673760508326,
+        "clearanceDeg": 124.65795601536767,
+        "eclipsed": false,
+        "totalEclipse": false,
+        "oldEclipsed": false
+      },
+      "sites": {
+        "phobos-60e": {
+          "meanSphere": {
+            "marsDistanceKm": 9297.964964790308,
+            "sunDistanceKm": 232399832.42235214,
+            "marsDirection": [
+              -0.4046452344789881,
+              0.7080724493492006,
+              0.5787016854010957
+            ],
+            "sunDirection": [
+              -0.11468780202000657,
+              -0.9041211478139651,
+              -0.41159647489182666
+            ],
+            "separationDeg": 146.30132745783752,
+            "marsRadiusDeg": 21.37940763491415,
+            "sunRadiusDeg": 0.1715179091400872,
+            "thresholdDeg": 21.550925544054234,
+            "oldThresholdDeg": 20.20044625318582,
+            "clearanceDeg": 124.75040191378328,
+            "eclipsed": false,
+            "totalEclipse": false,
+            "oldEclipsed": false,
+            "sunAltitudeDeg": 6.222556084482284
+          },
+          "equatorialSphere": {
+            "marsDistanceKm": 9297.964964790308,
+            "sunDistanceKm": 232399832.42235214,
+            "marsDirection": [
+              -0.4046452344789881,
+              0.7080724493492006,
+              0.5787016854010957
+            ],
+            "sunDirection": [
+              -0.11468780202000657,
+              -0.9041211478139651,
+              -0.41159647489182666
+            ],
+            "separationDeg": 146.30132745783752,
+            "marsRadiusDeg": 21.42368581202023,
+            "sunRadiusDeg": 0.1715179091400872,
+            "thresholdDeg": 21.595203721160317,
+            "oldThresholdDeg": 20.236827043866082,
+            "clearanceDeg": 124.7061237366772,
+            "eclipsed": false,
+            "totalEclipse": false,
+            "oldEclipsed": false,
+            "sunAltitudeDeg": 6.222556084482284
+          }
+        },
+        "phobos-311e": {
+          "meanSphere": {
+            "marsDistanceKm": 9295.460301723318,
+            "sunDistanceKm": 232399844.43063554,
+            "marsDirection": [
+              -0.4061963806460589,
+              0.7069687617019279,
+              0.5789643083366058
+            ],
+            "sunDirection": [
+              -0.11468785377526503,
+              -0.904121152873455,
+              -0.4115964493568894
+            ],
+            "separationDeg": 146.19122633840348,
+            "marsRadiusDeg": 21.385451585290866,
+            "sunRadiusDeg": 0.17151790027759495,
+            "thresholdDeg": 21.556969485568462,
+            "oldThresholdDeg": 20.205413847938505,
+            "clearanceDeg": 124.63425685283502,
+            "eclipsed": false,
+            "totalEclipse": false,
+            "oldEclipsed": false,
+            "sunAltitudeDeg": -77.22034925997784
+          },
+          "equatorialSphere": {
+            "marsDistanceKm": 9295.460301723318,
+            "sunDistanceKm": 232399844.43063554,
+            "marsDirection": [
+              -0.4061963806460589,
+              0.7069687617019279,
+              0.5789643083366058
+            ],
+            "sunDirection": [
+              -0.11468785377526503,
+              -0.904121152873455,
+              -0.4115964493568894
+            ],
+            "separationDeg": 146.19122633840348,
+            "marsRadiusDeg": 21.42974352665789,
+            "sunRadiusDeg": 0.17151790027759495,
+            "thresholdDeg": 21.601261426935487,
+            "oldThresholdDeg": 20.24180213684631,
+            "clearanceDeg": 124.589964911468,
+            "eclipsed": false,
+            "totalEclipse": false,
+            "oldEclipsed": false,
+            "sunAltitudeDeg": -77.22034925997784
+          }
+        }
+      }
+    },
+    {
+      "date": "2026-09-27T04:50:00Z",
+      "center": {
+        "marsDistanceKm": 9301.419929061572,
+        "sunDistanceKm": 232400037.22161445,
+        "marsDirection": [
+          -0.4166646182692531,
+          0.6994080070158255,
+          0.5807056359332916
+        ],
+        "sunDirection": [
+          -0.11468221088570035,
+          -0.9041217643103608,
+          -0.4115966785661517
+        ],
+        "separationDeg": 145.44503985904117,
+        "marsRadiusDeg": 21.41533548885253,
+        "sunRadiusDeg": 0.17151775799189198,
+        "thresholdDeg": 21.586853246844424,
+        "oldThresholdDeg": 20.22996805329635,
+        "clearanceDeg": 123.85818661219675,
+        "eclipsed": false,
+        "totalEclipse": false,
+        "oldEclipsed": false
+      },
+      "sites": {
+        "phobos-60e": {
+          "meanSphere": {
+            "marsDistanceKm": 9296.301169134178,
+            "sunDistanceKm": 232400035.87151513,
+            "marsDirection": [
+              -0.41582644646678557,
+              0.7000335154619359,
+              0.5805527053152099
+            ],
+            "sunDirection": [
+              -0.11468216884667379,
+              -0.9041217599465103,
+              -0.41159669986510805
+            ],
+            "separationDeg": 145.50556848880046,
+            "marsRadiusDeg": 21.383422114632005,
+            "sunRadiusDeg": 0.1715177589883062,
+            "thresholdDeg": 21.55493987362031,
+            "oldThresholdDeg": 20.203745715488317,
+            "clearanceDeg": 123.95062861518015,
+            "eclipsed": false,
+            "totalEclipse": false,
+            "oldEclipsed": false,
+            "sunAltitudeDeg": 6.997841621439513
+          },
+          "equatorialSphere": {
+            "marsDistanceKm": 9296.301169134178,
+            "sunDistanceKm": 232400035.87151513,
+            "marsDirection": [
+              -0.41582644646678557,
+              0.7000335154619359,
+              0.5805527053152099
+            ],
+            "sunDirection": [
+              -0.11468216884667379,
+              -0.9041217599465103,
+              -0.41159669986510805
+            ],
+            "separationDeg": 145.50556848880046,
+            "marsRadiusDeg": 21.4277094340331,
+            "sunRadiusDeg": 0.1715177589883062,
+            "thresholdDeg": 21.599227193021406,
+            "oldThresholdDeg": 20.240131486810014,
+            "clearanceDeg": 123.90634129577906,
+            "eclipsed": false,
+            "totalEclipse": false,
+            "oldEclipsed": false,
+            "sunAltitudeDeg": 6.997841621439513
+          }
+        },
+        "phobos-311e": {
+          "meanSphere": {
+            "marsDistanceKm": 9293.802871113041,
+            "sunDistanceKm": 232400048.06089985,
+            "marsDirection": [
+              -0.4173669700272238,
+              0.6989107860933316,
+              0.5807999013538964
+            ],
+            "sunDirection": [
+              -0.11468221996782854,
+              -0.9041217649492193,
+              -0.4115966746322901
+            ],
+            "separationDeg": 145.39544180442488,
+            "marsRadiusDeg": 21.389453025120396,
+            "sunRadiusDeg": 0.17151774999217126,
+            "thresholdDeg": 21.56097077511257,
+            "oldThresholdDeg": 20.208702248857712,
+            "clearanceDeg": 123.83447102931231,
+            "eclipsed": false,
+            "totalEclipse": false,
+            "oldEclipsed": false,
+            "sunAltitudeDeg": -77.99492916866424
+          },
+          "equatorialSphere": {
+            "marsDistanceKm": 9293.802871113041,
+            "sunDistanceKm": 232400048.06089985,
+            "marsDirection": [
+              -0.4173669700272238,
+              0.6989107860933316,
+              0.5807999013538964
+            ],
+            "sunDirection": [
+              -0.11468221996782854,
+              -0.9041217649492193,
+              -0.4115966746322901
+            ],
+            "separationDeg": 145.39544180442488,
+            "marsRadiusDeg": 21.433754079840917,
+            "sunRadiusDeg": 0.17151774999217126,
+            "thresholdDeg": 21.60527182983309,
+            "oldThresholdDeg": 20.245095500985283,
+            "clearanceDeg": 123.79016997459179,
+            "eclipsed": false,
+            "totalEclipse": false,
+            "oldEclipsed": false,
+            "sunAltitudeDeg": -77.99492916866424
+          }
+        }
+      }
+    },
+    {
+      "date": "2026-09-27T04:51:00Z",
+      "center": {
+        "marsDistanceKm": 9299.773308005782,
+        "sunDistanceKm": 232400242.2867019,
+        "marsDirection": [
+          -0.427763288285896,
+          0.6912207658326811,
+          0.5824366249443106
+        ],
+        "sunDirection": [
+          -0.11467657372926977,
+          -0.9041223760619557,
+          -0.4115969054084336
+        ],
+        "separationDeg": 144.6489940522521,
+        "marsRadiusDeg": 21.41931438342091,
+        "sunRadiusDeg": 0.17151760664777652,
+        "thresholdDeg": 21.590831990068686,
+        "oldThresholdDeg": 20.233236234371702,
+        "clearanceDeg": 123.05816206218341,
+        "eclipsed": false,
+        "totalEclipse": false,
+        "oldEclipsed": false
+      },
+      "sites": {
+        "phobos-60e": {
+          "meanSphere": {
+            "marsDistanceKm": 9294.650969911754,
+            "sunDistanceKm": 232400240.78793392,
+            "marsDirection": [
+              -0.4269313238934402,
+              0.6918564857553183,
+              0.5822922357346828
+            ],
+            "sunDirection": [
+              -0.11467653176677772,
+              -0.9041223717028437,
+              -0.41159692667507625
+            ],
+            "separationDeg": 144.70952247549712,
+            "marsRadiusDeg": 21.38740531678614,
+            "sunRadiusDeg": 0.17151760775391076,
+            "thresholdDeg": 21.55892292454005,
+            "oldThresholdDeg": 20.20701924240041,
+            "clearanceDeg": 123.15059955095708,
+            "eclipsed": false,
+            "totalEclipse": false,
+            "oldEclipsed": false,
+            "sunAltitudeDeg": 7.772943704439922
+          },
+          "equatorialSphere": {
+            "marsDistanceKm": 9294.650969911754,
+            "sunDistanceKm": 232400240.78793392,
+            "marsDirection": [
+              -0.4269313238934402,
+              0.6918564857553183,
+              0.5822922357346828
+            ],
+            "sunDirection": [
+              -0.11467653176677772,
+              -0.9041223717028437,
+              -0.41159692667507625
+            ],
+            "separationDeg": 144.70952247549712,
+            "marsRadiusDeg": 21.431701707750417,
+            "sunRadiusDeg": 0.17151760775391076,
+            "thresholdDeg": 21.603219315504326,
+            "oldThresholdDeg": 20.24340995473857,
+            "clearanceDeg": 123.10630315999279,
+            "eclipsed": false,
+            "totalEclipse": false,
+            "oldEclipsed": false,
+            "sunAltitudeDeg": 7.772943704439922
+          }
+        },
+        "phobos-311e": {
+          "meanSphere": {
+            "marsDistanceKm": 9292.159182415191,
+            "sunDistanceKm": 232400253.15614563,
+            "marsDirection": [
+              -0.42846091765860195,
+              0.6907149167453186,
+              0.5825239444217348
+            ],
+            "sunDirection": [
+              -0.11467658224461857,
+              -0.9041223766478614,
+              -0.4115969017489269
+            ],
+            "separationDeg": 144.59937029868505,
+            "marsRadiusDeg": 21.393422806557478,
+            "sunRadiusDeg": 0.17151759862581217,
+            "thresholdDeg": 21.56494040518329,
+            "oldThresholdDeg": 20.211964405574328,
+            "clearanceDeg": 123.03442989350175,
+            "eclipsed": false,
+            "totalEclipse": false,
+            "oldEclipsed": false,
+            "sunAltitudeDeg": -78.76921839900453
+          },
+          "equatorialSphere": {
+            "marsDistanceKm": 9292.159182415191,
+            "sunDistanceKm": 232400253.15614563,
+            "marsDirection": [
+              -0.42846091765860195,
+              0.6907149167453186,
+              0.5825239444217348
+            ],
+            "sunDirection": [
+              -0.11467658224461857,
+              -0.9041223766478614,
+              -0.4115969017489269
+            ],
+            "separationDeg": 144.59937029868505,
+            "marsRadiusDeg": 21.4377329030233,
+            "sunRadiusDeg": 0.17151759862581217,
+            "thresholdDeg": 21.60925050164911,
+            "oldThresholdDeg": 20.248362580839537,
+            "clearanceDeg": 122.99011979703593,
+            "eclipsed": false,
+            "totalEclipse": false,
+            "oldEclipsed": false,
+            "sunAltitudeDeg": -78.76921839900453
+          }
+        }
+      }
+    },
+    {
+      "date": "2026-09-27T04:52:00Z",
+      "center": {
+        "marsDistanceKm": 9298.140684873402,
+        "sunDistanceKm": 232400448.80510262,
+        "marsDirection": [
+          -0.43878319101804836,
+          0.6828970096950477,
+          0.5840556355601585
+        ],
+        "sunDirection": [
+          -0.1146709325790764,
+          -0.904122987428825,
+          -0.41159713413023363
+        ],
+        "separationDeg": 143.85266401552983,
+        "marsRadiusDeg": 21.423260951823615,
+        "sunRadiusDeg": 0.17151745423134265,
+        "thresholdDeg": 21.594778406054957,
+        "oldThresholdDeg": 20.236477638650097,
+        "clearanceDeg": 122.25788560947487,
+        "eclipsed": false,
+        "totalEclipse": false,
+        "oldEclipsed": false
+      },
+      "sites": {
+        "phobos-60e": {
+          "meanSphere": {
+            "marsDistanceKm": 9293.014690160588,
+            "sunDistanceKm": 232400447.15797502,
+            "marsDirection": [
+              -0.4379576034886868,
+              0.6835428194866898,
+              0.5839198159633159
+            ],
+            "sunDirection": [
+              -0.11467089070084503,
+              -0.9041229830751867,
+              -0.4115971553607978
+            ],
+            "separationDeg": 143.9131918475681,
+            "marsRadiusDeg": 21.391356424452535,
+            "sunRadiusDeg": 0.17151745544696848,
+            "thresholdDeg": 21.562873879899502,
+            "oldThresholdDeg": 20.210266167890406,
+            "clearanceDeg": 122.3503179676686,
+            "eclipsed": false,
+            "totalEclipse": false,
+            "oldEclipsed": false,
+            "sunAltitudeDeg": 8.547863823821372
+          },
+          "equatorialSphere": {
+            "marsDistanceKm": 9293.014690160588,
+            "sunDistanceKm": 232400447.15797502,
+            "marsDirection": [
+              -0.4379576034886868,
+              0.6835428194866898,
+              0.5839198159633159
+            ],
+            "sunDirection": [
+              -0.11467089070084503,
+              -0.9041229830751867,
+              -0.4115971553607978
+            ],
+            "separationDeg": 143.9131918475681,
+            "marsRadiusDeg": 21.435661814375955,
+            "sunRadiusDeg": 0.17151745544696848,
+            "thresholdDeg": 21.60717926982292,
+            "oldThresholdDeg": 20.246661780626205,
+            "clearanceDeg": 122.30601257774518,
+            "eclipsed": false,
+            "totalEclipse": false,
+            "oldEclipsed": false,
+            "sunAltitudeDeg": 8.547863823821372
+          }
+        },
+        "phobos-311e": {
+          "meanSphere": {
+            "marsDistanceKm": 9290.529557509471,
+            "sunDistanceKm": 232400459.7027087,
+            "marsDirection": [
+              -0.439475961889954,
+              0.6823826170195927,
+              0.5841359798115431
+            ],
+            "sunDirection": [
+              -0.11467094052628468,
+              -0.9041229879616136,
+              -0.4115971307458073
+            ],
+            "separationDeg": 143.8030142542011,
+            "marsRadiusDeg": 21.397360114730706,
+            "sunRadiusDeg": 0.171517446188608,
+            "thresholdDeg": 21.568877560919315,
+            "oldThresholdDeg": 20.21519965386046,
+            "clearanceDeg": 122.23413669328177,
+            "eclipsed": false,
+            "totalEclipse": false,
+            "oldEclipsed": false,
+            "sunAltitudeDeg": -79.54319428376513
+          },
+          "equatorialSphere": {
+            "marsDistanceKm": 9290.529557509471,
+            "sunDistanceKm": 232400459.7027087,
+            "marsDirection": [
+              -0.439475961889954,
+              0.6823826170195927,
+              0.5841359798115431
+            ],
+            "sunDirection": [
+              -0.11467094052628468,
+              -0.9041229879616136,
+              -0.4115971307458073
+            ],
+            "separationDeg": 143.8030142542011,
+            "marsRadiusDeg": 21.441679179465833,
+            "sunRadiusDeg": 0.171517446188608,
+            "thresholdDeg": 21.613196625654442,
+            "oldThresholdDeg": 20.251602711190262,
+            "clearanceDeg": 122.18981762854665,
+            "eclipsed": false,
+            "totalEclipse": false,
+            "oldEclipsed": false,
+            "sunAltitudeDeg": -79.54319428376513
+          }
+        }
+      }
+    }
+  ]
+}

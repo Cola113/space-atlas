@@ -50,6 +50,8 @@ export function defaultSiteId(bodyId) {
 
 export function angularDiameter(radiusKm, distanceKm) {
   if (!(radiusKm > 0 && distanceKm > radiusKm)) throw new RangeError('Observer must be outside the body');
+  // The limb ray is tangent to the sphere: sin(angular radius) = radius /
+  // center distance. atan would describe a flat disk and underestimate the limb.
   return 2 * Math.asin(radiusKm / distanceKm);
 }
 
@@ -99,7 +101,8 @@ export function sunHiddenByParent(frame, site) {
   if (site.parent === 'Sun') return false;
   const sun = frame.targets.Sun, parent = frame.targets[site.parent];
   if (!sun || !parent) return false;
-  const angularRadius = target => Math.atan(target.radiusKm / target.distanceKm);
+  // Any disk overlap counts as eclipsed, including partial ingress/egress.
+  const angularRadius = target => angularDiameter(target.radiusKm, target.distanceKm) / 2;
   return sun.direction.angleTo(parent.direction) < angularRadius(sun) + angularRadius(parent);
 }
 
