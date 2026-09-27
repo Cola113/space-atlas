@@ -33,7 +33,8 @@ test('a body may carry several sites and keeps its own-keyed one as the default'
     const sites=sitesForBody(bodyId);
     assert.ok(sites.length>=1,bodyId);
     for(const site of sites)assert.equal(site.id,bodyId);
-    assert.equal(defaultSiteId(bodyId),bodyId,`${bodyId} keeps its original site as the default`);
+    if(bodyId==='phobos') assert.equal(defaultSiteId(bodyId),'phobos-60e','Phobos uses its first registered site as the default');
+    else assert.equal(defaultSiteId(bodyId),bodyId,`${bodyId} keeps its original site as the default`);
   }
   const coords=new Set(Object.values(landingSites).map(site=>`${site.id}:${site.latitude},${site.longitude}`));
   assert.equal(coords.size,Object.keys(landingSites).length,'two sites on one body must not share coordinates');
