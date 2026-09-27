@@ -37,9 +37,12 @@ SITES = [
      'a new ground-level redraw informed by the saved MRO HiRISE orbital references, with no source pixel '
      'claimed as surveyed ground.',
      {'generatedOn': '2026-09-27',
+      'model': 'unverified (Antigravity generate_image)',
+      'requestedQuality': None, 'requestedSize': None, 'requestedAspectRatio': '16:9',
+      'generationRecord': 'phobos-generation-notes-20260927.md',
       'references': ['NASA/JPL-Caltech/University of Arizona HiRISE PSP_007769_9010 (orbital morphology only)',
                      'atlas-work/refs/phobos-20260927/SOURCES.md (local source log)'],
-      'requestedSizeAccepted': False, 'sourceNative2to1': False, 'aiUpscaled': False}),
+      'requestedSizeAccepted': None, 'sourceNative2to1': False, 'aiUpscaled': False}),
     ('phobos-311e', 'phobos-311E-raw.png',
      'reference-redraw with MRO HiRISE orbital imagery',
      'Provider frame 1376x768 was reparameterized to 360x180 at 3840x1920; it is not a native 2:1 '
@@ -49,9 +52,12 @@ SITES = [
      'candidate terrain is a new ground-level redraw informed by the saved MRO HiRISE orbital references, '
      'with no source pixel claimed as surveyed ground.',
      {'generatedOn': '2026-09-27',
+      'model': 'unverified (Antigravity generate_image)',
+      'requestedQuality': None, 'requestedSize': None, 'requestedAspectRatio': '16:9',
+      'generationRecord': 'phobos-generation-notes-20260927.md',
       'references': ['NASA/JPL-Caltech/University of Arizona HiRISE PSP_007769_9010 (orbital morphology only)',
                      'atlas-work/refs/phobos-20260927/SOURCES.md (local source log)'],
-      'requestedSizeAccepted': False, 'sourceNative2to1': False, 'aiUpscaled': False}),
+      'requestedSizeAccepted': None, 'sourceNative2to1': False, 'aiUpscaled': False}),
     ('moon-farside', 'moon-farside-retry-1.png',
      'reference-edit with same-body material reference',
      'Provider frame 3840x2160 reparameterized to 360x180 at 3840x1920; top-connected black sky removed; '

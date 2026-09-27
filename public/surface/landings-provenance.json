@@ -472,15 +472,17 @@
       "sha256": "f4f79d23cec846a619aa336db118fb4e3b913c9da9dd8d345f090ae7cf97a02e",
       "bytes": 344510,
       "processing": "Provider frame 1376x768 was reparameterized to 360x180 at 3840x1920; it is not a native 2:1 source and the local Lanczos resize is not AI upscaling. Black vacuum sky removed above a per-column source-pixel skyline; all terrain below it stays opaque, including dark crater-wall shadows; narrow wrap blend; nadir smoothing; WebP encoding. Phobos has no ground panorama: the terrain is a new ground-level redraw informed by the saved MRO HiRISE orbital references, with no source pixel claimed as surveyed ground.",
-      "model": "gpt-image-2.5-sunburst",
-      "requestedQuality": "high",
-      "requestedSize": "3840x1920",
+      "model": "unverified (Antigravity generate_image)",
+      "requestedQuality": null,
+      "requestedSize": null,
+      "requestedAspectRatio": "16:9",
+      "generationRecord": "phobos-generation-notes-20260927.md",
       "qualityExecutionVerified": false,
       "references": [
         "NASA/JPL-Caltech/University of Arizona HiRISE PSP_007769_9010 (orbital morphology only)",
         "atlas-work/refs/phobos-20260927/SOURCES.md (local source log)"
       ],
-      "requestedSizeAccepted": false,
+      "requestedSizeAccepted": null,
       "sourceNative2to1": false,
       "aiUpscaled": false
     },
@@ -502,15 +504,17 @@
       "sha256": "b9382ccd508a333dd1486b837c8d454de722da735a5b1c35259ef8661e145ca4",
       "bytes": 925110,
       "processing": "Provider frame 1376x768 was reparameterized to 360x180 at 3840x1920; it is not a native 2:1 source and the local Lanczos resize is not AI upscaling. Black vacuum sky removed above a per-column source-pixel skyline; all terrain below it stays opaque, including dark crater-wall shadows; narrow wrap blend; nadir smoothing; WebP encoding. Phobos has no ground panorama: the Stickney candidate terrain is a new ground-level redraw informed by the saved MRO HiRISE orbital references, with no source pixel claimed as surveyed ground.",
-      "model": "gpt-image-2.5-sunburst",
-      "requestedQuality": "high",
-      "requestedSize": "3840x1920",
+      "model": "unverified (Antigravity generate_image)",
+      "requestedQuality": null,
+      "requestedSize": null,
+      "requestedAspectRatio": "16:9",
+      "generationRecord": "phobos-generation-notes-20260927.md",
       "qualityExecutionVerified": false,
       "references": [
         "NASA/JPL-Caltech/University of Arizona HiRISE PSP_007769_9010 (orbital morphology only)",
         "atlas-work/refs/phobos-20260927/SOURCES.md (local source log)"
       ],
-      "requestedSizeAccepted": false,
+      "requestedSizeAccepted": null,
       "sourceNative2to1": false,
       "aiUpscaled": false
     }
