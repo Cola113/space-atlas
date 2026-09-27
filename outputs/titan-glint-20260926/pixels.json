@@ -1,0 +1,425 @@
+[
+  {
+    "name": "desktop",
+    "width": 1440,
+    "height": 900,
+    "on": {
+      "date": "2014-08-19T14:00:00.000Z",
+      "area": 51,
+      "peakDelta": 97.49059999999996,
+      "meanGlint": 217.63211764705878,
+      "meanSamePixelsWithoutGlint": 126.64134509803918,
+      "centroid": [
+        796.4705882352941,
+        543.2745098039215
+      ],
+      "bounds": [
+        792,
+        540,
+        800,
+        547
+      ],
+      "body": {
+        "id": "titan",
+        "meshId": "087e157c-8138-4761-ad4a-2deab5fe484b",
+        "radius": 0.57,
+        "radiusKm": 2574.76,
+        "renderRadius": 0.57,
+        "parent": "saturn",
+        "position": [
+          -74.16946721095742,
+          9.265730434011203,
+          -164.52042213011205
+        ],
+        "orbit": 18.4,
+        "orbitVisible": false,
+        "visible": true,
+        "x": 885.6000000000059,
+        "y": 417.9999999999882,
+        "radiusPx": 235.93517644646886,
+        "inView": true,
+        "occluded": false,
+        "labelVisible": false,
+        "rotation": -0.3332938618222609,
+        "orientation": [
+          -0.07427456291867254,
+          -0.7754116480140708,
+          -0.23070115377234998,
+          0.5830926539371333
+        ],
+        "physicalPositionKm": [
+          -895952386.3169632,
+          -1109145452.6801083,
+          -419429729.3985474
+        ],
+        "physicalOrientation": [
+          -0.032727897793476096,
+          0.04705928867970558,
+          0.08120628757385545,
+          0.9950476606240789
+        ],
+        "physicalAvailable": true,
+        "physicalModel": "JPL SAT441 原始多项式；主星日心平移取 Astronomy Engine",
+        "sunDirection": [
+          0.4769737266542724,
+          -0.037902292918722325,
+          0.8780999261320086
+        ],
+        "ringVisible": false,
+        "ringOuterRadius": null,
+        "detailReady": true,
+        "textureWidth": 3840,
+        "cloudsVisible": true,
+        "cloudRotation": -0.3332938618222609,
+        "layerVisible": true
+      },
+      "surroundingMean": 126.4476925659473,
+      "relativeLuminance": 1.7211236775519276
+    },
+    "off": {
+      "date": "2014-08-20T06:00:00.000Z",
+      "area": 0,
+      "peakDelta": 0,
+      "meanGlint": 0,
+      "meanSamePixelsWithoutGlint": 0,
+      "centroid": null,
+      "bounds": null,
+      "body": {
+        "id": "titan",
+        "meshId": "77570441-6157-4441-846e-b3c4dae75638",
+        "radius": 0.57,
+        "radiusKm": 2574.76,
+        "renderRadius": 0.57,
+        "parent": "saturn",
+        "position": [
+          -78.50294629184913,
+          11.201726889329404,
+          -164.83084086538997
+        ],
+        "orbit": 18.4,
+        "orbitVisible": false,
+        "visible": true,
+        "x": 885.5999999999942,
+        "y": 418,
+        "radiusPx": 235.93517644646826,
+        "inView": true,
+        "occluded": false,
+        "labelVisible": false,
+        "rotation": -0.595988916166178,
+        "orientation": [
+          -0.04341988814334499,
+          -0.6923645250313327,
+          -0.2384417022864808,
+          0.6796260974995604
+        ],
+        "physicalPositionKm": [
+          -895442231.2560879,
+          -1109747738.0826888,
+          -419562104.08760387
+        ],
+        "physicalOrientation": [
+          -0.026282626222230706,
+          0.050940313150613765,
+          0.21082837352779318,
+          0.9758410244351307
+        ],
+        "physicalAvailable": true,
+        "physicalModel": "JPL SAT441 原始多项式；主星日心平移取 Astronomy Engine",
+        "sunDirection": [
+          0.47742925123308105,
+          -0.03797716950415431,
+          0.8778491013058409
+        ],
+        "ringVisible": false,
+        "ringOuterRadius": null,
+        "detailReady": true,
+        "textureWidth": 3840,
+        "cloudsVisible": true,
+        "cloudRotation": -0.595988916166178,
+        "layerVisible": true
+      }
+    }
+  },
+  {
+    "name": "phone",
+    "width": 390,
+    "height": 844,
+    "on": {
+      "date": "2014-08-19T14:00:00.000Z",
+      "area": 44,
+      "peakDelta": 97.41839999999995,
+      "meanGlint": 216.6765045454545,
+      "meanSamePixelsWithoutGlint": 126.61294090909088,
+      "centroid": [
+        111.43181818181819,
+        449.0681818181818
+      ],
+      "bounds": [
+        108,
+        446,
+        115,
+        453
+      ],
+      "body": {
+        "id": "titan",
+        "meshId": "32d0643d-5cfb-457f-9be9-6e28a893db89",
+        "radius": 0.57,
+        "radiusKm": 2574.76,
+        "renderRadius": 0.57,
+        "parent": "saturn",
+        "position": [
+          -74.16946721095742,
+          9.265730434011203,
+          -164.52042213011205
+        ],
+        "orbit": 18.4,
+        "orbitVisible": false,
+        "visible": true,
+        "x": 195.00000000000549,
+        "y": 331.4999999999889,
+        "radiusPx": 221.25476546757744,
+        "inView": true,
+        "occluded": false,
+        "labelVisible": false,
+        "rotation": -0.3332938618222609,
+        "orientation": [
+          -0.07427456291867254,
+          -0.7754116480140708,
+          -0.23070115377234998,
+          0.5830926539371333
+        ],
+        "physicalPositionKm": [
+          -895952386.3169632,
+          -1109145452.6801083,
+          -419429729.3985474
+        ],
+        "physicalOrientation": [
+          -0.032727897793476096,
+          0.04705928867970558,
+          0.08120628757385545,
+          0.9950476606240789
+        ],
+        "physicalAvailable": true,
+        "physicalModel": "JPL SAT441 原始多项式；主星日心平移取 Astronomy Engine",
+        "sunDirection": [
+          0.4769737266542724,
+          -0.037902292918722325,
+          0.8780999261320086
+        ],
+        "ringVisible": false,
+        "ringOuterRadius": null,
+        "detailReady": true,
+        "textureWidth": 3840,
+        "cloudsVisible": true,
+        "cloudRotation": -0.3332938618222609,
+        "layerVisible": true
+      },
+      "surroundingMean": 126.45521626794267,
+      "relativeLuminance": 1.7134643468272932
+    },
+    "off": {
+      "date": "2014-08-20T06:00:00.000Z",
+      "area": 0,
+      "peakDelta": 0,
+      "meanGlint": 0,
+      "meanSamePixelsWithoutGlint": 0,
+      "centroid": null,
+      "bounds": null,
+      "body": {
+        "id": "titan",
+        "meshId": "c42f70d2-ee38-47bd-93a9-a204822e39bd",
+        "radius": 0.57,
+        "radiusKm": 2574.76,
+        "renderRadius": 0.57,
+        "parent": "saturn",
+        "position": [
+          -78.50294629184913,
+          11.201726889329404,
+          -164.83084086538997
+        ],
+        "orbit": 18.4,
+        "orbitVisible": false,
+        "visible": true,
+        "x": 194.9999999999945,
+        "y": 331.5,
+        "radiusPx": 221.2547654675769,
+        "inView": true,
+        "occluded": false,
+        "labelVisible": false,
+        "rotation": -0.595988916166178,
+        "orientation": [
+          -0.04341988814334499,
+          -0.6923645250313327,
+          -0.2384417022864808,
+          0.6796260974995604
+        ],
+        "physicalPositionKm": [
+          -895442231.2560879,
+          -1109747738.0826888,
+          -419562104.08760387
+        ],
+        "physicalOrientation": [
+          -0.026282626222230706,
+          0.050940313150613765,
+          0.21082837352779318,
+          0.9758410244351307
+        ],
+        "physicalAvailable": true,
+        "physicalModel": "JPL SAT441 原始多项式；主星日心平移取 Astronomy Engine",
+        "sunDirection": [
+          0.47742925123308105,
+          -0.03797716950415431,
+          0.8778491013058409
+        ],
+        "ringVisible": false,
+        "ringOuterRadius": null,
+        "detailReady": true,
+        "textureWidth": 3840,
+        "cloudsVisible": true,
+        "cloudRotation": -0.595988916166178,
+        "layerVisible": true
+      }
+    }
+  },
+  {
+    "name": "short",
+    "width": 800,
+    "height": 450,
+    "on": {
+      "date": "2014-08-19T14:00:00.000Z",
+      "area": 13,
+      "peakDelta": 55.14499999999997,
+      "meanGlint": 125.79961538461538,
+      "meanSamePixelsWithoutGlint": 75.26227692307694,
+      "centroid": [
+        391.0769230769231,
+        281.38461538461536
+      ],
+      "bounds": [
+        389,
+        280,
+        393,
+        283
+      ],
+      "body": {
+        "id": "titan",
+        "meshId": "4b6bec6e-af7f-481e-8b69-f8847e85a67e",
+        "radius": 0.57,
+        "radiusKm": 2574.76,
+        "renderRadius": 0.57,
+        "parent": "saturn",
+        "position": [
+          -74.16946721095742,
+          9.265730434011203,
+          -164.52042213011205
+        ],
+        "orbit": 18.4,
+        "orbitVisible": false,
+        "visible": true,
+        "x": 436.00000000000296,
+        "y": 218.99999999999415,
+        "radiusPx": 117.96758822323443,
+        "inView": true,
+        "occluded": false,
+        "labelVisible": false,
+        "rotation": -0.3332938618222609,
+        "orientation": [
+          -0.07427456291867254,
+          -0.7754116480140708,
+          -0.23070115377234998,
+          0.5830926539371333
+        ],
+        "physicalPositionKm": [
+          -895952386.3169632,
+          -1109145452.6801083,
+          -419429729.3985474
+        ],
+        "physicalOrientation": [
+          -0.032727897793476096,
+          0.04705928867970558,
+          0.08120628757385545,
+          0.9950476606240789
+        ],
+        "physicalAvailable": true,
+        "physicalModel": "JPL SAT441 原始多项式；主星日心平移取 Astronomy Engine",
+        "sunDirection": [
+          0.4769737266542724,
+          -0.037902292918722325,
+          0.8780999261320086
+        ],
+        "ringVisible": false,
+        "ringOuterRadius": null,
+        "detailReady": true,
+        "textureWidth": 3840,
+        "cloudsVisible": true,
+        "cloudRotation": -0.3332938618222609,
+        "layerVisible": true
+      },
+      "surroundingMean": 75.0161196172248,
+      "relativeLuminance": 1.6769677774126022
+    },
+    "off": {
+      "date": "2014-08-20T06:00:00.000Z",
+      "area": 0,
+      "peakDelta": 0,
+      "meanGlint": 0,
+      "meanSamePixelsWithoutGlint": 0,
+      "centroid": null,
+      "bounds": null,
+      "body": {
+        "id": "titan",
+        "meshId": "e6df1499-61be-4568-96c4-219fabb16e47",
+        "radius": 0.57,
+        "radiusKm": 2574.76,
+        "renderRadius": 0.57,
+        "parent": "saturn",
+        "position": [
+          -78.50294629184913,
+          11.201726889329404,
+          -164.83084086538997
+        ],
+        "orbit": 18.4,
+        "orbitVisible": false,
+        "visible": true,
+        "x": 435.9999999999971,
+        "y": 219,
+        "radiusPx": 117.96758822323413,
+        "inView": true,
+        "occluded": false,
+        "labelVisible": false,
+        "rotation": -0.595988916166178,
+        "orientation": [
+          -0.04341988814334499,
+          -0.6923645250313327,
+          -0.2384417022864808,
+          0.6796260974995604
+        ],
+        "physicalPositionKm": [
+          -895442231.2560879,
+          -1109747738.0826888,
+          -419562104.08760387
+        ],
+        "physicalOrientation": [
+          -0.026282626222230706,
+          0.050940313150613765,
+          0.21082837352779318,
+          0.9758410244351307
+        ],
+        "physicalAvailable": true,
+        "physicalModel": "JPL SAT441 原始多项式；主星日心平移取 Astronomy Engine",
+        "sunDirection": [
+          0.47742925123308105,
+          -0.03797716950415431,
+          0.8778491013058409
+        ],
+        "ringVisible": false,
+        "ringOuterRadius": null,
+        "detailReady": true,
+        "textureWidth": 3840,
+        "cloudsVisible": true,
+        "cloudRotation": -0.595988916166178,
+        "layerVisible": true
+      }
+    }
+  }
+]
