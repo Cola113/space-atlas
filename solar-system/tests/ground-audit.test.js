@@ -14,6 +14,12 @@ test('every landing sky and its physical illumination agree with independent DE4
   const covered=new Set(fixtures.map(f=>f.siteId));
   const uncovered=Object.keys(landingSites).filter(id=>!covered.has(id));
   assert.deepEqual(uncovered,[],'landing sites missing independent samples');
+  for (const siteId of ['phobos-60e','phobos-311e']) {
+    const samples=fixtures.filter(sample=>sample.siteId===siteId);
+    assert.ok(samples.length>0,`${siteId}: no independent samples`);
+    assert.ok(samples.every(sample=>sample.extraTargets?.includes('mars')),
+      `${siteId}: Mars was not retained as an explicit extra target`);
+  }
   const provider=localPhysics(),maxima={};
   let partialEclipses=0;
   try {

@@ -24,7 +24,8 @@ for (const [siteId, site] of Object.entries(landingSites)) {
     // The Earth viewer stands on the Moon's parent: the Moon is what that site is
     // for, so its sky geometry gets an independent sample beside the Sun's.
     ...(site.id === 'earth' ? {extraTargets:['moon'],
-      targetRadiiKm:{moon:physicalDefinitions.bodies.moon.radius.value}} : {})});
+      targetRadiiKm:{moon:physicalDefinitions.bodies.moon.radius.value}} : {}),
+    ...(site.id === 'phobos' ? {extraTargets:['mars']} : {})});
 }
 const root = fileURLToPath(new URL('../', import.meta.url));
 await mkdir(root + 'data/science-audit', {recursive:true});
