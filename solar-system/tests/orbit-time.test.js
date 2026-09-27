@@ -17,7 +17,7 @@ test('overview preserves physical latitude, eccentricity, orientation and Sun di
   const provider=localPhysics(),objects=scene();
   // Every catalogue body must be present in the frame, so the dated systems are all
   // loaded here; Ceres joined that list when its Horizons bundle replaced the ellipse.
-  await provider.ensure(new Date('2000-01-01'),['enceladus','miranda','pluto','ceres'],{prefetch:false});
+  await provider.ensure(new Date('2000-01-01'),['enceladus','miranda','pluto','ceres','phobos'],{prefetch:false});
   for(const stamp of ['2000-01-01','2000-03-21','2000-07-04','2000-12-21']){
     const frame=provider.frame(new Date(stamp)),rotation=skyRotation(frame.time.astronomy);
     updateDisplayState(objects,frame);
@@ -46,7 +46,7 @@ test('overview preserves physical latitude, eccentricity, orientation and Sun di
 test('missing required data hides bodies and never produces a placeholder physical orbit',()=>{
   const provider=localPhysics(),objects=scene();
   updateDisplayState(objects,provider.frame(new Date('1971-08-01')));
-  for(const id of ['pluto','charon','nix','enceladus','titan','miranda']){
+  for(const id of ['pluto','charon','nix','enceladus','titan','miranda','phobos']){
     assert.equal(objects.get(id).root.visible,false,id);
     assert.equal(objects.get(id).physicalAvailable,false,id);
   }

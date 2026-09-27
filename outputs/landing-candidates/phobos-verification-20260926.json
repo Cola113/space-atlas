@@ -1,0 +1,12 @@
+{
+  "cspiceEpochs": 854,
+  "surfaceSamples": 150,
+  "horizonsSamples": 12,
+  "relativeKm": 0.0006469223062548303,
+  "velocityKmS": 0.0002766382376576022,
+  "surfaceDirectionArcmin": 0.00007346410696316439,
+  "surfaceDistanceKm": 0.00031857608337304555,
+  "surfaceDiameterArcsec": 0.005604666145586634,
+  "horizonsKm": 0.0005685389014496795,
+  "horizonsVsCspiceKm": 0.0000872769015848702
+}

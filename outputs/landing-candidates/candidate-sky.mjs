@@ -31,8 +31,8 @@ const candidates = [
   ['月球 · 嫦娥四号天河基地（背面）', site('moon', 'Earth', -45.4446, 177.5991, '2019-01-03T02:26:00Z', 29.53)],
   ['火星 · 毅力号耶泽罗坑', site('mars', 'Sun', 18.4447, 77.4508, '2021-02-18T20:55:00Z', 1.02749)],
   ['火星 · 凤凰号北极', site('mars', 'Sun', 68.2188, 234.2477, '2008-05-25T23:53:00Z', 1.02749)],
-  ['火卫一 · 次火星点', site('phobos', 'Mars', 1, 60, '2026-09-15T00:00:00Z', 0.31891)],
-  ['火卫一 · 火星压地平线', site('phobos', 'Mars', 1, 150, '2026-09-15T00:00:00Z', 0.31891)],
+  ['火卫一 · 原候选 60°E', site('phobos', 'Mars', 1, 60, '2026-09-15T00:00:00Z', 0.31891)],
+  ['火卫一 · 原候选 150°E', site('phobos', 'Mars', 1, 150, '2026-09-15T00:00:00Z', 0.31891)],
   ['火卫一 · 斯蒂克尼坑 49°W', site('phobos', 'Mars', 1, 311, '2026-09-15T00:00:00Z', 0.31891)],
   ['冥王星 · 朝冥卫一（现落点为背侧）', site('pluto', 'Charon', 0, 0, '2026-09-15T00:00:00Z', 6.3872)],
   ['冥卫一 · 朝冥王星侧', site('charon', 'Pluto', 0, 0, '2026-09-15T00:00:00Z', 6.3872)],
@@ -45,7 +45,7 @@ const candidates = [
 ];
 
 for (const year of new Set(candidates.map(([, s]) => new Date(s.date).getUTCFullYear()).concat(2026))) {
-  await physicalState.ephemeris.ensure(new Date(`${year}-01-01T00:00:00Z`), ['saturn', 'uranus', 'pluto'], { prefetch: false });
+  await physicalState.ephemeris.ensure(new Date(`${year}-01-01T00:00:00Z`), ['saturn', 'uranus', 'pluto', 'ceres', 'phobos'], { prefetch: false });
 }
 
 const range = values => [Math.min(...values), Math.max(...values)];

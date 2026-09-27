@@ -18,9 +18,10 @@ test('all adopted mean ellipses agree with independent CSPICE conics across peri
   // Ceres left this set on 2026-09-18 when its Horizons bundle was published: it now
   // supplies dated states like the Pluto system, so asserting a fixed ellipse for it
   // would be asserting the model the project deliberately replaced.
-  assert.equal(new Set(fixtures.map(f=>f.id)).size,38);
+  assert.equal(new Set(fixtures.map(f=>f.id)).size,37);
   assert.ok(!fixtures.some(f=>f.id==='ceres'),'ceres is no longer a fixed mean ellipse');
-  assert.equal(Object.keys(meanElements.bodies).length,38,'mean-element registry matches the fixtures');
+  assert.ok(!fixtures.some(f=>f.id==='phobos'),'Phobos now uses MAR099 dated states');
+  assert.equal(Object.keys(meanElements.bodies).length,37,'mean-element registry matches the fixtures');
   let directionError=0,relativePositionError=0;
   for(const f of fixtures){
     const actual=atTdb(f.id,f.tdbSeconds),expected=new Vector3().fromArray(f.positionKm);
@@ -50,7 +51,7 @@ test('Haumea satellite positions and mutual plane angle match published 2009 sta
 
 test('retrograde orbital motion is independent of IAU spin',()=>{
   const time=physicalTime(new Date('2000-01-01T12:00:00Z'));
-  for(const id of ['phoebe','triton','phobos','vesta']){
+  for(const id of ['phoebe','triton','vesta']){
     const state=meanMotion(id,time),orientation=bodyOrientation(id,time);
     assert.ok(state.orientation.quaternion.angleTo(orientation.quaternion)<1e-7,id);
   }

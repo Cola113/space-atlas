@@ -16,7 +16,7 @@ const provider=localPhysics();
 // Ceres supplies dated states now, so its year bundle belongs in the fixture list
 // alongside the Pluto system: without it the scene drops the body instead of
 // exercising it, and "not rotating" would report a missing bundle as a dead attitude.
-await provider.ensure(new Date('2000-01-01T12:00:00Z'),['enceladus','miranda','pluto','ceres'],{prefetch:false});
+await provider.ensure(new Date('2000-01-01T12:00:00Z'),['enceladus','miranda','pluto','ceres','phobos'],{prefetch:false});
 const SIMULATION_EPOCH=Date.UTC(2000,0,1,12);
 const ROTATION_PERIOD_DAYS=Object.fromEntries(Object.entries(meanElements.bodies).map(([id,e])=>[id,e.spinDays]));
 const day = 86400000;

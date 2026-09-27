@@ -7,7 +7,7 @@ import { decodeEphemeris, evaluateEphemeris, EphemerisStore, MissingEphemerisErr
 const root = new URL('../../public/ephemeris/', import.meta.url);
 const arrayBuffer = buffer => buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength);
 const readYear = async (system, year) => arrayBuffer(await readFile(new URL(`${system}/${year}.bin`, root)));
-test('all 603 yearly bundles reproduce original JPL polynomial reference positions within one kilometre', async () => {
+test('all published yearly bundles reproduce original JPL reference positions within 0.1 kilometre', async () => {
   const manifest = JSON.parse(await readFile(new URL('manifest.json', root), 'utf8'));
   const references = JSON.parse(await readFile(new URL('ephemeris-reference.json', import.meta.url), 'utf8'));
   let checked = 0, maximum = 0;
