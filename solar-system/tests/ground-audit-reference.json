@@ -4,8 +4,9 @@
   "kernelSha256": {
     "de440s.bsp": "c1c7feeab882263fc493a9d5a5b2ddd71b54826cdf65d8d17a76126b260a49f2",
     "surface-reference-valid-coverage.bsp": "7b5c697d5f06311dd9858d95e2376d5e9a44491ae48cc5afe40647c8664bcde2",
+    "phobos-reference-valid-coverage.bsp": "df9f1520b76b5b5d9e72611179d1d746dc283d0a6cfc9058c8401315504eb6a1",
     "pck00011.tpc": "3dff7b1dbeceaa01f25467767d3fa25816051c85d162d1edf04acb310ee28bb1",
-    "ceres-horizons.spk": "f6cb484d1ada38f0139dfe4f7f73a9fdbbd94f23e2edf281171286ae1e516849"
+    "ceres-horizons.spk": "c2f83dd8df2d1d0847d7ce8d64493a35e0c013dd60f116f6518e3ef5d3df7017"
   },
   "horizons": {
     "io": {
@@ -27,8 +28,8 @@
             "CSV_FORMAT": "YES",
             "TLIST": "'2415020.499968067277 2415385.499972161371 2441165.208816804923 2451545.000742869452 2461296.000800723210 2461296.221942968201 2461296.443085213657 2461296.444698338863 2461296.664227470756 2461296.885369716212 2461296.888595966157 2461297.106511972845 2461297.327654218301 2461297.332493593451 2461297.368127111811 2461297.548796463758 2461297.589269357268 2461297.769938720390 2461297.776391220745 2461297.810411602259 2461297.888300722931 2461297.991080965847 2461298.031553859357 2461298.212223222945 2461298.220288847573 2461298.252696104813 2461298.332198338583 2461298.433365467936 2461298.473838361446 2461298.654507713392 2461298.664186463691 2461298.694980606902 2461298.776095965877 2461298.875649970490 2461298.916122852359 2461299.096792215947 2461299.108084090520 2461299.137265109457 2461299.219993593171 2461299.317934472580 2461299.358407354448 2461299.539076718036 2461299.551981717814 2461299.579549611546 2461299.663891220465 2461299.760218963493 2461299.800691857003 2461299.981361220125 2461299.995879345108 2461300.021834101994 2461300.107788847759 2461300.202503465582 2461300.242976359092 2461300.423645722680 2461300.439776972402 2461300.464118604548 2461300.551686463412 2461300.644787967671 2461300.685260861181 2461300.865930213127'"
           },
-          "sha256": "7e37666c1f839f2a9c00dca2f609f7bdb736f866d7566ecdadbecc4a36be7a66",
-          "header": "*******************************************************************************\n Revised: Mar 12, 2021             Io  / (Jupiter)                          501\n\n SATELLITE PHYSICAL PROPERTIES:\n  Mean radius (km)       = 1821.49           Density (g cm^-3) = 3.528 +- 0.006\n  GM (km^3/s^2)          = 5959.9155+- 0.004 Geometric Albedo  = 0.63  +- 0.02\n\n SATELLITE ORBIT (at J2000.0 epoch, 2000-Jan-1.5):\n  Semi-major axis, a (km)~ 422,000           Orbital period    ~ 1.77 d\n  Eccentricity, e        ~ 0.00472           Rotational period = Synchronous\n  Inclination, i  (deg)  ~ 0.0375\n*******************************************************************************\n\n\n*******************************************************************************\nEphemeris / API_USER Wed Sep 16 05:29:51 2026 Pasadena, USA      / Horizons\n*******************************************************************************\nTarget body name: Io (501)                        {source: jup365_merged}\nCenter body name: Sun (10)                        {source: jup365_merged}\nCenter-site name: BODY CENTER\n*******************************************************************************\nStart time      : A.D. 1899-Dec-31 23:59:57.2410 TDB\nStop  time      : A.D. 2026-Sep-17 08:46:56.3704 TDB\nStep-size       : DISCRETE TIME-LIST\n*******************************************************************************\nCenter geodetic : 0.0, 0.0, 0.0                   {E-lon(deg),Lat(deg),Alt(km)}\nCenter cylindric: 0.0, 0.0, 0.0                   {E-lon(deg),Dxy(km),Dz(km)}\nCenter radii    : 695700.0, 695700.0, 695700.0 km {Equator_a, b, pole_c}\nOutput units    : KM-S\nCalendar mode   : Mixed Julian/Gregorian\nOutput type     : GEOMETRIC cartesian states\nOutput format   : 2 (position and velocity)\nReference frame : ICRF\n*******************************************************************************\n            JDTDB,            Calendar Date (TDB),                      X,                      Y,                      Z,                     VX,                     VY,                     VZ,\n**************************************************************************************************************************************************************************************************\n"
+          "sha256": "603725680e3754604d970157ed45f06514b59e9427d7e694bc8679fa1768972e",
+          "header": "*******************************************************************************\n Revised: Mar 12, 2021             Io  / (Jupiter)                          501\n\n SATELLITE PHYSICAL PROPERTIES:\n  Mean radius (km)       = 1821.49           Density (g cm^-3) = 3.528 +- 0.006\n  GM (km^3/s^2)          = 5959.9155+- 0.004 Geometric Albedo  = 0.63  +- 0.02\n\n SATELLITE ORBIT (at J2000.0 epoch, 2000-Jan-1.5):\n  Semi-major axis, a (km)~ 422,000           Orbital period    ~ 1.77 d\n  Eccentricity, e        ~ 0.00472           Rotational period = Synchronous\n  Inclination, i  (deg)  ~ 0.0375\n*******************************************************************************\n\n\n*******************************************************************************\nEphemeris / API_USER Sat Sep 26 19:10:08 2026 Pasadena, USA      / Horizons\n*******************************************************************************\nTarget body name: Io (501)                        {source: jup365_merged}\nCenter body name: Sun (10)                        {source: jup365_merged}\nCenter-site name: BODY CENTER\n*******************************************************************************\nStart time      : A.D. 1899-Dec-31 23:59:57.2410 TDB\nStop  time      : A.D. 2026-Sep-17 08:46:56.3704 TDB\nStep-size       : DISCRETE TIME-LIST\n*******************************************************************************\nCenter geodetic : 0.0, 0.0, 0.0                   {E-lon(deg),Lat(deg),Alt(km)}\nCenter cylindric: 0.0, 0.0, 0.0                   {E-lon(deg),Dxy(km),Dz(km)}\nCenter radii    : 695700.0, 695700.0, 695700.0 km {Equator_a, b, pole_c}\nOutput units    : KM-S\nCalendar mode   : Mixed Julian/Gregorian\nOutput type     : GEOMETRIC cartesian states\nOutput format   : 2 (position and velocity)\nReference frame : ICRF\n*******************************************************************************\n            JDTDB,            Calendar Date (TDB),                      X,                      Y,                      Z,                     VX,                     VY,                     VZ,\n**************************************************************************************************************************************************************************************************\n"
         },
         {
           "url": "https://ssd.jpl.nasa.gov/api/horizons.api",
@@ -47,8 +48,8 @@
             "CSV_FORMAT": "YES",
             "TLIST": "'2461300.883674588054 2461300.906403106637 2461300.995584090706 2461301.087072470225 2461301.127545352094 2461301.308214715682 2461301.327572215348 2461301.348687609192 2461301.439481718000 2461301.529356972314 2461301.569829854183 2461301.750499217771 2461301.771469842643 2461301.790972111281 2461301.883379345294 2461301.971641463228 2461302.012114356738 2461302.192783719860 2461302.215367469937 2461302.233256602194 2461302.327276972588 2461302.413925965317 2461302.454398858827 2461302.635068222415 2461302.659265097231 2461302.675541104283 2461302.771174588241 2461302.856210467871 2461302.896683361381 2461303.077352712862 2461303.103162712883 2461303.117825606372 2461303.215072215535 2461303.338967851829 2461303.547060340177 2461303.560110108927 2461303.658969842829 2461303.781252354383 2461303.990957967471 2461304.002394611016 2461304.102867469657 2461304.223536856472 2461304.434855594765 2461304.444679101929 2461304.546765096951 2461304.878753222059 2461304.990662713069 2461305.322650837712 2461305.434560340364 2461305.766548465006 2461305.878457967658 2461306.210446092300 2461306.322355594486 2461306.654343719594 2461306.766253221780 2461307.098241346888 2461307.210150837898 2461307.542138962541 2461307.654048465192 2461307.986036589835'"
           },
-          "sha256": "ba191f9920c960c5f895d8016b5a60b78a0378e002657530639ca9ce6a33632d",
-          "header": "*******************************************************************************\n Revised: Mar 12, 2021             Io  / (Jupiter)                          501\n\n SATELLITE PHYSICAL PROPERTIES:\n  Mean radius (km)       = 1821.49           Density (g cm^-3) = 3.528 +- 0.006\n  GM (km^3/s^2)          = 5959.9155+- 0.004 Geometric Albedo  = 0.63  +- 0.02\n\n SATELLITE ORBIT (at J2000.0 epoch, 2000-Jan-1.5):\n  Semi-major axis, a (km)~ 422,000           Orbital period    ~ 1.77 d\n  Eccentricity, e        ~ 0.00472           Rotational period = Synchronous\n  Inclination, i  (deg)  ~ 0.0375\n*******************************************************************************\n\n\n*******************************************************************************\nEphemeris / API_USER Wed Sep 16 05:29:52 2026 Pasadena, USA      / Horizons\n*******************************************************************************\nTarget body name: Io (501)                        {source: jup365_merged}\nCenter body name: Sun (10)                        {source: jup365_merged}\nCenter-site name: BODY CENTER\n*******************************************************************************\nStart time      : A.D. 2026-Sep-17 09:12:29.4844 TDB\nStop  time      : A.D. 2026-Sep-24 11:39:53.5614 TDB\nStep-size       : DISCRETE TIME-LIST\n*******************************************************************************\nCenter geodetic : 0.0, 0.0, 0.0                   {E-lon(deg),Lat(deg),Alt(km)}\nCenter cylindric: 0.0, 0.0, 0.0                   {E-lon(deg),Dxy(km),Dz(km)}\nCenter radii    : 695700.0, 695700.0, 695700.0 km {Equator_a, b, pole_c}\nOutput units    : KM-S\nCalendar mode   : Mixed Julian/Gregorian\nOutput type     : GEOMETRIC cartesian states\nOutput format   : 2 (position and velocity)\nReference frame : ICRF\n*******************************************************************************\n            JDTDB,            Calendar Date (TDB),                      X,                      Y,                      Z,                     VX,                     VY,                     VZ,\n**************************************************************************************************************************************************************************************************\n"
+          "sha256": "27f42cc289c34cf8e77a35bf1adcdc678975c2c9ca570788a1268f3f6d98c86f",
+          "header": "*******************************************************************************\n Revised: Mar 12, 2021             Io  / (Jupiter)                          501\n\n SATELLITE PHYSICAL PROPERTIES:\n  Mean radius (km)       = 1821.49           Density (g cm^-3) = 3.528 +- 0.006\n  GM (km^3/s^2)          = 5959.9155+- 0.004 Geometric Albedo  = 0.63  +- 0.02\n\n SATELLITE ORBIT (at J2000.0 epoch, 2000-Jan-1.5):\n  Semi-major axis, a (km)~ 422,000           Orbital period    ~ 1.77 d\n  Eccentricity, e        ~ 0.00472           Rotational period = Synchronous\n  Inclination, i  (deg)  ~ 0.0375\n*******************************************************************************\n\n\n*******************************************************************************\nEphemeris / API_USER Sat Sep 26 19:10:09 2026 Pasadena, USA      / Horizons\n*******************************************************************************\nTarget body name: Io (501)                        {source: jup365_merged}\nCenter body name: Sun (10)                        {source: jup365_merged}\nCenter-site name: BODY CENTER\n*******************************************************************************\nStart time      : A.D. 2026-Sep-17 09:12:29.4844 TDB\nStop  time      : A.D. 2026-Sep-24 11:39:53.5614 TDB\nStep-size       : DISCRETE TIME-LIST\n*******************************************************************************\nCenter geodetic : 0.0, 0.0, 0.0                   {E-lon(deg),Lat(deg),Alt(km)}\nCenter cylindric: 0.0, 0.0, 0.0                   {E-lon(deg),Dxy(km),Dz(km)}\nCenter radii    : 695700.0, 695700.0, 695700.0 km {Equator_a, b, pole_c}\nOutput units    : KM-S\nCalendar mode   : Mixed Julian/Gregorian\nOutput type     : GEOMETRIC cartesian states\nOutput format   : 2 (position and velocity)\nReference frame : ICRF\n*******************************************************************************\n            JDTDB,            Calendar Date (TDB),                      X,                      Y,                      Z,                     VX,                     VY,                     VZ,\n**************************************************************************************************************************************************************************************************\n"
         },
         {
           "url": "https://ssd.jpl.nasa.gov/api/horizons.api",
@@ -67,8 +68,8 @@
             "CSV_FORMAT": "YES",
             "TLIST": "'2461308.097946092486 2461308.429934217129 2461308.541843719780 2461308.873831844423 2461308.985741347075 2461309.317729471717 2461309.429638962727 2461309.761627087370 2461309.873536590021 2461310.205524714664 2461310.317434217315 2461310.761331844609 2461311.205229471903 2461311.649127087556 2461312.093024714850 2488434.500789165031'"
           },
-          "sha256": "dd01e704a8c638c1ed73a6463ddec8d7173f3e682dc6c81aa62137f0349e5570",
-          "header": "*******************************************************************************\n Revised: Mar 12, 2021             Io  / (Jupiter)                          501\n\n SATELLITE PHYSICAL PROPERTIES:\n  Mean radius (km)       = 1821.49           Density (g cm^-3) = 3.528 +- 0.006\n  GM (km^3/s^2)          = 5959.9155+- 0.004 Geometric Albedo  = 0.63  +- 0.02\n\n SATELLITE ORBIT (at J2000.0 epoch, 2000-Jan-1.5):\n  Semi-major axis, a (km)~ 422,000           Orbital period    ~ 1.77 d\n  Eccentricity, e        ~ 0.00472           Rotational period = Synchronous\n  Inclination, i  (deg)  ~ 0.0375\n*******************************************************************************\n\n\n*******************************************************************************\nEphemeris / API_USER Wed Sep 16 05:29:53 2026 Pasadena, USA      / Horizons\n*******************************************************************************\nTarget body name: Io (501)                        {source: jup365_merged}\nCenter body name: Sun (10)                        {source: jup365_merged}\nCenter-site name: BODY CENTER\n*******************************************************************************\nStart time      : A.D. 2026-Sep-24 14:21:02.5424 TDB\nStop  time      : A.D. 2101-Jan-01 00:01:08.1839 TDB\nStep-size       : DISCRETE TIME-LIST\n*******************************************************************************\nCenter geodetic : 0.0, 0.0, 0.0                   {E-lon(deg),Lat(deg),Alt(km)}\nCenter cylindric: 0.0, 0.0, 0.0                   {E-lon(deg),Dxy(km),Dz(km)}\nCenter radii    : 695700.0, 695700.0, 695700.0 km {Equator_a, b, pole_c}\nOutput units    : KM-S\nCalendar mode   : Mixed Julian/Gregorian\nOutput type     : GEOMETRIC cartesian states\nOutput format   : 2 (position and velocity)\nReference frame : ICRF\n*******************************************************************************\n            JDTDB,            Calendar Date (TDB),                      X,                      Y,                      Z,                     VX,                     VY,                     VZ,\n**************************************************************************************************************************************************************************************************\n"
+          "sha256": "b542a4de74a9adce6ec375c8aa878e8f6b67e0897a7d0e14e009bcc869a1d943",
+          "header": "*******************************************************************************\n Revised: Mar 12, 2021             Io  / (Jupiter)                          501\n\n SATELLITE PHYSICAL PROPERTIES:\n  Mean radius (km)       = 1821.49           Density (g cm^-3) = 3.528 +- 0.006\n  GM (km^3/s^2)          = 5959.9155+- 0.004 Geometric Albedo  = 0.63  +- 0.02\n\n SATELLITE ORBIT (at J2000.0 epoch, 2000-Jan-1.5):\n  Semi-major axis, a (km)~ 422,000           Orbital period    ~ 1.77 d\n  Eccentricity, e        ~ 0.00472           Rotational period = Synchronous\n  Inclination, i  (deg)  ~ 0.0375\n*******************************************************************************\n\n\n*******************************************************************************\nEphemeris / API_USER Sat Sep 26 19:10:10 2026 Pasadena, USA      / Horizons\n*******************************************************************************\nTarget body name: Io (501)                        {source: jup365_merged}\nCenter body name: Sun (10)                        {source: jup365_merged}\nCenter-site name: BODY CENTER\n*******************************************************************************\nStart time      : A.D. 2026-Sep-24 14:21:02.5424 TDB\nStop  time      : A.D. 2101-Jan-01 00:01:08.1839 TDB\nStep-size       : DISCRETE TIME-LIST\n*******************************************************************************\nCenter geodetic : 0.0, 0.0, 0.0                   {E-lon(deg),Lat(deg),Alt(km)}\nCenter cylindric: 0.0, 0.0, 0.0                   {E-lon(deg),Dxy(km),Dz(km)}\nCenter radii    : 695700.0, 695700.0, 695700.0 km {Equator_a, b, pole_c}\nOutput units    : KM-S\nCalendar mode   : Mixed Julian/Gregorian\nOutput type     : GEOMETRIC cartesian states\nOutput format   : 2 (position and velocity)\nReference frame : ICRF\n*******************************************************************************\n            JDTDB,            Calendar Date (TDB),                      X,                      Y,                      Z,                     VX,                     VY,                     VZ,\n**************************************************************************************************************************************************************************************************\n"
         }
       ]
     },
@@ -91,8 +92,8 @@
             "CSV_FORMAT": "YES",
             "TLIST": "'2415020.499968067277 2415385.499972161371 2441165.208816804923 2451545.000742869452 2461296.000800723210 2461296.221942968201 2461296.443085213657 2461296.444698338863 2461296.664227470756 2461296.885369716212 2461296.888595966157 2461297.106511972845 2461297.327654218301 2461297.332493593451 2461297.368127111811 2461297.548796463758 2461297.589269357268 2461297.769938720390 2461297.776391220745 2461297.810411602259 2461297.888300722931 2461297.991080965847 2461298.031553859357 2461298.212223222945 2461298.220288847573 2461298.252696104813 2461298.332198338583 2461298.433365467936 2461298.473838361446 2461298.654507713392 2461298.664186463691 2461298.694980606902 2461298.776095965877 2461298.875649970490 2461298.916122852359 2461299.096792215947 2461299.108084090520 2461299.137265109457 2461299.219993593171 2461299.317934472580 2461299.358407354448 2461299.539076718036 2461299.551981717814 2461299.579549611546 2461299.663891220465 2461299.760218963493 2461299.800691857003 2461299.981361220125 2461299.995879345108 2461300.021834101994 2461300.107788847759 2461300.202503465582 2461300.242976359092 2461300.423645722680 2461300.439776972402 2461300.464118604548 2461300.551686463412 2461300.644787967671 2461300.685260861181 2461300.865930213127'"
           },
-          "sha256": "ae03fc077ff7d168db1381f98bf396f0cb480bf671993a386764d3a6f61d140b",
-          "header": "*******************************************************************************\n Revised: Mar 12, 2021           Europa / (Jupiter)                         502\n\n SATELLITE PHYSICAL PROPERTIES:\n  Mean radius (km)       = 1560.8   +- 0.3    Density (g cm^-3)= 3.013 +- 0.005\n  GM   (km^3/s^2)        = 3202.7121+- 0.0054 Geometric Albedo = 0.67 +/- 0.03  \n\n SATELLITE ORBIT (at J2000.0 epoch, 2000-Jan-1.5):\n  Semi-major axis, a (km) ~ 671,000           Orbital period   ~ 3.55 d\n  Eccentricity, e         ~ 0.00981        Rotational period   = Synchronous\n  Inclination, i  (deg)   ~ 0.462\n*******************************************************************************\n\n\n*******************************************************************************\nEphemeris / API_USER Wed Sep 16 05:29:54 2026 Pasadena, USA      / Horizons\n*******************************************************************************\nTarget body name: Europa (502)                    {source: jup365_merged}\nCenter body name: Sun (10)                        {source: jup365_merged}\nCenter-site name: BODY CENTER\n*******************************************************************************\nStart time      : A.D. 1899-Dec-31 23:59:57.2410 TDB\nStop  time      : A.D. 2026-Sep-17 08:46:56.3704 TDB\nStep-size       : DISCRETE TIME-LIST\n*******************************************************************************\nCenter geodetic : 0.0, 0.0, 0.0                   {E-lon(deg),Lat(deg),Alt(km)}\nCenter cylindric: 0.0, 0.0, 0.0                   {E-lon(deg),Dxy(km),Dz(km)}\nCenter radii    : 695700.0, 695700.0, 695700.0 km {Equator_a, b, pole_c}\nOutput units    : KM-S\nCalendar mode   : Mixed Julian/Gregorian\nOutput type     : GEOMETRIC cartesian states\nOutput format   : 2 (position and velocity)\nReference frame : ICRF\n*******************************************************************************\n            JDTDB,            Calendar Date (TDB),                      X,                      Y,                      Z,                     VX,                     VY,                     VZ,\n**************************************************************************************************************************************************************************************************\n"
+          "sha256": "d8858d0e22e05ce8b0d8c651d96eb46694a49fe1c6a793448f197ad9ed49942c",
+          "header": "*******************************************************************************\n Revised: Mar 12, 2021           Europa / (Jupiter)                         502\n\n SATELLITE PHYSICAL PROPERTIES:\n  Mean radius (km)       = 1560.8   +- 0.3    Density (g cm^-3)= 3.013 +- 0.005\n  GM   (km^3/s^2)        = 3202.7121+- 0.0054 Geometric Albedo = 0.67 +/- 0.03  \n\n SATELLITE ORBIT (at J2000.0 epoch, 2000-Jan-1.5):\n  Semi-major axis, a (km) ~ 671,000           Orbital period   ~ 3.55 d\n  Eccentricity, e         ~ 0.00981        Rotational period   = Synchronous\n  Inclination, i  (deg)   ~ 0.462\n*******************************************************************************\n\n\n*******************************************************************************\nEphemeris / API_USER Sat Sep 26 19:10:11 2026 Pasadena, USA      / Horizons\n*******************************************************************************\nTarget body name: Europa (502)                    {source: jup365_merged}\nCenter body name: Sun (10)                        {source: jup365_merged}\nCenter-site name: BODY CENTER\n*******************************************************************************\nStart time      : A.D. 1899-Dec-31 23:59:57.2410 TDB\nStop  time      : A.D. 2026-Sep-17 08:46:56.3704 TDB\nStep-size       : DISCRETE TIME-LIST\n*******************************************************************************\nCenter geodetic : 0.0, 0.0, 0.0                   {E-lon(deg),Lat(deg),Alt(km)}\nCenter cylindric: 0.0, 0.0, 0.0                   {E-lon(deg),Dxy(km),Dz(km)}\nCenter radii    : 695700.0, 695700.0, 695700.0 km {Equator_a, b, pole_c}\nOutput units    : KM-S\nCalendar mode   : Mixed Julian/Gregorian\nOutput type     : GEOMETRIC cartesian states\nOutput format   : 2 (position and velocity)\nReference frame : ICRF\n*******************************************************************************\n            JDTDB,            Calendar Date (TDB),                      X,                      Y,                      Z,                     VX,                     VY,                     VZ,\n**************************************************************************************************************************************************************************************************\n"
         },
         {
           "url": "https://ssd.jpl.nasa.gov/api/horizons.api",
@@ -111,8 +112,8 @@
             "CSV_FORMAT": "YES",
             "TLIST": "'2461300.883674588054 2461300.906403106637 2461300.995584090706 2461301.087072470225 2461301.127545352094 2461301.308214715682 2461301.327572215348 2461301.348687609192 2461301.439481718000 2461301.529356972314 2461301.569829854183 2461301.750499217771 2461301.771469842643 2461301.790972111281 2461301.883379345294 2461301.971641463228 2461302.012114356738 2461302.192783719860 2461302.215367469937 2461302.233256602194 2461302.327276972588 2461302.413925965317 2461302.454398858827 2461302.635068222415 2461302.659265097231 2461302.675541104283 2461302.771174588241 2461302.856210467871 2461302.896683361381 2461303.077352712862 2461303.103162712883 2461303.117825606372 2461303.215072215535 2461303.338967851829 2461303.547060340177 2461303.560110108927 2461303.658969842829 2461303.781252354383 2461303.990957967471 2461304.002394611016 2461304.102867469657 2461304.223536856472 2461304.434855594765 2461304.444679101929 2461304.546765096951 2461304.878753222059 2461304.990662713069 2461305.322650837712 2461305.434560340364 2461305.766548465006 2461305.878457967658 2461306.210446092300 2461306.322355594486 2461306.654343719594 2461306.766253221780 2461307.098241346888 2461307.210150837898 2461307.542138962541 2461307.654048465192 2461307.986036589835'"
           },
-          "sha256": "9f097c3a19c78ffe0692c975824a9d2895807dd88e872752ba583b56308bb29d",
-          "header": "*******************************************************************************\n Revised: Mar 12, 2021           Europa / (Jupiter)                         502\n\n SATELLITE PHYSICAL PROPERTIES:\n  Mean radius (km)       = 1560.8   +- 0.3    Density (g cm^-3)= 3.013 +- 0.005\n  GM   (km^3/s^2)        = 3202.7121+- 0.0054 Geometric Albedo = 0.67 +/- 0.03  \n\n SATELLITE ORBIT (at J2000.0 epoch, 2000-Jan-1.5):\n  Semi-major axis, a (km) ~ 671,000           Orbital period   ~ 3.55 d\n  Eccentricity, e         ~ 0.00981        Rotational period   = Synchronous\n  Inclination, i  (deg)   ~ 0.462\n*******************************************************************************\n\n\n*******************************************************************************\nEphemeris / API_USER Wed Sep 16 05:29:55 2026 Pasadena, USA      / Horizons\n*******************************************************************************\nTarget body name: Europa (502)                    {source: jup365_merged}\nCenter body name: Sun (10)                        {source: jup365_merged}\nCenter-site name: BODY CENTER\n*******************************************************************************\nStart time      : A.D. 2026-Sep-17 09:12:29.4844 TDB\nStop  time      : A.D. 2026-Sep-24 11:39:53.5614 TDB\nStep-size       : DISCRETE TIME-LIST\n*******************************************************************************\nCenter geodetic : 0.0, 0.0, 0.0                   {E-lon(deg),Lat(deg),Alt(km)}\nCenter cylindric: 0.0, 0.0, 0.0                   {E-lon(deg),Dxy(km),Dz(km)}\nCenter radii    : 695700.0, 695700.0, 695700.0 km {Equator_a, b, pole_c}\nOutput units    : KM-S\nCalendar mode   : Mixed Julian/Gregorian\nOutput type     : GEOMETRIC cartesian states\nOutput format   : 2 (position and velocity)\nReference frame : ICRF\n*******************************************************************************\n            JDTDB,            Calendar Date (TDB),                      X,                      Y,                      Z,                     VX,                     VY,                     VZ,\n**************************************************************************************************************************************************************************************************\n"
+          "sha256": "6b531a2842c2eeb2c0f950132117b02f9402e729cf662e3a33a16fc6298eb84d",
+          "header": "*******************************************************************************\n Revised: Mar 12, 2021           Europa / (Jupiter)                         502\n\n SATELLITE PHYSICAL PROPERTIES:\n  Mean radius (km)       = 1560.8   +- 0.3    Density (g cm^-3)= 3.013 +- 0.005\n  GM   (km^3/s^2)        = 3202.7121+- 0.0054 Geometric Albedo = 0.67 +/- 0.03  \n\n SATELLITE ORBIT (at J2000.0 epoch, 2000-Jan-1.5):\n  Semi-major axis, a (km) ~ 671,000           Orbital period   ~ 3.55 d\n  Eccentricity, e         ~ 0.00981        Rotational period   = Synchronous\n  Inclination, i  (deg)   ~ 0.462\n*******************************************************************************\n\n\n*******************************************************************************\nEphemeris / API_USER Sat Sep 26 19:10:12 2026 Pasadena, USA      / Horizons\n*******************************************************************************\nTarget body name: Europa (502)                    {source: jup365_merged}\nCenter body name: Sun (10)                        {source: jup365_merged}\nCenter-site name: BODY CENTER\n*******************************************************************************\nStart time      : A.D. 2026-Sep-17 09:12:29.4844 TDB\nStop  time      : A.D. 2026-Sep-24 11:39:53.5614 TDB\nStep-size       : DISCRETE TIME-LIST\n*******************************************************************************\nCenter geodetic : 0.0, 0.0, 0.0                   {E-lon(deg),Lat(deg),Alt(km)}\nCenter cylindric: 0.0, 0.0, 0.0                   {E-lon(deg),Dxy(km),Dz(km)}\nCenter radii    : 695700.0, 695700.0, 695700.0 km {Equator_a, b, pole_c}\nOutput units    : KM-S\nCalendar mode   : Mixed Julian/Gregorian\nOutput type     : GEOMETRIC cartesian states\nOutput format   : 2 (position and velocity)\nReference frame : ICRF\n*******************************************************************************\n            JDTDB,            Calendar Date (TDB),                      X,                      Y,                      Z,                     VX,                     VY,                     VZ,\n**************************************************************************************************************************************************************************************************\n"
         },
         {
           "url": "https://ssd.jpl.nasa.gov/api/horizons.api",
@@ -131,8 +132,8 @@
             "CSV_FORMAT": "YES",
             "TLIST": "'2461308.097946092486 2461308.429934217129 2461308.541843719780 2461308.873831844423 2461308.985741347075 2461309.317729471717 2461309.429638962727 2461309.761627087370 2461309.873536590021 2461310.205524714664 2461310.317434217315 2461310.761331844609 2461311.205229471903 2461311.649127087556 2461312.093024714850 2488434.500789165031'"
           },
-          "sha256": "d8ca3c8d2e98bcb594d1a096918d323a556d5827df90dd90897074fee9df8f7d",
-          "header": "*******************************************************************************\n Revised: Mar 12, 2021           Europa / (Jupiter)                         502\n\n SATELLITE PHYSICAL PROPERTIES:\n  Mean radius (km)       = 1560.8   +- 0.3    Density (g cm^-3)= 3.013 +- 0.005\n  GM   (km^3/s^2)        = 3202.7121+- 0.0054 Geometric Albedo = 0.67 +/- 0.03  \n\n SATELLITE ORBIT (at J2000.0 epoch, 2000-Jan-1.5):\n  Semi-major axis, a (km) ~ 671,000           Orbital period   ~ 3.55 d\n  Eccentricity, e         ~ 0.00981        Rotational period   = Synchronous\n  Inclination, i  (deg)   ~ 0.462\n*******************************************************************************\n\n\n*******************************************************************************\nEphemeris / API_USER Wed Sep 16 05:29:56 2026 Pasadena, USA      / Horizons\n*******************************************************************************\nTarget body name: Europa (502)                    {source: jup365_merged}\nCenter body name: Sun (10)                        {source: jup365_merged}\nCenter-site name: BODY CENTER\n*******************************************************************************\nStart time      : A.D. 2026-Sep-24 14:21:02.5424 TDB\nStop  time      : A.D. 2101-Jan-01 00:01:08.1839 TDB\nStep-size       : DISCRETE TIME-LIST\n*******************************************************************************\nCenter geodetic : 0.0, 0.0, 0.0                   {E-lon(deg),Lat(deg),Alt(km)}\nCenter cylindric: 0.0, 0.0, 0.0                   {E-lon(deg),Dxy(km),Dz(km)}\nCenter radii    : 695700.0, 695700.0, 695700.0 km {Equator_a, b, pole_c}\nOutput units    : KM-S\nCalendar mode   : Mixed Julian/Gregorian\nOutput type     : GEOMETRIC cartesian states\nOutput format   : 2 (position and velocity)\nReference frame : ICRF\n*******************************************************************************\n            JDTDB,            Calendar Date (TDB),                      X,                      Y,                      Z,                     VX,                     VY,                     VZ,\n**************************************************************************************************************************************************************************************************\n"
+          "sha256": "4427ed79df0e6f424e3c2f281e44423236baa7804b585de74f0afe1e76053697",
+          "header": "*******************************************************************************\n Revised: Mar 12, 2021           Europa / (Jupiter)                         502\n\n SATELLITE PHYSICAL PROPERTIES:\n  Mean radius (km)       = 1560.8   +- 0.3    Density (g cm^-3)= 3.013 +- 0.005\n  GM   (km^3/s^2)        = 3202.7121+- 0.0054 Geometric Albedo = 0.67 +/- 0.03  \n\n SATELLITE ORBIT (at J2000.0 epoch, 2000-Jan-1.5):\n  Semi-major axis, a (km) ~ 671,000           Orbital period   ~ 3.55 d\n  Eccentricity, e         ~ 0.00981        Rotational period   = Synchronous\n  Inclination, i  (deg)   ~ 0.462\n*******************************************************************************\n\n\n*******************************************************************************\nEphemeris / API_USER Sat Sep 26 19:10:13 2026 Pasadena, USA      / Horizons\n*******************************************************************************\nTarget body name: Europa (502)                    {source: jup365_merged}\nCenter body name: Sun (10)                        {source: jup365_merged}\nCenter-site name: BODY CENTER\n*******************************************************************************\nStart time      : A.D. 2026-Sep-24 14:21:02.5424 TDB\nStop  time      : A.D. 2101-Jan-01 00:01:08.1839 TDB\nStep-size       : DISCRETE TIME-LIST\n*******************************************************************************\nCenter geodetic : 0.0, 0.0, 0.0                   {E-lon(deg),Lat(deg),Alt(km)}\nCenter cylindric: 0.0, 0.0, 0.0                   {E-lon(deg),Dxy(km),Dz(km)}\nCenter radii    : 695700.0, 695700.0, 695700.0 km {Equator_a, b, pole_c}\nOutput units    : KM-S\nCalendar mode   : Mixed Julian/Gregorian\nOutput type     : GEOMETRIC cartesian states\nOutput format   : 2 (position and velocity)\nReference frame : ICRF\n*******************************************************************************\n            JDTDB,            Calendar Date (TDB),                      X,                      Y,                      Z,                     VX,                     VY,                     VZ,\n**************************************************************************************************************************************************************************************************\n"
         }
       ]
     },
@@ -155,8 +156,8 @@
             "CSV_FORMAT": "YES",
             "TLIST": "'2415020.499968067277 2415385.499972161371 2441165.208816804923 2451545.000742869452 2461296.000800723210 2461296.221942968201 2461296.443085213657 2461296.444698338863 2461296.664227470756 2461296.885369716212 2461296.888595966157 2461297.106511972845 2461297.327654218301 2461297.332493593451 2461297.368127111811 2461297.548796463758 2461297.589269357268 2461297.769938720390 2461297.776391220745 2461297.810411602259 2461297.888300722931 2461297.991080965847 2461298.031553859357 2461298.212223222945 2461298.220288847573 2461298.252696104813 2461298.332198338583 2461298.433365467936 2461298.473838361446 2461298.654507713392 2461298.664186463691 2461298.694980606902 2461298.776095965877 2461298.875649970490 2461298.916122852359 2461299.096792215947 2461299.108084090520 2461299.137265109457 2461299.219993593171 2461299.317934472580 2461299.358407354448 2461299.539076718036 2461299.551981717814 2461299.579549611546 2461299.663891220465 2461299.760218963493 2461299.800691857003 2461299.981361220125 2461299.995879345108 2461300.021834101994 2461300.107788847759 2461300.202503465582 2461300.242976359092 2461300.423645722680 2461300.439776972402 2461300.464118604548 2461300.551686463412 2461300.644787967671 2461300.685260861181 2461300.865930213127'"
           },
-          "sha256": "4869a2aea468fa0de48b1c3bd3e7eddb440ffe4a62357854bd152002ce774706",
-          "header": "*******************************************************************************\n Revised: April 12, 2021               Jupiter                              599\n \n PHYSICAL DATA (revised 2025-Jan-30):\n  Mass x 10^26 (kg)     = 18.9819           Density (g/cm^3)  = 1.3262 +- .0003\n  Equat. radius (1 bar) = 71492+-4 km       Polar radius (km)     = 66854+-10\n  Vol. Mean Radius (km) = 69911+-6          Flattening            = 0.06487\n  Geometric Albedo      = 0.52              Rocky core mass (Mc/M)= 0.0261\n  Sid. rot. period (III)= 9h 55m 29.711 s   Sid. rot. rate (rad/s)= 0.00017585\n  Mean solar day, hrs   = ~9.9259         \n  GM (km^3/s^2)         = 126686531.900     GM 1-sigma (km^3/s^2) =  +- 1.2732\n  Equ. grav, ge (m/s^2) = 24.79             Pol. grav, gp (m/s^2) =  28.34\n  Vis. magnitude V(1,0) = -9.40\n  Vis. mag. (opposition)= -2.70             Obliquity to orbit    =  3.13 deg\n  Sidereal orbit period = 11.861982204 y    Sidereal orbit period = 4332.589 d\n  Mean daily motion     = 0.0831294 deg/d   Mean orbit speed, km/s= 13.0697\n  Atmos. temp. (1 bar)  = 165+-5 K          Escape speed, km/s    =  59.5           \n  A_roche(ice)/Rp       =  2.76             Hill's sphere rad. Rp = 740\n                                 Perihelion   Aphelion     Mean\n  Solar Constant (W/m^2)         56           46           51\n  Maximum Planetary IR (W/m^2)   13.7         13.4         13.6\n  Minimum Planetary IR (W/m^2)   13.7         13.4         13.6\n*******************************************************************************\n\n\n*******************************************************************************\nEphemeris / API_USER Wed Sep 16 05:29:57 2026 Pasadena, USA      / Horizons\n*******************************************************************************\nTarget body name: Jupiter (599)                   {source: jup365_merged}\nCenter body name: Sun (10)                        {source: jup365_merged}\nCenter-site name: BODY CENTER\n*******************************************************************************\nStart time      : A.D. 1899-Dec-31 23:59:57.2410 TDB\nStop  time      : A.D. 2026-Sep-17 08:46:56.3704 TDB\nStep-size       : DISCRETE TIME-LIST\n*******************************************************************************\nCenter geodetic : 0.0, 0.0, 0.0                   {E-lon(deg),Lat(deg),Alt(km)}\nCenter cylindric: 0.0, 0.0, 0.0                   {E-lon(deg),Dxy(km),Dz(km)}\nCenter radii    : 695700.0, 695700.0, 695700.0 km {Equator_a, b, pole_c}\nOutput units    : KM-S\nCalendar mode   : Mixed Julian/Gregorian\nOutput type     : GEOMETRIC cartesian states\nOutput format   : 2 (position and velocity)\nReference frame : ICRF\n*******************************************************************************\n            JDTDB,            Calendar Date (TDB),                      X,                      Y,                      Z,                     VX,                     VY,                     VZ,\n**************************************************************************************************************************************************************************************************\n"
+          "sha256": "af45f5a117792d9b46beda92fc4eb1928719cd6a75b47cc069e3ede19fed4fd9",
+          "header": "*******************************************************************************\n Revised: April 12, 2021               Jupiter                              599\n \n PHYSICAL DATA (revised 2025-Jan-30):\n  Mass x 10^26 (kg)     = 18.9819           Density (g/cm^3)  = 1.3262 +- .0003\n  Equat. radius (1 bar) = 71492+-4 km       Polar radius (km)     = 66854+-10\n  Vol. Mean Radius (km) = 69911+-6          Flattening            = 0.06487\n  Geometric Albedo      = 0.52              Rocky core mass (Mc/M)= 0.0261\n  Sid. rot. period (III)= 9h 55m 29.711 s   Sid. rot. rate (rad/s)= 0.00017585\n  Mean solar day, hrs   = ~9.9259         \n  GM (km^3/s^2)         = 126686531.900     GM 1-sigma (km^3/s^2) =  +- 1.2732\n  Equ. grav, ge (m/s^2) = 24.79             Pol. grav, gp (m/s^2) =  28.34\n  Vis. magnitude V(1,0) = -9.40\n  Vis. mag. (opposition)= -2.70             Obliquity to orbit    =  3.13 deg\n  Sidereal orbit period = 11.861982204 y    Sidereal orbit period = 4332.589 d\n  Mean daily motion     = 0.0831294 deg/d   Mean orbit speed, km/s= 13.0697\n  Atmos. temp. (1 bar)  = 165+-5 K          Escape speed, km/s    =  59.5           \n  A_roche(ice)/Rp       =  2.76             Hill's sphere rad. Rp = 740\n                                 Perihelion   Aphelion     Mean\n  Solar Constant (W/m^2)         56           46           51\n  Maximum Planetary IR (W/m^2)   13.7         13.4         13.6\n  Minimum Planetary IR (W/m^2)   13.7         13.4         13.6\n*******************************************************************************\n\n\n*******************************************************************************\nEphemeris / API_USER Sat Sep 26 19:10:14 2026 Pasadena, USA      / Horizons\n*******************************************************************************\nTarget body name: Jupiter (599)                   {source: jup365_merged}\nCenter body name: Sun (10)                        {source: jup365_merged}\nCenter-site name: BODY CENTER\n*******************************************************************************\nStart time      : A.D. 1899-Dec-31 23:59:57.2410 TDB\nStop  time      : A.D. 2026-Sep-17 08:46:56.3704 TDB\nStep-size       : DISCRETE TIME-LIST\n*******************************************************************************\nCenter geodetic : 0.0, 0.0, 0.0                   {E-lon(deg),Lat(deg),Alt(km)}\nCenter cylindric: 0.0, 0.0, 0.0                   {E-lon(deg),Dxy(km),Dz(km)}\nCenter radii    : 695700.0, 695700.0, 695700.0 km {Equator_a, b, pole_c}\nOutput units    : KM-S\nCalendar mode   : Mixed Julian/Gregorian\nOutput type     : GEOMETRIC cartesian states\nOutput format   : 2 (position and velocity)\nReference frame : ICRF\n*******************************************************************************\n            JDTDB,            Calendar Date (TDB),                      X,                      Y,                      Z,                     VX,                     VY,                     VZ,\n**************************************************************************************************************************************************************************************************\n"
         },
         {
           "url": "https://ssd.jpl.nasa.gov/api/horizons.api",
@@ -175,8 +176,8 @@
             "CSV_FORMAT": "YES",
             "TLIST": "'2461300.883674588054 2461300.906403106637 2461300.995584090706 2461301.087072470225 2461301.127545352094 2461301.308214715682 2461301.327572215348 2461301.348687609192 2461301.439481718000 2461301.529356972314 2461301.569829854183 2461301.750499217771 2461301.771469842643 2461301.790972111281 2461301.883379345294 2461301.971641463228 2461302.012114356738 2461302.192783719860 2461302.215367469937 2461302.233256602194 2461302.327276972588 2461302.413925965317 2461302.454398858827 2461302.635068222415 2461302.659265097231 2461302.675541104283 2461302.771174588241 2461302.856210467871 2461302.896683361381 2461303.077352712862 2461303.103162712883 2461303.117825606372 2461303.215072215535 2461303.338967851829 2461303.547060340177 2461303.560110108927 2461303.658969842829 2461303.781252354383 2461303.990957967471 2461304.002394611016 2461304.102867469657 2461304.223536856472 2461304.434855594765 2461304.444679101929 2461304.546765096951 2461304.878753222059 2461304.990662713069 2461305.322650837712 2461305.434560340364 2461305.766548465006 2461305.878457967658 2461306.210446092300 2461306.322355594486 2461306.654343719594 2461306.766253221780 2461307.098241346888 2461307.210150837898 2461307.542138962541 2461307.654048465192 2461307.986036589835'"
           },
-          "sha256": "6aa5addb09c3e792a6e8d3b6a2588313249966e54f0eabb5aacccbd85bbe7f9a",
-          "header": "*******************************************************************************\n Revised: April 12, 2021               Jupiter                              599\n \n PHYSICAL DATA (revised 2025-Jan-30):\n  Mass x 10^26 (kg)     = 18.9819           Density (g/cm^3)  = 1.3262 +- .0003\n  Equat. radius (1 bar) = 71492+-4 km       Polar radius (km)     = 66854+-10\n  Vol. Mean Radius (km) = 69911+-6          Flattening            = 0.06487\n  Geometric Albedo      = 0.52              Rocky core mass (Mc/M)= 0.0261\n  Sid. rot. period (III)= 9h 55m 29.711 s   Sid. rot. rate (rad/s)= 0.00017585\n  Mean solar day, hrs   = ~9.9259         \n  GM (km^3/s^2)         = 126686531.900     GM 1-sigma (km^3/s^2) =  +- 1.2732\n  Equ. grav, ge (m/s^2) = 24.79             Pol. grav, gp (m/s^2) =  28.34\n  Vis. magnitude V(1,0) = -9.40\n  Vis. mag. (opposition)= -2.70             Obliquity to orbit    =  3.13 deg\n  Sidereal orbit period = 11.861982204 y    Sidereal orbit period = 4332.589 d\n  Mean daily motion     = 0.0831294 deg/d   Mean orbit speed, km/s= 13.0697\n  Atmos. temp. (1 bar)  = 165+-5 K          Escape speed, km/s    =  59.5           \n  A_roche(ice)/Rp       =  2.76             Hill's sphere rad. Rp = 740\n                                 Perihelion   Aphelion     Mean\n  Solar Constant (W/m^2)         56           46           51\n  Maximum Planetary IR (W/m^2)   13.7         13.4         13.6\n  Minimum Planetary IR (W/m^2)   13.7         13.4         13.6\n*******************************************************************************\n\n\n*******************************************************************************\nEphemeris / API_USER Wed Sep 16 05:29:58 2026 Pasadena, USA      / Horizons\n*******************************************************************************\nTarget body name: Jupiter (599)                   {source: jup365_merged}\nCenter body name: Sun (10)                        {source: jup365_merged}\nCenter-site name: BODY CENTER\n*******************************************************************************\nStart time      : A.D. 2026-Sep-17 09:12:29.4844 TDB\nStop  time      : A.D. 2026-Sep-24 11:39:53.5614 TDB\nStep-size       : DISCRETE TIME-LIST\n*******************************************************************************\nCenter geodetic : 0.0, 0.0, 0.0                   {E-lon(deg),Lat(deg),Alt(km)}\nCenter cylindric: 0.0, 0.0, 0.0                   {E-lon(deg),Dxy(km),Dz(km)}\nCenter radii    : 695700.0, 695700.0, 695700.0 km {Equator_a, b, pole_c}\nOutput units    : KM-S\nCalendar mode   : Mixed Julian/Gregorian\nOutput type     : GEOMETRIC cartesian states\nOutput format   : 2 (position and velocity)\nReference frame : ICRF\n*******************************************************************************\n            JDTDB,            Calendar Date (TDB),                      X,                      Y,                      Z,                     VX,                     VY,                     VZ,\n**************************************************************************************************************************************************************************************************\n"
+          "sha256": "980c1196aad3129d1d15516a5d3052ec652691c500e39e783ff0ab0bcef50c8b",
+          "header": "*******************************************************************************\n Revised: April 12, 2021               Jupiter                              599\n \n PHYSICAL DATA (revised 2025-Jan-30):\n  Mass x 10^26 (kg)     = 18.9819           Density (g/cm^3)  = 1.3262 +- .0003\n  Equat. radius (1 bar) = 71492+-4 km       Polar radius (km)     = 66854+-10\n  Vol. Mean Radius (km) = 69911+-6          Flattening            = 0.06487\n  Geometric Albedo      = 0.52              Rocky core mass (Mc/M)= 0.0261\n  Sid. rot. period (III)= 9h 55m 29.711 s   Sid. rot. rate (rad/s)= 0.00017585\n  Mean solar day, hrs   = ~9.9259         \n  GM (km^3/s^2)         = 126686531.900     GM 1-sigma (km^3/s^2) =  +- 1.2732\n  Equ. grav, ge (m/s^2) = 24.79             Pol. grav, gp (m/s^2) =  28.34\n  Vis. magnitude V(1,0) = -9.40\n  Vis. mag. (opposition)= -2.70             Obliquity to orbit    =  3.13 deg\n  Sidereal orbit period = 11.861982204 y    Sidereal orbit period = 4332.589 d\n  Mean daily motion     = 0.0831294 deg/d   Mean orbit speed, km/s= 13.0697\n  Atmos. temp. (1 bar)  = 165+-5 K          Escape speed, km/s    =  59.5           \n  A_roche(ice)/Rp       =  2.76             Hill's sphere rad. Rp = 740\n                                 Perihelion   Aphelion     Mean\n  Solar Constant (W/m^2)         56           46           51\n  Maximum Planetary IR (W/m^2)   13.7         13.4         13.6\n  Minimum Planetary IR (W/m^2)   13.7         13.4         13.6\n*******************************************************************************\n\n\n*******************************************************************************\nEphemeris / API_USER Sat Sep 26 19:10:16 2026 Pasadena, USA      / Horizons\n*******************************************************************************\nTarget body name: Jupiter (599)                   {source: jup365_merged}\nCenter body name: Sun (10)                        {source: jup365_merged}\nCenter-site name: BODY CENTER\n*******************************************************************************\nStart time      : A.D. 2026-Sep-17 09:12:29.4844 TDB\nStop  time      : A.D. 2026-Sep-24 11:39:53.5614 TDB\nStep-size       : DISCRETE TIME-LIST\n*******************************************************************************\nCenter geodetic : 0.0, 0.0, 0.0                   {E-lon(deg),Lat(deg),Alt(km)}\nCenter cylindric: 0.0, 0.0, 0.0                   {E-lon(deg),Dxy(km),Dz(km)}\nCenter radii    : 695700.0, 695700.0, 695700.0 km {Equator_a, b, pole_c}\nOutput units    : KM-S\nCalendar mode   : Mixed Julian/Gregorian\nOutput type     : GEOMETRIC cartesian states\nOutput format   : 2 (position and velocity)\nReference frame : ICRF\n*******************************************************************************\n            JDTDB,            Calendar Date (TDB),                      X,                      Y,                      Z,                     VX,                     VY,                     VZ,\n**************************************************************************************************************************************************************************************************\n"
         },
         {
           "url": "https://ssd.jpl.nasa.gov/api/horizons.api",
@@ -195,8 +196,8 @@
             "CSV_FORMAT": "YES",
             "TLIST": "'2461308.097946092486 2461308.429934217129 2461308.541843719780 2461308.873831844423 2461308.985741347075 2461309.317729471717 2461309.429638962727 2461309.761627087370 2461309.873536590021 2461310.205524714664 2461310.317434217315 2461310.761331844609 2461311.205229471903 2461311.649127087556 2461312.093024714850 2488434.500789165031'"
           },
-          "sha256": "457d3f8f7063ebe66309a4c6586d751ac532395e01e125a93fec62917a0d5de0",
-          "header": "*******************************************************************************\n Revised: April 12, 2021               Jupiter                              599\n \n PHYSICAL DATA (revised 2025-Jan-30):\n  Mass x 10^26 (kg)     = 18.9819           Density (g/cm^3)  = 1.3262 +- .0003\n  Equat. radius (1 bar) = 71492+-4 km       Polar radius (km)     = 66854+-10\n  Vol. Mean Radius (km) = 69911+-6          Flattening            = 0.06487\n  Geometric Albedo      = 0.52              Rocky core mass (Mc/M)= 0.0261\n  Sid. rot. period (III)= 9h 55m 29.711 s   Sid. rot. rate (rad/s)= 0.00017585\n  Mean solar day, hrs   = ~9.9259         \n  GM (km^3/s^2)         = 126686531.900     GM 1-sigma (km^3/s^2) =  +- 1.2732\n  Equ. grav, ge (m/s^2) = 24.79             Pol. grav, gp (m/s^2) =  28.34\n  Vis. magnitude V(1,0) = -9.40\n  Vis. mag. (opposition)= -2.70             Obliquity to orbit    =  3.13 deg\n  Sidereal orbit period = 11.861982204 y    Sidereal orbit period = 4332.589 d\n  Mean daily motion     = 0.0831294 deg/d   Mean orbit speed, km/s= 13.0697\n  Atmos. temp. (1 bar)  = 165+-5 K          Escape speed, km/s    =  59.5           \n  A_roche(ice)/Rp       =  2.76             Hill's sphere rad. Rp = 740\n                                 Perihelion   Aphelion     Mean\n  Solar Constant (W/m^2)         56           46           51\n  Maximum Planetary IR (W/m^2)   13.7         13.4         13.6\n  Minimum Planetary IR (W/m^2)   13.7         13.4         13.6\n*******************************************************************************\n\n\n*******************************************************************************\nEphemeris / API_USER Wed Sep 16 05:29:59 2026 Pasadena, USA      / Horizons\n*******************************************************************************\nTarget body name: Jupiter (599)                   {source: jup365_merged}\nCenter body name: Sun (10)                        {source: jup365_merged}\nCenter-site name: BODY CENTER\n*******************************************************************************\nStart time      : A.D. 2026-Sep-24 14:21:02.5424 TDB\nStop  time      : A.D. 2101-Jan-01 00:01:08.1839 TDB\nStep-size       : DISCRETE TIME-LIST\n*******************************************************************************\nCenter geodetic : 0.0, 0.0, 0.0                   {E-lon(deg),Lat(deg),Alt(km)}\nCenter cylindric: 0.0, 0.0, 0.0                   {E-lon(deg),Dxy(km),Dz(km)}\nCenter radii    : 695700.0, 695700.0, 695700.0 km {Equator_a, b, pole_c}\nOutput units    : KM-S\nCalendar mode   : Mixed Julian/Gregorian\nOutput type     : GEOMETRIC cartesian states\nOutput format   : 2 (position and velocity)\nReference frame : ICRF\n*******************************************************************************\n            JDTDB,            Calendar Date (TDB),                      X,                      Y,                      Z,                     VX,                     VY,                     VZ,\n**************************************************************************************************************************************************************************************************\n"
+          "sha256": "3aff37d9eba6957d24d3a76a223e4e5d03b8f057e055e57e70b81e0b73d38482",
+          "header": "*******************************************************************************\n Revised: April 12, 2021               Jupiter                              599\n \n PHYSICAL DATA (revised 2025-Jan-30):\n  Mass x 10^26 (kg)     = 18.9819           Density (g/cm^3)  = 1.3262 +- .0003\n  Equat. radius (1 bar) = 71492+-4 km       Polar radius (km)     = 66854+-10\n  Vol. Mean Radius (km) = 69911+-6          Flattening            = 0.06487\n  Geometric Albedo      = 0.52              Rocky core mass (Mc/M)= 0.0261\n  Sid. rot. period (III)= 9h 55m 29.711 s   Sid. rot. rate (rad/s)= 0.00017585\n  Mean solar day, hrs   = ~9.9259         \n  GM (km^3/s^2)         = 126686531.900     GM 1-sigma (km^3/s^2) =  +- 1.2732\n  Equ. grav, ge (m/s^2) = 24.79             Pol. grav, gp (m/s^2) =  28.34\n  Vis. magnitude V(1,0) = -9.40\n  Vis. mag. (opposition)= -2.70             Obliquity to orbit    =  3.13 deg\n  Sidereal orbit period = 11.861982204 y    Sidereal orbit period = 4332.589 d\n  Mean daily motion     = 0.0831294 deg/d   Mean orbit speed, km/s= 13.0697\n  Atmos. temp. (1 bar)  = 165+-5 K          Escape speed, km/s    =  59.5           \n  A_roche(ice)/Rp       =  2.76             Hill's sphere rad. Rp = 740\n                                 Perihelion   Aphelion     Mean\n  Solar Constant (W/m^2)         56           46           51\n  Maximum Planetary IR (W/m^2)   13.7         13.4         13.6\n  Minimum Planetary IR (W/m^2)   13.7         13.4         13.6\n*******************************************************************************\n\n\n*******************************************************************************\nEphemeris / API_USER Sat Sep 26 19:10:17 2026 Pasadena, USA      / Horizons\n*******************************************************************************\nTarget body name: Jupiter (599)                   {source: jup365_merged}\nCenter body name: Sun (10)                        {source: jup365_merged}\nCenter-site name: BODY CENTER\n*******************************************************************************\nStart time      : A.D. 2026-Sep-24 14:21:02.5424 TDB\nStop  time      : A.D. 2101-Jan-01 00:01:08.1839 TDB\nStep-size       : DISCRETE TIME-LIST\n*******************************************************************************\nCenter geodetic : 0.0, 0.0, 0.0                   {E-lon(deg),Lat(deg),Alt(km)}\nCenter cylindric: 0.0, 0.0, 0.0                   {E-lon(deg),Dxy(km),Dz(km)}\nCenter radii    : 695700.0, 695700.0, 695700.0 km {Equator_a, b, pole_c}\nOutput units    : KM-S\nCalendar mode   : Mixed Julian/Gregorian\nOutput type     : GEOMETRIC cartesian states\nOutput format   : 2 (position and velocity)\nReference frame : ICRF\n*******************************************************************************\n            JDTDB,            Calendar Date (TDB),                      X,                      Y,                      Z,                     VX,                     VY,                     VZ,\n**************************************************************************************************************************************************************************************************\n"
         }
       ]
     }
@@ -5153,6 +5154,3360 @@
           "sunDirection": null
         }
       }
+    },
+    {
+      "siteId": "phobos-60e",
+      "id": "phobos",
+      "parent": "mars",
+      "date": "1900-01-01T00:00:00Z",
+      "tdbSeconds": -3155716802.7589946,
+      "latitude": 1,
+      "longitude": 60,
+      "radiusKm": 11.08,
+      "parentRadiusKm": 3389.5,
+      "extraTargets": [
+        "mars"
+      ],
+      "targets": {
+        "sun": {
+          "direction": [
+            0.10584738370558458,
+            0.9777479199736916,
+            0.1811224346948836
+          ],
+          "distanceKm": 212641017.6406114,
+          "angularDiameter": 0.006543434083084755,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "mars": {
+          "direction": [
+            -0.8784967324740055,
+            0.47767531262902796,
+            0.008353845656710676
+          ],
+          "distanceKm": 9495.552949452469,
+          "angularDiameter": 0.7300155747371085,
+          "illuminatedFraction": 0.31223291297904376,
+          "sunDirection": [
+            0.1058883890559016,
+            0.9777429864245182,
+            0.18112509920165903
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "phobos-60e",
+      "id": "phobos",
+      "parent": "mars",
+      "date": "1900-12-31T23:59:59Z",
+      "tdbSeconds": -3124180802.4052444,
+      "latitude": 1,
+      "longitude": 60,
+      "radiusKm": 11.08,
+      "parentRadiusKm": 3389.5,
+      "extraTargets": [
+        "mars"
+      ],
+      "targets": {
+        "sun": {
+          "direction": [
+            0.3216848361335534,
+            0.9011498516323616,
+            -0.290599055581229
+          ],
+          "distanceKm": 246953938.00552556,
+          "angularDiameter": 0.005634256540497293,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "mars": {
+          "direction": [
+            -0.887353900440873,
+            0.4610184764685142,
+            0.008063481073281883
+          ],
+          "distanceKm": 9449.844511767991,
+          "angularDiameter": 0.7337135811867804,
+          "illuminatedFraction": 0.43619122234593743,
+          "sunDirection": [
+            0.32172036258643627,
+            0.9011366117038634,
+            -0.29060078345409307
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "phobos-60e",
+      "id": "phobos",
+      "parent": "mars",
+      "date": "1971-08-01T17:00:00Z",
+      "tdbSeconds": -896813958.2280614,
+      "latitude": 1,
+      "longitude": 60,
+      "radiusKm": 11.08,
+      "parentRadiusKm": 3389.5,
+      "extraTargets": [
+        "mars"
+      ],
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.8541343665983043,
+            -0.40936553618339855,
+            0.3207403023958673
+          ],
+          "distanceKm": 208203698.6710728,
+          "angularDiameter": 0.006682890832908616,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "mars": {
+          "direction": [
+            -0.8484604562620607,
+            0.5291775569362177,
+            0.009271860363065838
+          ],
+          "distanceKm": 9469.11370878368,
+          "angularDiameter": 0.7321499488198788,
+          "illuminatedFraction": 0.24449378196188382,
+          "sunDirection": [
+            -0.8541156296201055,
+            -0.4093991183068914,
+            0.3207473354031036
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "phobos-60e",
+      "id": "phobos",
+      "parent": "mars",
+      "date": "2000-01-01T12:00:00Z",
+      "tdbSeconds": 64.18392728473108,
+      "latitude": 1,
+      "longitude": 60,
+      "radiusKm": 11.08,
+      "parentRadiusKm": 3389.5,
+      "extraTargets": [
+        "mars"
+      ],
+      "targets": {
+        "sun": {
+          "direction": [
+            0.6018587734663753,
+            0.6746805371921029,
+            0.42728467037295637
+          ],
+          "distanceKm": 208119963.5392734,
+          "angularDiameter": 0.0066855796418970005,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "mars": {
+          "direction": [
+            -0.871048306018445,
+            0.4911230440589737,
+            0.008544248161462827
+          ],
+          "distanceKm": 9508.701811828163,
+          "angularDiameter": 0.7289588414746019,
+          "illuminatedFraction": 0.5946450656672493,
+          "sunDirection": [
+            0.6018933656055312,
+            0.6746522645069805,
+            0.4272805851377407
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "phobos-60e",
+      "id": "phobos",
+      "parent": "mars",
+      "date": "2100-12-31T23:59:59Z",
+      "tdbSeconds": 3187252868.183877,
+      "latitude": 1,
+      "longitude": 60,
+      "radiusKm": 11.08,
+      "parentRadiusKm": 3389.5,
+      "extraTargets": [
+        "mars"
+      ],
+      "targets": {
+        "sun": {
+          "direction": [
+            0.46327415379409975,
+            0.86949059737253,
+            -0.1713568192606343
+          ],
+          "distanceKm": 229848620.0811377,
+          "angularDiameter": 0.0060535587467883106,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "mars": {
+          "direction": [
+            -0.8856811127238892,
+            0.46422405642481257,
+            0.008061761635422104
+          ],
+          "distanceKm": 9465.046424805414,
+          "angularDiameter": 0.7324794265228353,
+          "illuminatedFraction": 0.5040486652552073,
+          "sunDirection": [
+            0.463310471585661,
+            0.8694711916850764,
+            -0.1713570942470886
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "phobos-60e",
+      "id": "phobos",
+      "parent": "mars",
+      "date": "2026-09-27T00:39:00Z",
+      "tdbSeconds": 843741609.1823612,
+      "latitude": 1,
+      "longitude": 60,
+      "radiusKm": 11.08,
+      "parentRadiusKm": 3389.5,
+      "extraTargets": [
+        "mars"
+      ],
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.9790070568531019,
+            0.20348056783964374,
+            0.011867651135912517
+          ],
+          "distanceKm": 232383925.59211352,
+          "angularDiameter": 0.005987514303666332,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "mars": {
+          "direction": [
+            -0.8416759859085075,
+            0.5399015600400878,
+            0.00937231087948115
+          ],
+          "distanceKm": 9408.594744482645,
+          "angularDiameter": 0.7370839942699089,
+          "illuminatedFraction": 0.03301386842035636,
+          "sunDirection": [
+            -0.9790100000655269,
+            0.20346640259061494,
+            0.011867720443731893
+          ]
+        }
+      },
+      "visibleSolarFraction": 0.0
+    },
+    {
+      "siteId": "phobos-60e",
+      "id": "phobos",
+      "parent": "mars",
+      "date": "2026-09-27T00:39:00.000Z",
+      "tdbSeconds": 843741609.1823612,
+      "latitude": 1,
+      "longitude": 60,
+      "radiusKm": 11.08,
+      "parentRadiusKm": 3389.5,
+      "extraTargets": [
+        "mars"
+      ],
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.9790070568531019,
+            0.20348056783964374,
+            0.011867651135912517
+          ],
+          "distanceKm": 232383925.59211352,
+          "angularDiameter": 0.005987514303666332,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "mars": {
+          "direction": [
+            -0.8416759859085075,
+            0.5399015600400878,
+            0.00937231087948115
+          ],
+          "distanceKm": 9408.594744482645,
+          "angularDiameter": 0.7370839942699089,
+          "illuminatedFraction": 0.03301386842035636,
+          "sunDirection": [
+            -0.9790100000655269,
+            0.20346640259061494,
+            0.011867720443731893
+          ]
+        }
+      },
+      "visibleSolarFraction": 0.0
+    },
+    {
+      "siteId": "phobos-60e",
+      "id": "phobos",
+      "parent": "mars",
+      "date": "2026-09-27T01:36:21.960Z",
+      "tdbSeconds": 843745051.1423612,
+      "latitude": 1,
+      "longitude": 60,
+      "radiusKm": 11.08,
+      "parentRadiusKm": 3389.5,
+      "extraTargets": [
+        "mars"
+      ],
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.8315884486375131,
+            -0.5553902733015283,
+            -0.0015153925919822284
+          ],
+          "distanceKm": 232386582.2315535,
+          "angularDiameter": 0.00598744585430056,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "mars": {
+          "direction": [
+            -0.8541668881531325,
+            0.5199202300367562,
+            0.009048844198043008
+          ],
+          "distanceKm": 9492.140665190627,
+          "angularDiameter": 0.7302903228292724,
+          "illuminatedFraction": 0.28924531134131753,
+          "sunDirection": [
+            -0.831567876818366,
+            -0.5554210732674951,
+            -0.0015157883026622574
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "phobos-60e",
+      "id": "phobos",
+      "parent": "mars",
+      "date": "2026-09-27T02:33:43.920Z",
+      "tdbSeconds": 843748493.1023611,
+      "latitude": 1,
+      "longitude": 60,
+      "radiusKm": 11.08,
+      "parentRadiusKm": 3389.5,
+      "extraTargets": [
+        "mars"
+      ],
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.18130623721875866,
+            -0.9833843711601976,
+            -0.009122878023859214
+          ],
+          "distanceKm": 232386970.2057184,
+          "angularDiameter": 0.00598743585812374,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "mars": {
+          "direction": [
+            -0.873094122660275,
+            0.487476975417188,
+            0.008535303989600326
+          ],
+          "distanceKm": 9505.311553835996,
+          "angularDiameter": 0.7292310058821462,
+          "illuminatedFraction": 0.6605971893728257,
+          "sunDirection": [
+            -0.18126814376960396,
+            -0.9833913915464463,
+            -0.00912310729225293
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "phobos-60e",
+      "id": "phobos",
+      "parent": "mars",
+      "date": "2026-09-27T03:31:05.880Z",
+      "tdbSeconds": 843751935.0623609,
+      "latitude": 1,
+      "longitude": 60,
+      "radiusKm": 11.08,
+      "parentRadiusKm": 3389.5,
+      "extraTargets": [
+        "mars"
+      ],
+      "targets": {
+        "sun": {
+          "direction": [
+            0.5763962489257524,
+            -0.8171456048038552,
+            -0.006358047975882997
+          ],
+          "distanceKm": 232389078.83052224,
+          "angularDiameter": 0.005987381529867256,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "mars": {
+          "direction": [
+            -0.8873871620707532,
+            0.46095342962160146,
+            0.008121595415782928
+          ],
+          "distanceKm": 9440.895060719182,
+          "angularDiameter": 0.7344421308860648,
+          "illuminatedFraction": 0.9441064566810339,
+          "sunDirection": [
+            0.5764115002423531,
+            -0.817134845870684,
+            -0.006358148492546658
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "phobos-60e",
+      "id": "phobos",
+      "parent": "mars",
+      "date": "2026-09-27T04:28:27.840Z",
+      "tdbSeconds": 843755377.0223608,
+      "latitude": 1,
+      "longitude": 60,
+      "radiusKm": 11.08,
+      "parentRadiusKm": 3389.5,
+      "extraTargets": [
+        "mars"
+      ],
+      "targets": {
+        "sun": {
+          "direction": [
+            0.9855696072125867,
+            -0.16920214817757998,
+            0.004814809541421406
+          ],
+          "distanceKm": 232395998.4681647,
+          "angularDiameter": 0.005987203253844212,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "mars": {
+          "direction": [
+            -0.8897834501280589,
+            0.4563118305632556,
+            0.008057615417644494
+          ],
+          "distanceKm": 9334.582535286716,
+          "angularDiameter": 0.7432116384295725,
+          "illuminatedFraction": 0.9770586364794566,
+          "sunDirection": [
+            0.9855675763105192,
+            -0.1692139918195834,
+            0.004814301391783786
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "phobos-60e",
+      "id": "phobos",
+      "parent": "mars",
+      "date": "2026-09-27T05:25:49.800Z",
+      "tdbSeconds": 843758818.9823604,
+      "latitude": 1,
+      "longitude": 60,
+      "radiusKm": 11.08,
+      "parentRadiusKm": 3389.5,
+      "extraTargets": [
+        "mars"
+      ],
+      "targets": {
+        "sun": {
+          "direction": [
+            0.8222687607597897,
+            0.5688283856086256,
+            0.01755997734747794
+          ],
+          "distanceKm": 232408170.80777365,
+          "angularDiameter": 0.005986889674124759,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "mars": {
+          "direction": [
+            -0.8789139784408375,
+            0.4769064881794817,
+            0.008391664531713316
+          ],
+          "distanceKm": 9247.94806411235,
+          "angularDiameter": 0.7505184691132994,
+          "illuminatedFraction": 0.7256549449830877,
+          "sunDirection": [
+            0.8222889678450253,
+            0.5687991942302855,
+            0.017559328100491687
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "phobos-60e",
+      "id": "phobos",
+      "parent": "mars",
+      "date": "2026-09-27T06:23:11.760Z",
+      "tdbSeconds": 843762260.9423603,
+      "latitude": 1,
+      "longitude": 60,
+      "radiusKm": 11.08,
+      "parentRadiusKm": 3389.5,
+      "extraTargets": [
+        "mars"
+      ],
+      "targets": {
+        "sun": {
+          "direction": [
+            0.19473030906516936,
+            0.9805480554534931,
+            0.02460930063528021
+          ],
+          "distanceKm": 232422858.52561155,
+          "angularDiameter": 0.005986511337805158,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "mars": {
+          "direction": [
+            -0.8599804920236656,
+            0.5102489079511497,
+            0.008922178735781836
+          ],
+          "distanceKm": 9233.647459308315,
+          "angularDiameter": 0.7517388010848324,
+          "illuminatedFraction": 0.33347822248336967,
+          "sunDirection": [
+            0.19476705130926852,
+            0.9805407586967997,
+            0.024609271801453
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "phobos-60e",
+      "id": "phobos",
+      "parent": "mars",
+      "date": "2026-09-27T07:20:33.720Z",
+      "tdbSeconds": 843765702.9023602,
+      "latitude": 1,
+      "longitude": 60,
+      "radiusKm": 11.08,
+      "parentRadiusKm": 3389.5,
+      "extraTargets": [
+        "mars"
+      ],
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.5450372583150631,
+            0.8381234989182842,
+            0.021986077625913727
+          ],
+          "distanceKm": 232435681.1216562,
+          "angularDiameter": 0.005986181083665748,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "mars": {
+          "direction": [
+            -0.8440650950486553,
+            0.5361595729471264,
+            0.009328861541450031
+          ],
+          "distanceKm": 9300.59242069163,
+          "angularDiameter": 0.7460609253923062,
+          "illuminatedFraction": 0.04519346940606994,
+          "sunDirection": [
+            -0.5450233214568303,
+            0.8381325507842751,
+            0.02198650458826256
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "phobos-60e",
+      "id": "phobos",
+      "parent": "mars",
+      "date": "2026-09-27T08:17:55.680Z",
+      "tdbSeconds": 843769144.86236,
+      "latitude": 1,
+      "longitude": 60,
+      "radiusKm": 11.08,
+      "parentRadiusKm": 3389.5,
+      "extraTargets": [
+        "mars"
+      ],
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.9776246804724299,
+            0.21007491471790196,
+            0.010886429049307365
+          ],
+          "distanceKm": 232443466.87488317,
+          "angularDiameter": 0.005985980574404349,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "mars": {
+          "direction": [
+            -0.8416131640864744,
+            0.5399993195873671,
+            0.009381731265262079
+          ],
+          "distanceKm": 9407.603487360764,
+          "angularDiameter": 0.7371653780976828,
+          "illuminatedFraction": 0.0318403726266176,
+          "sunDirection": [
+            -0.977627665770952,
+            0.21006101986493128,
+            0.0108864618928556
+          ]
+        }
+      },
+      "visibleSolarFraction": 0.0
+    },
+    {
+      "siteId": "phobos-60e",
+      "id": "phobos",
+      "parent": "mars",
+      "date": "2026-09-27T09:15:17.640Z",
+      "tdbSeconds": 843772586.8223598,
+      "latitude": 1,
+      "longitude": 60,
+      "radiusKm": 11.08,
+      "parentRadiusKm": 3389.5,
+      "extraTargets": [
+        "mars"
+      ],
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.8353521084758807,
+            -0.5497095070635283,
+            -0.0025125104722569375
+          ],
+          "distanceKm": 232446151.7253306,
+          "angularDiameter": 0.005985911433614136,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "mars": {
+          "direction": [
+            -0.8540205280900511,
+            0.5201604520605704,
+            0.009057688056761572
+          ],
+          "distanceKm": 9491.642353447287,
+          "angularDiameter": 0.7303304633097806,
+          "illuminatedFraction": 0.28629271410425317,
+          "sunDirection": [
+            -0.8353318151923667,
+            -0.5497403421065586,
+            -0.0025129241910052773
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "phobos-60e",
+      "id": "phobos",
+      "parent": "mars",
+      "date": "2026-09-27T10:12:39.600Z",
+      "tdbSeconds": 843776028.7823597,
+      "latitude": 1,
+      "longitude": 60,
+      "radiusKm": 11.08,
+      "parentRadiusKm": 3389.5,
+      "extraTargets": [
+        "mars"
+      ],
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.18800281888915407,
+            -0.9821155542901072,
+            -0.010196965782408206
+          ],
+          "distanceKm": 232446535.89862442,
+          "angularDiameter": 0.005985901540439477,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "mars": {
+          "direction": [
+            -0.872944645642671,
+            0.48774457840126667,
+            0.008536503028871165
+          ],
+          "distanceKm": 9505.569422311308,
+          "angularDiameter": 0.7292102973010619,
+          "illuminatedFraction": 0.6575146823359517,
+          "sunDirection": [
+            -0.18796469971659166,
+            -0.9821228482775924,
+            -0.010197183511184373
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "phobos-60e",
+      "id": "phobos",
+      "parent": "mars",
+      "date": "2026-09-27T11:10:01.560Z",
+      "tdbSeconds": 843779470.7423595,
+      "latitude": 1,
+      "longitude": 60,
+      "radiusKm": 11.08,
+      "parentRadiusKm": 3389.5,
+      "extraTargets": [
+        "mars"
+      ],
+      "targets": {
+        "sun": {
+          "direction": [
+            0.5708708731420494,
+            -0.8210054029330612,
+            -0.007521605729906148
+          ],
+          "distanceKm": 232448607.34100008,
+          "angularDiameter": 0.0059858481975209165,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "mars": {
+          "direction": [
+            -0.8873028205207778,
+            0.46111586576422053,
+            0.008115604499075325
+          ],
+          "distanceKm": 9441.767883303834,
+          "angularDiameter": 0.7343710115732274,
+          "illuminatedFraction": 0.9425918937545248,
+          "sunDirection": [
+            0.5708863881151276,
+            -0.8209946141245198,
+            -0.007521664935028132
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "phobos-60e",
+      "id": "phobos",
+      "parent": "mars",
+      "date": "2026-09-27T12:07:23.520Z",
+      "tdbSeconds": 843782912.7023594,
+      "latitude": 1,
+      "longitude": 60,
+      "radiusKm": 11.08,
+      "parentRadiusKm": 3389.5,
+      "extraTargets": [
+        "mars"
+      ],
+      "targets": {
+        "sun": {
+          "direction": [
+            0.9844307624106318,
+            -0.17573582587641481,
+            0.0036046529869988965
+          ],
+          "distanceKm": 232455473.1484959,
+          "angularDiameter": 0.005985671398912677,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "mars": {
+          "direction": [
+            -0.8897997985464745,
+            0.45628005536973604,
+            0.008051681715263529
+          ],
+          "distanceKm": 9335.575004082124,
+          "angularDiameter": 0.7431287782760825,
+          "illuminatedFraction": 0.9780527356381471,
+          "sunDirection": [
+            0.9844286975012297,
+            -0.17574740209058376,
+            0.003604191232802299
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "phobos-60e",
+      "id": "phobos",
+      "parent": "mars",
+      "date": "2026-09-27T13:04:45.480Z",
+      "tdbSeconds": 843786354.6623592,
+      "latitude": 1,
+      "longitude": 60,
+      "radiusKm": 11.08,
+      "parentRadiusKm": 3389.5,
+      "extraTargets": [
+        "mars"
+      ],
+      "targets": {
+        "sun": {
+          "direction": [
+            0.8259974087563047,
+            0.5634361622626594,
+            0.016369843694921997
+          ],
+          "distanceKm": 232467602.04251865,
+          "angularDiameter": 0.005985359098230096,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "mars": {
+          "direction": [
+            -0.879032058893885,
+            0.47668879941180914,
+            0.008392136325498655
+          ],
+          "distanceKm": 9248.462969768763,
+          "angularDiameter": 0.7504746058564797,
+          "illuminatedFraction": 0.7286942891861276,
+          "sunDirection": [
+            0.8260173497951668,
+            0.5634069459430886,
+            0.016369211967922633
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "phobos-60e",
+      "id": "phobos",
+      "parent": "mars",
+      "date": "2026-09-27T14:02:07.440Z",
+      "tdbSeconds": 843789796.622359,
+      "latitude": 1,
+      "longitude": 60,
+      "radiusKm": 11.08,
+      "parentRadiusKm": 3389.5,
+      "extraTargets": [
+        "mars"
+      ],
+      "targets": {
+        "sun": {
+          "direction": [
+            0.20116059202795777,
+            0.9792765592736351,
+            0.02349120414436633
+          ],
+          "distanceKm": 232482279.581289,
+          "angularDiameter": 0.005984981217375608,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "mars": {
+          "direction": [
+            -0.8601499234257663,
+            0.50996314543471,
+            0.008927459268172953
+          ],
+          "distanceKm": 9233.40352518679,
+          "angularDiameter": 0.7517596523712883,
+          "illuminatedFraction": 0.33672953903227537,
+          "sunDirection": [
+            0.20119736373924968,
+            0.9792690061961027,
+            0.02349115425161672
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "phobos-60e",
+      "id": "phobos",
+      "parent": "mars",
+      "date": "2026-09-27T14:59:29.400Z",
+      "tdbSeconds": 843793238.582359,
+      "latitude": 1,
+      "longitude": 60,
+      "radiusKm": 11.08,
+      "parentRadiusKm": 3389.5,
+      "extraTargets": [
+        "mars"
+      ],
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.5394801175279355,
+            0.8417375835423648,
+            0.020953358783385778
+          ],
+          "distanceKm": 232495128.497368,
+          "angularDiameter": 0.005984650454527271,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "mars": {
+          "direction": [
+            -0.8441842435908776,
+            0.5359718925880647,
+            0.009332375285316307
+          ],
+          "distanceKm": 9299.796793509215,
+          "angularDiameter": 0.7461278889262652,
+          "illuminatedFraction": 0.04662163314234147,
+          "sunDirection": [
+            -0.5394659168217745,
+            0.8417466751568575,
+            0.020953745489000437
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "phobos-60e",
+      "id": "phobos",
+      "parent": "mars",
+      "date": "2026-09-27T15:56:51.360Z",
+      "tdbSeconds": 843796680.5423589,
+      "latitude": 1,
+      "longitude": 60,
+      "radiusKm": 11.08,
+      "parentRadiusKm": 3389.5,
+      "extraTargets": [
+        "mars"
+      ],
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.976197421007243,
+            0.21665750457624647,
+            0.009905600920758454
+          ],
+          "distanceKm": 232502956.18580568,
+          "angularDiameter": 0.005984448968405339,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "mars": {
+          "direction": [
+            -0.8415987841242483,
+            0.5400217487506385,
+            0.00938069490439941
+          ],
+          "distanceKm": 9406.75572447341,
+          "angularDiameter": 0.7372349954369339,
+          "illuminatedFraction": 0.030672781531295934,
+          "sunDirection": [
+            -0.976200444014558,
+            0.21664388346430624,
+            0.009905597573292329
+          ]
+        }
+      },
+      "visibleSolarFraction": 0.0
+    },
+    {
+      "siteId": "phobos-60e",
+      "id": "phobos",
+      "parent": "mars",
+      "date": "2026-09-27T16:54:13.320Z",
+      "tdbSeconds": 843800122.5023584,
+      "latitude": 1,
+      "longitude": 60,
+      "radiusKm": 11.08,
+      "parentRadiusKm": 3389.5,
+      "extraTargets": [
+        "mars"
+      ],
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.8390752456075076,
+            -0.5440040642799674,
+            -0.0035085973804215532
+          ],
+          "distanceKm": 232505669.1548713,
+          "angularDiameter": 0.005984379139254767,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "mars": {
+          "direction": [
+            -0.8538833018125289,
+            0.5203857055512846,
+            0.009056729190260912
+          ],
+          "distanceKm": 9491.208034029976,
+          "angularDiameter": 0.7303654527087428,
+          "illuminatedFraction": 0.28334226521587524,
+          "sunDirection": [
+            -0.8390552311266454,
+            -0.544034930710667,
+            -0.003509029160828902
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "phobos-60e",
+      "id": "phobos",
+      "parent": "mars",
+      "date": "2026-09-27T17:51:35.280Z",
+      "tdbSeconds": 843803564.4623584,
+      "latitude": 1,
+      "longitude": 60,
+      "radiusKm": 11.08,
+      "parentRadiusKm": 3389.5,
+      "extraTargets": [
+        "mars"
+      ],
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.19468946820734886,
+            -0.9808001866823849,
+            -0.01126963943251745
+          ],
+          "distanceKm": 232506049.33477515,
+          "angularDiameter": 0.005984369353928828,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "mars": {
+          "direction": [
+            -0.8727786199071871,
+            0.48804151712081945,
+            0.008541557194927291
+          ],
+          "distanceKm": 9505.751871512788,
+          "angularDiameter": 0.7291956461254294,
+          "illuminatedFraction": 0.654441824713328,
+          "sunDirection": [
+            -0.1946513276408684,
+            -0.9808077544612244,
+            -0.011269846333390458
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "phobos-60e",
+      "id": "phobos",
+      "parent": "mars",
+      "date": "2026-09-27T18:48:57.240Z",
+      "tdbSeconds": 843807006.4223583,
+      "latitude": 1,
+      "longitude": 60,
+      "radiusKm": 11.08,
+      "parentRadiusKm": 3389.5,
+      "extraTargets": [
+        "mars"
+      ],
+      "targets": {
+        "sun": {
+          "direction": [
+            0.5653191836936627,
+            -0.8248265336856091,
+            -0.008683886003020017
+          ],
+          "distanceKm": 232508084.1487309,
+          "angularDiameter": 0.005984316981063329,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "mars": {
+          "direction": [
+            -0.8872096483837201,
+            0.4612949216119768,
+            0.008126198978332565
+          ],
+          "distanceKm": 9442.45775099119,
+          "angularDiameter": 0.7343148097786788,
+          "illuminatedFraction": 0.941062251206868,
+          "sunDirection": [
+            0.565334961852317,
+            -0.8248157192383494,
+            -0.008683904925972794
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "phobos-60e",
+      "id": "phobos",
+      "parent": "mars",
+      "date": "2026-09-27T19:46:19.200Z",
+      "tdbSeconds": 843810448.3823581,
+      "latitude": 1,
+      "longitude": 60,
+      "radiusKm": 11.08,
+      "parentRadiusKm": 3389.5,
+      "extraTargets": [
+        "mars"
+      ],
+      "targets": {
+        "sun": {
+          "direction": [
+            0.9832472409074435,
+            -0.1822611479419676,
+            0.002395245034675425
+          ],
+          "distanceKm": 232514896.10325983,
+          "angularDiameter": 0.005984141658890443,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "mars": {
+          "direction": [
+            -0.8898323187713427,
+            0.456216485982697,
+            0.0080599247896796
+          ],
+          "distanceKm": 9336.390132798608,
+          "angularDiameter": 0.7430607382312943,
+          "illuminatedFraction": 0.9790298524111303,
+          "sunDirection": [
+            0.9832451459310498,
+            -0.18227245484659546,
+            0.002394829268280257
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "phobos-60e",
+      "id": "phobos",
+      "parent": "mars",
+      "date": "2026-09-27T20:43:41.160Z",
+      "tdbSeconds": 843813890.3423579,
+      "latitude": 1,
+      "longitude": 60,
+      "radiusKm": 11.08,
+      "parentRadiusKm": 3389.5,
+      "extraTargets": [
+        "mars"
+      ],
+      "targets": {
+        "sun": {
+          "direction": [
+            0.8296889423892881,
+            0.5580195605075299,
+            0.015179886953725722
+          ],
+          "distanceKm": 232526980.79673773,
+          "angularDiameter": 0.005983830655267481,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "mars": {
+          "direction": [
+            -0.8791760061692936,
+            0.4764233092158535,
+            0.008389315349016036
+          ],
+          "distanceKm": 9248.920646386508,
+          "angularDiameter": 0.7504356221864056,
+          "illuminatedFraction": 0.731746483692255,
+          "sunDirection": [
+            0.8297086164331612,
+            0.5579903238181422,
+            0.015179273431048126
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "phobos-60e",
+      "id": "phobos",
+      "parent": "mars",
+      "date": "2026-09-27T21:41:03.120Z",
+      "tdbSeconds": 843817332.3023578,
+      "latitude": 1,
+      "longitude": 60,
+      "radiusKm": 11.08,
+      "parentRadiusKm": 3389.5,
+      "extraTargets": [
+        "mars"
+      ],
+      "targets": {
+        "sun": {
+          "direction": [
+            0.20758057029274538,
+            0.9779620429933128,
+            0.0223729591535087
+          ],
+          "distanceKm": 232541648.22128883,
+          "angularDiameter": 0.0059834532276230356,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "mars": {
+          "direction": [
+            -0.8603183309137773,
+            0.5096792344534301,
+            0.008913330505381328
+          ],
+          "distanceKm": 9233.21601871088,
+          "angularDiameter": 0.7517756810766403,
+          "illuminatedFraction": 0.3399873228517439,
+          "sunDirection": [
+            0.2076173680885197,
+            0.9779542332242714,
+            0.022372889547928515
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "phobos-60e",
+      "id": "phobos",
+      "parent": "mars",
+      "date": "2026-09-27T22:38:25.080Z",
+      "tdbSeconds": 843820774.2623577,
+      "latitude": 1,
+      "longitude": 60,
+      "radiusKm": 11.08,
+      "parentRadiusKm": 3389.5,
+      "extraTargets": [
+        "mars"
+      ],
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.5339003512091414,
+            0.8453127149944775,
+            0.019920563431315746
+          ],
+          "distanceKm": 232554523.50046912,
+          "angularDiameter": 0.005983121955371553,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "mars": {
+          "direction": [
+            -0.8442592718341226,
+            0.5358539574530082,
+            0.009317628671847596
+          ],
+          "distanceKm": 9299.073746556336,
+          "angularDiameter": 0.7461887544840089,
+          "illuminatedFraction": 0.04805360938232328,
+          "sunDirection": [
+            -0.533885888772908,
+            0.8453218411228729,
+            0.0199209108676927
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "phobos-60e",
+      "id": "phobos",
+      "parent": "mars",
+      "date": "2026-09-27T23:35:47.040Z",
+      "tdbSeconds": 843824216.2223575,
+      "latitude": 1,
+      "longitude": 60,
+      "radiusKm": 11.08,
+      "parentRadiusKm": 3389.5,
+      "extraTargets": [
+        "mars"
+      ],
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.9747253887583501,
+            0.22322804011375025,
+            0.008925167609455265
+          ],
+          "distanceKm": 232562392.34447053,
+          "angularDiameter": 0.005982919513380505,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "mars": {
+          "direction": [
+            -0.8415295999752821,
+            0.5401296198713245,
+            0.009376891974447627
+          ],
+          "distanceKm": 9405.922488686414,
+          "angularDiameter": 0.737303432967956,
+          "illuminatedFraction": 0.02954430253706114,
+          "sunDirection": [
+            -0.9747284466128011,
+            0.22321468915331782,
+            0.00892512800935032
+          ]
+        }
+      },
+      "visibleSolarFraction": 0.0
+    },
+    {
+      "siteId": "phobos-60e",
+      "id": "phobos",
+      "parent": "mars",
+      "date": "2026-09-28T00:33:09.000Z",
+      "tdbSeconds": 843827658.1823574,
+      "latitude": 1,
+      "longitude": 60,
+      "radiusKm": 11.08,
+      "parentRadiusKm": 3389.5,
+      "extraTargets": [
+        "mars"
+      ],
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.8427577073092358,
+            -0.5382742459839251,
+            -0.004503651997814823
+          ],
+          "distanceKm": 232565133.60125038,
+          "angularDiameter": 0.0059828489922007086,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "mars": {
+          "direction": [
+            -0.8537280735985948,
+            0.5206401901971752,
+            0.00906469531099534
+          ],
+          "distanceKm": 9490.752248994522,
+          "angularDiameter": 0.7304021751043049,
+          "illuminatedFraction": 0.2804175270586494,
+          "sunDirection": [
+            -0.8427379715338323,
+            -0.5383051405981677,
+            -0.004504102644071519
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "phobos-60e",
+      "id": "phobos",
+      "parent": "mars",
+      "date": "2026-09-28T01:30:30.960Z",
+      "tdbSeconds": 843831100.1423572,
+      "latitude": 1,
+      "longitude": 60,
+      "radiusKm": 11.08,
+      "parentRadiusKm": 3389.5,
+      "extraTargets": [
+        "mars"
+      ],
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.2013658589675838,
+            -0.9794383559791676,
+            -0.012340894581535249
+          ],
+          "distanceKm": 232565510.88019648,
+          "angularDiameter": 0.005982839286506658,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "mars": {
+          "direction": [
+            -0.8726411978776972,
+            0.48828701138593833,
+            0.008551858182055084
+          ],
+          "distanceKm": 9505.961089540413,
+          "angularDiameter": 0.7291788460816467,
+          "illuminatedFraction": 0.6513347754962249,
+          "sunDirection": [
+            -0.20132769978088846,
+            -0.979446197992709,
+            -0.012341091465642289
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "phobos-60e",
+      "id": "phobos",
+      "parent": "mars",
+      "date": "2026-09-28T02:27:52.920Z",
+      "tdbSeconds": 843834542.1023571,
+      "latitude": 1,
+      "longitude": 60,
+      "radiusKm": 11.08,
+      "parentRadiusKm": 3389.5,
+      "extraTargets": [
+        "mars"
+      ],
+      "targets": {
+        "sun": {
+          "direction": [
+            0.5597414533095786,
+            -0.8286088243355814,
+            -0.009844880907685257
+          ],
+          "distanceKm": 232567509.09311366,
+          "angularDiameter": 0.005982787881981365,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "mars": {
+          "direction": [
+            -0.8871616389590443,
+            0.4613872123685103,
+            0.00812813769059144
+          ],
+          "distanceKm": 9443.243061379191,
+          "angularDiameter": 0.7342508432393897,
+          "illuminatedFraction": 0.9394899573083961,
+          "sunDirection": [
+            0.5597574980465607,
+            -0.8285979858293765,
+            -0.009844859580243682
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "phobos-60e",
+      "id": "phobos",
+      "parent": "mars",
+      "date": "2026-09-28T03:25:14.880Z",
+      "tdbSeconds": 843837984.062357,
+      "latitude": 1,
+      "longitude": 60,
+      "radiusKm": 11.08,
+      "parentRadiusKm": 3389.5,
+      "extraTargets": [
+        "mars"
+      ],
+      "targets": {
+        "sun": {
+          "direction": [
+            0.9820191085366453,
+            -0.18877781241426278,
+            0.0011865955409677488
+          ],
+          "distanceKm": 232574266.5796976,
+          "angularDiameter": 0.005982614050499371,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "mars": {
+          "direction": [
+            -0.8898896317154987,
+            0.45610483993711476,
+            0.008050984485971205
+          ],
+          "distanceKm": 9337.31432197631,
+          "angularDiameter": 0.7429836102030513,
+          "illuminatedFraction": 0.9799923461518119,
+          "sunDirection": [
+            0.9820169875314443,
+            -0.18878884783306135,
+            0.0011862265942619364
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "phobos-60e",
+      "id": "phobos",
+      "parent": "mars",
+      "date": "2026-09-28T04:22:36.840Z",
+      "tdbSeconds": 843841426.0223569,
+      "latitude": 1,
+      "longitude": 60,
+      "radiusKm": 11.08,
+      "parentRadiusKm": 3389.5,
+      "extraTargets": [
+        "mars"
+      ],
+      "targets": {
+        "sun": {
+          "direction": [
+            0.8333432104055298,
+            0.5525788362698442,
+            0.013990117142803073
+          ],
+          "distanceKm": 232586307.23778453,
+          "angularDiameter": 0.005982304338264197,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "mars": {
+          "direction": [
+            -0.8793090325201445,
+            0.4761779429946903,
+            0.008378062653911859
+          ],
+          "distanceKm": 9249.398369823002,
+          "angularDiameter": 0.7503949354162647,
+          "illuminatedFraction": 0.7347770741530024,
+          "sunDirection": [
+            0.8333626175124977,
+            0.5525495823778812,
+            0.013989522749097542
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "phobos-60e",
+      "id": "phobos",
+      "parent": "mars",
+      "date": "2026-09-28T05:19:58.800Z",
+      "tdbSeconds": 843844867.9823565,
+      "latitude": 1,
+      "longitude": 60,
+      "radiusKm": 11.08,
+      "parentRadiusKm": 3389.5,
+      "extraTargets": [
+        "mars"
+      ],
+      "targets": {
+        "sun": {
+          "direction": [
+            0.21398996528476208,
+            0.9766045964626395,
+            0.02125457422464915
+          ],
+          "distanceKm": 232600964.38266426,
+          "angularDiameter": 0.005981927367501799,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "mars": {
+          "direction": [
+            -0.8604609858579776,
+            0.5094384125362388,
+            0.008910423607992357
+          ],
+          "distanceKm": 9232.900935983107,
+          "angularDiameter": 0.7518026170238132,
+          "illuminatedFraction": 0.34322826278151836,
+          "sunDirection": [
+            0.21402678446114243,
+            0.9765965299944973,
+            0.02125448507798059
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "phobos-60e",
+      "id": "phobos",
+      "parent": "mars",
+      "date": "2026-09-28T06:17:20.760Z",
+      "tdbSeconds": 843848309.9423565,
+      "latitude": 1,
+      "longitude": 60,
+      "radiusKm": 11.08,
+      "parentRadiusKm": 3389.5,
+      "extraTargets": [
+        "mars"
+      ],
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.5282982394660068,
+            0.848848764555573,
+            0.018887696778453075
+          ],
+          "distanceKm": 232613865.17239854,
+          "angularDiameter": 0.005981595608183753,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "mars": {
+          "direction": [
+            -0.8443305885931177,
+            0.5357414602389373,
+            0.009324427438208403
+          ],
+          "distanceKm": 9298.159824660763,
+          "angularDiameter": 0.7462657023353123,
+          "illuminatedFraction": 0.049504783127828966,
+          "sunDirection": [
+            -0.5282835155840143,
+            0.8488579212420722,
+            0.018888004309142097
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "phobos-60e",
+      "id": "phobos",
+      "parent": "mars",
+      "date": "2026-09-28T07:14:42.720Z",
+      "tdbSeconds": 843851751.9023564,
+      "latitude": 1,
+      "longitude": 60,
+      "radiusKm": 11.08,
+      "parentRadiusKm": 3389.5,
+      "extraTargets": [
+        "mars"
+      ],
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.9732086988773276,
+            0.22978621223925066,
+            0.00794513022153637
+          ],
+          "distanceKm": 232621775.25799742,
+          "angularDiameter": 0.005981392209020907,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "mars": {
+          "direction": [
+            -0.8414830672132697,
+            0.5402019566267459,
+            0.009385821753237582
+          ],
+          "distanceKm": 9404.971136095382,
+          "angularDiameter": 0.7373815879148433,
+          "illuminatedFraction": 0.028430146477623985,
+          "sunDirection": [
+            -0.9732117875020164,
+            0.22977313330484314,
+            0.00794505370683054
+          ]
+        }
+      },
+      "visibleSolarFraction": 0.0
+    },
+    {
+      "siteId": "phobos-311e",
+      "id": "phobos",
+      "parent": "mars",
+      "date": "1900-01-01T00:00:00Z",
+      "tdbSeconds": -3155716802.7589946,
+      "latitude": 1,
+      "longitude": 311,
+      "radiusKm": 11.08,
+      "parentRadiusKm": 3389.5,
+      "extraTargets": [
+        "mars"
+      ],
+      "targets": {
+        "sun": {
+          "direction": [
+            0.8928662700918145,
+            -0.4221837952957707,
+            0.15668652374084274
+          ],
+          "distanceKm": 212641033.1541645,
+          "angularDiameter": 0.006543433605696771,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "mars": {
+          "direction": [
+            0.7390026500305674,
+            0.6735996308946277,
+            0.01177372100993642
+          ],
+          "distanceKm": 9493.383242503642,
+          "angularDiameter": 0.730190249258232,
+          "illuminatedFraction": 0.3113729082053721,
+          "sunDirection": [
+            0.8928483158450707,
+            -0.42222097986978935,
+            0.15668863727282684
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "phobos-311e",
+      "id": "phobos",
+      "parent": "mars",
+      "date": "1900-12-31T23:59:59Z",
+      "tdbSeconds": -3124180802.4052444,
+      "latitude": 1,
+      "longitude": 311,
+      "radiusKm": 11.08,
+      "parentRadiusKm": 3389.5,
+      "extraTargets": [
+        "mars"
+      ],
+      "targets": {
+        "sun": {
+          "direction": [
+            0.7423984645346584,
+            -0.5904127402475203,
+            -0.3166343569639843
+          ],
+          "distanceKm": 246953954.53450003,
+          "angularDiameter": 0.005634256163387603,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "mars": {
+          "direction": [
+            0.7261636592576207,
+            0.6874168843693489,
+            0.012015284329509806
+          ],
+          "distanceKm": 9447.33733234241,
+          "angularDiameter": 0.7339175341658574,
+          "illuminatedFraction": 0.4352994836904473,
+          "sunDirection": [
+            0.7423743603162964,
+            -0.5904419609845801,
+            -0.3166363842859079
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "phobos-311e",
+      "id": "phobos",
+      "parent": "mars",
+      "date": "1971-08-01T17:00:00Z",
+      "tdbSeconds": -896813958.2280614,
+      "latitude": 1,
+      "longitude": 311,
+      "radiusKm": 11.08,
+      "parentRadiusKm": 3389.5,
+      "extraTargets": [
+        "mars"
+      ],
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.1036320548532465,
+            0.9331690155245941,
+            0.34417435359386417
+          ],
+          "distanceKm": 208203683.79357496,
+          "angularDiameter": 0.0066828913104461036,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "mars": {
+          "direction": [
+            0.7778522941320688,
+            0.6283508127024443,
+            0.011002940045997816
+          ],
+          "distanceKm": 9468.015449406597,
+          "angularDiameter": 0.7322388853600155,
+          "illuminatedFraction": 0.2452498310509551,
+          "sunDirection": [
+            -0.10366982955889308,
+            0.9331620629447739,
+            0.34418182799195596
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "phobos-311e",
+      "id": "phobos",
+      "parent": "mars",
+      "date": "2000-01-01T12:00:00Z",
+      "tdbSeconds": 64.18392728473108,
+      "latitude": 1,
+      "longitude": 311,
+      "radiusKm": 11.08,
+      "parentRadiusKm": 3389.5,
+      "extraTargets": [
+        "mars"
+      ],
+      "targets": {
+        "sun": {
+          "direction": [
+            0.4489306565687428,
+            -0.7982475305943066,
+            0.40157458272760393
+          ],
+          "distanceKm": 208119979.8617468,
+          "angularDiameter": 0.006685579117557136,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "mars": {
+          "direction": [
+            0.7492728324989615,
+            0.6621610740443484,
+            0.011529722434566477
+          ],
+          "distanceKm": 9506.80770127078,
+          "angularDiameter": 0.7291108719226048,
+          "illuminatedFraction": 0.5938054629599723,
+          "sunDirection": [
+            0.4488925836505053,
+            -0.7982709374020448,
+            0.4015706150141405
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "phobos-311e",
+      "id": "phobos",
+      "parent": "mars",
+      "date": "2100-12-31T23:59:59Z",
+      "tdbSeconds": 3187252868.183877,
+      "latitude": 1,
+      "longitude": 311,
+      "radiusKm": 11.08,
+      "parentRadiusKm": 3389.5,
+      "extraTargets": [
+        "mars"
+      ],
+      "targets": {
+        "sun": {
+          "direction": [
+            0.6683393242348669,
+            -0.7167313789009849,
+            -0.19904441258165023
+          ],
+          "distanceKm": 229848637.6590944,
+          "angularDiameter": 0.006053558283833561,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "mars": {
+          "direction": [
+            0.7286430928683771,
+            0.6847900069152745,
+            0.011911743960648537
+          ],
+          "distanceKm": 9462.603833310406,
+          "angularDiameter": 0.7326774392077624,
+          "illuminatedFraction": 0.5031208934738344,
+          "sunDirection": [
+            0.6683091556702819,
+            -0.7167593873410505,
+            -0.1990448519951138
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "phobos-311e",
+      "id": "phobos",
+      "parent": "mars",
+      "date": "2026-09-27T00:39:00Z",
+      "tdbSeconds": 843741609.1823612,
+      "latitude": 1,
+      "longitude": 311,
+      "radiusKm": 11.08,
+      "parentRadiusKm": 3389.5,
+      "extraTargets": [
+        "mars"
+      ],
+      "targets": {
+        "sun": {
+          "direction": [
+            0.5112947707240172,
+            0.8590891913775406,
+            0.023311342487252744
+          ],
+          "distanceKm": 232383918.32688844,
+          "angularDiameter": 0.005987514490859875,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "mars": {
+          "direction": [
+            0.7857728636654399,
+            0.6184218602144081,
+            0.010742883037852945
+          ],
+          "distanceKm": 9407.72520319882,
+          "angularDiameter": 0.7371553840361647,
+          "illuminatedFraction": 0.033356849159102975,
+          "sunDirection": [
+            0.5112822775507861,
+            0.8590966145817374,
+            0.02331178836293794
+          ]
+        }
+      },
+      "visibleSolarFraction": 0.24216461181640625
+    },
+    {
+      "siteId": "phobos-311e",
+      "id": "phobos",
+      "parent": "mars",
+      "date": "2026-09-27T00:39:00.000Z",
+      "tdbSeconds": 843741609.1823612,
+      "latitude": 1,
+      "longitude": 311,
+      "radiusKm": 11.08,
+      "parentRadiusKm": 3389.5,
+      "extraTargets": [
+        "mars"
+      ],
+      "targets": {
+        "sun": {
+          "direction": [
+            0.5112947707240172,
+            0.8590891913775406,
+            0.023311342487252744
+          ],
+          "distanceKm": 232383918.32688844,
+          "angularDiameter": 0.005987514490859875,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "mars": {
+          "direction": [
+            0.7857728636654399,
+            0.6184218602144081,
+            0.010742883037852945
+          ],
+          "distanceKm": 9407.72520319882,
+          "angularDiameter": 0.7371553840361647,
+          "illuminatedFraction": 0.033356849159102975,
+          "sunDirection": [
+            0.5112822775507861,
+            0.8590966145817374,
+            0.02331178836293794
+          ]
+        }
+      },
+      "visibleSolarFraction": 0.24216461181640625
+    },
+    {
+      "siteId": "phobos-311e",
+      "id": "phobos",
+      "parent": "mars",
+      "date": "2026-09-27T01:36:21.960Z",
+      "tdbSeconds": 843745051.1423612,
+      "latitude": 1,
+      "longitude": 311,
+      "radiusKm": 11.08,
+      "parentRadiusKm": 3389.5,
+      "extraTargets": [
+        "mars"
+      ],
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.2543381032472366,
+            0.9667907774828789,
+            0.025054377075650884
+          ],
+          "distanceKm": 232386565.36327597,
+          "angularDiameter": 0.005987446288913465,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "mars": {
+          "direction": [
+            0.7709670128841676,
+            0.6367785390333159,
+            0.011088609969680753
+          ],
+          "distanceKm": 9490.846556143091,
+          "angularDiameter": 0.7303945765091597,
+          "illuminatedFraction": 0.29010524703076823,
+          "sunDirection": [
+            -0.2543739514305303,
+            0.9667813466295052,
+            0.025054353770529777
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "phobos-311e",
+      "id": "phobos",
+      "parent": "mars",
+      "date": "2026-09-27T02:33:43.920Z",
+      "tdbSeconds": 843748493.1023611,
+      "latitude": 1,
+      "longitude": 311,
+      "radiusKm": 11.08,
+      "parentRadiusKm": 3389.5,
+      "extraTargets": [
+        "mars"
+      ],
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.8707895965608657,
+            0.4913748901471209,
+            0.01661914120132049
+          ],
+          "distanceKm": 232386953.86295223,
+          "angularDiameter": 0.005987436279195383,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "mars": {
+          "direction": [
+            0.7464976193316514,
+            0.6652862830537196,
+            0.011638982461679236
+          ],
+          "distanceKm": 9503.34245662609,
+          "angularDiameter": 0.7293891774498243,
+          "illuminatedFraction": 0.6614902926882988,
+          "sunDirection": [
+            -0.8708086230951791,
+            0.4913411942877275,
+            0.01661844574524079
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "phobos-311e",
+      "id": "phobos",
+      "parent": "mars",
+      "date": "2026-09-27T03:31:05.880Z",
+      "tdbSeconds": 843751935.0623609,
+      "latitude": 1,
+      "longitude": 311,
+      "radiusKm": 11.08,
+      "parentRadiusKm": 3389.5,
+      "extraTargets": [
+        "mars"
+      ],
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.9602698339360439,
+            -0.27905669474037154,
+            0.003034329089271899
+          ],
+          "distanceKm": 232389072.86760908,
+          "angularDiameter": 0.005987381683499018,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "mars": {
+          "direction": [
+            0.7261152721423115,
+            0.6874669415377439,
+            0.012075423571738436
+          ],
+          "distanceKm": 9438.386608197832,
+          "angularDiameter": 0.7346466032083827,
+          "illuminatedFraction": 0.9445403568947353,
+          "sunDirection": [
+            -0.9602646501570902,
+            -0.27907453869244575,
+            0.003033729104546169
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "phobos-311e",
+      "id": "phobos",
+      "parent": "mars",
+      "date": "2026-09-27T04:28:27.840Z",
+      "tdbSeconds": 843755377.0223608,
+      "latitude": 1,
+      "longitude": 311,
+      "radiusKm": 11.08,
+      "parentRadiusKm": 3389.5,
+      "extraTargets": [
+        "mars"
+      ],
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.48074997269925385,
+            -0.8768253306136601,
+            -0.00753679931483269
+          ],
+          "distanceKm": 232396006.30979735,
+          "angularDiameter": 0.005987203051820135,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "mars": {
+          "direction": [
+            0.7225274005143226,
+            0.691235366962679,
+            0.012158246830291198
+          ],
+          "distanceKm": 9331.98096721773,
+          "angularDiameter": 0.7434289305586556,
+          "illuminatedFraction": 0.9767714929607438,
+          "sunDirection": [
+            -0.48076057786672505,
+            -0.8768195141625023,
+            -0.00753699894427717
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "phobos-311e",
+      "id": "phobos",
+      "parent": "mars",
+      "date": "2026-09-27T05:25:49.800Z",
+      "tdbSeconds": 843758818.9823604,
+      "latitude": 1,
+      "longitude": 311,
+      "radiusKm": 11.08,
+      "parentRadiusKm": 3389.5,
+      "extraTargets": [
+        "mars"
+      ],
+      "targets": {
+        "sun": {
+          "direction": [
+            0.2703411593189811,
+            -0.9627208878309291,
+            -0.009173315218446568
+          ],
+          "distanceKm": 232408187.77986678,
+          "angularDiameter": 0.005986889236918335,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "mars": {
+          "direction": [
+            0.7384474331989157,
+            0.6742071695909994,
+            0.011835576624151672
+          ],
+          "distanceKm": 9245.763154078792,
+          "angularDiameter": 0.7507046535643866,
+          "illuminatedFraction": 0.7247904514756339,
+          "sunDirection": [
+            0.27030694770026,
+            -0.9627304911990706,
+            -0.009173621998170395
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "phobos-311e",
+      "id": "phobos",
+      "parent": "mars",
+      "date": "2026-09-27T06:23:11.760Z",
+      "tdbSeconds": 843762260.9423603,
+      "latitude": 1,
+      "longitude": 311,
+      "radiusKm": 11.08,
+      "parentRadiusKm": 3389.5,
+      "extraTargets": [
+        "mars"
+      ],
+      "targets": {
+        "sun": {
+          "direction": [
+            0.8639932836657325,
+            -0.5035016673810603,
+            -0.00129488416374257
+          ],
+          "distanceKm": 232422874.97133097,
+          "angularDiameter": 0.005986510914211827,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "mars": {
+          "direction": [
+            0.7637642063622844,
+            0.6453967552618413,
+            0.011281195737912305
+          ],
+          "distanceKm": 9232.150836114082,
+          "angularDiameter": 0.7518667499051207,
+          "illuminatedFraction": 0.33256053612368003,
+          "sunDirection": [
+            0.863974438976987,
+            -0.5035340016960874,
+            -0.001295349499533767
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "phobos-311e",
+      "id": "phobos",
+      "parent": "mars",
+      "date": "2026-09-27T07:20:33.720Z",
+      "tdbSeconds": 843765702.9023602,
+      "latitude": 1,
+      "longitude": 311,
+      "radiusKm": 11.08,
+      "parentRadiusKm": 3389.5,
+      "extraTargets": [
+        "mars"
+      ],
+      "targets": {
+        "sun": {
+          "direction": [
+            0.9701502378808,
+            0.24222780835800028,
+            0.011584679447738161
+          ],
+          "distanceKm": 232435687.72516355,
+          "angularDiameter": 0.005986180913597592,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "mars": {
+          "direction": [
+            0.7830326208285365,
+            0.6218864278899064,
+            0.010825226312909293
+          ],
+          "distanceKm": 9299.643080688007,
+          "angularDiameter": 0.7461408275050275,
+          "illuminatedFraction": 0.04479198529769146,
+          "sunDirection": [
+            0.9701542474231845,
+            0.24221174964656028,
+            0.011584668312328296
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "phobos-311e",
+      "id": "phobos",
+      "parent": "mars",
+      "date": "2026-09-27T08:17:55.680Z",
+      "tdbSeconds": 843769144.86236,
+      "latitude": 1,
+      "longitude": 311,
+      "radiusKm": 11.08,
+      "parentRadiusKm": 3389.5,
+      "extraTargets": [
+        "mars"
+      ],
+      "targets": {
+        "sun": {
+          "direction": [
+            0.5170626490400667,
+            0.8556607770039214,
+            0.022155172414453056
+          ],
+          "distanceKm": 232443459.72072682,
+          "angularDiameter": 0.005985980758641706,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "mars": {
+          "direction": [
+            0.785844942094759,
+            0.6183301594175807,
+            0.010748997102721872
+          ],
+          "distanceKm": 9406.736044245525,
+          "angularDiameter": 0.7372366117153645,
+          "illuminatedFraction": 0.03217748151066979,
+          "sunDirection": [
+            0.5170504246749984,
+            0.855668153422232,
+            0.022155576327218793
+          ]
+        }
+      },
+      "visibleSolarFraction": 0.0
+    },
+    {
+      "siteId": "phobos-311e",
+      "id": "phobos",
+      "parent": "mars",
+      "date": "2026-09-27T09:15:17.640Z",
+      "tdbSeconds": 843772586.8223598,
+      "latitude": 1,
+      "longitude": 311,
+      "radiusKm": 11.08,
+      "parentRadiusKm": 3389.5,
+      "extraTargets": [
+        "mars"
+      ],
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.24775877702613908,
+            0.9685247269156289,
+            0.023988367170740686
+          ],
+          "distanceKm": 232446134.9007904,
+          "angularDiameter": 0.00598591186687799,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "mars": {
+          "direction": [
+            0.7711462848512829,
+            0.6365614117929719,
+            0.011089471412224924
+          ],
+          "distanceKm": 9490.35330922928,
+          "angularDiameter": 0.7304343206084172,
+          "illuminatedFraction": 0.2871501018026886,
+          "sunDirection": [
+            -0.24779456850247475,
+            0.9685155712633114,
+            0.023988331354516074
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "phobos-311e",
+      "id": "phobos",
+      "parent": "mars",
+      "date": "2026-09-27T10:12:39.600Z",
+      "tdbSeconds": 843776028.7823597,
+      "latitude": 1,
+      "longitude": 311,
+      "radiusKm": 11.08,
+      "parentRadiusKm": 3389.5,
+      "extraTargets": [
+        "mars"
+      ],
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.8674276197160696,
+            0.4973179391508529,
+            0.015626642392482955
+          ],
+          "distanceKm": 232446519.50406003,
+          "angularDiameter": 0.005985901962629241,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "mars": {
+          "direction": [
+            0.7467015355755486,
+            0.6650575347916516,
+            0.01163151692466073
+          ],
+          "distanceKm": 9503.605821808378,
+          "angularDiameter": 0.7293680180550385,
+          "illuminatedFraction": 0.6584097565029949,
+          "sunDirection": [
+            -0.8674469131375507,
+            0.4972843071356644,
+            0.015625964441823667
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "phobos-311e",
+      "id": "phobos",
+      "parent": "mars",
+      "date": "2026-09-27T11:10:01.560Z",
+      "tdbSeconds": 843779470.7423595,
+      "latitude": 1,
+      "longitude": 311,
+      "radiusKm": 11.08,
+      "parentRadiusKm": 3389.5,
+      "extraTargets": [
+        "mars"
+      ],
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.962139103594077,
+            -0.27255116192575024,
+            0.002051698835068574
+          ],
+          "distanceKm": 232448601.263222,
+          "angularDiameter": 0.005985848354031927,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "mars": {
+          "direction": [
+            0.7262409390584916,
+            0.6873343811835295,
+            0.012064281101470897
+          ],
+          "distanceKm": 9439.26269750336,
+          "angularDiameter": 0.7345751769865505,
+          "illuminatedFraction": 0.9430312822893031,
+          "sunDirection": [
+            -0.9621339761995261,
+            -0.272569265852149,
+            0.0020511351273464124
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "phobos-311e",
+      "id": "phobos",
+      "parent": "mars",
+      "date": "2026-09-27T12:07:23.520Z",
+      "tdbSeconds": 843782912.7023594,
+      "latitude": 1,
+      "longitude": 311,
+      "radiusKm": 11.08,
+      "parentRadiusKm": 3389.5,
+      "extraTargets": [
+        "mars"
+      ],
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.4865759433685078,
+            -0.8735961848640306,
+            -0.008576545111931014
+          ],
+          "distanceKm": 232455480.88194036,
+          "angularDiameter": 0.005985671199777791,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "mars": {
+          "direction": [
+            0.7225024876392305,
+            0.6912614932947024,
+            0.012153322307144263
+          ],
+          "distanceKm": 9332.972794613486,
+          "angularDiameter": 0.7433460742671433,
+          "illuminatedFraction": 0.9777717284222337,
+          "sunDirection": [
+            -0.4865862838335914,
+            -0.8735904237874623,
+            -0.008576704020620262
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "phobos-311e",
+      "id": "phobos",
+      "parent": "mars",
+      "date": "2026-09-27T13:04:45.480Z",
+      "tdbSeconds": 843786354.6623592,
+      "latitude": 1,
+      "longitude": 311,
+      "radiusKm": 11.08,
+      "parentRadiusKm": 3389.5,
+      "extraTargets": [
+        "mars"
+      ],
+      "targets": {
+        "sun": {
+          "direction": [
+            0.26400992087553476,
+            -0.9644649689918671,
+            -0.010299770230998512
+          ],
+          "distanceKm": 232467618.97418433,
+          "angularDiameter": 0.0059853586622880825,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "mars": {
+          "direction": [
+            0.7382803286240526,
+            0.6743900197579877,
+            0.011843040892520222
+          ],
+          "distanceKm": 9246.273624042555,
+          "angularDiameter": 0.7506611459984669,
+          "illuminatedFraction": 0.7278328576370011,
+          "sunDirection": [
+            0.2639757720816731,
+            -0.9644743130995712,
+            -0.010300054611273805
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "phobos-311e",
+      "id": "phobos",
+      "parent": "mars",
+      "date": "2026-09-27T14:02:07.440Z",
+      "tdbSeconds": 843789796.622359,
+      "latitude": 1,
+      "longitude": 311,
+      "radiusKm": 11.08,
+      "parentRadiusKm": 3389.5,
+      "extraTargets": [
+        "mars"
+      ],
+      "targets": {
+        "sun": {
+          "direction": [
+            0.8606792978632763,
+            -0.5091413850520352,
+            -0.0024892281680775584
+          ],
+          "distanceKm": 232482296.07541552,
+          "angularDiameter": 0.0059849807927526,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "mars": {
+          "direction": [
+            0.7635497945769631,
+            0.645650148373184,
+            0.01129588894964479
+          ],
+          "distanceKm": 9231.900931391036,
+          "angularDiameter": 0.7518881190346222,
+          "illuminatedFraction": 0.3358096277810034,
+          "sunDirection": [
+            0.8606602008549176,
+            -0.509173663903081,
+            -0.002489709196894068
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "phobos-311e",
+      "id": "phobos",
+      "parent": "mars",
+      "date": "2026-09-27T14:59:29.400Z",
+      "tdbSeconds": 843793238.582359,
+      "latitude": 1,
+      "longitude": 311,
+      "radiusKm": 11.08,
+      "parentRadiusKm": 3389.5,
+      "extraTargets": [
+        "mars"
+      ],
+      "targets": {
+        "sun": {
+          "direction": [
+            0.971740631502247,
+            0.23582294484209265,
+            0.010377079243101838
+          ],
+          "distanceKm": 232495135.21190178,
+          "angularDiameter": 0.005984650281688138,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "mars": {
+          "direction": [
+            0.7828944675800613,
+            0.6220601693866845,
+            0.010835049383455142
+          ],
+          "distanceKm": 9298.843451152628,
+          "angularDiameter": 0.7462081427205458,
+          "illuminatedFraction": 0.04621409508662594,
+          "sunDirection": [
+            0.9717445925707685,
+            0.23580662461469065,
+            0.010377022564179408
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "phobos-311e",
+      "id": "phobos",
+      "parent": "mars",
+      "date": "2026-09-27T15:56:51.360Z",
+      "tdbSeconds": 843796680.5423589,
+      "latitude": 1,
+      "longitude": 311,
+      "radiusKm": 11.08,
+      "parentRadiusKm": 3389.5,
+      "extraTargets": [
+        "mars"
+      ],
+      "targets": {
+        "sun": {
+          "direction": [
+            0.5228048065595208,
+            0.8521937451567099,
+            0.020998927449823908
+          ],
+          "distanceKm": 232502949.14301568,
+          "angularDiameter": 0.005984449149681935,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "mars": {
+          "direction": [
+            0.7858615155023111,
+            0.6183091266526534,
+            0.010747201982104422
+          ],
+          "distanceKm": 9405.888762698189,
+          "angularDiameter": 0.737306203314622,
+          "illuminatedFraction": 0.03100391689388987,
+          "sunDirection": [
+            0.5227928527511689,
+            0.8522010695556895,
+            0.020999289522112666
+          ]
+        }
+      },
+      "visibleSolarFraction": 0.0
+    },
+    {
+      "siteId": "phobos-311e",
+      "id": "phobos",
+      "parent": "mars",
+      "date": "2026-09-27T16:54:13.320Z",
+      "tdbSeconds": 843800122.5023584,
+      "latitude": 1,
+      "longitude": 311,
+      "radiusKm": 11.08,
+      "parentRadiusKm": 3389.5,
+      "extraTargets": [
+        "mars"
+      ],
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.24116929811779814,
+            0.9702123194232478,
+            0.02292214834457495
+          ],
+          "distanceKm": 232505652.37485546,
+          "angularDiameter": 0.005984379571150833,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "mars": {
+          "direction": [
+            0.7713142338127486,
+            0.6363580466095363,
+            0.011081030328809634
+          ],
+          "distanceKm": 9489.923736459437,
+          "angularDiameter": 0.7304689376813478,
+          "illuminatedFraction": 0.28419705362546926,
+          "sunDirection": [
+            -0.2412050293120829,
+            0.9702034380332504,
+            0.02292209988239446
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "phobos-311e",
+      "id": "phobos",
+      "parent": "mars",
+      "date": "2026-09-27T17:51:35.280Z",
+      "tdbSeconds": 843803564.4623584,
+      "latitude": 1,
+      "longitude": 311,
+      "radiusKm": 11.08,
+      "parentRadiusKm": 3389.5,
+      "extraTargets": [
+        "mars"
+      ],
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.8640248453030442,
+            0.503236429007958,
+            0.01463431646401149
+          ],
+          "distanceKm": 232506032.88920063,
+          "angularDiameter": 0.0059843697772154186,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "mars": {
+          "direction": [
+            0.7469278277463453,
+            0.6648034552424504,
+            0.01162695298970769
+          ],
+          "distanceKm": 9503.794373121493,
+          "angularDiameter": 0.7293528701600086,
+          "illuminatedFraction": 0.6553388309431232,
+          "sunDirection": [
+            -0.8640444044009102,
+            0.5032028650093217,
+            0.01463365538363231
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "phobos-311e",
+      "id": "phobos",
+      "parent": "mars",
+      "date": "2026-09-27T18:48:57.240Z",
+      "tdbSeconds": 843807006.4223583,
+      "latitude": 1,
+      "longitude": 311,
+      "radiusKm": 11.08,
+      "parentRadiusKm": 3389.5,
+      "extraTargets": [
+        "mars"
+      ],
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.9639632301250479,
+            -0.2660333556383758,
+            0.0010698853534066481
+          ],
+          "distanceKm": 232508077.9563803,
+          "angularDiameter": 0.005984317140443165,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "mars": {
+          "direction": [
+            0.7263797189744176,
+            0.687187629765113,
+            0.012069190546685938
+          ],
+          "distanceKm": 9439.956173182261,
+          "angularDiameter": 0.7345186490707426,
+          "illuminatedFraction": 0.9415071012696848,
+          "sunDirection": [
+            -0.9639581629846412,
+            -0.2660517176995504,
+            0.0010693570004375768
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "phobos-311e",
+      "id": "phobos",
+      "parent": "mars",
+      "date": "2026-09-27T19:46:19.200Z",
+      "tdbSeconds": 843810448.3823581,
+      "latitude": 1,
+      "longitude": 311,
+      "radiusKm": 11.08,
+      "parentRadiusKm": 3389.5,
+      "extraTargets": [
+        "mars"
+      ],
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.4923794571771238,
+            -0.8703275371668867,
+            -0.009614998647045275
+          ],
+          "distanceKm": 232514903.72817093,
+          "angularDiameter": 0.005984141462650618,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "mars": {
+          "direction": [
+            0.7224530835816835,
+            0.6913129461025687,
+            0.012163575720330019
+          ],
+          "distanceKm": 9333.786649383517,
+          "angularDiameter": 0.7432780997868376,
+          "illuminatedFraction": 0.97875502130236,
+          "sunDirection": [
+            -0.4923895324436271,
+            -0.8703218357931122,
+            -0.009615117349961108
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "phobos-311e",
+      "id": "phobos",
+      "parent": "mars",
+      "date": "2026-09-27T20:43:41.160Z",
+      "tdbSeconds": 843813890.3423579,
+      "latitude": 1,
+      "longitude": 311,
+      "radiusKm": 11.08,
+      "parentRadiusKm": 3389.5,
+      "extraTargets": [
+        "mars"
+      ],
+      "targets": {
+        "sun": {
+          "direction": [
+            0.25766772187737014,
+            -0.966166040285418,
+            -0.011424872065897164
+          ],
+          "distanceKm": 232526997.68722928,
+          "angularDiameter": 0.005983830220607663,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "mars": {
+          "direction": [
+            0.7380764777813095,
+            0.6746130150997875,
+            0.011848746934154617
+          ],
+          "distanceKm": 9246.725891032194,
+          "angularDiameter": 0.750622603420956,
+          "illuminatedFraction": 0.7308881791115704,
+          "sunDirection": [
+            0.2576336405510263,
+            -0.9661751257313679,
+            -0.011425133452184563
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "phobos-311e",
+      "id": "phobos",
+      "parent": "mars",
+      "date": "2026-09-27T21:41:03.120Z",
+      "tdbSeconds": 843817332.3023578,
+      "latitude": 1,
+      "longitude": 311,
+      "radiusKm": 11.08,
+      "parentRadiusKm": 3389.5,
+      "extraTargets": [
+        "mars"
+      ],
+      "targets": {
+        "sun": {
+          "direction": [
+            0.8573279943896605,
+            -0.5147573688845618,
+            -0.003682555477627325
+          ],
+          "distanceKm": 232541664.76308268,
+          "angularDiameter": 0.005983452801990298,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "mars": {
+          "direction": [
+            0.7633364690643053,
+            0.6459024273465955,
+            0.011291117934690027
+          ],
+          "distanceKm": 9231.707487160427,
+          "angularDiameter": 0.751904661134151,
+          "illuminatedFraction": 0.3390652381265276,
+          "sunDirection": [
+            0.8573086458280539,
+            -0.5147895889830599,
+            -0.0036830507898960867
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "phobos-311e",
+      "id": "phobos",
+      "parent": "mars",
+      "date": "2026-09-27T22:38:25.080Z",
+      "tdbSeconds": 843820774.2623577,
+      "latitude": 1,
+      "longitude": 311,
+      "radiusKm": 11.08,
+      "parentRadiusKm": 3389.5,
+      "extraTargets": [
+        "mars"
+      ],
+      "targets": {
+        "sun": {
+          "direction": [
+            0.9732868323718815,
+            0.22940935968527776,
+            0.009169930223282547
+          ],
+          "distanceKm": 232554530.32569435,
+          "angularDiameter": 0.0059831217797728375,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "mars": {
+          "direction": [
+            0.7828074552634398,
+            0.6221698506558346,
+            0.010824274519533135
+          ],
+          "distanceKm": 9298.117883611181,
+          "angularDiameter": 0.746269233961869,
+          "illuminatedFraction": 0.047640111297913235,
+          "sunDirection": [
+            0.973290740722238,
+            0.22939278161670296,
+            0.009169829142836497
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "phobos-311e",
+      "id": "phobos",
+      "parent": "mars",
+      "date": "2026-09-27T23:35:47.040Z",
+      "tdbSeconds": 843824216.2223575,
+      "latitude": 1,
+      "longitude": 311,
+      "radiusKm": 11.08,
+      "parentRadiusKm": 3389.5,
+      "extraTargets": [
+        "mars"
+      ],
+      "targets": {
+        "sun": {
+          "direction": [
+            0.5285209981462785,
+            0.8486882967633835,
+            0.01984261714916646
+          ],
+          "distanceKm": 232562385.41333905,
+          "angularDiameter": 0.00598291969169191,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "mars": {
+          "direction": [
+            0.7859408266015485,
+            0.6182084395055786,
+            0.01073975814214354
+          ],
+          "distanceKm": 9405.057836562537,
+          "angularDiameter": 0.7373744646464372,
+          "illuminatedFraction": 0.029869542383695435,
+          "sunDirection": [
+            0.5285093105753961,
+            0.8486955676049459,
+            0.019842937354082046
+          ]
+        }
+      },
+      "visibleSolarFraction": 0.0
+    },
+    {
+      "siteId": "phobos-311e",
+      "id": "phobos",
+      "parent": "mars",
+      "date": "2026-09-28T00:33:09.000Z",
+      "tdbSeconds": 843827658.1823574,
+      "latitude": 1,
+      "longitude": 311,
+      "radiusKm": 11.08,
+      "parentRadiusKm": 3389.5,
+      "extraTargets": [
+        "mars"
+      ],
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.23457000081136595,
+            0.971853508479909,
+            0.021855726358266034
+          ],
+          "distanceKm": 232565116.8665433,
+          "angularDiameter": 0.005982849422710346,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "mars": {
+          "direction": [
+            0.7715040586460817,
+            0.6361279031581423,
+            0.011080537723786112
+          ],
+          "distanceKm": 9489.47331833837,
+          "angularDiameter": 0.7305052381865765,
+          "illuminatedFraction": 0.2812696972559835,
+          "sunDirection": [
+            -0.2346056687381306,
+            0.9718449002443097,
+            0.021855664370184356
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "phobos-311e",
+      "id": "phobos",
+      "parent": "mars",
+      "date": "2026-09-28T01:30:30.960Z",
+      "tdbSeconds": 843831100.1423572,
+      "latitude": 1,
+      "longitude": 311,
+      "radiusKm": 11.08,
+      "parentRadiusKm": 3389.5,
+      "extraTargets": [
+        "mars"
+      ],
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.8605814623061782,
+            0.5091300797282053,
+            0.013642164451121654
+          ],
+          "distanceKm": 232565494.3844019,
+          "angularDiameter": 0.005982839710868762,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "mars": {
+          "direction": [
+            0.7471149556707181,
+            0.6645931104288869,
+            0.011629298499834285
+          ],
+          "distanceKm": 9504.008639221138,
+          "angularDiameter": 0.7293356571650745,
+          "illuminatedFraction": 0.6522336834233768,
+          "sunDirection": [
+            -0.8606012866171799,
+            0.5090965865324077,
+            0.013641519486673371
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "phobos-311e",
+      "id": "phobos",
+      "parent": "mars",
+      "date": "2026-09-28T02:27:52.920Z",
+      "tdbSeconds": 843834542.1023571,
+      "latitude": 1,
+      "longitude": 311,
+      "radiusKm": 11.08,
+      "parentRadiusKm": 3389.5,
+      "extraTargets": [
+        "mars"
+      ],
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.9657421388998856,
+            -0.2595035900560752,
+            8.888803289486791e-05
+          ],
+          "distanceKm": 232567502.78648847,
+          "angularDiameter": 0.005982788044219481,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "mars": {
+          "direction": [
+            0.7264511376900338,
+            0.6871121473801398,
+            0.012068200839737857
+          ],
+          "distanceKm": 9440.743341416104,
+          "angularDiameter": 0.7344544947162291,
+          "illuminatedFraction": 0.9399403192075687,
+          "sunDirection": [
+            -0.9657371346131367,
+            -0.25952221295205974,
+            8.839498440546783e-05
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "phobos-311e",
+      "id": "phobos",
+      "parent": "mars",
+      "date": "2026-09-28T03:25:14.880Z",
+      "tdbSeconds": 843837984.062357,
+      "latitude": 1,
+      "longitude": 311,
+      "radiusKm": 11.08,
+      "parentRadiusKm": 3389.5,
+      "extraTargets": [
+        "mars"
+      ],
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.4981602499304899,
+            -0.8670195481741934,
+            -0.01065215813858341
+          ],
+          "distanceKm": 232574274.09573537,
+          "angularDiameter": 0.00598261385716033,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "mars": {
+          "direction": [
+            0.7223660663711469,
+            0.691403966601543,
+            0.01215817104370265
+          ],
+          "distanceKm": 9334.708593988675,
+          "angularDiameter": 0.7432011128729579,
+          "illuminatedFraction": 0.9797237574887565,
+          "sunDirection": [
+            -0.4981700592351435,
+            -0.8670139110484654,
+            -0.010652235920107325
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "phobos-311e",
+      "id": "phobos",
+      "parent": "mars",
+      "date": "2026-09-28T04:22:36.840Z",
+      "tdbSeconds": 843841426.0223569,
+      "latitude": 1,
+      "longitude": 311,
+      "radiusKm": 11.08,
+      "parentRadiusKm": 3389.5,
+      "extraTargets": [
+        "mars"
+      ],
+      "targets": {
+        "sun": {
+          "direction": [
+            0.2513148536794606,
+            -0.9678240421705968,
+            -0.012548614132162681
+          ],
+          "distanceKm": 232586324.08635727,
+          "angularDiameter": 0.0059823039049042796,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "mars": {
+          "direction": [
+            0.7378879249903243,
+            0.6748193070835755,
+            0.011845376343386503
+          ],
+          "distanceKm": 9247.198612666452,
+          "angularDiameter": 0.7505823220237201,
+          "illuminatedFraction": 0.7339219264604779,
+          "sunDirection": [
+            0.25128084281212937,
+            -0.9678328700541713,
+            -0.01254885167382663
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "phobos-311e",
+      "id": "phobos",
+      "parent": "mars",
+      "date": "2026-09-28T05:19:58.800Z",
+      "tdbSeconds": 843844867.9823565,
+      "latitude": 1,
+      "longitude": 311,
+      "radiusKm": 11.08,
+      "parentRadiusKm": 3389.5,
+      "extraTargets": [
+        "mars"
+      ],
+      "targets": {
+        "sun": {
+          "direction": [
+            0.8539395490232352,
+            -0.520349384935327,
+            -0.00487485501530515
+          ],
+          "distanceKm": 232600980.97138417,
+          "angularDiameter": 0.005981926940879292,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "mars": {
+          "direction": [
+            0.7631556274367804,
+            0.6461160000113316,
+            0.011296142745674073
+          ],
+          "distanceKm": 9231.387372490119,
+          "angularDiameter": 0.7519320369119771,
+          "illuminatedFraction": 0.34230404877568676,
+          "sunDirection": [
+            0.8539199504287635,
+            -0.5203815418345239,
+            -0.004875364361912917
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "phobos-311e",
+      "id": "phobos",
+      "parent": "mars",
+      "date": "2026-09-28T06:17:20.760Z",
+      "tdbSeconds": 843848309.9423565,
+      "latitude": 1,
+      "longitude": 311,
+      "radiusKm": 11.08,
+      "parentRadiusKm": 3389.5,
+      "extraTargets": [
+        "mars"
+      ],
+      "targets": {
+        "sun": {
+          "direction": [
+            0.9747888100820565,
+            0.22298735942824321,
+            0.007963245194510169
+          ],
+          "distanceKm": 232613872.1079754,
+          "angularDiameter": 0.005981595429836953,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "mars": {
+          "direction": [
+            0.7827247457471993,
+            0.6222737166254612,
+            0.01083485081195537
+          ],
+          "distanceKm": 9297.201565783667,
+          "angularDiameter": 0.7463464006401171,
+          "illuminatedFraction": 0.04908534255234698,
+          "sunDirection": [
+            0.9747926620550604,
+            0.22297052508166817,
+            0.007963099171409112
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "phobos-311e",
+      "id": "phobos",
+      "parent": "mars",
+      "date": "2026-09-28T07:14:42.720Z",
+      "tdbSeconds": 843851751.9023564,
+      "latitude": 1,
+      "longitude": 311,
+      "radiusKm": 11.08,
+      "parentRadiusKm": 3389.5,
+      "extraTargets": [
+        "mars"
+      ],
+      "targets": {
+        "sun": {
+          "direction": [
+            0.5342109691013813,
+            0.8451446411652666,
+            0.018686251667894935
+          ],
+          "distanceKm": 232621768.43881086,
+          "angularDiameter": 0.005981392384362841,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "mars": {
+          "direction": [
+            0.785994204716314,
+            0.6181404601633664,
+            0.010746239406912045
+          ],
+          "distanceKm": 9404.108037894512,
+          "angularDiameter": 0.73745250734174,
+          "illuminatedFraction": 0.028749442544933945,
+          "sunDirection": [
+            0.5341995482087083,
+            0.845151853999548,
+            0.018686529232000114
+          ]
+        }
+      },
+      "visibleSolarFraction": 0.0
     },
     {
       "siteId": "io",

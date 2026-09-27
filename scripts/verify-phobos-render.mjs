@@ -31,7 +31,8 @@ try {
     await page.screenshot({path:out+'/'+name+'-initial.png'});
     assert.equal(s.selected,'phobos');assert.equal(s.date,Date.parse(date));assert.equal(s.playing,false);
     assert.match(b.physicalModel,/MAR099/);assert.equal(b.visible,true);assert.ok(b.inView);assert.ok(b.textureWidth>0);
-    assert.ok(!s.landing.some(l=>l.body==='phobos'));assert.equal(s.landing.length,19);
+    assert.deepEqual(s.landing.filter(l=>l.body==='phobos').map(l=>l.siteId).sort(),['phobos-311e','phobos-60e']);
+    assert.equal(s.landing.length,21);
     await provider.ensure(new Date(date),['phobos'],{prefetch:false});
     const expected=provider.frame(new Date(date)).bodies.get('phobos');
     const positionErrorKm=new Vector3().fromArray(b.physicalPositionKm).distanceTo(expected.positionKm);

@@ -12,8 +12,8 @@ const altitudeOf=(site,target,offsetMs=0)=>
   horizonAngles(surfaceFrame(site,new Date(Date.parse(site.date)+offsetMs)).targets[target].direction).altitude;
 
 test('every landing site has a decodable local image and never draws the observer body in the sky',async()=>{
-  assert.equal(landableBodyIds.length,13);
-  assert.equal(Object.keys(landingSites).length,19);
+  assert.equal(landableBodyIds.length,14);
+  assert.equal(Object.keys(landingSites).length,21);
   for(const [siteId,site] of Object.entries(landingSites)){
     assert.equal(site.siteId,siteId,'a site id must match its key');
     const frame=surfaceFrame(site);
@@ -33,7 +33,8 @@ test('a body may carry several sites and keeps its own-keyed one as the default'
     const sites=sitesForBody(bodyId);
     assert.ok(sites.length>=1,bodyId);
     for(const site of sites)assert.equal(site.id,bodyId);
-    assert.equal(defaultSiteId(bodyId),bodyId,`${bodyId} keeps its original site as the default`);
+    if(bodyId==='phobos') assert.equal(defaultSiteId(bodyId),'phobos-60e','Phobos uses its first registered site as the default');
+    else assert.equal(defaultSiteId(bodyId),bodyId,`${bodyId} keeps its original site as the default`);
   }
   const coords=new Set(Object.values(landingSites).map(site=>`${site.id}:${site.latitude},${site.longitude}`));
   assert.equal(coords.size,Object.keys(landingSites).length,'two sites on one body must not share coordinates');
@@ -52,6 +53,23 @@ test('second sites on one body show a different sky from the first',()=>{
   assert.ok(altitudeOf(landingSites['europa-subjovian'],'Jupiter')>80);
   assert.ok(altitudeOf(landingSites.europa,'Jupiter')<40);
   assert.ok(altitudeOf(landingSites.charon,'Pluto')>80);
+});
+
+test('the two Phobos sites keep the Mars disc and daylight window',()=>{
+  const ranges={
+    'phobos-60e':{altitude:[27,33],diameter:[41,44]},
+    'phobos-311e':{altitude:[38,44],diameter:[41,44]},
+  };
+  for(const [id,range] of Object.entries(ranges)){
+    const site=landingSites[id],frame=surfaceFrame(site,new Date(site.date));
+    const marsAltitude=horizonAngles(frame.targets.Mars.direction).altitude;
+    const marsDiameter=MathUtils.radToDeg(angularDiameter(site.parentRadiusKm,frame.targets.Mars.distanceKm));
+    const sunAltitude=horizonAngles(frame.targets.Sun.direction).altitude;
+    assert.ok(marsAltitude>=range.altitude[0]&&marsAltitude<=range.altitude[1],`${id}: Mars ${marsAltitude}`);
+    assert.ok(marsDiameter>=range.diameter[0]&&marsDiameter<=range.diameter[1],`${id}: diameter ${marsDiameter}`);
+    assert.ok(marsAltitude-marsDiameter/2>0,`${id}: Mars disc must clear the horizon`);
+    assert.ok(sunAltitude>8,`${id}: default Sun altitude ${sunAltitude}`);
+  }
 });
 
 test('synchronous rotation keeps the parent in place at a sub-parent site',()=>{

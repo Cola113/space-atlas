@@ -453,7 +453,71 @@
           "mode": "text-to-image"
         }
       ]
+    },
+    {
+      "id": "phobos-60e",
+      "generatedOn": "2026-09-27",
+      "mode": "reference-redraw with MRO HiRISE orbital imagery",
+      "sourceFile": "phobos-60E-raw.png",
+      "sourceDimensions": [
+        1376,
+        768
+      ],
+      "deliveredDimensions": [
+        3840,
+        1920
+      ],
+      "sourceSha256": "02bc9c432546a9cb533282353bdc92ad73e0a08909e9a9cabf49227dc6e47860",
+      "file": "phobos-60e.webp",
+      "sha256": "f4f79d23cec846a619aa336db118fb4e3b913c9da9dd8d345f090ae7cf97a02e",
+      "bytes": 344510,
+      "processing": "Provider frame 1376x768 was reparameterized to 360x180 at 3840x1920; it is not a native 2:1 source and the local Lanczos resize is not AI upscaling. Black vacuum sky removed above a per-column source-pixel skyline; all terrain below it stays opaque, including dark crater-wall shadows; narrow wrap blend; nadir smoothing; WebP encoding. Phobos has no ground panorama: the terrain is a new ground-level redraw informed by the saved MRO HiRISE orbital references, with no source pixel claimed as surveyed ground.",
+      "model": "unverified (Antigravity generate_image)",
+      "requestedQuality": null,
+      "requestedSize": null,
+      "requestedAspectRatio": "16:9",
+      "generationRecord": "phobos-generation-notes-20260927.md",
+      "qualityExecutionVerified": false,
+      "references": [
+        "NASA/JPL-Caltech/University of Arizona HiRISE PSP_007769_9010 (orbital morphology only)",
+        "atlas-work/refs/phobos-20260927/SOURCES.md (local source log)"
+      ],
+      "requestedSizeAccepted": null,
+      "sourceNative2to1": false,
+      "aiUpscaled": false
+    },
+    {
+      "id": "phobos-311e",
+      "generatedOn": "2026-09-27",
+      "mode": "reference-redraw with MRO HiRISE orbital imagery",
+      "sourceFile": "phobos-311E-raw.png",
+      "sourceDimensions": [
+        1376,
+        768
+      ],
+      "deliveredDimensions": [
+        3840,
+        1920
+      ],
+      "sourceSha256": "e517548a7feb409d8d354a05dc308565e2120ced8e653ae2f2591fb05328ed9c",
+      "file": "phobos-311e.webp",
+      "sha256": "b9382ccd508a333dd1486b837c8d454de722da735a5b1c35259ef8661e145ca4",
+      "bytes": 925110,
+      "processing": "Provider frame 1376x768 was reparameterized to 360x180 at 3840x1920; it is not a native 2:1 source and the local Lanczos resize is not AI upscaling. Black vacuum sky removed above a per-column source-pixel skyline; all terrain below it stays opaque, including dark crater-wall shadows; narrow wrap blend; nadir smoothing; WebP encoding. Phobos has no ground panorama: the Stickney candidate terrain is a new ground-level redraw informed by the saved MRO HiRISE orbital references, with no source pixel claimed as surveyed ground.",
+      "model": "unverified (Antigravity generate_image)",
+      "requestedQuality": null,
+      "requestedSize": null,
+      "requestedAspectRatio": "16:9",
+      "generationRecord": "phobos-generation-notes-20260927.md",
+      "qualityExecutionVerified": false,
+      "references": [
+        "NASA/JPL-Caltech/University of Arizona HiRISE PSP_007769_9010 (orbital morphology only)",
+        "atlas-work/refs/phobos-20260927/SOURCES.md (local source log)"
+      ],
+      "requestedSizeAccepted": null,
+      "sourceNative2to1": false,
+      "aiUpscaled": false
     }
   ],
-  "updatedOn": "2026-09-25"
+  "updatedOn": "2026-09-27"
 }

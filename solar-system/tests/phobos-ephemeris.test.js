@@ -14,7 +14,7 @@ test('Phobos MAR099 year records and three unregistered candidate skies agree wi
   assert.ok(r.surfaceDistanceKm<.002); assert.ok(r.surfaceDiameterArcsec<.1,JSON.stringify(r));
   console.log('Phobos independent reference differences:',JSON.stringify(r));
 });
-test('Phobos availability, Mars translation and IAU attitude remain separate; no landing is registered',async()=>{
+test('Phobos availability, Mars translation, IAU attitude and two landing sites remain separate',async()=>{
   const p=localPhysics(),date=new Date('2026-09-26T00:00:00Z');
   const before=p.frame(date); assert.equal(before.bodies.has('phobos'),false);
   assert.throws(()=>p.frame(date,{required:['phobos']}),MissingEphemerisError);
@@ -25,7 +25,9 @@ test('Phobos availability, Mars translation and IAU attitude remain separate; no
   assert.match(b.model,/MAR099/); assert.equal(b.parent,'mars');
   assert.equal(meanElements.bodies.phobos,undefined); assert.equal(physicalDefinitions.bodies.phobos.rotation.provider,'iau-pck');
   assert.ok(b.orientation.quaternion.angleTo(bodyOrientation('phobos',date).quaternion)<1e-7);
-  assert.ok(!Object.values(landingSites).some(s=>s.id==='phobos'));
+  assert.deepEqual(Object.entries(landingSites).filter(([,s])=>s.id==='phobos').map(([id,s])=>[id,s.latitude,s.longitude]),[
+    ['phobos-60e',1,60],['phobos-311e',1,311],
+  ]);
   for(const boundary of ['1900-01-01T00:00:00Z','2101-01-01T00:00:00Z']) {
     const t=Date.parse(boundary),first=boundary.startsWith('1900');
     const inside=new Date(t+(first?0:-1)),outside=new Date(t+(first?-1:0));
