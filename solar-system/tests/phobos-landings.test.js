@@ -7,6 +7,8 @@ import {landingSites, surfaceFrame, horizonAngles, nextDaylight, sunHiddenByPare
 
 before(prepareSurfaceTests);
 
+const eclipseReference=JSON.parse(await readFile(new URL('phobos-eclipse-reference.json',import.meta.url),'utf8'));
+
 test('Phobos panoramas preserve opaque crater shadows below the skyline',async()=>{
   for(const id of ['phobos-60e','phobos-311e']){
     const file=await readFile(new URL(`../../public${landingSites[id].texture}`,import.meta.url));
@@ -35,6 +37,32 @@ test('both Phobos default moments and daylight jumps are sunlit outside Mars sha
       const frame=surfaceFrame(site,new Date(time));
       assert.ok(horizonAngles(frame.targets.Sun.direction).altitude>8,`${id}: Sun must be above 8 degrees`);
       assert.equal(sunHiddenByParent(frame,site),false,`${id}: visible Sun must not be eclipsed by Mars`);
+    }
+  }
+});
+
+test('both Phobos defaults retain at least ten minutes after complete independent eclipse egress',()=>{
+  for(const id of ['phobos-60e','phobos-311e']){
+    const site=landingSites[id],time=Date.parse(site.date);
+    const reference=eclipseReference.candidates.find(candidate=>candidate.siteId===id);
+    assert.equal(time,Date.parse(reference.date),id+': unverified default epoch');
+    assert.ok(reference.meanSphere.sunAltitudeDeg>8);
+    assert.equal(reference.meanSphere.eclipsed,false);
+    assert.equal(reference.equatorialSphere.eclipsed,false);
+    assert.ok(reference.minimumMinutesAfterEgress>=10);
+    const brackets=eclipseReference.egress.sites[id];
+    for(const bracket of Object.values(brackets))assert.ok(time-Date.parse(bracket[1])>=600000);
+    // A start/end check alone could miss an intervening eclipse. Sample the
+    // application's full buffer and check independent minute samples as well.
+    for(let offset=0;offset<=600000;offset+=15000){
+      const frame=surfaceFrame(site,new Date(time-offset));
+      assert.equal(sunHiddenByParent(frame,site),false,id+': eclipse within the ten-minute buffer');
+      if(offset%60000===0){
+        const sample=eclipseReference.samples.find(row=>Date.parse(row.date)===time-offset);
+        assert.ok(sample,id+': missing independent buffer sample');
+        assert.equal(sample.sites[id].meanSphere.eclipsed,false);
+        assert.equal(sample.sites[id].equatorialSphere.eclipsed,false);
+      }
     }
   }
 });

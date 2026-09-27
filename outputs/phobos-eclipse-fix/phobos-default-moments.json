@@ -1,0 +1,520 @@
+{
+  "rejectedDate": "2026-09-27T00:39:00Z",
+  "reason": "atan(r/d) underestimated spherical angular radii; both old default moments still overlap Mars.",
+  "search": {
+    "start": "2026-09-27T00:00:00.000Z",
+    "stepSeconds": 60,
+    "minimumSunAltitudeDeg": 8,
+    "acceptanceMarginMinutes": 10,
+    "selectionMarginMinutes": 12
+  },
+  "reference": "solar-system/tests/phobos-eclipse-reference.json",
+  "moments": [
+    {
+      "siteId": "phobos-60e",
+      "body": "phobos",
+      "parent": "Mars",
+      "date": "2026-09-27T04:52:00.000Z",
+      "parentDistanceKm": 9293.014532854197,
+      "parentRadiusKm": 3389.5,
+      "sunDistanceKm": 232401735.70409355,
+      "sunRadiusKm": 695700,
+      "oldParentRadiusDeg": 20.038749793160182,
+      "parentRadiusDeg": 21.39135680437066,
+      "parentRadiusIncreaseDeg": 1.3526070112104769,
+      "oldSunRadiusDeg": 0.17151573597711997,
+      "sunRadiusDeg": 0.17151650446951136,
+      "sunRadiusIncreaseDeg": 7.684923913897634e-7,
+      "oldThresholdDeg": 20.210265529137303,
+      "thresholdDeg": 21.56287330884017,
+      "thresholdIncreaseDeg": 1.3526077797028684,
+      "separationDeg": 143.9129982911082,
+      "clearanceDeg": 122.35012498226804,
+      "sunAltitudeDeg": 8.548076243290021,
+      "parentAltitudeDeg": 27.522529425066097,
+      "oldEclipsed": false,
+      "eclipsed": false,
+      "totalEclipse": false,
+      "changedToEclipse": false,
+      "daylightAltitudeThresholdDeg": 8,
+      "oldDaylightEligible": true,
+      "daylightEligible": true,
+      "registeredDate": "2026-09-27T04:52:00Z",
+      "registeredMatchesSearch": true,
+      "search": {
+        "date": "2026-09-27T04:52:00.000Z",
+        "egressBracket": {
+          "lower": "2026-09-27T00:39:26.951Z",
+          "upper": "2026-09-27T00:39:26.952Z"
+        },
+        "minimumMinutesAfterEgress": 252.5508
+      },
+      "independent": {
+        "date": "2026-09-27T04:52:00Z",
+        "sunAltitudeDeg": 8.547863823821372,
+        "meanSphereClearanceDeg": 122.3503179676686,
+        "equatorialSphereClearanceDeg": 122.30601257774518,
+        "minimumMinutesAfterEgress": 252.48333333333332,
+        "egressBrackets": {
+          "meanSphere": [
+            "2026-09-27T00:39:26Z",
+            "2026-09-27T00:39:27Z"
+          ],
+          "equatorialSphere": [
+            "2026-09-27T00:39:30Z",
+            "2026-09-27T00:39:31Z"
+          ]
+        }
+      },
+      "lastTenMinutes": [
+        {
+          "date": "2026-09-27T04:42:00.000Z",
+          "clearanceDeg": 130.34119736295247
+        },
+        {
+          "date": "2026-09-27T04:42:15.000Z",
+          "clearanceDeg": 130.14174980641843
+        },
+        {
+          "date": "2026-09-27T04:42:30.000Z",
+          "clearanceDeg": 129.94228475824494
+        },
+        {
+          "date": "2026-09-27T04:42:45.000Z",
+          "clearanceDeg": 129.74280226050075
+        },
+        {
+          "date": "2026-09-27T04:43:00.000Z",
+          "clearanceDeg": 129.54330236118733
+        },
+        {
+          "date": "2026-09-27T04:43:15.000Z",
+          "clearanceDeg": 129.34378511102264
+        },
+        {
+          "date": "2026-09-27T04:43:30.000Z",
+          "clearanceDeg": 129.14425055766347
+        },
+        {
+          "date": "2026-09-27T04:43:45.000Z",
+          "clearanceDeg": 128.9446987457417
+        },
+        {
+          "date": "2026-09-27T04:44:00.000Z",
+          "clearanceDeg": 128.74512972300886
+        },
+        {
+          "date": "2026-09-27T04:44:15.000Z",
+          "clearanceDeg": 128.54554354209344
+        },
+        {
+          "date": "2026-09-27T04:44:30.000Z",
+          "clearanceDeg": 128.34594024632224
+        },
+        {
+          "date": "2026-09-27T04:44:45.000Z",
+          "clearanceDeg": 128.14631988311277
+        },
+        {
+          "date": "2026-09-27T04:45:00.000Z",
+          "clearanceDeg": 127.94668250606038
+        },
+        {
+          "date": "2026-09-27T04:45:15.000Z",
+          "clearanceDeg": 127.74702815795689
+        },
+        {
+          "date": "2026-09-27T04:45:30.000Z",
+          "clearanceDeg": 127.547356887305
+        },
+        {
+          "date": "2026-09-27T04:45:45.000Z",
+          "clearanceDeg": 127.34766874706344
+        },
+        {
+          "date": "2026-09-27T04:46:00.000Z",
+          "clearanceDeg": 127.14796378073731
+        },
+        {
+          "date": "2026-09-27T04:46:15.000Z",
+          "clearanceDeg": 126.94824203708563
+        },
+        {
+          "date": "2026-09-27T04:46:30.000Z",
+          "clearanceDeg": 126.74850356934854
+        },
+        {
+          "date": "2026-09-27T04:46:45.000Z",
+          "clearanceDeg": 126.5487484212369
+        },
+        {
+          "date": "2026-09-27T04:47:00.000Z",
+          "clearanceDeg": 126.34897664191153
+        },
+        {
+          "date": "2026-09-27T04:47:15.000Z",
+          "clearanceDeg": 126.14918828307302
+        },
+        {
+          "date": "2026-09-27T04:47:30.000Z",
+          "clearanceDeg": 125.94938339392085
+        },
+        {
+          "date": "2026-09-27T04:47:45.000Z",
+          "clearanceDeg": 125.74956202046717
+        },
+        {
+          "date": "2026-09-27T04:48:00.000Z",
+          "clearanceDeg": 125.54972421155395
+        },
+        {
+          "date": "2026-09-27T04:48:15.000Z",
+          "clearanceDeg": 125.34987002191943
+        },
+        {
+          "date": "2026-09-27T04:48:30.000Z",
+          "clearanceDeg": 125.1499994957091
+        },
+        {
+          "date": "2026-09-27T04:48:45.000Z",
+          "clearanceDeg": 124.95011268291785
+        },
+        {
+          "date": "2026-09-27T04:49:00.000Z",
+          "clearanceDeg": 124.75020963758273
+        },
+        {
+          "date": "2026-09-27T04:49:15.000Z",
+          "clearanceDeg": 124.55029040492789
+        },
+        {
+          "date": "2026-09-27T04:49:30.000Z",
+          "clearanceDeg": 124.35035503527726
+        },
+        {
+          "date": "2026-09-27T04:49:45.000Z",
+          "clearanceDeg": 124.15040358318122
+        },
+        {
+          "date": "2026-09-27T04:50:00.000Z",
+          "clearanceDeg": 123.95043609414424
+        },
+        {
+          "date": "2026-09-27T04:50:15.000Z",
+          "clearanceDeg": 123.7504526186061
+        },
+        {
+          "date": "2026-09-27T04:50:30.000Z",
+          "clearanceDeg": 123.55045321178693
+        },
+        {
+          "date": "2026-09-27T04:50:45.000Z",
+          "clearanceDeg": 123.35043791950324
+        },
+        {
+          "date": "2026-09-27T04:51:00.000Z",
+          "clearanceDeg": 123.15040679273966
+        },
+        {
+          "date": "2026-09-27T04:51:15.000Z",
+          "clearanceDeg": 122.95035988534566
+        },
+        {
+          "date": "2026-09-27T04:51:30.000Z",
+          "clearanceDeg": 122.75029724871905
+        },
+        {
+          "date": "2026-09-27T04:51:45.000Z",
+          "clearanceDeg": 122.55021893041699
+        },
+        {
+          "date": "2026-09-27T04:52:00.000Z",
+          "clearanceDeg": 122.35012498226804
+        }
+      ],
+      "daylightJump": {
+        "siteId": "phobos-60e",
+        "body": "phobos",
+        "parent": "Mars",
+        "date": "2026-09-27T04:56:47.019Z",
+        "parentDistanceKm": 9285.389657237834,
+        "parentRadiusKm": 3389.5,
+        "sunDistanceKm": 232402742.50079122,
+        "sunRadiusKm": 695700,
+        "oldParentRadiusDeg": 20.053894120976416,
+        "parentRadiusDeg": 21.40978828693498,
+        "parentRadiusIncreaseDeg": 1.3558941659585635,
+        "oldSunRadiusDeg": 0.1715149929547136,
+        "sunRadiusDeg": 0.17151576143711744,
+        "sunRadiusIncreaseDeg": 7.684824038511895e-7,
+        "oldThresholdDeg": 20.22540911393113,
+        "thresholdDeg": 21.581304048372097,
+        "thresholdIncreaseDeg": 1.3558949344409683,
+        "separationDeg": 140.09977166525536,
+        "clearanceDeg": 118.51846761688327,
+        "sunAltitudeDeg": 12.252554888776041,
+        "parentAltitudeDeg": 27.630793096438847,
+        "oldEclipsed": false,
+        "eclipsed": false,
+        "totalEclipse": false,
+        "changedToEclipse": false,
+        "daylightAltitudeThresholdDeg": 8,
+        "oldDaylightEligible": true,
+        "daylightEligible": true
+      }
+    },
+    {
+      "siteId": "phobos-311e",
+      "body": "phobos",
+      "parent": "Mars",
+      "date": "2026-09-27T00:52:00.000Z",
+      "parentDistanceKm": 9430.830112016625,
+      "parentRadiusKm": 3389.5,
+      "sunDistanceKm": 232386190.67424798,
+      "sunRadiusKm": 695700,
+      "oldParentRadiusDeg": 19.768758207682502,
+      "parentRadiusDeg": 21.063740942775475,
+      "parentRadiusIncreaseDeg": 1.2949827350929723,
+      "oldSunRadiusDeg": 0.17152720912574912,
+      "sunRadiusDeg": 0.17152797777237108,
+      "sunRadiusIncreaseDeg": 7.68646621962521e-7,
+      "oldThresholdDeg": 19.94028541680825,
+      "thresholdDeg": 21.235268920547846,
+      "thresholdIncreaseDeg": 1.2949835037395943,
+      "separationDeg": 31.119006222433114,
+      "clearanceDeg": 9.883737301885269,
+      "sunAltitudeDeg": 69.45392866119133,
+      "parentAltitudeDeg": 38.383519982257816,
+      "oldEclipsed": false,
+      "eclipsed": false,
+      "totalEclipse": false,
+      "changedToEclipse": false,
+      "daylightAltitudeThresholdDeg": 8,
+      "oldDaylightEligible": true,
+      "daylightEligible": true,
+      "registeredDate": "2026-09-27T00:52:00Z",
+      "registeredMatchesSearch": true,
+      "search": {
+        "date": "2026-09-27T00:52:00.000Z",
+        "egressBracket": {
+          "lower": "2026-09-27T00:39:18.680Z",
+          "upper": "2026-09-27T00:39:18.681Z"
+        },
+        "minimumMinutesAfterEgress": 12.68865
+      },
+      "independent": {
+        "date": "2026-09-27T00:52:00Z",
+        "sunAltitudeDeg": 69.45368179348442,
+        "meanSphereClearanceDeg": 9.883544380007528,
+        "equatorialSphereClearanceDeg": 9.839983516147033,
+        "minimumMinutesAfterEgress": 12.616666666666667,
+        "egressBrackets": {
+          "meanSphere": [
+            "2026-09-27T00:39:18Z",
+            "2026-09-27T00:39:19Z"
+          ],
+          "equatorialSphere": [
+            "2026-09-27T00:39:22Z",
+            "2026-09-27T00:39:23Z"
+          ]
+        }
+      },
+      "lastTenMinutes": [
+        {
+          "date": "2026-09-27T00:42:00.000Z",
+          "clearanceDeg": 2.0984783950999777
+        },
+        {
+          "date": "2026-09-27T00:42:15.000Z",
+          "clearanceDeg": 2.2934877134374787
+        },
+        {
+          "date": "2026-09-27T00:42:30.000Z",
+          "clearanceDeg": 2.4884776153654897
+        },
+        {
+          "date": "2026-09-27T00:42:45.000Z",
+          "clearanceDeg": 2.6834480983565854
+        },
+        {
+          "date": "2026-09-27T00:43:00.000Z",
+          "clearanceDeg": 2.8783991558351367
+        },
+        {
+          "date": "2026-09-27T00:43:15.000Z",
+          "clearanceDeg": 3.0733307914257075
+        },
+        {
+          "date": "2026-09-27T00:43:30.000Z",
+          "clearanceDeg": 3.2682430046430753
+        },
+        {
+          "date": "2026-09-27T00:43:45.000Z",
+          "clearanceDeg": 3.463135792715942
+        },
+        {
+          "date": "2026-09-27T00:44:00.000Z",
+          "clearanceDeg": 3.658009156620693
+        },
+        {
+          "date": "2026-09-27T00:44:15.000Z",
+          "clearanceDeg": 3.852863101004708
+        },
+        {
+          "date": "2026-09-27T00:44:30.000Z",
+          "clearanceDeg": 4.047697628197838
+        },
+        {
+          "date": "2026-09-27T00:44:45.000Z",
+          "clearanceDeg": 4.242512736423507
+        },
+        {
+          "date": "2026-09-27T00:45:00.000Z",
+          "clearanceDeg": 4.437308433827582
+        },
+        {
+          "date": "2026-09-27T00:45:15.000Z",
+          "clearanceDeg": 4.6320847244372665
+        },
+        {
+          "date": "2026-09-27T00:45:30.000Z",
+          "clearanceDeg": 4.826841608321658
+        },
+        {
+          "date": "2026-09-27T00:45:45.000Z",
+          "clearanceDeg": 5.021579095385643
+        },
+        {
+          "date": "2026-09-27T00:46:00.000Z",
+          "clearanceDeg": 5.216297191302342
+        },
+        {
+          "date": "2026-09-27T00:46:15.000Z",
+          "clearanceDeg": 5.410995897746169
+        },
+        {
+          "date": "2026-09-27T00:46:30.000Z",
+          "clearanceDeg": 5.60567522631937
+        },
+        {
+          "date": "2026-09-27T00:46:45.000Z",
+          "clearanceDeg": 5.800335184269567
+        },
+        {
+          "date": "2026-09-27T00:47:00.000Z",
+          "clearanceDeg": 5.994975776440569
+        },
+        {
+          "date": "2026-09-27T00:47:15.000Z",
+          "clearanceDeg": 6.189597011139831
+        },
+        {
+          "date": "2026-09-27T00:47:30.000Z",
+          "clearanceDeg": 6.384198900318953
+        },
+        {
+          "date": "2026-09-27T00:47:45.000Z",
+          "clearanceDeg": 6.57878145329585
+        },
+        {
+          "date": "2026-09-27T00:48:00.000Z",
+          "clearanceDeg": 6.7733446751769115
+        },
+        {
+          "date": "2026-09-27T00:48:15.000Z",
+          "clearanceDeg": 6.967888580902194
+        },
+        {
+          "date": "2026-09-27T00:48:30.000Z",
+          "clearanceDeg": 7.1624131810845775
+        },
+        {
+          "date": "2026-09-27T00:48:45.000Z",
+          "clearanceDeg": 7.356918482234814
+        },
+        {
+          "date": "2026-09-27T00:49:00.000Z",
+          "clearanceDeg": 7.551404500542862
+        },
+        {
+          "date": "2026-09-27T00:49:15.000Z",
+          "clearanceDeg": 7.7458712480202365
+        },
+        {
+          "date": "2026-09-27T00:49:30.000Z",
+          "clearanceDeg": 7.940318732444151
+        },
+        {
+          "date": "2026-09-27T00:49:45.000Z",
+          "clearanceDeg": 8.13474697107642
+        },
+        {
+          "date": "2026-09-27T00:50:00.000Z",
+          "clearanceDeg": 8.329155977387579
+        },
+        {
+          "date": "2026-09-27T00:50:15.000Z",
+          "clearanceDeg": 8.523545760108949
+        },
+        {
+          "date": "2026-09-27T00:50:30.000Z",
+          "clearanceDeg": 8.717916338048614
+        },
+        {
+          "date": "2026-09-27T00:50:45.000Z",
+          "clearanceDeg": 8.91226772542366
+        },
+        {
+          "date": "2026-09-27T00:51:00.000Z",
+          "clearanceDeg": 9.106599934041572
+        },
+        {
+          "date": "2026-09-27T00:51:15.000Z",
+          "clearanceDeg": 9.300912978864883
+        },
+        {
+          "date": "2026-09-27T00:51:30.000Z",
+          "clearanceDeg": 9.495206878655765
+        },
+        {
+          "date": "2026-09-27T00:51:45.000Z",
+          "clearanceDeg": 9.689481649119227
+        },
+        {
+          "date": "2026-09-27T00:52:00.000Z",
+          "clearanceDeg": 9.883737301885269
+        }
+      ],
+      "daylightJump": {
+        "siteId": "phobos-311e",
+        "body": "phobos",
+        "parent": "Mars",
+        "date": "2026-09-27T00:56:47.019Z",
+        "parentDistanceKm": 9438.859971845885,
+        "parentRadiusKm": 3389.5,
+        "sunDistanceKm": 232386486.99518403,
+        "sunRadiusKm": 695700,
+        "oldParentRadiusDeg": 19.75324225031851,
+        "parentRadiusDeg": 21.044969251098347,
+        "parentRadiusIncreaseDeg": 1.2917270007798365,
+        "oldSunRadiusDeg": 0.17152699040907526,
+        "sunRadiusDeg": 0.1715277590527569,
+        "sunRadiusIncreaseDeg": 7.686436816478626e-7,
+        "oldThresholdDeg": 19.924769240727585,
+        "thresholdDeg": 21.216497010151105,
+        "thresholdIncreaseDeg": 1.2917277694235203,
+        "separationDeg": 34.813580951363335,
+        "clearanceDeg": 13.59708394121223,
+        "sunAltitudeDeg": 73.2246105583349,
+        "parentAltitudeDeg": 38.47119169129908,
+        "oldEclipsed": false,
+        "eclipsed": false,
+        "totalEclipse": false,
+        "changedToEclipse": false,
+        "daylightAltitudeThresholdDeg": 8,
+        "oldDaylightEligible": true,
+        "daylightEligible": true
+      }
+    }
+  ]
+}
