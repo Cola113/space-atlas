@@ -14,7 +14,7 @@ import json
 from datetime import date
 from pathlib import Path
 from PIL import Image
-from landing_texture_lib import dynamic_cloud_sea, panorama_from_frame, panorama_with_traced_skyline, sha256
+from landing_texture_lib import dynamic_cloud_sea, panorama_from_frame, panorama_with_traced_skyline, panorama_with_vacuum_skyline, sha256
 
 MODEL_NOTE = {
     'model': 'gpt-image-2.5-sunburst',
@@ -31,7 +31,8 @@ SITES = [
     ('phobos-60e', 'phobos-60E-raw.png',
      'reference-redraw with MRO HiRISE orbital imagery',
      'Provider frame 1376x768 was reparameterized to 360x180 at 3840x1920; it is not a native 2:1 '
-     'source and the local Lanczos resize is not AI upscaling. Top-connected black vacuum sky removed; '
+     'source and the local Lanczos resize is not AI upscaling. Black vacuum sky removed above a per-column '
+     'source-pixel skyline; all terrain below it stays opaque, including dark crater-wall shadows; '
      'narrow wrap blend; nadir smoothing; WebP encoding. Phobos has no ground panorama: the terrain is '
      'a new ground-level redraw informed by the saved MRO HiRISE orbital references, with no source pixel '
      'claimed as surveyed ground.',
@@ -42,7 +43,8 @@ SITES = [
     ('phobos-311e', 'phobos-311E-raw.png',
      'reference-redraw with MRO HiRISE orbital imagery',
      'Provider frame 1376x768 was reparameterized to 360x180 at 3840x1920; it is not a native 2:1 '
-     'source and the local Lanczos resize is not AI upscaling. Top-connected black vacuum sky removed; '
+     'source and the local Lanczos resize is not AI upscaling. Black vacuum sky removed above a per-column '
+     'source-pixel skyline; all terrain below it stays opaque, including dark crater-wall shadows; '
      'narrow wrap blend; nadir smoothing; WebP encoding. Phobos has no ground panorama: the Stickney '
      'candidate terrain is a new ground-level redraw informed by the saved MRO HiRISE orbital references, '
      'with no source pixel claimed as surveyed ground.',
@@ -167,7 +169,12 @@ for site_id, filename, mode, processing, extra in SITES:
     source = args.sources / 'raw' / filename
     # The earth sky carries an atmospheric band the black flood fill would keep;
     # its transparent region needs the per-column skyline trace instead.
-    image = panorama_with_traced_skyline(source) if site_id == 'earth' else panorama_from_frame(source)
+    if site_id in ('phobos-60e', 'phobos-311e'):
+        image = panorama_with_vacuum_skyline(source)
+    elif site_id == 'earth':
+        image = panorama_with_traced_skyline(source)
+    else:
+        image = panorama_from_frame(source)
     dest = args.output / f'{site_id}.webp'
     image.save(dest, quality=91, method=6, exact=True)
     entry = {

@@ -159,5 +159,29 @@ def panorama_from_frame(source, size=(3840, 1920)):
     return wrap(remove_black_sky(original.resize(size, Image.Resampling.LANCZOS)))
 
 
+def panorama_with_vacuum_skyline(source, size=(3840, 1920)):
+    """Trace a black vacuum sky without punching holes in dark crater walls.
+
+    The Phobos inputs have a black sky but terrain shadows also connect to it.
+    Only pixels above the first terrain boundary are sky; every lower pixel
+    remains opaque, including black shadows. Work in source pixels before the
+    existing resampling, wrap blend and nadir treatment.
+    """
+    original = Image.open(source).convert('RGB')
+    rgb = np.asarray(original).copy()
+    solid = rgb.max(axis=2) > 12
+    if not solid.any(axis=0).all():
+        raise ValueError('Vacuum skyline requires terrain in every source column')
+    boundary = solid.argmax(axis=0)
+    padded = np.pad(boundary, 4, mode='wrap')
+    boundary = np.median(np.lib.stride_tricks.sliding_window_view(padded, 9), axis=1)
+    rows = np.arange(original.height)[:, None]
+    coverage = np.clip((rows - boundary[None, :] + 1) / 2, 0, 1)
+    coverage = coverage * coverage * (3 - 2 * coverage)
+    alpha = np.uint8(np.round(coverage * 255))
+    ground = Image.fromarray(np.dstack([rgb, alpha]))
+    return wrap(ground.resize(size, Image.Resampling.LANCZOS))
+
+
 def sha256(path):
     return hashlib.sha256(Path(path).read_bytes()).hexdigest()
