@@ -149,10 +149,11 @@ SITES = [
      {'generatedOn': '2026-09-25',
       'requestedSizeAccepted': True}),
     ('moon-tycho', 'moon-tycho-4k-raw.png',
-     'multi-reference redraw easter-egg panorama (gpt-image-2.5-sunburst)',
-     'Provider frame 3840x2160 (requested 3840x1920 quality high; references: public/surface/moon-farside.webp '
-     'for 360x180 equirectangular horizon geometry and public/surface/moon-4k.webp for Apollo lunar regolith '
-     'albedo only, no source pixels preserved) was seamlessly wrapped across a 240-column minimum-cost wavy '
+     'iterative multi-reference edit easter-egg panorama (gpt-image-2.5-sunburst)',
+     'Provider frame 3840x2160 (requested 3840x2160 quality high; Image 1: pre-refinement moon-tycho '
+     'panorama edit target, SHA-256 95042905b4f82802d47014b0ddfbd6bed842c19f11b8796c06ef863d36065ec5; '
+     'Image 2: public/surface/moon-4k.webp for lunar regolith material only; no source pixels preserved) '
+     'was seamlessly wrapped across a 240-column minimum-cost wavy '
      'overlap seam with two-band tone blending, reparameterized via Lanczos to 3840x1920 (not claimed as native '
      '2:1), top-connected pure-black vacuum sky flood-filled transparent, nadir smoothed, and encoded to RGBA '
      'WebP. Fictional commemorative tribute scene (Cyberpunk 2077: Phantom Liberty) at Tycho Crater rim; not '
@@ -160,13 +161,15 @@ SITES = [
      {'generatedOn': '2026-11-22',
       'model': 'gpt-image-2.5-sunburst',
       'requestedQuality': 'high',
-      'requestedSize': '3840x1920',
+      'requestedSize': '3840x2160',
       'references': [
-          'public/surface/moon-farside.webp (same body, equirectangular horizon geometry only)',
+          'public/surface/moon-tycho.webp before refinement (edit target; SHA-256 95042905b4f82802d47014b0ddfbd6bed842c19f11b8796c06ef863d36065ec5)',
           'public/surface/moon-4k.webp (same body, regolith albedo and micro-texture only)',
       ],
-      'requestedSizeAccepted': False,
-      'sourceNative2to1': False}),
+      'editTargetSha256': '95042905b4f82802d47014b0ddfbd6bed842c19f11b8796c06ef863d36065ec5',
+      'requestedSizeAccepted': True,
+      'sourceNative2to1': False,
+      'aiUpscaled': False}),
 ]
 
 parser = argparse.ArgumentParser()
