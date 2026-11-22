@@ -35,16 +35,14 @@ import { createLandmarks, landmarks } from "./landmarks.js";
 import { landingSites, defaultSiteId, resolveLandingSite } from "./surface/geometry.js";
 import {
   SONGBIRD_DEFAULT_TIMESTAMP,
-  SONGBIRD_COPY,
   easterEggLandingSites,
   isSongbird2077Active,
   computeEarthMoonL1Display,
-  earthMoonL1Fraction,
   matchesSongbirdQuery,
   createCrystalPalaceMesh,
-  createEarthMoonTransferArc,
 } from "./easter-eggs/songbird-2077.js";
 import { createSongbirdRadio } from "./easter-eggs/songbird-audio.js";
+import { createSongbirdBriefController } from "./easter-eggs/songbird-ui.js";
 import {
   cameraPath,
   occludedByBody,
@@ -155,8 +153,9 @@ let scene,
   moonTransitDiscs,
   landmarkView,
   crystalPalaceOrbit,
-  earthMoonTransferArc,
+  songbirdBrief,
   songbirdRadio;
+const crystalPalaceSunDir = new THREE.Vector3(1, 0, 0);
 let songbird2077WasActive = false;
 let songbirdClock = 0;
 const rotationFollow = new RotationFollow();
@@ -273,7 +272,6 @@ function disposeScene() {
   moonTransitDiscs?.dispose();
   songbirdRadio?.dispose();
   crystalPalaceOrbit?.dispose();
-  earthMoonTransferArc?.dispose();
   const textures = new Set(highTextures.values());
   scene?.traverse(object => {
     object.geometry?.dispose();
@@ -1193,6 +1191,9 @@ function currentFocusOffset(body) {
   const offset = focusedOffset(body, state.close);
   const frame = landmarkView?.frame;
   if (frame) {
+    if (landmarkView.active?.focusPoint) {
+      return frame.direction.clone().multiplyScalar(0.50);
+    }
     const zoom = frame.extent > 1 ? Math.max(2, landmarkView.active.zoom || 1) : (landmarkView.active.zoom || 1);
     return frame.direction.multiplyScalar(offset.length() * zoom * frame.extent);
   }
@@ -1232,7 +1233,9 @@ function flyTo(target, offset, duration = 1700, kind = "travel") {
 
 function applyDistanceLimits() {
   const body = objects.get(state.selected);
-  controls.minDistance = body ? (body.renderRadius || body.radius) * 1.09 : 20;
+  controls.minDistance = landmarkView?.active?.focusPoint
+    ? 0.2
+    : body ? (body.renderRadius || body.radius) * 1.09 : 20;
   controls.maxDistance = 600 * ORBIT_SPACING;
 }
 
@@ -1774,53 +1777,56 @@ function crystalPalaceAnchor() {
   if (!l1 || !moon?.mesh) return null;
   moon.mesh.updateWorldMatrix(true, false);
   const localPoint = moon.mesh.worldToLocal(l1.position.clone());
+  // Frame Crystal Palace from a sunlit 3/4 oblique angle so both sunlit hull
+  // rings and shadowed warm habitat windows read crisply with the Moon beyond.
+  const sunDir = moon.sunDirection.clone().normalize();
   const fromMoon = l1.position.clone().sub(moon.root.position).normalize();
-  const worldView = fromMoon.clone()
-    .multiplyScalar(0.45)
-    .addScaledVector(l1.side, 0.82)
-    .addScaledVector(l1.lift, 0.34)
+  const worldView = sunDir
+    .multiplyScalar(0.58)
+    .addScaledVector(l1.side, 0.54)
+    .addScaledVector(l1.lift, 0.42)
+    .addScaledVector(fromMoon, 0.24)
     .normalize();
   const localView = worldView
     .transformDirection(moon.mesh.matrixWorld.clone().invert())
     .normalize();
-  return { point: localPoint, viewDirection: localView, extent: Math.max(1.55, localPoint.length()) };
+  return { point: localPoint, viewDirection: localView, extent: 1 };
 }
 
 function updateSongbird2077Orbit(dt = 0) {
   const active = isSongbird2077Active(state.date);
   if (active !== songbird2077WasActive) {
     songbird2077WasActive = active;
-    if (!active) songbirdRadio?.stop();
+    if (!active) {
+      songbirdRadio?.stop();
+      if (landmarkView?.active?.id === "crystal-palace-l1") {
+        clearLandmark();
+        const moon = objects.get("moon");
+        if (moon && state.selected === "moon") flyTo(moon.root.position, focusedOffset(moon), 850);
+      }
+    }
     if (!$("landmark-brief").hidden && landmarkView?.active) {
-      updateLandmarkBriefEaster(landmarkView.active);
+      songbirdBrief?.update(landmarkView.active);
     }
   }
-  if (!crystalPalaceOrbit || !earthMoonTransferArc) return;
+  if (!crystalPalaceOrbit) return;
   const earth = objects.get("earth");
   const moon = objects.get("moon");
   const l1 = active ? computeEarthMoonL1Display(earth, moon, state.date) : null;
   const visible = Boolean(active && l1 && earth?.root.visible && moon?.root.visible);
   crystalPalaceOrbit.group.visible = visible;
-  const showArc = Boolean(
-    visible &&
-    state.orbits &&
-    (state.selected === "moon" || state.selected === "earth" || state.system),
-  );
-  earthMoonTransferArc.group.visible = showArc;
   if (!visible || !l1) return;
   if (!reducedMotion && state.playing && dt > 0) songbirdClock += dt;
+  crystalPalaceSunDir.copy(moon.sunDirection).normalize();
   crystalPalaceOrbit.group.position.copy(l1.position);
   crystalPalaceOrbit.group.lookAt(earth.root.position);
-  crystalPalaceOrbit.group.rotateX(0.48);
-  crystalPalaceOrbit.step(songbirdClock, 1);
-  if (showArc) {
-    earthMoonTransferArc.update(
-      earth.root.position,
-      l1.position,
-      moon.root.position,
-      songbirdClock * 0.12,
-      { reducedMotion },
-    );
+  crystalPalaceOrbit.group.rotateX(0.18);
+  crystalPalaceOrbit.group.rotateZ(0.32);
+  const camDist = camera ? camera.position.distanceTo(l1.position) : 2;
+  const glowStrength = THREE.MathUtils.smoothstep(camDist, 0.60, 2.4) * 0.55;
+  crystalPalaceOrbit.step(songbirdClock, glowStrength);
+  if (!$("landmark-brief").hidden && landmarkView?.active?.id === "crystal-palace-l1") {
+    songbirdBrief?.update(landmarkView.active);
   }
 }
 
@@ -1847,142 +1853,13 @@ function tuneToSongbird2077({ selectMoonTycho = false } = {}) {
   }
   updateSimulationDate();
   refreshObservationGate();
-  if (landmarkView?.active) updateLandmarkBriefEaster(landmarkView.active);
+  if (landmarkView?.active) songbirdBrief?.update(landmarkView.active);
   toast("已调频至 2077 年 · 月球第谷终端与地月 L1「水晶宫」已上线");
-}
-
-function updateLandmarkBriefEaster(feature = landmarkView?.active) {
-  const brief = $("landmark-brief");
-  const slot = $("landmark-brief-easter");
-  if (!slot) return;
-  slot.replaceChildren();
-  slot.classList.remove("is-hint");
-  brief.classList.remove("easter-2077");
-  if (!feature || feature.easterEgg !== "songbird-2077") {
-    slot.hidden = true;
-    songbirdRadio?.stop();
-    return;
-  }
-  const active = isSongbird2077Active(state.date);
-  if (!active) {
-    songbirdRadio?.stop();
-    if (feature.id === "tycho") {
-      slot.hidden = false;
-      slot.classList.add("is-hint");
-      const meta = document.createElement("small");
-      meta.className = "landmark-brief-easter-meta";
-      meta.textContent = SONGBIRD_COPY.tychoHint;
-      const btn = document.createElement("button");
-      btn.type = "button";
-      btn.className = "landmark-brief-easter-btn landmark-brief-easter-hint-btn";
-      btn.textContent = "将模拟时间调至 2077 年 ↗";
-      btn.addEventListener("click", () => tuneToSongbird2077());
-      slot.append(meta, btn);
-    } else {
-      slot.hidden = true;
-    }
-    return;
-  }
-
-  brief.classList.add("easter-2077");
-  slot.hidden = false;
-
-  if (feature.id === "tycho") {
-    const copy = SONGBIRD_COPY.tycho2077;
-    const head = document.createElement("div");
-    head.className = "landmark-brief-easter-head";
-    const img = document.createElement("img");
-    img.className = "landmark-brief-easter-badge";
-    img.src = copy.badge;
-    img.alt = copy.badgeAlt;
-    img.width = 52;
-    img.height = 52;
-    const headerText = document.createElement("div");
-    const eyebrow = document.createElement("span");
-    eyebrow.className = "landmark-brief-easter-eyebrow";
-    eyebrow.textContent = copy.eyebrow;
-    const radioNote = document.createElement("small");
-    radioNote.className = "landmark-brief-easter-meta";
-    radioNote.style.margin = "4px 0 0";
-    radioNote.textContent = copy.radioQuote;
-    headerText.append(eyebrow, radioNote);
-    head.append(img, headerText);
-
-    const quote = document.createElement("p");
-    quote.className = "landmark-brief-easter-quote";
-    quote.textContent = copy.message;
-
-    const meta = document.createElement("small");
-    meta.className = "landmark-brief-easter-meta";
-    meta.textContent = copy.meta;
-
-    const radioBtn = document.createElement("button");
-    radioBtn.type = "button";
-    radioBtn.className = "landmark-brief-easter-btn";
-    const playing = Boolean(songbirdRadio?.isPlaying());
-    radioBtn.setAttribute("aria-pressed", String(playing));
-    radioBtn.textContent = playing ? copy.radioLabelStop : copy.radioLabelPlay;
-    radioBtn.addEventListener("click", () => {
-      const ok = songbirdRadio?.toggle();
-      if (ok === false && !songbirdRadio?.isPlaying()) {
-        // stopped cleanly
-      }
-      updateLandmarkBriefEaster(feature);
-    });
-    slot.append(head, quote, meta, radioBtn);
-  } else if (feature.id === "crystal-palace-l1") {
-    const copy = SONGBIRD_COPY.crystalPalace2077;
-    const earth = objects.get("earth")?.physical;
-    const moon = objects.get("moon")?.physical;
-    const { moonFraction } = earthMoonL1Fraction();
-    const moonDistKm = earth && moon ? earth.positionKm.distanceTo(moon.positionKm) * moonFraction : 58000;
-    const head = document.createElement("div");
-    head.className = "landmark-brief-easter-head";
-    const img = document.createElement("img");
-    img.className = "landmark-brief-easter-badge";
-    img.src = copy.badge;
-    img.alt = copy.badgeAlt;
-    img.width = 52;
-    img.height = 52;
-    const headerText = document.createElement("div");
-    const eyebrow = document.createElement("span");
-    eyebrow.className = "landmark-brief-easter-eyebrow";
-    eyebrow.textContent = copy.eyebrow;
-    const readout = document.createElement("small");
-    readout.className = "landmark-brief-easter-meta";
-    readout.style.margin = "4px 0 0";
-    readout.textContent = `当前 L1 距月球约 ${(moonDistKm / 10000).toFixed(2)} 万公里`;
-    headerText.append(eyebrow, readout);
-    head.append(img, headerText);
-
-    const quote = document.createElement("p");
-    quote.className = "landmark-brief-easter-quote";
-    quote.textContent = copy.message;
-
-    const meta = document.createElement("small");
-    meta.className = "landmark-brief-easter-meta";
-    meta.textContent = copy.meta;
-    slot.append(head, quote, meta);
-  } else if (feature.id === "mare-tranquillitatis") {
-    const copy = SONGBIRD_COPY.tranquillitatis2077;
-    const eyebrow = document.createElement("span");
-    eyebrow.className = "landmark-brief-easter-eyebrow";
-    eyebrow.textContent = copy.eyebrow;
-    const quote = document.createElement("p");
-    quote.className = "landmark-brief-easter-quote";
-    quote.textContent = copy.message;
-    const meta = document.createElement("small");
-    meta.className = "landmark-brief-easter-meta";
-    meta.textContent = copy.meta;
-    slot.append(eyebrow, quote, meta);
-  }
 }
 
 function closeLandmarkBrief(restoreFocus = false) {
   $("landmark-brief").hidden = true;
-  $("landmark-brief").classList.remove("easter-2077");
-  if ($("landmark-brief-easter")) $("landmark-brief-easter").hidden = true;
-  songbirdRadio?.stop();
+  songbirdBrief?.clear();
   $("app").classList.remove("has-landmark-brief");
   if (restoreFocus) landmarkView?.focusActive();
 }
@@ -1993,6 +1870,7 @@ function clearLandmark() {
     return;
   }
   landmarkView.select("");
+  applyDistanceLimits();
   if (landmarkFollow !== null) state.followRotation = landmarkFollow;
   landmarkFollow = null;
   landmarkTrackingDirection = null;
@@ -2039,10 +1917,10 @@ function selectLandmark(id) {
   $("landmark-brief-title").textContent = feature.name;
   $("landmark-brief-text").textContent = feature.text;
   $("landmark-brief-location").textContent = feature.location;
-  document.querySelector('.landmark-brief-body').scrollTop = 0;
   $("landmark-brief-source").href = feature.source;
-  updateLandmarkBriefEaster(feature);
+  songbirdBrief?.update(feature);
   $("landmark-brief").hidden = false;
+  document.querySelector('.landmark-brief-body').scrollTop = 0;
   $("app").classList.add("has-landmark-brief");
   $("caption-title").textContent = feature.name;
   $("caption-detail").textContent = feature.location;
@@ -2053,8 +1931,10 @@ function selectLandmark(id) {
     `正在观测${feature.name}。${feature.text}`;
   updateActivityUi();
   updateObservationTools();
-  flyTo(body.root.position, currentFocusOffset(body), 1100);
+  const focusTarget = feature.focusPoint ? landmarkView.frame.point : body.root.position;
+  flyTo(focusTarget, currentFocusOffset(body), 1100);
   flight.landmark = feature.id;
+  flight.focusPoint = Boolean(feature.focusPoint);
   prioritizeObservation(body);
   loadHighTexture(body);
 }
@@ -2686,7 +2566,9 @@ function animate(now) {
   lastFrame = now;
   if (document.hidden || surfaceView || landingBusy) return;
   const focused = objects.get(state.selected);
+  const focusPointActive = Boolean(landmarkView?.active?.focusPoint && landmarkView.frame);
   const previous = focused?.root.position.clone();
+  const previousFocusPoint = focusPointActive ? landmarkView.frame.point.clone() : null;
   if (state.playing && !state.atlas && !infoDialogOpen()) {
     const candidate=isEarthObservation()?Date.now():state.date+(elapsed<=1000?simulationElapsed(elapsed,state.speed,state.direction):0);
     if(!observationGate || observationGate.check(new Date(candidate))) state.date=candidate;
@@ -2697,16 +2579,24 @@ function animate(now) {
   }
   observedClouds?.update(dt);
   if (focused && !flight) {
-    const delta = focused.root.position.clone().sub(previous);
-    camera.position.add(delta);
-    controls.target.add(delta);
+    if (focusPointActive && landmarkView.frame && previousFocusPoint) {
+      const delta = landmarkView.frame.point.clone().sub(previousFocusPoint);
+      camera.position.add(delta);
+      controls.target.copy(landmarkView.frame.point);
+    } else {
+      const delta = focused.root.position.clone().sub(previous);
+      camera.position.add(delta);
+      controls.target.add(delta);
+    }
   }
   if (flight) {
     if (!state.atlas && !infoDialogOpen()) flight.elapsed += dt * 1000;
     const t =
       flight.duration === 0 ? 1 : Math.min(flight.elapsed / flight.duration, 1);
     const eased = smoothProgress(t);
-    const target = focused ? focused.root.position : flight.endTarget;
+    const target = flight.focusPoint && landmarkView.frame
+      ? landmarkView.frame.point
+      : (focused ? focused.root.position : flight.endTarget);
     flight.position(eased, camera.position);
     camera.position.addScaledVector(
       target.clone().sub(flight.endTarget),
@@ -2717,7 +2607,7 @@ function animate(now) {
       target,
       smoothProgress(Math.min(t * 1.5, 1)),
     );
-    if (flight.landmark && landmarkView.frame && focused)
+    if (flight.landmark && !flight.focusPoint && landmarkView.frame && focused)
       camera.position.addScaledVector(currentFocusOffset(focused).sub(flight.endOffset), eased);
     viewOffset.lerpVectors(flight.startOffset, flight.endViewOffset, eased);
     applyViewOffset();
@@ -2727,8 +2617,8 @@ function animate(now) {
       applyDistanceLimits();
     }
   }
-  const trackingShadow = landmarkView.active?.id === 'ring-shadow' || Boolean(landmarkView.active?.trackDirection);
-  const following = state.followRotation && !state.system && !state.atlas && !flight && !infoDialogOpen();
+  const trackingShadow = landmarkView.active?.id === 'ring-shadow' || (Boolean(landmarkView.active?.trackDirection) && !landmarkView.active?.focusPoint);
+  const following = state.followRotation && !state.system && !state.atlas && !flight && !infoDialogOpen() && !landmarkView.active?.focusPoint;
   rotationFollow.update(focused,camera,controls.target,following && !trackingShadow);
   const landmarkFrame = landmarkView.frame;
   if (trackingShadow && landmarkFrame && following && landmarkTrackingDirection) {
@@ -2873,18 +2763,26 @@ async function init() {
     createBodies(textures);
     moonTransits = createMoonTransitSystem(objects);
     moonTransitDiscs = createMoonTransitDiscs(objects);
-    crystalPalaceOrbit = createCrystalPalaceMesh({ scale: 0.068, includeHalo: true });
+    crystalPalaceOrbit = createCrystalPalaceMesh({
+      scale: 0.075,
+      includeHalo: true,
+      withLighting: material => bindPhysicalSun(material, crystalPalaceSunDir),
+    });
     crystalPalaceOrbit.group.visible = false;
     scene.add(crystalPalaceOrbit.group);
-    earthMoonTransferArc = createEarthMoonTransferArc();
-    earthMoonTransferArc.group.visible = false;
-    scene.add(earthMoonTransferArc.group);
     songbirdRadio = createSongbirdRadio({
-      onChange: () => {
-        if (!$("landmark-brief").hidden && landmarkView?.active) {
-          updateLandmarkBriefEaster(landmarkView.active);
-        }
+      onChange: () => songbirdBrief?.syncRadioButton(),
+    });
+    songbirdBrief = createSongbirdBriefController({
+      briefElement: $("landmark-brief"),
+      slotElement: $("landmark-brief-easter"),
+      getDate: () => state.date,
+      getMoonEarthDistanceKm: () => {
+        const earth = objects.get("earth")?.physical;
+        const moon = objects.get("moon")?.physical;
+        return earth && moon ? earth.positionKm.distanceTo(moon.positionKm) : 384400;
       },
+      radio: songbirdRadio,
     });
     dynamics = createDynamics(objects, { defer: true });
     // Prepare one main body per frame; secondary bodies retain small meshes.
@@ -2982,7 +2880,6 @@ async function init() {
             songbird2077: active,
             crystalPalaceVisible: visible,
             crystalPalaceScreen: screen,
-            transferArcVisible: Boolean(earthMoonTransferArc?.group.visible),
             audioPlaying: Boolean(songbirdRadio?.isPlaying()),
           };
         })(),

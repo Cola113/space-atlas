@@ -25,7 +25,6 @@ import {
   computeEarthMoonL1,
   computeTychoEchoOnMoon,
   createCrystalPalaceMesh,
-  createSurfaceShuttle,
   createEarthMoonEchoPoint,
 } from '../easter-eggs/songbird-2077.js';
 
@@ -352,10 +351,12 @@ export function createSurfaceSky({scene,renderer,site,parentMap,cloudMap,cloudLa
 
   const reducedMotion = typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches;
   const crystalPalacePhysicalScale = { value: 1 };
+  const crystalPalaceSunDir = new THREE.Vector3(1, 0, 0);
   const crystalPalaceSky = site.id === 'moon' && site.siteId !== 'moon-farside'
     ? createCrystalPalaceMesh({
         scale: 1,
         includeHalo: true,
+        withLighting: material => bindPhysicalSun(material, crystalPalaceSunDir),
         withSkyDepth: material => bindSkyDepth(material, crystalPalacePhysicalScale, depthRange),
       })
     : null;
@@ -364,8 +365,6 @@ export function createSurfaceSky({scene,renderer,site,parentMap,cloudMap,cloudLa
     crystalPalaceSky.group.renderOrder = 4;
     scene.add(crystalPalaceSky.group);
   }
-  const surfaceShuttle = site.siteId === 'moon-tycho' ? createSurfaceShuttle() : null;
-  if (surfaceShuttle) scene.add(surfaceShuttle.group);
   const tychoEchoPhysicalScale = { value: 1 };
   const tychoEcho = site.id === 'earth'
     ? createEarthMoonEchoPoint(material => bindSkyDepth(material, tychoEchoPhysicalScale, depthRange))
@@ -411,16 +410,18 @@ export function createSurfaceSky({scene,renderer,site,parentMap,cloudMap,cloudLa
       if (visible && l1) {
         const distance = surfaceSkyDistance(l1.distanceKm);
         crystalPalacePhysicalScale.value = l1.distanceKm / distance;
+        crystalPalaceSunDir.copy(frame.targets.Sun.direction).normalize();
         crystalPalaceSky.group.position.copy(l1.direction).multiplyScalar(distance);
-        // Subtle star-like glint at 1x, crisp twin-ring silhouette under 4x/8x telescope
+        // Subtle star-like specular glint at 1x, crisp sunlit twin-ring architecture under 4x/8x telescope
         const zoom = camera?.zoom || 1;
-        const displayRadius = zoom >= 4 ? 0.0022 : zoom >= 2 ? 0.0018 : 0.0014;
+        const displayRadius = zoom >= 8 ? 0.00182 : zoom >= 4 ? 0.00168 : zoom >= 2 ? 0.00125 : 0.0009;
+        const glowStrength = zoom >= 8 ? 0.03 : zoom >= 4 ? 0.08 : zoom >= 2 ? 0.24 : 0.56;
         crystalPalaceSky.group.scale.setScalar(distance * displayRadius);
         crystalPalaceSky.group.lookAt(0, 0, 0);
-        crystalPalaceSky.group.rotateX(0.55);
-        crystalPalaceSky.group.rotateZ(0.22);
+        crystalPalaceSky.group.rotateX(0.58);
+        crystalPalaceSky.group.rotateZ(0.24);
         const spinTime = reducedMotion ? 0 : ((time - epoch) / 1000) * 0.0012;
-        crystalPalaceSky.step(spinTime, zoom >= 4 ? 0.72 : 0.95);
+        crystalPalaceSky.step(spinTime, glowStrength);
         easterTargets.crystalPalace = {
           direction: l1.direction.clone(),
           distanceKm: l1.distanceKm,
@@ -428,14 +429,6 @@ export function createSurfaceSky({scene,renderer,site,parentMap,cloudMap,cloudLa
           visible: true,
         };
       }
-    }
-    if (surfaceShuttle) {
-      const startDir = l1?.direction || frame.targets.Earth?.direction || null;
-      const cyclePhase = (time - epoch) / (HOURS * 1.4);
-      surfaceShuttle.update(startDir, site.panoramaCenter ?? 13.5, cyclePhase, {
-        visible: active2077 && Boolean(startDir) && horizonAngles(startDir).altitude > 10,
-        reducedMotion,
-      });
     }
     if (tychoEcho) {
       const zoom = camera?.zoom || 1;
@@ -446,9 +439,11 @@ export function createSurfaceSky({scene,renderer,site,parentMap,cloudMap,cloudLa
         const distance = surfaceSkyDistance(echo.distanceKm) * 0.996;
         tychoEchoPhysicalScale.value = echo.distanceKm / distance;
         tychoEcho.sprite.position.copy(echo.direction).multiplyScalar(distance);
-        const pulse = reducedMotion ? 0.85 : 0.58 + 0.36 * Math.sin(((time - epoch) / 1000) * 0.004);
-        tychoEcho.sprite.scale.setScalar(distance * (zoom >= 8 ? 0.0011 : 0.0015));
-        tychoEcho.material.opacity = pulse;
+        const sunAlt = horizonAngles(frame.targets.Sun.direction).altitude;
+        const nightBoost = smoothstep(-sunAlt, -2, 8);
+        const pulse = reducedMotion ? 0.9 : 0.72 + 0.26 * Math.sin(((time - epoch) / 1000) * 0.004);
+        tychoEcho.sprite.scale.setScalar(distance * (zoom >= 8 ? 0.00095 : 0.00135));
+        tychoEcho.material.opacity = pulse * (0.55 + 0.45 * nightBoost);
         easterTargets.tychoEcho = {
           direction: echo.direction.clone(),
           distanceKm: echo.distanceKm,

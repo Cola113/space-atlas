@@ -53,7 +53,7 @@ export function createSurfaceView(siteId, {renderOrbit,onClosed,initialDate,init
     <section class="surface-details" id="surface-details" aria-label="观景说明" hidden>
       <button class="surface-details-close" type="button" aria-label="关闭观景说明"><i data-lucide="x"></i></button>
       <span class="surface-eyebrow">这个视野从哪里来</span><h2>${site.title}</h2>
-      ${site.siteId==='moon-tycho'?`<div class="surface-easter-card"><img src="${SONGBIRD_COPY.tycho2077.badge}" alt="${SONGBIRD_COPY.tycho2077.badgeAlt}" width="54" height="54" /><div><span class="surface-easter-eyebrow">${SONGBIRD_COPY.tycho2077.eyebrow}</span><p>${SONGBIRD_COPY.tycho2077.message}</p><button type="button" class="surface-easter-radio" aria-pressed="false">${SONGBIRD_COPY.tycho2077.radioLabelPlay}</button></div></div>`:''}
+      ${site.siteId==='moon-tycho'?`<div class="surface-easter-card"><img src="${SONGBIRD_COPY.tycho2077.badge}" alt="${SONGBIRD_COPY.tycho2077.badgeAlt}" width="50" height="50" /><div><span class="surface-easter-eyebrow">${SONGBIRD_COPY.tycho2077.eyebrow}</span><p class="surface-easter-quote">${SONGBIRD_COPY.tycho2077.message}</p><button type="button" class="surface-easter-radio" aria-pressed="false">${SONGBIRD_COPY.tycho2077.radioLabelPlay}</button><small class="surface-easter-dormant" hidden>${SONGBIRD_COPY.surfaceDormantNotice}</small></div></div>`:''}
       <p>${site.description}</p>
       <dl><div><dt>表面模拟时间</dt><dd class="surface-details-time"></dd></div>
       <div><dt>落点坐标</dt><dd>${Math.abs(site.latitude).toFixed(4)}° ${site.latitude<0?'S':'N'} / ${site.longitude.toFixed(4)}° E</dd></div>
@@ -92,21 +92,46 @@ export function createSurfaceView(siteId, {renderOrbit,onClosed,initialDate,init
   const $ = selector => root.querySelector(selector);
   const events = new AbortController();
   const textures = new Set();
-  let renderer, sky, disposed = false, loaded = false, raf = 0, noticeTimer = 0, groundMask;
-  const surfaceRadio = site.siteId === 'moon-tycho' ? createSongbirdRadio({
-    onChange: playing => {
-      const btn = $('.surface-easter-radio');
-      if (!btn) return;
+  let renderer, sky, domeMaterial = null, disposed = false, loaded = false, raf = 0, noticeTimer = 0, groundMask;
+  const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const syncSurfaceEasterState = () => {
+    const active = isSongbird2077Active(clock.time);
+    if (domeMaterial?.uniforms?.tychoBeacon) {
+      domeMaterial.uniforms.tychoBeacon.value = site.siteId === 'moon-tycho' && active ? 1 : 0;
+    }
+    if (site.siteId !== 'moon-tycho') return;
+    if (!active && surfaceRadio?.isPlaying()) surfaceRadio.stop();
+    const btn = $('.surface-easter-radio');
+    const dormant = $('.surface-easter-dormant');
+    if (btn) {
+      btn.disabled = !active;
+      const playing = Boolean(active && surfaceRadio?.isPlaying());
       btn.setAttribute('aria-pressed', String(playing));
-      btn.textContent = playing ? SONGBIRD_COPY.tycho2077.radioLabelStop : SONGBIRD_COPY.tycho2077.radioLabelPlay;
-    },
+      btn.textContent = !active
+        ? '第谷电波休眠（需 2077 年起）'
+        : playing ? SONGBIRD_COPY.tycho2077.radioLabelStop : SONGBIRD_COPY.tycho2077.radioLabelPlay;
+    }
+    if (dormant) dormant.hidden = active;
+  };
+  const surfaceRadio = site.siteId === 'moon-tycho' ? createSongbirdRadio({
+    onChange: () => syncSurfaceEasterState(),
   }) : null;
   if ($('.surface-easter-radio')) {
-    $('.surface-easter-radio').addEventListener('click', () => surfaceRadio?.toggle(), { signal: events.signal });
+    $('.surface-easter-radio').addEventListener('click', () => {
+      if (!isSongbird2077Active(clock.time)) return;
+      surfaceRadio?.toggle();
+      syncSurfaceEasterState();
+    }, { signal: events.signal });
   }
   let lastFrame = null, lastDraw = -Infinity, lastSkyUpdate = -Infinity, skyTime = null, lastOrbit = null, dirty = true, lastReadout = '';
   let resetExposure = true, exposureElapsed = 0;
-  const initialPitch = () => site.initialPitch + (site.id === 'europa' && innerWidth < 600 ? 8 : 0);
+  const initialPitch = () => {
+    if (site.siteId === 'moon-tycho') {
+      if (innerHeight < 540) return site.initialPitch + 2;
+      if (innerWidth < 600) return site.initialPitch - 1.5;
+    }
+    return site.initialPitch + (site.id === 'europa' && innerWidth < 600 ? 8 : 0);
+  };
   let resetPitch = initialPitch();
   let heading = site.initialHeading, pitch = resetPitch, motion = null, drag = null;
   const scene = new THREE.Scene();
@@ -322,29 +347,24 @@ export function createSurfaceView(siteId, {renderOrbit,onClosed,initialDate,init
       const sy = (-proj.y * 0.5 + 0.5) * innerHeight;
       easterLabel.querySelector('span').textContent = title;
       easterLabel.querySelector('small').textContent = sub;
-      easterLabel.style.transform = 'translateX(-50%)';
       easterLabel.hidden = false;
       const overlaps = (a, b) => a && b && a.left < b.right && a.right > b.left && a.top < b.bottom && a.bottom > b.top;
-      easterLabel.style.left = '0px';
-      easterLabel.style.top = '0px';
-      easterLabel.style.transform = 'none';
+      // Measure once, then evaluate every candidate placement purely in arithmetic (zero reflow loop).
       const { width: labelW, height: labelH } = easterLabel.getBoundingClientRect();
       const clampedX = THREE.MathUtils.clamp(sx, labelW / 2 + 12, innerWidth - labelW / 2 - 12);
       const belowParentTop = Math.max(sy + 18, (parentRect ? parentRect.bottom + 8 : 0), (parentDiscRect ? parentDiscRect.bottom + 8 : 0));
       const aboveParentTop = Math.min(sy - labelH - 16, (parentDiscRect ? parentDiscRect.top - labelH - 10 : sy - labelH - 16));
       const candidates = [
-        { left: sx, top: sy + 18, transform: 'translateX(-50%)' },
-        { left: sx - 16, top: sy - labelH / 2, transform: 'translateX(-100%)' },
-        { left: sx + 16, top: sy - labelH / 2, transform: 'translateX(0)' },
-        { left: sx, top: sy - labelH - 16, transform: 'translateX(-50%)' },
-        { left: clampedX, top: belowParentTop, transform: 'translateX(-50%)' },
-        { left: clampedX, top: aboveParentTop, transform: 'translateX(-50%)' },
+        { left: sx, top: sy + 18, align: -0.5, transform: 'translateX(-50%)' },
+        { left: sx - 16, top: sy - labelH / 2, align: -1, transform: 'translateX(-100%)' },
+        { left: sx + 16, top: sy - labelH / 2, align: 0, transform: 'translateX(0)' },
+        { left: sx, top: sy - labelH - 16, align: -0.5, transform: 'translateX(-50%)' },
+        { left: clampedX, top: belowParentTop, align: -0.5, transform: 'translateX(-50%)' },
+        { left: clampedX, top: aboveParentTop, align: -0.5, transform: 'translateX(-50%)' },
       ];
       for (const pos of candidates) {
-        easterLabel.style.left = `${pos.left}px`;
-        easterLabel.style.top = `${pos.top}px`;
-        easterLabel.style.transform = pos.transform;
-        const bounds = easterLabel.getBoundingClientRect();
+        const bx = pos.left + pos.align * labelW;
+        const bounds = { left: bx, right: bx + labelW, top: pos.top, bottom: pos.top + labelH };
         if (
           bounds.left >= 10 &&
           bounds.right <= innerWidth - 10 &&
@@ -354,6 +374,9 @@ export function createSurfaceView(siteId, {renderOrbit,onClosed,initialDate,init
           !overlaps(bounds, parentRect) &&
           !overlaps(bounds, parentDiscRect)
         ) {
+          easterLabel.style.left = `${pos.left}px`;
+          easterLabel.style.top = `${pos.top}px`;
+          easterLabel.style.transform = pos.transform;
           return true;
         }
       }
@@ -415,6 +438,7 @@ export function createSurfaceView(siteId, {renderOrbit,onClosed,initialDate,init
       updateCamera(sample.settle);
       if((skyTime!==clock.time&&(now-lastSkyUpdate>=50||dirty))||lastSkyUpdate===-Infinity){
         frame=sky.update(clock.time,camera,{resetExposure});skyTime=clock.time;lastSkyUpdate=now;resetExposure=false;
+        syncSurfaceEasterState();
         updateEasterHud();
       }
       sky.advanceExposure(exposureElapsed);exposureElapsed=0;
@@ -506,10 +530,12 @@ export function createSurfaceView(siteId, {renderOrbit,onClosed,initialDate,init
       ground.wrapS=THREE.RepeatWrapping;
       const dome=new THREE.Mesh(new THREE.SphereGeometry(100,128,64),new THREE.ShaderMaterial({
         uniforms:{panorama:{value:ground},center:{value:rad(site.panoramaCenter)},daylight:{value:1},activityTime:{value:0},lava:{value:site.activity==='lava'?1:0},
-          tychoBeacon:{value:site.siteId==='moon-tycho'?1:0},earth:{value:site.atmosphere==='earth'?1:0},sunAlt:{value:0}},
+          tychoBeacon:{value:site.siteId==='moon-tycho'&&isSongbird2077Active(clock.time)?1:0},
+          reducedMotion:{value:reducedMotion?1:0},
+          earth:{value:site.atmosphere==='earth'?1:0},sunAlt:{value:0}},
         vertexShader:'varying vec3 direction; void main(){direction=position;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}',
         fragmentShader:`uniform sampler2D panorama;uniform float center;uniform float daylight;uniform float activityTime;uniform float lava;
-          uniform float tychoBeacon;uniform float earth;uniform float sunAlt;varying vec3 direction;
+          uniform float tychoBeacon;uniform float reducedMotion;uniform float earth;uniform float sunAlt;varying vec3 direction;
           ${earthAtmosphereGLSL}
           void main(){vec3 d=normalize(direction);vec2 uv=vec2((atan(d.x,-d.z)-center)/6.28318530718+.5,.5+asin(clamp(d.y,-1.,1.))/3.14159265359);
           // Correct the longitude derivative across the wrap, avoiding a
@@ -518,14 +544,17 @@ export function createSurfaceView(siteId, {renderOrbit,onClosed,initialDate,init
           vec4 c=textureGrad(panorama,uv,dx,dy);if(c.a<.03)discard;
           float hot=lava*step(c.g*3.,c.r)*step(c.b*2.,c.g)*step(.12,c.r)*(1.-step(.18,c.g));
           vec3 emission=hot*c.rgb*(.7+.2*sin(mod(activityTime,86400.)*.0007+uv.x*31.));
-          float cyanLed=tychoBeacon*step(c.r*1.35,c.b)*step(c.r*1.12,c.g)*step(.30,c.b);
-          emission+=cyanLed*vec3(.35,.88,1.)*(.68+.28*sin(mod(activityTime,86400.)*.0015));
+          float inPuck=1.-smoothstep(.010,.022,length(vec2(fract(uv.x)-.7143,uv.y-.1692)));
+          float cyanLed=tychoBeacon*inPuck*step(c.r*1.28,c.b)*step(c.r*1.08,c.g)*step(.32,c.b);
+          float beaconPulse=mix(.65+.28*sin(mod(activityTime,86400.)*.0015),.82,reducedMotion);
+          emission+=cyanLed*vec3(.38,.88,1.)*beaconPulse;
           vec3 tint=earth>.5?earthLightTint(sunAlt,daylight):mix(vec3(.7,.79,1.),vec3(1.),smoothstep(.015,.25,daylight));
           c.rgb*=daylight*tint;c.rgb+=emission;gl_FragColor=c;
           #include <colorspace_fragment>
           }`,
         side:THREE.BackSide,transparent:true,depthWrite:false,depthTest:false,
-      }));dome.renderOrder=20;scene.add(dome);
+      }));dome.renderOrder=20;domeMaterial=dome.material;scene.add(dome);
+      syncSurfaceEasterState();
       sky=createSurfaceSky({scene,renderer,site,parentMap,cloudMap,cloudLayerMap,groundMaterial:dome.material,signal:events.signal,provider,initialFrame:frame,
         onCatalogueReady:()=>{lastSkyUpdate=-Infinity;invalidate();},
         onCatalogueError:()=>{notice('完整星表暂未加载，已显示主要亮星。');invalidate();}});

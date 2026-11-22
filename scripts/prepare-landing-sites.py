@@ -14,7 +14,7 @@ import json
 from datetime import date
 from pathlib import Path
 from PIL import Image
-from landing_texture_lib import dynamic_cloud_sea, panorama_from_frame, panorama_with_traced_skyline, panorama_with_vacuum_skyline, sha256
+from landing_texture_lib import dynamic_cloud_sea, panorama_from_frame, panorama_with_dp_wrap, panorama_with_traced_skyline, panorama_with_vacuum_skyline, sha256
 
 MODEL_NOTE = {
     'model': 'gpt-image-2.5-sunburst',
@@ -149,18 +149,22 @@ SITES = [
      {'generatedOn': '2026-09-25',
       'requestedSizeAccepted': True}),
     ('moon-tycho', 'moon-tycho-4k-raw.png',
-     'two-stage reference-redraw easter-egg panorama (gpt-image-2.6 layout -> gpt-image-2.5-sunburst 4K pass)',
-     'Stage 1 (gpt-image-2.6, material reference public/surface/moon-4k.webp) returned 1774x887 native 2:1; '
-     'Stage 2 (gpt-image-2.5-sunburst, requested 3840x1920 quality high) refined micro-detail at 3840x2160 '
-     'and was reparameterized to 360x180 at 3840x1920 via Lanczos resampling (not claimed as native 2:1). '
-     'Pure-black vacuum sky removed above a per-column source-pixel skyline so dark crater-wall shadows stay '
-     'opaque; narrow wrap blend; nadir smoothing; WebP encoding. Fictional commemorative tribute scene '
-     '(Cyberpunk 2077: Phantom Liberty) at Tycho Crater rim; not surveyed lunar terrain.',
-     {'generatedOn': '2026-11-21',
-      'model': 'gpt-image-2.6 -> gpt-image-2.5-sunburst',
+     'multi-reference redraw easter-egg panorama (gpt-image-2.5-sunburst)',
+     'Provider frame 3840x2160 (requested 3840x1920 quality high; references: public/surface/moon-farside.webp '
+     'for 360x180 equirectangular horizon geometry and public/surface/moon-4k.webp for Apollo lunar regolith '
+     'albedo only, no source pixels preserved) was seamlessly wrapped across a 240-column minimum-cost wavy '
+     'overlap seam with two-band tone blending, reparameterized via Lanczos to 3840x1920 (not claimed as native '
+     '2:1), top-connected pure-black vacuum sky flood-filled transparent, nadir smoothed, and encoded to RGBA '
+     'WebP. Fictional commemorative tribute scene (Cyberpunk 2077: Phantom Liberty) at Tycho Crater rim; not '
+     'surveyed lunar terrain.',
+     {'generatedOn': '2026-11-22',
+      'model': 'gpt-image-2.5-sunburst',
       'requestedQuality': 'high',
       'requestedSize': '3840x1920',
-      'references': ['public/surface/moon-4k.webp (same body, regolith material character only)'],
+      'references': [
+          'public/surface/moon-farside.webp (same body, equirectangular horizon geometry only)',
+          'public/surface/moon-4k.webp (same body, regolith albedo and micro-texture only)',
+      ],
       'requestedSizeAccepted': False,
       'sourceNative2to1': False}),
 ]
@@ -190,8 +194,10 @@ for site_id, filename, mode, processing, extra in SITES:
     source = args.sources / 'raw' / filename
     # The earth sky carries an atmospheric band the black flood fill would keep;
     # its transparent region needs the per-column skyline trace instead.
-    if site_id in ('phobos-60e', 'phobos-311e', 'moon-tycho'):
+    if site_id in ('phobos-60e', 'phobos-311e'):
         image = panorama_with_vacuum_skyline(source)
+    elif site_id == 'moon-tycho':
+        image = panorama_with_dp_wrap(source)
     elif site_id == 'earth':
         image = panorama_with_traced_skyline(source)
     else:
@@ -226,4 +232,4 @@ for site_id, filename, mode, processing, extra in SITES:
     print(f'{site_id}: {image.size}, {entry["bytes"]} bytes', flush=True)
 
 published['updatedOn'] = date.today().isoformat()
-record_path.write_text(json.dumps(published, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+record_path.write_text(json.dumps(published, ensure_ascii=False, indent=2) + '\n', encoding='utf-8', newline='\n')

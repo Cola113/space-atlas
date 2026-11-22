@@ -1966,82 +1966,92 @@ dialog .dialog-close {
 .landmark-brief-close { position: absolute; top: 2px; right: 4px; width: 44px; height: 44px; border: 0; color: #c8d7cd; background: transparent; cursor: pointer; }
 .landmark-brief-close svg { width: 18px; height: 18px; }
 /* 2077 Moon Songbird & Crystal Palace L1 Easter Egg */
+.landing-marker {
+  z-index: 2;
+}
 .landmark-marker-2077 .landmark-dot {
-  background: #103b48;
-  border-color: #8df1ff;
-  box-shadow: 0 0 0 3px #0c2c38cc, 0 0 12px #5ee4ff80;
-  animation: songbird-pulse 2.8s ease-in-out infinite;
+  background: #143944;
+  border-color: #8fdce8;
+  box-shadow: 0 0 0 3px #0c2630cc, 0 0 10px #5ec8de66;
+  animation: songbird-pulse 3.2s ease-in-out infinite;
 }
 .landmark-marker-2077.active .landmark-dot {
-  background: #78ecff;
-  border-color: #e4fcff;
-  box-shadow: 0 0 0 5px #123e4dc0, 0 0 16px #78ecffaa;
+  background: #84dce9;
+  border-color: #e6f9fc;
+  box-shadow: 0 0 0 4px #123642c0, 0 0 12px #78d8e899;
 }
 .landmark-marker-2077 .landmark-name {
-  border: 1px solid #6be4ff44;
-  color: #dcf9ff;
+  border: 1px solid #78cfde3d;
+  color: #dcf2f6;
 }
 .landing-marker-2077 {
-  color: #78ecff;
+  color: #84dce9;
 }
 .landing-marker-2077:hover, .landing-marker-2077:focus-visible {
-  color: #d9fbff;
+  color: #e0f9fd;
 }
 .landing-marker-2077 svg {
-  filter: drop-shadow(0 0 6px #59e3ffaa);
+  filter: drop-shadow(0 0 5px #5ccbe088);
 }
 .landing-marker-2077 .landmark-name {
-  border: 1px solid #6be4ff55;
-  color: #dffaff;
-  background: #081820e6;
+  border: 1px solid #78cfde4d;
+  color: #e2f6fa;
+  background: #0a171ce8;
 }
 .landmark-brief.easter-2077 {
-  border-color: #6be4ff66;
-  background: linear-gradient(168deg, #09161ef2, #0b1210f2 62%);
-  box-shadow: 0 14px 44px #000b, 0 0 24px #45d8ff1c;
+  border-color: #78cfde52;
+  background: linear-gradient(168deg, #0a151bf2, #0b1210f4 64%);
+  box-shadow: 0 14px 42px #000b;
+  padding: 10px 14px;
+}
+.landmark-brief.easter-2077 h2 {
+  margin: 0 36px 6px 0;
+}
+.landmark-brief.easter-2077 p {
+  margin: 0 0 6px;
+  line-height: 1.55;
+}
+.landmark-brief.easter-2077 .landmark-brief-source {
+  min-height: 32px;
 }
 .landmark-brief-easter {
-  margin: 8px 0 4px;
-  padding: 8px 10px;
-  border: 1px solid #6be4ff33;
+  margin: 6px 0 2px;
+  padding: 7px 9px;
+  border: 1px solid #78cfde2e;
   border-radius: 6px;
-  background: #07141cb8;
-}
-.landmark-brief-easter.is-hint {
-  border-color: #ffffff1c;
-  background: #0f191880;
+  background: #081319b8;
 }
 .landmark-brief-easter-head {
   display: flex;
   align-items: center;
-  gap: 9px;
-  margin-bottom: 6px;
+  gap: 8px;
+  margin-bottom: 5px;
 }
 .landmark-brief-easter-badge {
-  width: 44px;
-  height: 44px;
+  width: 40px;
+  height: 40px;
   flex: none;
   object-fit: contain;
-  filter: drop-shadow(0 2px 10px #5ae2ff38);
+  filter: drop-shadow(0 2px 8px #5ac6da30);
 }
 .landmark-brief-easter-eyebrow {
   display: block;
   font-size: 9px;
-  letter-spacing: 1.2px;
-  color: #7ee9ff;
+  letter-spacing: 1.1px;
+  color: #84d6e6;
   font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 }
 .landmark-brief-easter-quote {
-  margin: 3px 0 6px;
-  color: #e4f7fc;
+  margin: 2px 0 5px;
+  color: #e2f2f6;
   font-size: 11px;
-  line-height: 1.55;
+  line-height: 1.5;
 }
 .landmark-brief-easter-meta {
   display: block;
-  color: #8fb2bd;
+  color: #8faab2;
   font-size: 10px;
-  line-height: 1.45;
+  line-height: 1.42;
   margin-bottom: 6px;
 }
 .landmark-brief-easter-btn {
@@ -2052,32 +2062,22 @@ dialog .dialog-close {
   width: 100%;
   min-height: 36px;
   padding: 6px 10px;
-  border: 1px solid #6be4ff55;
+  border: 1px solid #78cfde4d;
   border-radius: 5px;
-  background: #0d2b36cc;
-  color: #d7f9ff;
+  background: #0f2933cc;
+  color: #daf4f9;
   font-size: 11px;
   cursor: pointer;
   transition: background .2s, border-color .2s;
 }
 .landmark-brief-easter-btn:hover, .landmark-brief-easter-btn:focus-visible {
-  background: #144354e6;
-  border-color: #9af4ff99;
+  background: #163d4be6;
+  border-color: #9be3ef88;
 }
 .landmark-brief-easter-btn[aria-pressed="true"] {
-  background: #175264f0;
-  border-color: #8df2ff;
+  background: #1a4b5cf0;
+  border-color: #92e1ef;
   color: #ffffff;
-}
-.landmark-brief-easter-hint-btn {
-  border-color: #9fcab244;
-  background: #12201bcc;
-  color: #cbe2d6;
-}
-.landmark-brief-easter-hint-btn:hover, .landmark-brief-easter-hint-btn:focus-visible {
-  background: #1a3129e6;
-  border-color: #78ecff66;
-  color: #e6fbff;
 }
 .atlas-easter-hint {
   margin: 18px auto 6px;
@@ -2086,18 +2086,18 @@ dialog .dialog-close {
   align-items: center;
   gap: 16px;
   padding: 14px 18px;
-  border: 1px solid #6be4ff55;
+  border: 1px solid #78cfde4d;
   border-radius: 10px;
-  background: linear-gradient(135deg, #081822eb, #0c141aeb);
-  box-shadow: 0 10px 32px #0008, 0 0 22px #4bd9ff1a;
+  background: linear-gradient(135deg, #0a161ceb, #0c1315eb);
+  box-shadow: 0 10px 32px #0008;
 }
 .atlas-easter-hint[hidden] { display: none; }
 .atlas-easter-badge {
-  width: 58px;
-  height: 58px;
+  width: 56px;
+  height: 56px;
   flex: none;
   object-fit: contain;
-  filter: drop-shadow(0 2px 10px #5ee4ff44);
+  filter: drop-shadow(0 2px 8px #5ec8de38);
 }
 .atlas-easter-copy {
   flex: 1;
@@ -2106,41 +2106,41 @@ dialog .dialog-close {
 .atlas-easter-eyebrow {
   display: block;
   font-size: 10px;
-  letter-spacing: 1.5px;
-  color: #7deaff;
+  letter-spacing: 1.4px;
+  color: #84d6e6;
   font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 }
 .atlas-easter-copy h3 {
   margin: 4px 0 4px;
   font-size: 15px;
   font-weight: 500;
-  color: #ebf9fd;
+  color: #e8f5f8;
 }
 .atlas-easter-copy p {
   margin: 0;
   font-size: 12px;
-  color: #9ebcc6;
+  color: #9bb4bc;
   line-height: 1.5;
 }
 .atlas-easter-action {
   flex: none;
   min-height: 44px;
   padding: 9px 14px;
-  border: 1px solid #72e8ff66;
+  border: 1px solid #78cfde59;
   border-radius: 7px;
-  background: #0f3240e6;
-  color: #e2fbff;
+  background: #102f3be6;
+  color: #e2f7fb;
   font-size: 12px;
   cursor: pointer;
   white-space: nowrap;
 }
 .atlas-easter-action:hover, .atlas-easter-action:focus-visible {
-  background: #174c60f5;
-  border-color: #a6f4ff;
+  background: #184657f5;
+  border-color: #a5e6f2;
 }
 @keyframes songbird-pulse {
-  0%, 100% { box-shadow: 0 0 0 3px #0c2c38cc, 0 0 10px #5ee4ff66; }
-  50% { box-shadow: 0 0 0 5px #104252cc, 0 0 16px #78ecffbb; }
+  0%, 100% { box-shadow: 0 0 0 3px #0c2630cc, 0 0 8px #5ec8de55; }
+  50% { box-shadow: 0 0 0 4px #123c4acc, 0 0 13px #7cd8e899; }
 }
 @media (max-width: 760px) {
   .atlas-easter-hint {
@@ -2149,6 +2149,90 @@ dialog .dialog-close {
   }
   .atlas-easter-action {
     width: 100%;
+  }
+  .landmark-brief.easter-2077 h2 {
+    font-size: 15px;
+    line-height: 20px;
+    margin-bottom: 4px;
+  }
+  .landmark-brief.easter-2077 p {
+    font-size: 11px;
+    line-height: 1.45;
+    margin-bottom: 4px;
+  }
+  .landmark-brief-easter {
+    margin: 5px 0 2px;
+    padding: 6px 8px;
+  }
+  .landmark-brief-easter-head {
+    margin-bottom: 4px;
+  }
+  .landmark-brief-easter-badge {
+    width: 32px;
+    height: 32px;
+  }
+  .landmark-brief-easter-quote {
+    font-size: 10.5px;
+    line-height: 1.42;
+    margin: 2px 0 4px;
+  }
+  .landmark-brief-easter-meta {
+    font-size: 9.5px;
+    line-height: 1.35;
+    margin-bottom: 5px;
+  }
+  .landmark-brief-easter-btn {
+    min-height: 34px;
+    padding: 5px 8px;
+  }
+  .landmark-brief.easter-2077 .landmark-brief-source {
+    min-height: 28px;
+  }
+}
+@media (min-width: 560px) and (max-height: 540px) {
+  .landmark-brief.easter-2077 h2 {
+    margin: 0 32px 3px 0;
+    font-size: 13.5px;
+    line-height: 17px;
+  }
+  .landmark-brief.easter-2077 p {
+    margin: 0 0 3px;
+    font-size: 10px;
+    line-height: 1.34;
+  }
+  .landmark-brief.easter-2077 small {
+    font-size: 9px;
+  }
+  .landmark-brief-easter {
+    margin: 3px 0 1px;
+    padding: 4px 6px;
+  }
+  .landmark-brief-easter-head {
+    gap: 6px;
+    margin-bottom: 2px;
+  }
+  .landmark-brief-easter-badge {
+    width: 24px;
+    height: 24px;
+  }
+  .landmark-brief-easter-quote {
+    font-size: 9.5px;
+    line-height: 1.32;
+    margin: 1px 0 2px;
+  }
+  .landmark-brief-easter-meta {
+    font-size: 8.5px;
+    line-height: 1.28;
+    margin-bottom: 3px;
+  }
+  .landmark-brief-easter-btn {
+    min-height: 26px;
+    padding: 2px 8px;
+    font-size: 9.5px;
+  }
+  .landmark-brief.easter-2077 .landmark-brief-source {
+    min-height: 22px;
+    font-size: 9.5px;
   }
 }
 @media (prefers-reduced-motion: reduce) {

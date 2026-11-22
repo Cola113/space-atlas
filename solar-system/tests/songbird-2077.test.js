@@ -11,6 +11,7 @@ import {
   computeTychoEchoOnMoon,
   easterEggLandingSites,
   matchesSongbirdQuery,
+  createCrystalPalaceMesh,
 } from '../src/easter-eggs/songbird-2077.js';
 import { landingSites, resolveLandingSite, surfaceFrame, horizonAngles, angularDiameter } from '../src/surface/geometry.js';
 import { landmarks, landmarkFrame } from '../src/landmarks.js';
@@ -118,8 +119,19 @@ test('Moon landmarks and Atlas easter-egg search keywords behave consistently', 
   assert.equal(matchesSongbirdQuery('水晶宫'), true);
   assert.equal(matchesSongbirdQuery('2077'), true);
   assert.equal(matchesSongbirdQuery('地球'), false);
+  assert.equal(matchesSongbirdQuery('207'), false);
+  assert.equal(matchesSongbirdQuery('pal'), false);
+  assert.equal(matchesSongbirdQuery('bird'), false);
   assert.equal(matchesSongbirdQuery('a'), false);
   assert.equal(easterEggLandingSites['moon-tycho'].siteId, 'moon-tycho');
+
+  const station = createCrystalPalaceMesh({ scale: 1, includeHalo: true });
+  const litMaterials = station.materials.filter((m) => m.isMeshStandardMaterial);
+  assert.ok(litMaterials.length >= 4, 'Crystal Palace hull should use physically lit materials');
+  assert.ok(litMaterials.some((m) => Boolean(m.emissiveMap)), 'Crystal Palace rings should carry cabin-window emissive texture');
+  station.step(3.5, 0.25);
+  station.dispose();
+
   mesh.geometry.dispose();
   mesh.material.dispose();
 });
