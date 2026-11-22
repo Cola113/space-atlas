@@ -517,7 +517,35 @@
       "requestedSizeAccepted": null,
       "sourceNative2to1": false,
       "aiUpscaled": false
+    },
+    {
+      "id": "moon-tycho",
+      "generatedOn": "2026-11-21",
+      "mode": "two-stage reference-redraw easter-egg panorama (gpt-image-2.6 layout -> gpt-image-2.5-sunburst 4K pass)",
+      "sourceFile": "moon-tycho-4k-raw.png",
+      "sourceDimensions": [
+        3840,
+        2160
+      ],
+      "deliveredDimensions": [
+        3840,
+        1920
+      ],
+      "sourceSha256": "a1c04158e31eeb5078157e6146c40a3136d75cda0b290cfd8b1758e094ad7a0b",
+      "file": "moon-tycho.webp",
+      "sha256": "0199577569705cbd8c7d03cfde1bc7bebd124ca359a517fe0a0e87f04b809122",
+      "bytes": 1279608,
+      "processing": "Stage 1 (gpt-image-2.6, material reference public/surface/moon-4k.webp) returned 1774x887 native 2:1; Stage 2 (gpt-image-2.5-sunburst, requested 3840x1920 quality high) refined micro-detail at 3840x2160 and was reparameterized to 360x180 at 3840x1920 via Lanczos resampling (not claimed as native 2:1). Pure-black vacuum sky removed above a per-column source-pixel skyline so dark crater-wall shadows stay opaque; narrow wrap blend; nadir smoothing; WebP encoding. Fictional commemorative tribute scene (Cyberpunk 2077: Phantom Liberty) at Tycho Crater rim; not surveyed lunar terrain.",
+      "model": "gpt-image-2.6 -> gpt-image-2.5-sunburst",
+      "requestedQuality": "high",
+      "requestedSize": "3840x1920",
+      "qualityExecutionVerified": false,
+      "references": [
+        "public/surface/moon-4k.webp (same body, regolith material character only)"
+      ],
+      "requestedSizeAccepted": false,
+      "sourceNative2to1": false
     }
   ],
-  "updatedOn": "2026-09-27"
+  "updatedOn": "2026-11-21"
 }

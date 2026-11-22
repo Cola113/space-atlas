@@ -4,6 +4,7 @@ import { bodyOrientation } from '../physics/orientation.js';
 import { physicalState, AU_KM } from '../physics/state.js';
 export { AU_KM } from '../physics/state.js';
 import { additionalLandingSites } from './sites.js';
+import { easterEggLandingSites } from '../easter-eggs/songbird-2077.js';
 
 const rad = MathUtils.degToRad;
 
@@ -46,6 +47,13 @@ export function sitesForBody(bodyId) { return landingSitesByBody[bodyId] || []; 
 // the site that existed before the body gained a second one.
 export function defaultSiteId(bodyId) {
   return landingSites[bodyId]?.siteId || sitesForBody(bodyId)[0]?.siteId || null;
+}
+
+// Resolve either a canonical scientific site or an unlocked easter-egg site.
+// Keeping easter-egg sites out of `landingSites` preserves the 21-site scientific
+// baseline and independent DE440/Horizons/CSPICE audit coverage.
+export function resolveLandingSite(siteId) {
+  return landingSites[siteId] || easterEggLandingSites[siteId] || null;
 }
 
 export function angularDiameter(radiusKm, distanceKm) {

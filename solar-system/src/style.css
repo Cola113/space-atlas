@@ -1965,6 +1965,197 @@ dialog .dialog-close {
 .landmark-brief-source { display: inline-flex; align-items: center; min-height: 44px; color: #b8dfc8; font-size: 11px; }
 .landmark-brief-close { position: absolute; top: 2px; right: 4px; width: 44px; height: 44px; border: 0; color: #c8d7cd; background: transparent; cursor: pointer; }
 .landmark-brief-close svg { width: 18px; height: 18px; }
+/* 2077 Moon Songbird & Crystal Palace L1 Easter Egg */
+.landmark-marker-2077 .landmark-dot {
+  background: #103b48;
+  border-color: #8df1ff;
+  box-shadow: 0 0 0 3px #0c2c38cc, 0 0 12px #5ee4ff80;
+  animation: songbird-pulse 2.8s ease-in-out infinite;
+}
+.landmark-marker-2077.active .landmark-dot {
+  background: #78ecff;
+  border-color: #e4fcff;
+  box-shadow: 0 0 0 5px #123e4dc0, 0 0 16px #78ecffaa;
+}
+.landmark-marker-2077 .landmark-name {
+  border: 1px solid #6be4ff44;
+  color: #dcf9ff;
+}
+.landing-marker-2077 {
+  color: #78ecff;
+}
+.landing-marker-2077:hover, .landing-marker-2077:focus-visible {
+  color: #d9fbff;
+}
+.landing-marker-2077 svg {
+  filter: drop-shadow(0 0 6px #59e3ffaa);
+}
+.landing-marker-2077 .landmark-name {
+  border: 1px solid #6be4ff55;
+  color: #dffaff;
+  background: #081820e6;
+}
+.landmark-brief.easter-2077 {
+  border-color: #6be4ff66;
+  background: linear-gradient(168deg, #09161ef2, #0b1210f2 62%);
+  box-shadow: 0 14px 44px #000b, 0 0 24px #45d8ff1c;
+}
+.landmark-brief-easter {
+  margin: 8px 0 4px;
+  padding: 8px 10px;
+  border: 1px solid #6be4ff33;
+  border-radius: 6px;
+  background: #07141cb8;
+}
+.landmark-brief-easter.is-hint {
+  border-color: #ffffff1c;
+  background: #0f191880;
+}
+.landmark-brief-easter-head {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 6px;
+}
+.landmark-brief-easter-badge {
+  width: 44px;
+  height: 44px;
+  flex: none;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 10px #5ae2ff38);
+}
+.landmark-brief-easter-eyebrow {
+  display: block;
+  font-size: 9px;
+  letter-spacing: 1.2px;
+  color: #7ee9ff;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+.landmark-brief-easter-quote {
+  margin: 3px 0 6px;
+  color: #e4f7fc;
+  font-size: 11px;
+  line-height: 1.55;
+}
+.landmark-brief-easter-meta {
+  display: block;
+  color: #8fb2bd;
+  font-size: 10px;
+  line-height: 1.45;
+  margin-bottom: 6px;
+}
+.landmark-brief-easter-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  min-height: 36px;
+  padding: 6px 10px;
+  border: 1px solid #6be4ff55;
+  border-radius: 5px;
+  background: #0d2b36cc;
+  color: #d7f9ff;
+  font-size: 11px;
+  cursor: pointer;
+  transition: background .2s, border-color .2s;
+}
+.landmark-brief-easter-btn:hover, .landmark-brief-easter-btn:focus-visible {
+  background: #144354e6;
+  border-color: #9af4ff99;
+}
+.landmark-brief-easter-btn[aria-pressed="true"] {
+  background: #175264f0;
+  border-color: #8df2ff;
+  color: #ffffff;
+}
+.landmark-brief-easter-hint-btn {
+  border-color: #9fcab244;
+  background: #12201bcc;
+  color: #cbe2d6;
+}
+.landmark-brief-easter-hint-btn:hover, .landmark-brief-easter-hint-btn:focus-visible {
+  background: #1a3129e6;
+  border-color: #78ecff66;
+  color: #e6fbff;
+}
+.atlas-easter-hint {
+  margin: 18px auto 6px;
+  max-width: 680px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 18px;
+  border: 1px solid #6be4ff55;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #081822eb, #0c141aeb);
+  box-shadow: 0 10px 32px #0008, 0 0 22px #4bd9ff1a;
+}
+.atlas-easter-hint[hidden] { display: none; }
+.atlas-easter-badge {
+  width: 58px;
+  height: 58px;
+  flex: none;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 10px #5ee4ff44);
+}
+.atlas-easter-copy {
+  flex: 1;
+  min-width: 0;
+}
+.atlas-easter-eyebrow {
+  display: block;
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  color: #7deaff;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+.atlas-easter-copy h3 {
+  margin: 4px 0 4px;
+  font-size: 15px;
+  font-weight: 500;
+  color: #ebf9fd;
+}
+.atlas-easter-copy p {
+  margin: 0;
+  font-size: 12px;
+  color: #9ebcc6;
+  line-height: 1.5;
+}
+.atlas-easter-action {
+  flex: none;
+  min-height: 44px;
+  padding: 9px 14px;
+  border: 1px solid #72e8ff66;
+  border-radius: 7px;
+  background: #0f3240e6;
+  color: #e2fbff;
+  font-size: 12px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.atlas-easter-action:hover, .atlas-easter-action:focus-visible {
+  background: #174c60f5;
+  border-color: #a6f4ff;
+}
+@keyframes songbird-pulse {
+  0%, 100% { box-shadow: 0 0 0 3px #0c2c38cc, 0 0 10px #5ee4ff66; }
+  50% { box-shadow: 0 0 0 5px #104252cc, 0 0 16px #78ecffbb; }
+}
+@media (max-width: 760px) {
+  .atlas-easter-hint {
+    flex-wrap: wrap;
+    padding: 12px 14px;
+  }
+  .atlas-easter-action {
+    width: 100%;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .landmark-marker-2077 .landmark-dot {
+    animation: none;
+  }
+}
 @media (max-width: 1050px) and (min-width: 761px) {
   .observation-tools {
     width: 340px;

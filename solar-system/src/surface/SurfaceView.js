@@ -1,5 +1,7 @@
 import * as THREE from 'three';
-import { landingSites, surfaceFrame, angularDiameter, horizonAngles, lookDirection, nextDaylightAsync } from './geometry.js';
+import { resolveLandingSite, surfaceFrame, angularDiameter, horizonAngles, lookDirection, nextDaylightAsync } from './geometry.js';
+import { SONGBIRD_COPY, isSongbird2077Active } from '../easter-eggs/songbird-2077.js';
+import { createSongbirdRadio } from '../easter-eggs/songbird-audio.js';
 import { createIcons, ArrowLeft, Info, X, RotateCcw, Camera, Sunrise, ArrowUpRight } from 'lucide';
 import { SurfaceClock } from './SurfaceClock.js';
 import { simulationRates, formatSimulationRate, simulationRateEquivalent, simulationDirectionLabel } from '../simulation-time.js';
@@ -20,7 +22,7 @@ const compass = angle => ['北','东北','东','东南','南','西南','西','�
 // Camera position is fixed. A brief lens/attitude change settles the arrival;
 // after landing, only the look direction changes. Time and rate carry across views.
 export function createSurfaceView(siteId, {renderOrbit,onClosed,initialDate,initialRate,initialDirection=1,initialPlaying=true,onDirectionChange,onPlayingChange,onRateChange,onTimeChange,provider=physicalState}) {
-  const site = landingSites[siteId];
+  const site = resolveLandingSite(siteId);
   if (!site) throw new Error('这个天体还没有开放着陆点。');
   const parsedDate = initialDate instanceof Date ? initialDate.getTime()
     : (typeof initialDate === 'number' ? initialDate : Date.parse(initialDate || site.date));
@@ -46,10 +48,12 @@ export function createSurfaceView(siteId, {renderOrbit,onClosed,initialDate,init
       <h1>${site.name}<span>·</span><small>${site.title}</small></h1>
       <p>${site.provenance}</p></div>
     <div class="surface-target" hidden><span></span><small></small></div>
+    <div class="surface-target surface-target-easter" hidden><span></span><small></small></div>
     <div class="surface-crosshair" aria-hidden="true"></div>
     <section class="surface-details" id="surface-details" aria-label="观景说明" hidden>
       <button class="surface-details-close" type="button" aria-label="关闭观景说明"><i data-lucide="x"></i></button>
       <span class="surface-eyebrow">这个视野从哪里来</span><h2>${site.title}</h2>
+      ${site.siteId==='moon-tycho'?`<div class="surface-easter-card"><img src="${SONGBIRD_COPY.tycho2077.badge}" alt="${SONGBIRD_COPY.tycho2077.badgeAlt}" width="54" height="54" /><div><span class="surface-easter-eyebrow">${SONGBIRD_COPY.tycho2077.eyebrow}</span><p>${SONGBIRD_COPY.tycho2077.message}</p><button type="button" class="surface-easter-radio" aria-pressed="false">${SONGBIRD_COPY.tycho2077.radioLabelPlay}</button></div></div>`:''}
       <p>${site.description}</p>
       <dl><div><dt>表面模拟时间</dt><dd class="surface-details-time"></dd></div>
       <div><dt>落点坐标</dt><dd>${Math.abs(site.latitude).toFixed(4)}° ${site.latitude<0?'S':'N'} / ${site.longitude.toFixed(4)}° E</dd></div>
@@ -89,6 +93,17 @@ export function createSurfaceView(siteId, {renderOrbit,onClosed,initialDate,init
   const events = new AbortController();
   const textures = new Set();
   let renderer, sky, disposed = false, loaded = false, raf = 0, noticeTimer = 0, groundMask;
+  const surfaceRadio = site.siteId === 'moon-tycho' ? createSongbirdRadio({
+    onChange: playing => {
+      const btn = $('.surface-easter-radio');
+      if (!btn) return;
+      btn.setAttribute('aria-pressed', String(playing));
+      btn.textContent = playing ? SONGBIRD_COPY.tycho2077.radioLabelStop : SONGBIRD_COPY.tycho2077.radioLabelPlay;
+    },
+  }) : null;
+  if ($('.surface-easter-radio')) {
+    $('.surface-easter-radio').addEventListener('click', () => surfaceRadio?.toggle(), { signal: events.signal });
+  }
   let lastFrame = null, lastDraw = -Infinity, lastSkyUpdate = -Infinity, skyTime = null, lastOrbit = null, dirty = true, lastReadout = '';
   let resetExposure = true, exposureElapsed = 0;
   const initialPitch = () => site.initialPitch + (site.id === 'europa' && innerWidth < 600 ? 8 : 0);
@@ -148,6 +163,7 @@ export function createSurfaceView(siteId, {renderOrbit,onClosed,initialDate,init
   function dispose() {
     if (disposed) return;
     disposed = true;
+    surfaceRadio?.dispose();
     events.abort(); gate.dispose(); resizeObserver.disconnect(); clearTimeout(noticeTimer); cancelAnimationFrame(raf);
     scene.traverse(object => { object.geometry?.dispose();
       for (const material of [object.material].flat().filter(Boolean)) material.dispose();
@@ -182,7 +198,7 @@ export function createSurfaceView(siteId, {renderOrbit,onClosed,initialDate,init
     const button=$('.surface-telescope');button.querySelector('span').textContent=`望远镜 ${magnification}×`;
     button.setAttribute('aria-label',`望远镜 ${magnification} 倍，点击切换倍率`);
     $('.surface-angle-scale').textContent=`纵向视场 ${telescopeFieldOfView(magnification).toFixed(1)}°`;
-    root.dataset.magnification=String(magnification);invalidate();
+    root.dataset.magnification=String(magnification);lastSkyUpdate=-Infinity;invalidate();
   }
   listen($('.surface-telescope'),'click',()=>setMagnification(TELESCOPE_MAGNIFICATIONS[(TELESCOPE_MAGNIFICATIONS.indexOf(magnification)+1)%TELESCOPE_MAGNIFICATIONS.length]));
   listen($('.surface-rate'),'input',event=>{
@@ -265,6 +281,104 @@ export function createSurfaceView(siteId, {renderOrbit,onClosed,initialDate,init
       const location=$('.surface-location').getBoundingClientRect();
       if(bounds.left<location.right&&bounds.right>location.left&&bounds.top<location.bottom&&bounds.bottom>location.top)label.hidden=true;
     }
+    updateEasterHud();
+  }
+  function updateEasterHud() {
+    const easterLabel = $('.surface-target-easter');
+    if (!easterLabel) return;
+    easterLabel.hidden = true;
+    const targets = sky?.getEasterEggTargets?.();
+    if (!targets?.active) return;
+    const look = lookDirection(heading, pitch);
+    const parentLabel = $('.surface-target');
+    const parentRect = parentLabel && !parentLabel.hidden ? parentLabel.getBoundingClientRect() : null;
+    let parentDiscRect = null;
+    const parentTarget = frame?.targets?.[site.parent];
+    if (parentTarget && !site.obscuredParent && parentTarget.direction.dot(look) > 0) {
+      const pp = parentTarget.direction.clone().multiplyScalar(500).project(camera);
+      const pr = Math.tan(angularDiameter(site.parentRadiusKm, parentTarget.distanceKm) / 2) / Math.tan(rad(camera.fov / 2)) * camera.zoom * innerHeight * 0.5 + 8;
+      const px = (pp.x * 0.5 + 0.5) * innerWidth;
+      const py = (-pp.y * 0.5 + 0.5) * innerHeight;
+      parentDiscRect = { left: px - pr, right: px + pr, top: py - pr, bottom: py + pr };
+    }
+    const footerTop = $('.surface-footer').getBoundingClientRect().top - 12;
+    const headerBottom = Math.max(78, $('.surface-header').getBoundingClientRect().bottom + 8);
+    const location = $('.surface-location').getBoundingClientRect();
+
+    const place = (direction, title, sub, minZoom, maxAngleDeg) => {
+      const angles = horizonAngles(direction);
+      if (angles.altitude <= 0) return false;
+      const cosAngle = direction.dot(look);
+      if (cosAngle <= 0) return false;
+      const angleDeg = deg(Math.acos(THREE.MathUtils.clamp(cosAngle, -1, 1)));
+      if (magnification < minZoom && angleDeg > maxAngleDeg) return false;
+      const u = THREE.MathUtils.euclideanModulo((angles.azimuth - site.panoramaCenter) / 360 + 0.5, 1);
+      const v = THREE.MathUtils.clamp(0.5 - angles.altitude / 180, 0, 0.999);
+      const occluded = groundMask && groundMask[(Math.floor(v * 256) * 512 + Math.floor(u * 512)) * 4 + 3] > 128;
+      if (occluded) return false;
+      const proj = direction.clone().multiplyScalar(500).project(camera);
+      if (Math.abs(proj.x) >= 0.86 || Math.abs(proj.y) >= 0.76) return false;
+      const sx = (proj.x * 0.5 + 0.5) * innerWidth;
+      const sy = (-proj.y * 0.5 + 0.5) * innerHeight;
+      easterLabel.querySelector('span').textContent = title;
+      easterLabel.querySelector('small').textContent = sub;
+      easterLabel.style.transform = 'translateX(-50%)';
+      easterLabel.hidden = false;
+      const overlaps = (a, b) => a && b && a.left < b.right && a.right > b.left && a.top < b.bottom && a.bottom > b.top;
+      easterLabel.style.left = '0px';
+      easterLabel.style.top = '0px';
+      easterLabel.style.transform = 'none';
+      const { width: labelW, height: labelH } = easterLabel.getBoundingClientRect();
+      const clampedX = THREE.MathUtils.clamp(sx, labelW / 2 + 12, innerWidth - labelW / 2 - 12);
+      const belowParentTop = Math.max(sy + 18, (parentRect ? parentRect.bottom + 8 : 0), (parentDiscRect ? parentDiscRect.bottom + 8 : 0));
+      const aboveParentTop = Math.min(sy - labelH - 16, (parentDiscRect ? parentDiscRect.top - labelH - 10 : sy - labelH - 16));
+      const candidates = [
+        { left: sx, top: sy + 18, transform: 'translateX(-50%)' },
+        { left: sx - 16, top: sy - labelH / 2, transform: 'translateX(-100%)' },
+        { left: sx + 16, top: sy - labelH / 2, transform: 'translateX(0)' },
+        { left: sx, top: sy - labelH - 16, transform: 'translateX(-50%)' },
+        { left: clampedX, top: belowParentTop, transform: 'translateX(-50%)' },
+        { left: clampedX, top: aboveParentTop, transform: 'translateX(-50%)' },
+      ];
+      for (const pos of candidates) {
+        easterLabel.style.left = `${pos.left}px`;
+        easterLabel.style.top = `${pos.top}px`;
+        easterLabel.style.transform = pos.transform;
+        const bounds = easterLabel.getBoundingClientRect();
+        if (
+          bounds.left >= 10 &&
+          bounds.right <= innerWidth - 10 &&
+          bounds.top >= headerBottom &&
+          bounds.bottom <= footerTop &&
+          !overlaps(bounds, location) &&
+          !overlaps(bounds, parentRect) &&
+          !overlaps(bounds, parentDiscRect)
+        ) {
+          return true;
+        }
+      }
+      easterLabel.hidden = true;
+      return false;
+    };
+
+    if (targets.crystalPalace?.visible) {
+      const cp = targets.crystalPalace;
+      place(
+        cp.direction,
+        '水晶宫 · CRYSTAL PALACE',
+        `地月 L1 · 约 ${(cp.moonDistanceKm / 10000).toFixed(1)} 万公里`,
+        2,
+        14,
+      );
+    } else if (targets.tychoEcho?.visible) {
+      place(
+        targets.tychoEcho.direction,
+        '第谷 · 2077 信号回波',
+        `TYCHO 43.31°S · 望远镜 ${magnification}×`,
+        4,
+        12,
+      );
+    }
   }
   function render(now = performance.now()) {
     raf = 0;
@@ -301,6 +415,7 @@ export function createSurfaceView(siteId, {renderOrbit,onClosed,initialDate,init
       updateCamera(sample.settle);
       if((skyTime!==clock.time&&(now-lastSkyUpdate>=50||dirty))||lastSkyUpdate===-Infinity){
         frame=sky.update(clock.time,camera,{resetExposure});skyTime=clock.time;lastSkyUpdate=now;resetExposure=false;
+        updateEasterHud();
       }
       sky.advanceExposure(exposureElapsed);exposureElapsed=0;
       sky.faceCamera(camera);updateReadout();renderer.render(scene,camera);
@@ -391,10 +506,10 @@ export function createSurfaceView(siteId, {renderOrbit,onClosed,initialDate,init
       ground.wrapS=THREE.RepeatWrapping;
       const dome=new THREE.Mesh(new THREE.SphereGeometry(100,128,64),new THREE.ShaderMaterial({
         uniforms:{panorama:{value:ground},center:{value:rad(site.panoramaCenter)},daylight:{value:1},activityTime:{value:0},lava:{value:site.activity==='lava'?1:0},
-          earth:{value:site.atmosphere==='earth'?1:0},sunAlt:{value:0}},
+          tychoBeacon:{value:site.siteId==='moon-tycho'?1:0},earth:{value:site.atmosphere==='earth'?1:0},sunAlt:{value:0}},
         vertexShader:'varying vec3 direction; void main(){direction=position;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}',
         fragmentShader:`uniform sampler2D panorama;uniform float center;uniform float daylight;uniform float activityTime;uniform float lava;
-          uniform float earth;uniform float sunAlt;varying vec3 direction;
+          uniform float tychoBeacon;uniform float earth;uniform float sunAlt;varying vec3 direction;
           ${earthAtmosphereGLSL}
           void main(){vec3 d=normalize(direction);vec2 uv=vec2((atan(d.x,-d.z)-center)/6.28318530718+.5,.5+asin(clamp(d.y,-1.,1.))/3.14159265359);
           // Correct the longitude derivative across the wrap, avoiding a
@@ -403,6 +518,8 @@ export function createSurfaceView(siteId, {renderOrbit,onClosed,initialDate,init
           vec4 c=textureGrad(panorama,uv,dx,dy);if(c.a<.03)discard;
           float hot=lava*step(c.g*3.,c.r)*step(c.b*2.,c.g)*step(.12,c.r)*(1.-step(.18,c.g));
           vec3 emission=hot*c.rgb*(.7+.2*sin(mod(activityTime,86400.)*.0007+uv.x*31.));
+          float cyanLed=tychoBeacon*step(c.r*1.35,c.b)*step(c.r*1.12,c.g)*step(.30,c.b);
+          emission+=cyanLed*vec3(.35,.88,1.)*(.68+.28*sin(mod(activityTime,86400.)*.0015));
           vec3 tint=earth>.5?earthLightTint(sunAlt,daylight):mix(vec3(.7,.79,1.),vec3(1.),smoothstep(.015,.25,daylight));
           c.rgb*=daylight*tint;c.rgb+=emission;gl_FragColor=c;
           #include <colorspace_fragment>
@@ -450,7 +567,9 @@ export function createSurfaceView(siteId, {renderOrbit,onClosed,initialDate,init
           const url=URL.createObjectURL(blob),link=document.createElement('a');
           link.href=url;link.download=`space-atlas-${siteId}.png`;link.click();
           setTimeout(()=>URL.revokeObjectURL(url),1000);
-          notice('照片已生成，已开始下载。');
+          const easterTargets = sky?.getEasterEggTargets?.();
+          const framedEarth = site.siteId === 'moon-tycho' && (!$('.surface-target').hidden || !$('.surface-target-easter').hidden || Boolean(easterTargets?.crystalPalace?.visible && magnification >= 4));
+          notice(framedEarth ? '照片已生成，已定格 2077 年第谷的地球与 L1 星火。' : '照片已生成，已开始下载。');
         },'image/png');
       });
       loaded=true;journey.ready();lastFrame=null;invalidate();
@@ -464,8 +583,18 @@ export function createSurfaceView(siteId, {renderOrbit,onClosed,initialDate,init
   }
   updateReadout();invalidate();
   load();
-  return { dispose, getTime:()=>clock.time, snapshot:()=>({date:clock.time,playing:clock.playing,rate:clock.rate,direction:clock.direction,magnification,fieldOfView:camera.getEffectiveFOV(),cameraZoom:camera.zoom,ephemeris:root.dataset.ephemeris,
-    observerKm:frame?.observerKm.toArray(),centerKm:frame?.centerKm.toArray(),
-    targets:frame&&Object.fromEntries(Object.entries(frame.targets).map(([name,target])=>[name,{direction:target.direction.toArray(),distanceKm:target.distanceKm,angularDiameter:target.angularDiameter}])),
-    accuracy:frame?.accuracy}) };
+  return { dispose, getTime:()=>clock.time, snapshot:()=>{
+    const easterTargets = sky?.getEasterEggTargets?.() || { active: isSongbird2077Active(clock.time), crystalPalace: null, tychoEcho: null };
+    return {date:clock.time,playing:clock.playing,rate:clock.rate,direction:clock.direction,magnification,fieldOfView:camera.getEffectiveFOV(),cameraZoom:camera.zoom,ephemeris:root.dataset.ephemeris,
+      observerKm:frame?.observerKm.toArray(),centerKm:frame?.centerKm.toArray(),
+      targets:frame&&Object.fromEntries(Object.entries(frame.targets).map(([name,target])=>[name,{direction:target.direction.toArray(),distanceKm:target.distanceKm,angularDiameter:target.angularDiameter}])),
+      easterEgg:{
+        songbird2077: Boolean(easterTargets.active),
+        crystalPalaceVisible: Boolean(easterTargets.crystalPalace?.visible),
+        crystalPalaceLabelVisible: Boolean($('.surface-target-easter') && !$('.surface-target-easter').hidden),
+        tychoEchoVisible: Boolean(easterTargets.tychoEcho?.visible),
+        audioPlaying: Boolean(surfaceRadio?.isPlaying()),
+      },
+      accuracy:frame?.accuracy};
+  } };
 }

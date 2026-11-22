@@ -41,6 +41,37 @@ export const landmarks = {
         "https://science.nasa.gov/earth/earth-observatory/earth-at-night/maps/",
     },
   ],
+  moon: [
+    {
+      id: "tycho",
+      name: "第谷撞击坑",
+      uv: geographic(-43.31, 348.64),
+      location: "43.31°S / 11.36°W · 南半球高地",
+      text: "月球南半球最醒目的年轻撞击坑，直径约 85 千米，明亮的辐射纹横跨大半个近月面，中央峰高耸于坑底。",
+      source: "https://planetarynames.wr.usgs.gov/Feature/6175",
+      easterEgg: "songbird-2077",
+    },
+    {
+      id: "mare-tranquillitatis",
+      name: "静海",
+      uv: geographic(8.5, 31.4),
+      location: "8.50°N / 31.40°E · 暗色玄武岩月海",
+      text: "宽阔平坦的玄武岩月海盆地，色泽偏蓝灰；阿波罗 11 号曾在其西南边缘降落，留下人类在地球之外的第一枚脚印。",
+      source: "https://planetarynames.wr.usgs.gov/Feature/3690",
+      easterEgg: "songbird-2077",
+    },
+    {
+      id: "crystal-palace-l1",
+      name: "水晶宫 · 地月 L1",
+      dynamic: "crystal-palace-l1",
+      trackDirection: true,
+      zoom: 1.0,
+      location: "地月 L1 拉格朗日点 · 距月球约 5.8 万公里（2077 彩蛋）",
+      text: "悬停于地球与月球引力平衡点的双环空间站，从月球近侧仰望地球时，它正好位于地月视线走廊中。",
+      source: "https://science.nasa.gov/resource/what-is-a-lagrange-point/",
+      easterEgg: "songbird-2077",
+    },
+  ],
   mars: [
     { id: 'north-pole', name: '北极冰冠', uv: geographic(90, 0), location: '90°N / 北极地区', text: '北极高原保存着水冰与尘埃层，周围季节性冰霜随季节变化。此处为固定地图，未模拟极冠季节伸缩。', source: 'https://www.usgs.gov/maps/geologic-map-north-polar-region-mars' },
     {
@@ -172,7 +203,12 @@ export function landingPointVisible(frame, body, observer, bodies) {
   return sightline.intersectObjects(occluders, false).length === 0;
 }
 
-export function createLandmarks(objects, camera, onSelect, dynamicAnchor, { landingSites = {}, onLanding = () => {} } = {}) {
+export function createLandmarks(objects, camera, onSelect, dynamicAnchor, {
+  landingSites = {},
+  onLanding = () => {},
+  isLandingSiteActive = () => true,
+  isEasterEggActive = () => false,
+} = {}) {
   const container = document.getElementById("landmark-markers");
   const picker = document.getElementById("landmark-select");
   let bodyId = null;
@@ -201,6 +237,7 @@ export function createLandmarks(objects, camera, onSelect, dynamicAnchor, { land
         button.setAttribute("aria-label", `定位${feature.name}`);
         button.setAttribute("aria-pressed", "false");
         button.dataset.landmark = feature.id;
+        if (feature.easterEgg) button.dataset.easterEgg = feature.easterEgg;
         const dot = document.createElement("span");
         dot.className = "landmark-dot";
         const label = document.createElement("span");
@@ -215,10 +252,11 @@ export function createLandmarks(objects, camera, onSelect, dynamicAnchor, { land
       // collision pass in update() keeps overlapping labels apart.
       landingMarkers = Object.values(landingSites).filter((site) => site.id === id).map((site) => {
         const button = document.createElement("button");
-        button.className = "landmark-marker landing-marker";
+        button.className = site.easterEgg ? "landmark-marker landing-marker landing-marker-2077" : "landmark-marker landing-marker";
         button.setAttribute("aria-label", `降落到${site.name}表面 · ${site.title}`);
         button.dataset.landingSite = site.siteId;
         button.dataset.landingBody = site.id;
+        if (site.easterEgg) button.dataset.easterEgg = site.easterEgg;
         button.hidden = true;
         const pin = createElement(MapPin, { 'aria-hidden': 'true', width: 13, height: 13 });
         const label = document.createElement("span");
@@ -226,9 +264,9 @@ export function createLandmarks(objects, camera, onSelect, dynamicAnchor, { land
         label.textContent = `降落 · ${site.title}`;
         button.title = `${label.textContent} · ${Math.abs(site.latitude)}°${site.latitude < 0 ? 'S' : 'N'} / ${site.longitude}°E`;
         button.append(pin, label);
-        const marker = { site, button, label, x: 0, y: 0, visible: false, exposed: false, enabled: false };
+        const marker = { site, button, label, x: 0, y: 0, visible: false, exposed: false, enabled: false, active: !site.easterEgg };
         button.addEventListener("click", () => {
-          if (marker.enabled && marker.visible && !button.disabled) onLanding(site.id, site.siteId);
+          if (marker.active && marker.enabled && marker.visible && !button.disabled) onLanding(site.id, site.siteId);
         });
         container.append(button);
         return marker;
@@ -258,7 +296,7 @@ export function createLandmarks(objects, camera, onSelect, dynamicAnchor, { land
       for (const marker of landingMarkers) marker.button.disabled = Boolean(busy);
     },
     focusLanding(siteId) {
-      const marker = landingMarkers.find((entry) => (siteId ? entry.site.siteId === siteId : true) && entry.enabled && entry.visible);
+      const marker = landingMarkers.find((entry) => (siteId ? entry.site.siteId === siteId : true) && entry.active && entry.enabled && entry.visible);
       if (marker) marker.button.focus({ preventScroll: true });
       else {
         const info = document.getElementById('body-details-button');
@@ -278,7 +316,8 @@ export function createLandmarks(objects, camera, onSelect, dynamicAnchor, { land
       shadows = showShadows;
       const body = objects.get(bodyId);
       const occupied = [];
-      const priority = marker => marker.feature === active ? 2 : marker.site ? 1 : 0;
+      const easterActive = Boolean(isEasterEggActive());
+      const priority = marker => marker.feature === active ? 2 : marker.site ? (marker.site.easterEgg ? 1.5 : 1) : 0;
       // Two sites on one body compete for the same space when the body is small.
       // The one facing the camera claims it first, so rotating to a site reveals it.
       const facing = marker => {
@@ -290,6 +329,18 @@ export function createLandmarks(objects, camera, onSelect, dynamicAnchor, { land
       };
       for (const marker of [...markers, ...landingMarkers].sort((a, b) => priority(b) - priority(a) || facing(b) - facing(a))) {
         marker.visible = false;
+        if (marker.site) {
+          marker.active = Boolean(isLandingSiteActive(marker.site));
+          if (!marker.active) {
+            marker.available = false;
+            marker.exposed = false;
+            marker.button.hidden = true;
+            continue;
+          }
+        }
+        if (marker.feature?.easterEgg) {
+          marker.button.classList.toggle("landmark-marker-2077", easterActive);
+        }
         const frame = marker.site ? body && landingFrame(marker.site, body) : frameFor(marker.feature);
         marker.available = Boolean(frame);
         if (marker.option) {
@@ -297,7 +348,7 @@ export function createLandmarks(objects, camera, onSelect, dynamicAnchor, { land
           marker.option.hidden = !frame;
         }
         if (marker.site) marker.exposed = Boolean(frame && body.physicalAvailable && landingPointVisible(frame, body, camera.position, objects.values()));
-        if (!hidden && body && frame && (!marker.site || (marker.enabled && marker.exposed))) {
+        if (!hidden && body && frame && (!marker.site || (marker.active && marker.enabled && marker.exposed))) {
           const point = frame.point;
           const normal = point.clone().sub(body.root.position).normalize();
           const towardCamera = camera.position.clone().sub(point);
@@ -347,7 +398,9 @@ export function createLandmarks(objects, camera, onSelect, dynamicAnchor, { land
           visible,
           available,
         })),
-        landing: landingMarkers.map(({ site, x, y, visible, exposed, enabled }) => ({ siteId: site.siteId, body: bodyId, latitude: site.latitude, longitude: site.longitude, visible, exposed, enabled, x, y })),
+        landing: landingMarkers
+          .filter((entry) => entry.active)
+          .map(({ site, x, y, visible, exposed, enabled }) => ({ siteId: site.siteId, body: bodyId, latitude: site.latitude, longitude: site.longitude, visible, exposed, enabled, x, y })),
       };
     },
   };

@@ -148,6 +148,21 @@ SITES = [
      'reference image was supplied.',
      {'generatedOn': '2026-09-25',
       'requestedSizeAccepted': True}),
+    ('moon-tycho', 'moon-tycho-4k-raw.png',
+     'two-stage reference-redraw easter-egg panorama (gpt-image-2.6 layout -> gpt-image-2.5-sunburst 4K pass)',
+     'Stage 1 (gpt-image-2.6, material reference public/surface/moon-4k.webp) returned 1774x887 native 2:1; '
+     'Stage 2 (gpt-image-2.5-sunburst, requested 3840x1920 quality high) refined micro-detail at 3840x2160 '
+     'and was reparameterized to 360x180 at 3840x1920 via Lanczos resampling (not claimed as native 2:1). '
+     'Pure-black vacuum sky removed above a per-column source-pixel skyline so dark crater-wall shadows stay '
+     'opaque; narrow wrap blend; nadir smoothing; WebP encoding. Fictional commemorative tribute scene '
+     '(Cyberpunk 2077: Phantom Liberty) at Tycho Crater rim; not surveyed lunar terrain.',
+     {'generatedOn': '2026-11-21',
+      'model': 'gpt-image-2.6 -> gpt-image-2.5-sunburst',
+      'requestedQuality': 'high',
+      'requestedSize': '3840x1920',
+      'references': ['public/surface/moon-4k.webp (same body, regolith material character only)'],
+      'requestedSizeAccepted': False,
+      'sourceNative2to1': False}),
 ]
 
 parser = argparse.ArgumentParser()
@@ -175,7 +190,7 @@ for site_id, filename, mode, processing, extra in SITES:
     source = args.sources / 'raw' / filename
     # The earth sky carries an atmospheric band the black flood fill would keep;
     # its transparent region needs the per-column skyline trace instead.
-    if site_id in ('phobos-60e', 'phobos-311e'):
+    if site_id in ('phobos-60e', 'phobos-311e', 'moon-tycho'):
         image = panorama_with_vacuum_skyline(source)
     elif site_id == 'earth':
         image = panorama_with_traced_skyline(source)
