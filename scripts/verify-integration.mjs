@@ -16,7 +16,7 @@ let currentPage, currentName, currentErrors;
 const events = [];
 const settle = page => page.waitForFunction(() => window.solarAtlas?.snapshot().ready || window.observatory?.getState().ready || window.orionAtlas?.snapshot().ready, null, { timeout: 90000 });
 async function screenshot(page, name) {
-  await page.screenshot({ path: fileURLToPath(new URL(name + '.png', output)), animations: 'disabled' });
+  await page.screenshot({ path: fileURLToPath(new URL(name + '.png', output)), animations: 'disabled', timeout: 60000 });
 }
 async function canvasPixels(page) {
   const data = await page.locator('canvas').first().screenshot({ animations: 'disabled', timeout: 60000 });
@@ -48,8 +48,9 @@ async function checkHeader(page) {
   return bounds;
 }
 try {
+  const requested = (process.env.ATLAS_VIEWPORTS || process.env.INTEGRATION_VIEWPORT || '').split(',').map(s => s.trim()).filter(Boolean);
   const viewports = [['desktop',{width:1440,height:900}],['phone',{width:390,height:844}],['short',{width:800,height:450}],['compact',{width:640,height:360}]];
-  for (const [name, viewport] of viewports.filter(([name]) => !process.env.INTEGRATION_VIEWPORT || name === process.env.INTEGRATION_VIEWPORT)) {
+  for (const [name, viewport] of viewports.filter(([name]) => !requested.length || requested.includes(name))) {
     const context = await browser.newContext({ viewport, deviceScaleFactor:name==='phone'?3:name==='desktop'?1:2, isMobile:name==='phone', hasTouch:name==='phone' });
     await configureDeploymentAccess(context, base);
     const page = await context.newPage();

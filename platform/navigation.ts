@@ -1,6 +1,13 @@
 import { createElement, Orbit, Aperture, Sparkles, ChevronDown, Check } from 'lucide';
 import { scenes, sceneById } from './scenes.js';
+import './tokens.css';
 import './style.css';
+
+const BRAND_MARK_SVG = `<svg viewBox="0 0 28 28" fill="none" aria-hidden="true">
+  <circle cx="14" cy="14" r="9.2" stroke="currentColor" stroke-opacity="0.34" stroke-width="1.2" />
+  <ellipse cx="14" cy="14" rx="12.4" ry="4.3" transform="rotate(-24 14 14)" stroke="currentColor" stroke-width="1.35" />
+  <circle cx="22.8" cy="9.7" r="2.1" fill="var(--nasa-signal, #fc3d21)" />
+</svg>`;
 
 export function mountNavigation(id: string) {
   const host = document.getElementById('scene-navigation');
@@ -10,10 +17,9 @@ export function mountNavigation(id: string) {
   const options = { signal: events.signal };
   document.documentElement.dataset.scene = id;
   host.innerHTML = `<button id="scene-switcher" type="button" popovertarget="scene-menu" aria-label="切换探索场景，当前${scene.name}" aria-expanded="false" aria-controls="scene-menu">
-    <span class="space-atlas-mark" aria-hidden="true"></span><span class="space-atlas-title">星际图鉴<small>${scene.name} / ${scene.english}</small></span><span class="space-atlas-chevron" aria-hidden="true"></span>
+    <span class="space-atlas-mark" aria-hidden="true">${BRAND_MARK_SVG}</span><span class="space-atlas-title">星际图鉴<small>${scene.name} · ${scene.english}</small></span><span class="space-atlas-chevron" aria-hidden="true"></span>
   </button>`;
   const button = host.querySelector<HTMLButtonElement>('button')!;
-  host.querySelector('.space-atlas-mark')!.append(createElement(Orbit));
   host.querySelector('.space-atlas-chevron')!.append(createElement(ChevronDown));
   const menu = document.createElement('nav');
   menu.id = 'scene-menu';

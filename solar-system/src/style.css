@@ -5,14 +5,14 @@
 @font-face { font-family: Barlow; font-style: normal; font-weight: 700; font-display: swap; src: url('/shared/fonts/barlow-latin-700-normal.woff2') format('woff2'); }
 
 :root {
-  font-family: Barlow, "Segoe UI", "Microsoft YaHei", "PingFang SC", sans-serif;
-  color: #eef1f0;
-  background: #07090b;
+  font-family: var(--nasa-font-sans, Barlow, "Segoe UI", "Microsoft YaHei", "PingFang SC", sans-serif);
+  color: var(--nasa-text, #f5f7fa);
+  background: var(--nasa-bg, #05070b);
   font-synthesis: none;
-  --muted: #828b8c;
-  --accent: #bbebd2;
-  --line: rgba(210, 231, 226, 0.13);
-  --panel: #0e1315;
+  --muted: var(--nasa-text-muted, #727d8d);
+  --accent: var(--nasa-text, #f5f7fa);
+  --line: var(--nasa-border, rgba(255, 255, 255, 0.11));
+  --panel: var(--nasa-bg-elevated, #0a0e16);
   letter-spacing: 0;
   color-scheme: dark;
 }

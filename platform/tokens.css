@@ -1,0 +1,55 @@
+/* Shared NASA Artemis Minimal design system across all Space Atlas scenes
+ * (Solar System, 21 Surface Sites, Black Hole Observatory, Orion Nebula).
+ * Philosophy: deep vacuum black, smoked optical glass, pure Flight White
+ * primary actions, quiet 1px hairlines, and extreme restraint on NASA
+ * Signal Vermilion (#FC3D21) for micro-accents and active indicators only.
+ */
+:root {
+  --nasa-bg: #05070b;
+  --nasa-bg-elevated: #0a0e16;
+  --nasa-surface: rgba(11, 14, 21, 0.68);
+  --nasa-surface-hover: rgba(24, 30, 42, 0.82);
+  --nasa-surface-active: rgba(30, 38, 52, 0.88);
+  --nasa-surface-solid: rgba(10, 13, 20, 0.92);
+  --nasa-surface-card: rgba(16, 20, 30, 0.64);
+  --nasa-surface-card-hover: rgba(24, 30, 44, 0.80);
+
+  --nasa-text: #f5f7fa;
+  --nasa-text-soft: #aeb7c4;
+  --nasa-text-muted: #727d8d;
+
+  --nasa-signal: #fc3d21;
+  --nasa-signal-soft: rgba(252, 61, 33, 0.18);
+  --nasa-blue: #6aa9ff;
+  --nasa-blue-soft: rgba(106, 169, 255, 0.14);
+  --nasa-amber: #e6b566;
+
+  --nasa-primary-bg: #f4f6f9;
+  --nasa-primary-hover: #ffffff;
+  --nasa-primary-text: #07090e;
+  --nasa-primary-border: #ffffff;
+
+  --nasa-border: rgba(255, 255, 255, 0.11);
+  --nasa-border-strong: rgba(255, 255, 255, 0.24);
+  --nasa-border-subtle: rgba(255, 255, 255, 0.07);
+  --nasa-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+
+  --nasa-blur: 18px;
+  --nasa-blur-heavy: 24px;
+  --nasa-shadow: 0 14px 40px rgba(0, 0, 0, 0.54);
+  --nasa-shadow-lg: 0 28px 80px rgba(0, 0, 0, 0.72);
+
+  --nasa-radius: 6px;
+  --nasa-radius-lg: 12px;
+  --nasa-radius-pill: 999px;
+
+  --nasa-focus-color: #f5f7fa;
+  --nasa-font-sans: Barlow, -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+  --nasa-font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --nasa-blur: 12px;
+  }
+}

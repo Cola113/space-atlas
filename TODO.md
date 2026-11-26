@@ -1,5 +1,8 @@
 # TODO
 
+2026-11-26 全场景 NASA Artemis Minimal 极简主题统一：
+- **跨四场景统一设计体系**：新增共享设计令牌 `platform/tokens.css`，统一太阳系、21 处地表观景、黑洞与猎户座星云四个场景为单一「NASA Artemis Minimal」航天任务极简风格——真空深黑底色、顶部细高光烟熏光学玻璃、航天白主操作按钮、细发丝线边框、等宽遥测读数与极克制的 NASA 信号朱红 `#FC3D21` 微点缀（定制轨道卫星徽标、2px 激活底线、24px 标题指示刻度与实时状态点），不增设主题切换器；同步保留 2077 月球第谷彩蛋青色加密美学与所有 ≥44×44 px 触控、≥8 px 间距、≥2 px 焦点环、四视口安全区契约。同步将 CI 视觉门禁拆为 10 个并行分片以稳定落在单分片时限内。
+
 2026-11-26 工程健康度、推荐观测入口与太阳黑子批次：
 - **CI 视觉门禁分片与软渲染稳健化**：自落点增至 21 处后，单线程 `visual-gate` 在无 GPU runner 上稳定超过 40 分钟超时。现为 `verify-landings.mjs` 补齐 `earth` 落点覆盖与 `ATLAS_VIEWPORTS` 分片支持，将 `.github/workflows/checks.yml` 拆分为 7 个并行作业（`integration-sky-moments`、`saturn-shadows`、`controls` + 四视口 `landings`），单分片控制在 30 分钟以内；同时在 `prefers-reduced-motion: reduce` 下关闭轨道拖拽阻尼余滑并放宽 `landing-navigation.mjs` 的软件渲染收敛上限，以及为画布截图统一传入 `animations: 'disabled'`，消除无 GPU 环境的间歇性超时。
 - **修复两项未入门槛的既存失败脚本**：`verify-ground-rendering.mjs` 修复多落点 `siteId` 错配（此前将 `moon-farside` 样本与 `moon` 正面坐标系对照）、扁球体真实网格求交、土星环影带分桶以及火卫一升级 MAR099 后的命名与星历加载，9 处主星落点 × 3 相位 + 深度遮挡全过；`verify-surface-panorama.mjs` 改为先按 `landingSites[id].id` 定位天体再展开落点，适配全部 21 处多落点。同时修复 `earth-night.js` 缓存键串联与 `SurfaceSky.js` 异步夜光首次对齐。

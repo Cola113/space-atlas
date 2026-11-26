@@ -1,3 +1,4 @@
+import '../../platform/tokens.css';
 import './ui/style.css';
 import { Observatory } from './app/Observatory';
 

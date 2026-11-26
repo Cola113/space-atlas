@@ -27,15 +27,17 @@ async function checkDisplay(){await openDisplay();const rects=[];for(const sel o
  await page.locator('#info-button').click();assert.equal(await page.locator('#credits-dialog').getAttribute('open'),'');await control('#close-credits');await page.keyboard.press('Escape');assert.equal(await page.locator('#display-settings summary').evaluate(e=>e===document.activeElement),true);
  await openDisplay();await page.locator('#display-settings-close').click();assert.equal(await page.locator('#display-settings summary').evaluate(e=>e===document.activeElement),true);return rects;
 }
-try{for(const [caseName,width,height,dpr] of [['desktop',1440,900,1],['phone',390,844,3],['tablet',800,450,2],['short',640,360,2]]){
+const requestedViewports=(process.env.ATLAS_VIEWPORTS||'').split(',').map(s=>s.trim()).filter(Boolean);
+const controlViewports=[['desktop',1440,900,1],['phone',390,844,3],['tablet',800,450,2],['short',640,360,2]].filter(([n])=>!requestedViewports.length||requestedViewports.includes(n));
+try{for(const [caseName,width,height,dpr] of controlViewports){
  name=caseName;const context=await browser.newContext({viewport:{width,height},deviceScaleFactor:dpr,reducedMotion:'reduce'});
  await context.addInitScript(()=>sessionStorage.setItem('space-atlas:scene:solar-system',JSON.stringify({version:1,value:{date:Date.UTC(1971,7,1),playing:false,selected:'europa',speed:1000,speedUnit:'realtime'}})));
  page=await context.newPage();const errors=[];page.on('pageerror',e=>errors.push(e.message));await page.goto(base+'/solar-system/');await settle();
- const normal=await directControls();await page.screenshot({path:`${out}/${name}-europa.png`});
+ const normal=await directControls();await page.screenshot({path:`${out}/${name}-europa.png`,animations:'disabled',timeout:60000});
  const start=await snap();await page.locator('#surface-button').click();await settle();assert.equal((await snap()).close,true);assert.equal((await snap()).date,start.date);await page.locator('#surface-button').click();await settle();
  for(const selector of ['#zoom-in','#zoom-out']){await page.locator(selector).click();await settle();assert.equal((await snap()).date,start.date);}
  await page.locator('#body-details-button').click();const date=(await snap()).date;await control('#close-body-details');assert.match(await page.locator('#planet-title').textContent(),/木卫二/);await page.waitForTimeout(100);assert.equal((await snap()).date,date);
- await control('#activity-rate',{scroll:true});await page.locator('#activity-rate').selectOption('2');assert.equal(await page.locator('#activity-rate').inputValue(),'2');await page.screenshot({path:`${out}/${name}-details-scrolled.png`});await page.keyboard.press('Escape');assert.equal(await page.locator('#body-details-button').evaluate(e=>e===document.activeElement),true);
+ await control('#activity-rate',{scroll:true});await page.locator('#activity-rate').selectOption('2');assert.equal(await page.locator('#activity-rate').inputValue(),'2');await page.screenshot({path:`${out}/${name}-details-scrolled.png`,animations:'disabled',timeout:60000});await page.keyboard.press('Escape');assert.equal(await page.locator('#body-details-button').evaluate(e=>e===document.activeElement),true);
  // The date scrubber: the date itself is the trigger, the slider jumps months, and a jump must
  // change the date and nothing else -- direction and rate are the two things it may not touch.
  const beforeJump=await snap();
@@ -82,7 +84,7 @@ try{for(const [caseName,width,height,dpr] of [['desktop',1440,900,1],['phone',39
  await page.locator('#night-view').click();await settle();await page.keyboard.press('Escape');
  await select('europa');
  // Simulated cutouts reserve the same CSS geometry as native env() values; this is not a hardware notch test.
- await page.addStyleTag({content:'#app{--safe-top:20px;--safe-bottom:20px;--safe-left:24px;--safe-right:24px}'});await page.evaluate(()=>window.dispatchEvent(new Event('resize')));await settle();const safe=await directControls();await page.screenshot({path:`${out}/${name}-safe.png`});
+ await page.addStyleTag({content:'#app{--safe-top:20px;--safe-bottom:20px;--safe-left:24px;--safe-right:24px}'});await page.evaluate(()=>window.dispatchEvent(new Event('resize')));await settle();const safe=await directControls();await page.screenshot({path:`${out}/${name}-safe.png`,animations:'disabled',timeout:60000});
  await page.locator('#back-button').click();await settle();assert.equal((await snap()).selected,null);await control('#explore-earth',{scroll:true});await page.locator('#explore-earth').click();await settle();assert.equal((await snap()).selected,'earth');
  assert.deepEqual(errors,[]);results.push({name,dpr,normal,display,observation:obs,safe,passed:true,errors});console.log(name,'controls passed');await context.close();
 }await writeFile(`${out}/report.json`,JSON.stringify(results,null,2));}

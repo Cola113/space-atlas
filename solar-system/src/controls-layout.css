@@ -1,209 +1,1706 @@
-/* Final control layout: persistent observation actions, scrollable named settings. */
+/* NASA Artemis Minimal unified presentation & final control layout for Solar System.
+ * Preserves all 44x44px hit targets, >=8px gaps, safe-area reservations, and 4-viewport geometry.
+ */
 #app {
   --safe-top: env(safe-area-inset-top, 0px);
   --safe-bottom: env(safe-area-inset-bottom, 0px);
   --safe-left: env(safe-area-inset-left, 0px);
   --safe-right: env(safe-area-inset-right, 0px);
-  --header-height: 88px;
+  --header-height: 80px;
+  background: var(--nasa-bg);
 }
-button:focus-visible, summary:focus-visible, a:focus-visible, input:focus-visible {
-  outline: 2px solid #c6f6df;
+
+/* Soft feather scrim along the top edge so stars flow uninterrupted without a hard top divider line. */
+#app::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: calc(var(--safe-top) + var(--header-height) + 28px);
+  background: linear-gradient(180deg, rgba(5, 7, 11, 0.72) 0%, rgba(5, 7, 11, 0.28) 62%, transparent 100%);
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* Focus ring & base interactive polish */
+#app button:focus-visible,
+#app summary:focus-visible,
+#app a:focus-visible,
+#app input:focus-visible,
+#app select:focus-visible,
+#app .follow-button:focus-visible,
+#app .observation-settings summary:focus-visible,
+#app .time-settings summary:focus-visible,
+#app .resource-status button:focus-visible {
+  outline: 2px solid var(--nasa-focus-color);
   outline-offset: 3px;
 }
-#app button:disabled { opacity: .5; cursor: not-allowed; }
+
+#app a {
+  color: var(--nasa-blue);
+  text-underline-offset: 4px;
+}
+#app a:hover {
+  color: var(--nasa-text);
+}
+#app button:disabled {
+  opacity: 0.42;
+  cursor: not-allowed;
+}
+
+/* Typography micro-craft: crisp Latin eyebrows & zero-jitter tabular telemetry */
+#app .eyebrow,
+#app .choice-en,
+#app .credits-signature,
+#app .bottom-meta span:last-child {
+  font-family: var(--nasa-font-mono);
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+}
+#app .eyebrow {
+  color: var(--nasa-text-muted);
+}
+#app .tiny-cross {
+  color: var(--nasa-signal);
+  font-weight: 500;
+}
+#app output,
+#app #simulation-date,
+#app .overview-stats strong,
+#app .planet-facts dd,
+#app .moment-card-sub,
+#app .cloud-time time {
+  font-variant-numeric: tabular-nums;
+}
+
+/* =========================================================================
+   Top Header: Floating Swiss Bar + Borderless Underline Navigation
+   ========================================================================= */
 #app .topbar {
   top: var(--safe-top);
-  left: max(24px, var(--safe-left));
-  right: max(24px, var(--safe-right));
+  left: max(28px, var(--safe-left));
+  right: max(28px, var(--safe-right));
   height: var(--header-height);
   gap: 16px;
+  border-bottom: 0;
 }
+
 #app .view-switch {
-  position: static; transform: none; height: auto; padding: 0;
-  display: flex; gap: 8px; border: 0; background: none;
+  position: static;
+  transform: none;
+  height: auto;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 0;
+  background: none;
 }
-#app .view-switch button { min-height: 44px; padding: 0 16px; border: 1px solid #536b5f; }
-#app .display-settings { position: relative; }
+#app .view-switch button {
+  position: relative;
+  min-height: 44px;
+  padding: 0 16px;
+  border: 1px solid transparent;
+  border-radius: var(--nasa-radius);
+  background: transparent;
+  color: var(--nasa-text-soft);
+  font-size: 13px;
+  font-weight: 500;
+  transition: color 0.18s ease, background 0.18s ease, border-color 0.18s ease;
+}
+#app .view-switch button:hover {
+  color: var(--nasa-text);
+  background: var(--nasa-surface-hover);
+}
+#app .view-switch button.active {
+  color: var(--nasa-text);
+  background: transparent;
+  border-color: transparent;
+}
+#app .view-switch button.active::after {
+  content: "";
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  bottom: 4px;
+  height: 2px;
+  border-radius: 1px;
+  background: var(--nasa-signal);
+}
+
+#app .display-settings {
+  position: relative;
+}
 #app .display-settings summary {
-  display: flex; align-items: center; justify-content: center; min-height: 44px; min-width: 100px;
-  padding: 0 12px; list-style: none; font-size: 12px; cursor: pointer;
-  border: 1px solid #536b5f; border-radius: 5px; color: #e3f1e9; background: #0c1211f5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  min-width: 104px;
+  padding: 0 14px;
+  list-style: none;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  border: 1px solid var(--nasa-border);
+  border-radius: var(--nasa-radius);
+  color: var(--nasa-text);
+  background: var(--nasa-surface);
+  box-shadow: var(--nasa-highlight);
+  backdrop-filter: blur(var(--nasa-blur)) saturate(135%);
+  -webkit-backdrop-filter: blur(var(--nasa-blur)) saturate(135%);
+  transition: background 0.18s ease, border-color 0.18s ease;
 }
-.display-settings summary::after { content: '⌄'; margin-left: 8px; }
-.display-settings[open] summary::after { content: '⌃'; }
+#app .display-settings summary:hover,
+#app .display-settings[open] summary {
+  background: var(--nasa-surface-hover);
+  border-color: var(--nasa-border-strong);
+}
+.display-settings summary::after {
+  content: "⌄";
+  margin-left: 8px;
+  color: var(--nasa-text-muted);
+}
+.display-settings[open] summary::after {
+  content: "⌃";
+  color: var(--nasa-text);
+}
+
 #display-settings-panel {
-  position: absolute; top: calc(100% + 8px); right: 0; width: min(308px, calc(100vw - 32px));
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: min(308px, calc(100vw - 32px));
   max-height: calc(100dvh - var(--safe-top) - var(--safe-bottom) - var(--header-height) - 24px);
-  overflow: auto; overscroll-behavior: contain; display: flex; flex-direction: column; gap: 8px;
-  padding: 12px; border: 1px solid #536b5f; border-radius: 8px; background: #101b17fa;
-  box-shadow: 0 8px 26px #0009;
+  overflow: auto;
+  overscroll-behavior: contain;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 14px;
+  border: 1px solid var(--nasa-border);
+  border-radius: var(--nasa-radius-lg);
+  background: var(--nasa-surface-solid);
+  box-shadow: var(--nasa-highlight), var(--nasa-shadow-lg);
+  backdrop-filter: blur(var(--nasa-blur-heavy)) saturate(135%);
+  -webkit-backdrop-filter: blur(var(--nasa-blur-heavy)) saturate(135%);
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.22) transparent;
 }
-#display-settings-panel .icon-button { display: flex; width: 100%; min-height: 44px; height: 44px; gap: 8px; justify-content: flex-start; padding: 0 12px; font-size: 12px; flex: none; }
-#display-settings-panel .live-state { display: flex; margin: 0; min-height: 20px; }
-.display-settings-heading { display: flex; justify-content: space-between; align-items: center; gap: 8px; font-size: 13px; }
-#display-settings-close { min-width: 44px; min-height: 44px; font-size: 24px; }
+#display-settings-panel .icon-button {
+  display: flex;
+  width: 100%;
+  min-height: 44px;
+  height: 44px;
+  gap: 10px;
+  justify-content: flex-start;
+  padding: 0 12px;
+  font-size: 12px;
+  flex: none;
+  color: var(--nasa-text-soft);
+  background: var(--nasa-surface-card);
+  border: 1px solid var(--nasa-border-subtle);
+  border-radius: var(--nasa-radius);
+}
+#display-settings-panel .icon-button:hover {
+  color: var(--nasa-text);
+  background: var(--nasa-surface-hover);
+  border-color: var(--nasa-border-strong);
+}
+#display-settings-panel .icon-button.active {
+  color: var(--nasa-text);
+  background: rgba(255, 255, 255, 0.085);
+  border-color: var(--nasa-border-strong);
+  box-shadow: inset 2.5px 0 0 var(--nasa-signal);
+}
+#display-settings-panel .live-state {
+  display: flex;
+  margin: 2px 0;
+  min-height: 20px;
+  color: var(--nasa-text-muted);
+  font-family: var(--nasa-font-mono);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+}
+.live-state b,
+.status-dot {
+  background: var(--nasa-signal);
+  box-shadow: 0 0 8px rgba(252, 61, 33, 0.55);
+}
+.display-settings-heading {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  padding-bottom: 10px;
+  margin-bottom: 2px;
+  border-bottom: 1px solid var(--nasa-border-subtle);
+}
+.display-settings-heading::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -1px;
+  width: 24px;
+  height: 1.5px;
+  background: var(--nasa-signal);
+}
+#display-settings-close {
+  min-width: 44px;
+  min-height: 44px;
+  font-size: 22px;
+  border-radius: var(--nasa-radius);
+  color: var(--nasa-text-soft);
+}
+#display-settings-close:hover {
+  background: var(--nasa-surface-hover);
+  color: var(--nasa-text);
+}
+
+/* =========================================================================
+   Overview Intro Hero (Left Editorial Column)
+   ========================================================================= */
+#app .intro h1 {
+  color: var(--nasa-text);
+  font-weight: 600;
+  text-shadow: 0 2px 24px rgba(0, 0, 0, 0.65);
+}
+#app .intro h1 span {
+  font-family: var(--nasa-font-mono);
+  font-size: 12px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--nasa-text-muted);
+  margin-top: 10px;
+}
+#app .intro p {
+  color: var(--nasa-text-soft);
+  text-shadow: 0 1px 12px rgba(0, 0, 0, 0.7);
+}
+#app .overview-stats {
+  position: relative;
+  padding-top: 20px;
+  margin-top: 22px;
+  border-top: 1px solid var(--nasa-border);
+}
+#app .overview-stats::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: -1px;
+  width: 28px;
+  height: 1.5px;
+  background: var(--nasa-signal);
+}
+#app .overview-stats strong {
+  color: var(--nasa-text);
+  font-weight: 500;
+}
+#app .overview-stats strong small,
+#app .overview-stats span {
+  color: var(--nasa-text-muted);
+}
+.intro-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  margin-top: 22px;
+}
+.intro-actions .text-action {
+  margin-top: 0;
+  min-height: 44px;
+  min-width: 176px;
+  padding: 0 16px;
+  gap: 12px;
+  justify-content: space-between;
+  border: 1px solid var(--nasa-primary-border);
+  border-radius: var(--nasa-radius);
+  background: var(--nasa-primary-bg);
+  color: var(--nasa-primary-text);
+  font-size: 12.5px;
+  font-weight: 600;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.36);
+  transition: background 0.18s ease, transform 0.18s ease, border-color 0.18s ease;
+}
+.intro-actions .text-action:hover {
+  background: var(--nasa-primary-hover);
+  color: var(--nasa-primary-text);
+  border-color: var(--nasa-primary-hover);
+}
+.intro-actions .text-action-secondary {
+  background: var(--nasa-surface);
+  color: var(--nasa-text);
+  border-color: var(--nasa-border);
+  font-weight: 500;
+  box-shadow: var(--nasa-highlight);
+  backdrop-filter: blur(var(--nasa-blur));
+  -webkit-backdrop-filter: blur(var(--nasa-blur));
+}
+.intro-actions .text-action-secondary:hover {
+  background: var(--nasa-surface-hover);
+  color: #ffffff;
+  border-color: var(--nasa-border-strong);
+}
+
+/* =========================================================================
+   Right Zoom Toolbar & Top-Right Observation Tools
+   ========================================================================= */
 #app .scene-toolbar {
-  top: calc(var(--safe-top) + var(--header-height) + 96px); bottom: auto;
-  right: max(16px, var(--safe-right)); transform: none; max-height: none; overflow: visible;
-  display: flex; flex-direction: column; gap: 8px; padding: 0; border: 0; background: none;
+  top: calc(var(--safe-top) + var(--header-height) + 96px);
+  bottom: auto;
+  right: max(20px, var(--safe-right));
+  transform: none;
+  max-height: none;
+  overflow: visible;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 0;
+  border: 0;
+  background: none;
+  backdrop-filter: none;
 }
 #app .scene-toolbar .icon-button {
-  width: 44px; height: 44px; min-width: 44px; min-height: 44px;
-  border: 1px solid #536b5f; background: #0c1211f5;
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  min-height: 44px;
+  border: 1px solid var(--nasa-border);
+  border-radius: var(--nasa-radius);
+  background: var(--nasa-surface);
+  color: var(--nasa-text);
+  box-shadow: var(--nasa-highlight);
+  backdrop-filter: blur(var(--nasa-blur));
+  -webkit-backdrop-filter: blur(var(--nasa-blur));
 }
+#app .scene-toolbar .icon-button:hover {
+  background: var(--nasa-surface-hover);
+  border-color: var(--nasa-border-strong);
+  color: #ffffff;
+}
+.icon-button[data-tip]:hover:after,
+.icon-button[data-tip]:focus-visible:after {
+  background: var(--nasa-surface-solid);
+  border: 1px solid var(--nasa-border);
+  border-radius: var(--nasa-radius);
+  color: var(--nasa-text);
+  box-shadow: var(--nasa-shadow);
+}
+
+#app .observation-tools {
+  top: calc(var(--safe-top) + var(--header-height) + 22px);
+  right: max(28px, var(--safe-right));
+  justify-content: flex-end;
+}
+#app .observation-tools .follow-button,
+#app .observation-settings summary {
+  border: 1px solid var(--nasa-border);
+  border-radius: var(--nasa-radius);
+  background: var(--nasa-surface);
+  color: var(--nasa-text);
+  box-shadow: var(--nasa-highlight);
+  backdrop-filter: blur(var(--nasa-blur)) saturate(135%);
+  -webkit-backdrop-filter: blur(var(--nasa-blur)) saturate(135%);
+  transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease;
+}
+#app .observation-tools .follow-button:hover,
+#app .observation-settings summary:hover,
+#app .observation-settings[open] summary {
+  background: var(--nasa-surface-hover);
+  border-color: var(--nasa-border-strong);
+}
+#app .observation-tools .follow-button.active {
+  background: rgba(255, 255, 255, 0.10);
+  border-color: var(--nasa-border-strong);
+  box-shadow: inset 0 -2px 0 var(--nasa-signal), var(--nasa-highlight);
+  color: #ffffff;
+}
+#app .observation-settings-panel {
+  border: 1px solid var(--nasa-border);
+  border-radius: var(--nasa-radius-lg);
+  background: var(--nasa-surface-solid);
+  box-shadow: var(--nasa-highlight), var(--nasa-shadow-lg);
+  backdrop-filter: blur(var(--nasa-blur-heavy)) saturate(135%);
+  -webkit-backdrop-filter: blur(var(--nasa-blur-heavy)) saturate(135%);
+}
+#app .family-picker,
+#app .landmark-picker,
+#app .observation-settings-panel .icon-button,
+#app .detail-toggle > span {
+  background: var(--nasa-surface-card);
+  border: 1px solid var(--nasa-border);
+  border-radius: var(--nasa-radius);
+  color: var(--nasa-text-soft);
+}
+#app .family-picker > svg,
+#app .landmark-picker > svg {
+  color: var(--nasa-text-soft);
+}
+#app #family-select,
+#app #landmark-select {
+  background: transparent;
+  color: var(--nasa-text);
+}
+#app #family-select option,
+#app #landmark-select option,
+#app #catalog-filter option,
+#app #atlas-filter option,
+#app #atlas-system option,
+#app #cloud-mode option,
+#app #activity-rate option {
+  background: #0b0f17;
+  color: var(--nasa-text);
+}
+#app .observation-settings-panel .icon-button:hover {
+  background: var(--nasa-surface-hover);
+  border-color: var(--nasa-border-strong);
+  color: var(--nasa-text);
+}
+#app .observation-settings-panel .icon-button.active,
+#app .detail-toggle input:checked + span {
+  background: rgba(255, 255, 255, 0.10);
+  border-color: var(--nasa-border-strong);
+  color: var(--nasa-text);
+  box-shadow: inset 2px 0 0 var(--nasa-signal);
+}
+#app .detail-toggle input:focus-visible + span {
+  outline: 2px solid var(--nasa-focus-color);
+  outline-offset: 3px;
+}
+
+/* =========================================================================
+   Left Selected Body Identity & Actions (Frameless Swiss Mission Block)
+   ========================================================================= */
 #app #planet-info {
-  position: absolute; top: calc(var(--safe-top) + var(--header-height) + 28px); bottom: auto;
-  left: max(24px, var(--safe-left)); right: auto; width: 284px; height: auto;
-  max-height: none; padding: 0; margin: 0; overflow: visible;
-  display: flex; flex-direction: column; gap: 8px;
+  position: absolute;
+  top: calc(var(--safe-top) + var(--header-height) + 22px);
+  bottom: auto;
+  left: max(28px, var(--safe-left));
+  right: auto;
+  width: 284px;
+  height: auto;
+  max-height: none;
+  padding: 0;
+  margin: 0;
+  overflow: visible;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  border: 0;
+  background: transparent;
 }
-.selected-identity { display: flex; align-items: baseline; gap: 8px; min-height: 26px; flex-wrap: wrap; }
-#selected-name { font-size: 22px; font-weight: 500; }
-#selected-english { color: #a5bbae; font-size: 12px; }
+.selected-identity {
+  position: relative;
+  display: flex;
+  align-items: baseline;
+  gap: 9px;
+  min-height: 28px;
+  padding-bottom: 10px;
+  flex-wrap: wrap;
+  border-bottom: 1px solid var(--nasa-border);
+  text-shadow: 0 2px 18px rgba(0, 0, 0, 0.78);
+}
+.selected-identity::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -1px;
+  width: 28px;
+  height: 1.5px;
+  background: var(--nasa-signal);
+}
+#selected-name {
+  font-size: 26px;
+  font-weight: 600;
+  line-height: 1.1;
+  color: var(--nasa-text);
+}
+#selected-english {
+  font-family: var(--nasa-font-mono);
+  color: var(--nasa-text-muted);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
 .landing-badge {
-  display: inline-flex; align-items: center; justify-content: center;
-  width: 20px; height: 20px; flex: none; border-radius: 50%;
-  color: #c5f1d5; background: #173c2b; border: 1px solid #85b69b;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  flex: none;
+  border-radius: 50%;
+  color: var(--nasa-text);
+  background: rgba(10, 16, 28, 0.85);
+  border: 1px solid rgba(106, 169, 255, 0.55);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.45);
 }
-.landing-badge svg { width: 13px; height: 13px; }
-.planet-choice .landing-badge { position: absolute; top: 5px; right: 12px; }
-.atlas-item h3 { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.landing-badge svg {
+  width: 12px;
+  height: 12px;
+  color: var(--nasa-blue);
+}
+.planet-choice .landing-badge {
+  position: absolute;
+  top: 6px;
+  right: 10px;
+}
+.atlas-item h3 {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
 #app #planet-info .planet-navigation,
-#app #planet-info .planet-info-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; padding: 0; margin: 0; }
+#app #planet-info .planet-info-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  padding: 0;
+  margin: 0;
+}
 #app #planet-info button {
-  grid-area: auto; align-self: stretch;
-  position: static; width: 100%; height: auto; min-height: 44px; margin: 0; padding: 6px 8px;
-  display: flex; align-items: center; justify-content: center; gap: 6px;
-  font-size: 12px; line-height: 1.4; letter-spacing: 0; border: 1px solid #536b5f; border-radius: 5px;
-  background: #0c1211f5; color: #e3f1e9;
+  grid-area: auto;
+  align-self: stretch;
+  position: static;
+  width: 100%;
+  max-width: none;
+  height: auto;
+  min-height: 44px;
+  margin: 0;
+  padding: 6px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.35;
+  letter-spacing: 0;
+  border: 1px solid var(--nasa-border);
+  border-radius: var(--nasa-radius);
+  background: var(--nasa-surface);
+  color: var(--nasa-text);
+  box-shadow: var(--nasa-highlight);
+  backdrop-filter: blur(var(--nasa-blur)) saturate(135%);
+  -webkit-backdrop-filter: blur(var(--nasa-blur)) saturate(135%);
+  transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease;
 }
-#app #planet-info #surface-button { background: #bde5c9; color: #162a1e; }
-#app #planet-info .planet-info-actions { grid-template-columns: minmax(0, 1fr); }
-#app #planet-info button svg { width: 16px; height: 16px; margin: 0; }
-#body-details-dialog { width: min(560px, calc(100vw - 32px)); padding: 0; }
-#body-details-dialog[open] { display: flex; flex-direction: column; }
-#body-details-dialog, #credits-dialog {
-  max-height: calc(100dvh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px) - 32px);
-  border: 1px solid #536b5f; border-radius: 10px; background: #101b17; color: #e4eee8;
-  overscroll-behavior: contain;
+#app #planet-info button:hover {
+  background: var(--nasa-surface-hover);
+  border-color: var(--nasa-border-strong);
+  color: #ffffff;
 }
-.body-details-heading { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 12px 20px; flex: none; border-bottom: 1px solid #344c3d; font-size: 13px; }
-#close-body-details { min-width: 44px; min-height: 44px; font-size: 24px; }
-#body-details-dialog #planet-info-content {
-  display: block; min-height: 0; padding: 20px; overflow: auto; overscroll-behavior: contain;
-  scrollbar-width: thin; scrollbar-gutter: stable;
+#app #planet-info #surface-button {
+  background: var(--nasa-primary-bg);
+  color: var(--nasa-primary-text);
+  border-color: var(--nasa-primary-border);
+  font-weight: 600;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.38);
 }
-#body-details-dialog h1 { margin: 8px 0; font-size: 30px; }
-#body-details-dialog .planet-description { display: block; font-size: 13px; line-height: 1.8; margin: 16px 0; }
-#body-details-dialog .planet-facts { display: grid; margin: 20px 0; gap: 20px 16px; }
-#body-details-dialog .planet-facts dt { font-size: 12px; }
-#body-details-dialog .surface-feature, #body-details-dialog .cloud-panel { position: static; display: block; height: auto; max-height: none; width: auto; margin: 16px 0; }
-#body-details-dialog .surface-feature p, #body-details-dialog .cloud-panel p { display: block; font-size: 12px; line-height: 1.8; }
-#body-details-dialog .activity-controls, #body-details-dialog .cloud-controls { display: flex; gap: 8px; margin-top: 8px; }
-#body-details-dialog .activity-controls button, #body-details-dialog .cloud-controls button { min-height: 44px; height: auto; font-size: 12px; }
-#body-details-dialog select { min-height: 44px; min-width: 72px; font-size: 12px; }
-#body-details-dialog #layer-control { display: flex; margin: 8px 0 0; min-height: 44px; font-size: 12px; }
-#body-details-dialog .cloud-source summary { display: flex; align-items: center; min-height: 44px; font-size: 12px; }
-#body-details-dialog .cloud-heading, #body-details-dialog .cloud-time { font-size: 12px; }
-#app .observation-tools { top: calc(var(--safe-top) + var(--header-height) + 24px); right: max(80px, var(--safe-right)); }
-#app .explorer-bottom { padding-bottom: var(--safe-bottom); height: calc(var(--explorer-height) + var(--safe-bottom)); }
-#app .observation-status { bottom: calc(var(--explorer-height) + var(--safe-bottom) + 12px); }
-#app .planet-dock { gap: 8px; }
-#app .dock-scroll { min-width: 44px; min-height: 44px; }
-#app .dock-strip { gap: 8px; grid-template-columns: 44px minmax(0, 1fr) 44px; }
-#app .atlas-filters { gap: 8px; }
-#app .atlas-filters input, #app .atlas-filters select, #atlas-reset, #explore-earth, #explore-moments { min-height: 44px; }
-.intro-actions { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; margin-top: 20px; }
-.intro-actions .text-action { margin-top: 0; }
-.intro-actions .text-action-secondary { color: #b7d7c5; border-color: #3a5547; }
-.intro-actions .text-action-secondary:hover { color: #e4f5ea; border-color: #85b69b; }
-#time-moments-button { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; background: #193125; border-color: #5b826d; color: #d8f2e2; }
-#time-moments-button svg { width: 15px; height: 15px; flex: none; }
+#app #planet-info #surface-button:hover {
+  background: var(--nasa-primary-hover);
+  color: var(--nasa-primary-text);
+  border-color: var(--nasa-primary-hover);
+}
+#app #planet-info .planet-info-actions {
+  grid-template-columns: minmax(0, 1fr);
+}
+#app #planet-info button svg {
+  width: 15px;
+  height: 15px;
+  margin: 0;
+}
+
+/* =========================================================================
+   Dialogs: Body Details, Credits, Curated Moments (Swiss Mission Dossiers)
+   ========================================================================= */
+#body-details-dialog {
+  width: min(560px, calc(100vw - 32px));
+  padding: 0;
+}
+#body-details-dialog[open] {
+  display: flex;
+  flex-direction: column;
+}
+#body-details-dialog,
+#credits-dialog,
 #moments-dialog {
-  width: min(680px, calc(100vw - 32px)); padding: 0;
   max-height: calc(100dvh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px) - 32px);
-  border: 1px solid #536b5f; border-radius: 10px; background: #101b17; color: #e4eee8;
+  border: 1px solid var(--nasa-border);
+  border-radius: var(--nasa-radius-lg);
+  background: var(--nasa-surface-solid);
+  color: var(--nasa-text);
+  box-shadow: var(--nasa-highlight), var(--nasa-shadow-lg);
+  backdrop-filter: blur(var(--nasa-blur-heavy)) saturate(135%);
+  -webkit-backdrop-filter: blur(var(--nasa-blur-heavy)) saturate(135%);
   overscroll-behavior: contain;
 }
-#moments-dialog[open] { display: flex; flex-direction: column; }
-.moments-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 20px; flex: none; border-bottom: 1px solid #344c3d; }
-.moments-heading h2 { margin: 4px 0 0; font-size: 20px; font-weight: 500; }
-#close-moments { min-width: 44px; min-height: 44px; font-size: 24px; color: #dce9e2; border: 1px solid #456051; border-radius: 6px; background: #16261f; }
-.moments-content { min-height: 0; padding: 16px 20px 20px; overflow: auto; overscroll-behavior: contain; scrollbar-width: thin; display: flex; flex-direction: column; gap: 14px; }
-.moments-intro { margin: 0; font-size: 12px; line-height: 1.75; color: #aebfb4; }
-.moments-live-bar { display: flex; flex-direction: column; gap: 6px; padding: 12px; border: 1px solid #395747; border-radius: 8px; background: #15251e; }
-.moments-live-button { display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; width: 100%; padding: 8px 14px; border: 1px solid #75a88d; border-radius: 6px; background: #214031; color: #e7f7ed; font-size: 13px; cursor: pointer; }
-.moments-live-button:hover { background: #2a513e; }
-.moments-live-button svg { width: 16px; height: 16px; flex: none; }
-#moments-live-status { font-size: 11px; color: #a8c7b4; min-height: 0; }
-.moments-section + .moments-section { margin-top: 16px; }
-.moments-section h3 { margin: 0 0 10px; font-size: 13px; font-weight: 500; color: #bce2cb; letter-spacing: 0.04em; }
-.moments-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+dialog::backdrop {
+  background: rgba(3, 5, 10, 0.62);
+  backdrop-filter: blur(6px);
+}
+.body-details-heading {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 14px 20px;
+  flex: none;
+  border-bottom: 1px solid var(--nasa-border);
+  font-size: 13px;
+  font-weight: 500;
+}
+.body-details-heading::after {
+  content: "";
+  position: absolute;
+  left: 20px;
+  bottom: -1px;
+  width: 28px;
+  height: 1.5px;
+  background: var(--nasa-signal);
+}
+#close-body-details {
+  min-width: 44px;
+  min-height: 44px;
+  font-size: 22px;
+  border-radius: var(--nasa-radius);
+  color: var(--nasa-text-soft);
+}
+#close-body-details:hover {
+  background: var(--nasa-surface-hover);
+  color: var(--nasa-text);
+}
+#body-details-dialog #planet-info-content {
+  display: block;
+  min-height: 0;
+  padding: 20px;
+  overflow: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+  scrollbar-gutter: stable;
+}
+#body-details-dialog h1 {
+  margin: 8px 0 4px;
+  font-size: 30px;
+  font-weight: 600;
+  color: var(--nasa-text);
+}
+#body-details-dialog .planet-english {
+  font-family: var(--nasa-font-mono);
+  font-size: 11px;
+  letter-spacing: 0.10em;
+  color: var(--nasa-text-muted);
+}
+#body-details-dialog .planet-description {
+  display: block;
+  font-size: 13px;
+  line-height: 1.85;
+  margin: 16px 0;
+  color: var(--nasa-text-soft);
+}
+#body-details-dialog .planet-facts {
+  display: grid;
+  margin: 20px 0;
+  padding: 16px 0;
+  gap: 18px 16px;
+  border-top: 1px solid var(--nasa-border-subtle);
+  border-bottom: 1px solid var(--nasa-border-subtle);
+}
+#body-details-dialog .planet-facts dt {
+  font-size: 11px;
+  color: var(--nasa-text-muted);
+}
+#body-details-dialog .planet-facts dd {
+  color: var(--nasa-text);
+  font-family: var(--nasa-font-mono);
+}
+#body-details-dialog .surface-feature,
+#body-details-dialog .cloud-panel {
+  position: static;
+  display: block;
+  height: auto;
+  max-height: none;
+  width: auto;
+  margin: 16px 0;
+  padding: 14px 16px;
+  border: 1px solid var(--nasa-border-subtle);
+  border-radius: var(--nasa-radius);
+  background: var(--nasa-surface-card);
+}
+#body-details-dialog .feature-label,
+#body-details-dialog #activity-state {
+  font-family: var(--nasa-font-mono);
+  color: var(--nasa-text-muted);
+}
+#body-details-dialog .surface-feature p,
+#body-details-dialog .cloud-panel p {
+  display: block;
+  font-size: 12px;
+  line-height: 1.8;
+  color: var(--nasa-text-soft);
+}
+#body-details-dialog .activity-controls,
+#body-details-dialog .cloud-controls {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+#body-details-dialog .activity-controls button,
+#body-details-dialog .cloud-controls button {
+  min-height: 44px;
+  height: auto;
+  font-size: 12px;
+  border-radius: var(--nasa-radius);
+  border: 1px solid var(--nasa-border);
+  background: var(--nasa-surface);
+  color: var(--nasa-text);
+  padding: 0 14px;
+}
+#body-details-dialog #event-trigger {
+  background: var(--nasa-primary-bg);
+  color: var(--nasa-primary-text);
+  border-color: var(--nasa-primary-border);
+  font-weight: 600;
+}
+#body-details-dialog #event-trigger:hover:not(:disabled) {
+  background: var(--nasa-primary-hover);
+}
+#body-details-dialog #event-trigger:disabled {
+  background: var(--nasa-surface-card);
+  color: var(--nasa-text-muted);
+  border-color: var(--nasa-border-subtle);
+  font-weight: 500;
+  opacity: 0.68;
+}
+#body-details-dialog select {
+  min-height: 44px;
+  min-width: 72px;
+  font-size: 12px;
+  border: 1px solid var(--nasa-border);
+  border-radius: var(--nasa-radius);
+  background: var(--nasa-surface);
+  color: var(--nasa-text);
+}
+#body-details-dialog #layer-control {
+  display: flex;
+  margin: 10px 0 0;
+  min-height: 44px;
+  font-size: 12px;
+  color: var(--nasa-text-soft);
+}
+#app .switch-track {
+  background: rgba(255, 255, 255, 0.18);
+}
+#app .switch-track:after {
+  background: var(--nasa-text-soft);
+}
+#app .layer-toggle input:checked + .switch-track {
+  background: var(--nasa-primary-bg);
+}
+#app .layer-toggle input:checked + .switch-track:after {
+  background: var(--nasa-primary-text);
+}
+#body-details-dialog .cloud-source summary {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  font-size: 12px;
+  color: var(--nasa-text-soft);
+}
+#body-details-dialog .cloud-heading,
+#body-details-dialog .cloud-time {
+  font-size: 12px;
+  color: var(--nasa-text);
+}
+#app #cloud-status {
+  color: var(--nasa-blue);
+  font-family: var(--nasa-font-mono);
+}
+#app .cloud-panel[data-status="stale"] #cloud-status {
+  color: var(--nasa-amber);
+}
+#credits-dialog h2,
+#credits-dialog h3 {
+  color: var(--nasa-text);
+}
+#credits-dialog p,
+#credits-dialog .physics-accuracy {
+  color: var(--nasa-text-soft);
+}
+#credits-dialog .credits-signature {
+  color: var(--nasa-text-muted);
+  border-top: 1px solid var(--nasa-border);
+}
+
+/* Curated Moments Dialog */
+#moments-dialog {
+  width: min(680px, calc(100vw - 32px));
+  padding: 0;
+}
+#moments-dialog[open] {
+  display: flex;
+  flex-direction: column;
+}
+.moments-heading {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 20px;
+  flex: none;
+  border-bottom: 1px solid var(--nasa-border);
+}
+.moments-heading::after {
+  content: "";
+  position: absolute;
+  left: 20px;
+  bottom: -1px;
+  width: 28px;
+  height: 1.5px;
+  background: var(--nasa-signal);
+}
+.moments-heading h2 {
+  margin: 4px 0 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--nasa-text);
+}
+#close-moments {
+  min-width: 44px;
+  min-height: 44px;
+  font-size: 22px;
+  color: var(--nasa-text-soft);
+  border: 1px solid var(--nasa-border);
+  border-radius: var(--nasa-radius);
+  background: var(--nasa-surface);
+}
+#close-moments:hover {
+  background: var(--nasa-surface-hover);
+  border-color: var(--nasa-border-strong);
+  color: var(--nasa-text);
+}
+.moments-content {
+  min-height: 0;
+  padding: 16px 20px 20px;
+  overflow: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.moments-intro {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.75;
+  color: var(--nasa-text-soft);
+}
+.moments-live-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 12px;
+  border: 1px solid var(--nasa-border-subtle);
+  border-radius: var(--nasa-radius);
+  background: var(--nasa-surface-card);
+}
+.moments-live-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  width: 100%;
+  padding: 8px 14px;
+  border: 1px solid var(--nasa-primary-border);
+  border-radius: var(--nasa-radius);
+  background: var(--nasa-primary-bg);
+  color: var(--nasa-primary-text);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.18s ease;
+}
+.moments-live-button:hover {
+  background: var(--nasa-primary-hover);
+  color: var(--nasa-primary-text);
+}
+.moments-live-button svg {
+  width: 16px;
+  height: 16px;
+  flex: none;
+}
+#moments-live-status {
+  font-size: 11px;
+  color: var(--nasa-text-soft);
+  min-height: 0;
+}
+.moments-section + .moments-section {
+  margin-top: 16px;
+}
+.moments-section h3 {
+  margin: 0 0 10px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--nasa-text-muted);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.moments-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
 .moment-card {
-  display: flex; flex-direction: column; align-items: flex-start; gap: 6px;
-  width: 100%; min-height: 44px; padding: 12px 14px; text-align: left;
-  border: 1px solid #30473b; border-radius: 7px; background: #14211b; color: #e3f0e8; cursor: pointer;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  width: 100%;
+  min-height: 44px;
+  padding: 12px 14px;
+  text-align: left;
+  border: 1px solid var(--nasa-border);
+  border-radius: var(--nasa-radius);
+  background: var(--nasa-surface-card);
+  color: var(--nasa-text);
+  cursor: pointer;
+  overflow: hidden;
+  transition: border-color 0.18s ease, background 0.18s ease;
 }
-.moment-card:hover { border-color: #85b69b; background: #1b2e25; }
-.moment-card-header { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; width: 100%; }
-.moment-card strong { font-size: 14px; font-weight: 500; color: #eef7f1; }
-.moment-card-tag { font-size: 10px; padding: 2px 6px; border-radius: 999px; background: #1d3529; color: #a9d9bc; border: 1px solid #3f6350; flex: none; }
-.moment-card-sub { font-size: 11px; color: #8fb49e; }
-.moment-card p { margin: 2px 0 0; font-size: 12px; line-height: 1.65; color: #b9cabf; }
-.moment-card small { font-size: 10px; line-height: 1.5; color: #7e9788; }
+.moment-card::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 2.5px;
+  background: var(--nasa-signal);
+  opacity: 0;
+  transition: opacity 0.18s ease;
+}
+.moment-card:hover {
+  border-color: var(--nasa-border-strong);
+  background: var(--nasa-surface-card-hover);
+}
+.moment-card:hover::before {
+  opacity: 1;
+}
+.moment-card-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+}
+.moment-card strong {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--nasa-text);
+}
+.moment-card-tag {
+  font-family: var(--nasa-font-mono);
+  font-size: 10px;
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.07);
+  color: var(--nasa-text-soft);
+  border: 1px solid var(--nasa-border);
+  flex: none;
+}
+.moment-card-sub {
+  font-family: var(--nasa-font-mono);
+  font-size: 11px;
+  color: var(--nasa-text-soft);
+}
+.moment-card p {
+  margin: 2px 0 0;
+  font-size: 12px;
+  line-height: 1.65;
+  color: var(--nasa-text-soft);
+}
+.moment-card small {
+  font-size: 10px;
+  line-height: 1.5;
+  color: var(--nasa-text-muted);
+}
 @media (max-width: 620px) {
-  .moments-grid { grid-template-columns: minmax(0, 1fr); }
+  .moments-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
-#app .atlas-panel { top: calc(var(--safe-top) + var(--header-height)); padding-bottom: max(20px, var(--safe-bottom)); }
-#app.atlas-open .planet-info, #app.atlas-open .scene-toolbar { display: none; }
-#app .resource-status { top: calc(var(--safe-top) + var(--header-height) + 8px); width: min(440px, calc(100% - 48px)); max-width: none; flex-wrap: nowrap; }
-#resource-message { flex: 1; min-width: 0; }
-#app.has-resource-notice .observation-tools { top: calc(var(--safe-top) + var(--header-height) + 72px); }
-@media(max-width: 760px) and (min-height: 541px) {
-  #app.has-landmark-brief #planet-info { display: none; }
-  #app .landmark-brief { top: auto; bottom: calc(var(--explorer-height) + var(--safe-bottom) + 8px); left: max(16px, var(--safe-left)); right: max(16px, var(--safe-right)); width: auto; max-height: 220px; }
-  #app .landmark-brief.easter-2077 { max-height: min(312px, 40dvh); padding: 9px 12px; }
-  #app.has-landmark-brief .toast { top: calc(var(--safe-top) + var(--header-height) + 64px); bottom: auto; }
-  #app { --header-height: 112px; }
-  #app .topbar { left: max(16px, var(--safe-left)); right: max(16px, var(--safe-right)); display: grid; grid-template-columns: 1fr auto; gap: 8px; align-content: center; }
-  #app .view-switch { grid-row: 2; grid-column: 1/-1; }
-  #app .view-switch button { flex: 1; }
-  #app .display-settings { grid-column: 2; grid-row: 1; }
-  #app .observation-tools { left: max(16px, var(--safe-left)); right: max(16px, var(--safe-right)); width: auto; top: calc(var(--safe-top) + var(--header-height) + 8px); }
-  #app #planet-info { top: auto; bottom: calc(var(--explorer-height) + var(--safe-bottom) + 8px); left: max(16px, var(--safe-left)); right: max(16px, var(--safe-right)); width: auto; }
-  #selected-name { font-size: 20px; }
-  #app .scene-toolbar { top: calc(var(--safe-top) + var(--header-height) + 68px); }
-  #app .explorer-bottom { left: max(16px, var(--safe-left)); right: max(16px, var(--safe-right)); }
-  #app .observation-status, #app .focus-caption { display: none; }
-  #app .intro { top: calc(var(--safe-top) + var(--header-height) + 32px); }
-  #app .time-settings-panel { max-height: calc(100dvh - var(--safe-top) - var(--safe-bottom) - var(--header-height) - var(--explorer-height) - 24px); }
-  #app.has-resource-notice .scene-toolbar { top: calc(var(--safe-top) + var(--header-height) + 132px); }
+
+/* =========================================================================
+   Bottom Mission Dock, Time Strip & Time Panel
+   ========================================================================= */
+#app .explorer-bottom {
+  left: 0;
+  right: 0;
+  padding-left: max(28px, var(--safe-left));
+  padding-right: max(28px, var(--safe-right));
+  padding-bottom: var(--safe-bottom);
+  height: calc(var(--explorer-height) + var(--safe-bottom));
+  background: linear-gradient(180deg, rgba(5, 7, 11, 0) 0%, rgba(5, 7, 11, 0.74) 36%, rgba(5, 7, 11, 0.94) 100%);
 }
-@media(min-width: 560px) and (max-height: 540px) {
-  #app.has-landmark-brief #planet-info { display: none; }
-  #app .landmark-brief { top: calc(var(--safe-top) + var(--header-height) + 8px); left: max(16px, var(--safe-left)); width: 220px; max-height: calc(100dvh - var(--header-height) - var(--explorer-height) - 16px); padding: 10px 12px; }
-  #app .landmark-brief.easter-2077 { width: 224px; padding: 8px 10px; }
-  #app.has-landmark-brief .toast { left: calc(50% + 116px); }
-  #app { --header-height: 56px; --explorer-height: 124px; }
-  #app .topbar { left: max(16px, var(--safe-left)); right: max(16px, var(--safe-right)); gap: 8px; }
-  #app .view-switch button { padding: 0 10px; font-size: 11px; }
-  #app .view-switch svg { display: none; }
-  #app .timeline-title { flex-direction: row; flex-wrap: nowrap; align-items: center; width: auto; }
-  #app .timeline { height: 48px; min-height: 48px; }
-  #app .timeline-title #catalog-filter { width: auto; max-width: 164px; flex: none; }
-  #app .display-settings summary { min-width: 92px; }
-  #app #planet-info { left: max(16px, var(--safe-left)); top: calc(var(--safe-top) + var(--header-height) + 8px); bottom: auto; width: 220px; gap: 8px; }
-  #selected-name { font-size: 16px; }
-  #selected-english { font-size: 10px; }
-  .selected-identity { min-height: 20px; line-height: 20px; flex-wrap: nowrap; align-items: center; }
-  #app #planet-info button { font-size: 11px; padding: 4px; gap: 4px; }
-  #app #planet-info button svg { display: none; }
-  #app .observation-tools { left: max(252px, calc(var(--safe-left) + 236px)); right: max(16px, var(--safe-right)); width: auto; top: calc(var(--safe-top) + var(--header-height) + 8px); padding: 0; }
-  #app .observation-settings-panel { max-height: calc(100dvh - var(--safe-top) - var(--safe-bottom) - var(--header-height) - 76px); }
-  #app .scene-toolbar { top: auto; bottom: calc(var(--explorer-height) + var(--safe-bottom) + 8px); flex-direction: row; }
-  #app .explorer-bottom { left: max(16px, var(--safe-left)); right: max(16px, var(--safe-right)); }
-  #app .observation-status, #app .focus-caption { display: none; }
-  #app .time-settings-panel { top: calc(var(--safe-top) + var(--header-height) + 8px); bottom: calc(var(--explorer-height) + var(--safe-bottom) + 8px); }
-  #app.has-resource-notice .observation-tools { top: calc(var(--safe-top) + var(--header-height) + 8px); }
-  #app .resource-status { top: calc(var(--safe-top) + var(--header-height) + 60px); left: max(252px, calc(var(--safe-left) + 236px)); right: calc(max(16px, var(--safe-right)) + 104px); transform: none; width: auto; font-size: 11px; padding: 4px 8px; }
+#app .timeline {
+  border-top: 1px solid var(--nasa-border);
+}
+#app .timeline-title #catalog-filter {
+  color: var(--nasa-text);
+  font-weight: 500;
+}
+#app .timeline-title small {
+  color: var(--nasa-text-muted);
+  font-family: var(--nasa-font-mono);
+}
+#app #simulation-date {
+  font-family: var(--nasa-font-mono);
+  color: var(--nasa-text);
+  font-size: 11.5px;
+}
+#app .date-jump {
+  border-radius: var(--nasa-radius);
+}
+#app .date-jump:hover,
+#app .date-jump:focus-visible {
+  border-color: var(--nasa-border-strong);
+  background: var(--nasa-surface-hover);
+}
+#app .time-controls #play-toggle {
+  border: 1px solid var(--nasa-border);
+  border-radius: var(--nasa-radius);
+  background: var(--nasa-surface);
+  color: var(--nasa-text);
+  box-shadow: var(--nasa-highlight);
+}
+#app .time-controls #play-toggle:hover {
+  background: var(--nasa-surface-hover);
+  border-color: var(--nasa-border-strong);
+}
+#app .time-settings summary {
+  border: 1px solid var(--nasa-border);
+  border-radius: var(--nasa-radius);
+  background: var(--nasa-surface);
+  color: var(--nasa-text);
+  box-shadow: var(--nasa-highlight);
+  backdrop-filter: blur(var(--nasa-blur));
+  -webkit-backdrop-filter: blur(var(--nasa-blur));
+  font-variant-numeric: tabular-nums;
+}
+#app .time-settings summary:hover,
+#app .time-settings[open] summary {
+  background: var(--nasa-surface-hover);
+  border-color: var(--nasa-border-strong);
+}
+#app .time-settings-panel {
+  border: 1px solid var(--nasa-border);
+  border-radius: var(--nasa-radius-lg);
+  background: var(--nasa-surface-solid);
+  box-shadow: var(--nasa-highlight), var(--nasa-shadow-lg);
+  backdrop-filter: blur(var(--nasa-blur-heavy)) saturate(135%);
+  -webkit-backdrop-filter: blur(var(--nasa-blur-heavy)) saturate(135%);
+}
+#app .time-settings-panel button,
+#app .time-jump-row button {
+  border: 1px solid var(--nasa-border);
+  border-radius: var(--nasa-radius);
+  background: var(--nasa-surface-card);
+  color: var(--nasa-text);
+}
+#app .time-settings-panel button:hover,
+#app .time-jump-row button:hover {
+  background: var(--nasa-surface-hover);
+  border-color: var(--nasa-border-strong);
+}
+#app .time-jump-row #time-jump-apply {
+  background: var(--nasa-primary-bg);
+  color: var(--nasa-primary-text);
+  border-color: var(--nasa-primary-border);
+  font-weight: 600;
+}
+#app .time-jump-row #time-jump-apply:hover {
+  background: var(--nasa-primary-hover);
+}
+#app .time-jump-row input {
+  border: 1px solid var(--nasa-border);
+  border-radius: var(--nasa-radius);
+  background: var(--nasa-surface);
+  color: var(--nasa-text);
+  font-family: var(--nasa-font-mono);
+}
+#app .time-settings-panel p {
+  color: var(--nasa-text-muted);
+}
+#app input[type="range"] {
+  accent-color: var(--nasa-text);
+}
+#app #time-settings-panel input#time-month {
+  background-image: repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.22) 0 1px, transparent 1px 4.975%);
+}
+#time-moments-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  background: var(--nasa-primary-bg);
+  border-color: var(--nasa-primary-border);
+  color: var(--nasa-primary-text);
+  font-weight: 600;
+}
+#time-moments-button:hover {
+  background: var(--nasa-primary-hover);
+  color: var(--nasa-primary-text);
+}
+#time-moments-button svg {
+  width: 15px;
+  height: 15px;
+  flex: none;
+}
+
+#app .observation-status {
+  bottom: calc(var(--explorer-height) + var(--safe-bottom) + 12px);
+  color: var(--nasa-text-muted);
+  font-family: var(--nasa-font-mono);
+}
+#app .status-separator {
+  color: rgba(255, 255, 255, 0.22);
+}
+#app .focus-caption .caption-line {
+  background: linear-gradient(90deg, var(--nasa-signal), var(--nasa-border-strong));
+}
+#app .focus-caption div {
+  color: var(--nasa-text);
+}
+#app .focus-caption small {
+  color: var(--nasa-text-muted);
+}
+
+#app .planet-dock {
+  gap: 8px;
+  scrollbar-color: rgba(255, 255, 255, 0.22) transparent;
+}
+#app .planet-dock::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.22);
+}
+#app .dock-scroll {
+  min-width: 44px;
+  min-height: 44px;
+  border: 1px solid var(--nasa-border);
+  border-radius: var(--nasa-radius);
+  background: var(--nasa-surface);
+  color: var(--nasa-text-soft);
+}
+#app .dock-scroll:not(:disabled):hover {
+  background: var(--nasa-surface-hover);
+  border-color: var(--nasa-border-strong);
+  color: var(--nasa-text);
+}
+#app .dock-strip {
+  gap: 8px;
+  grid-template-columns: 44px minmax(0, 1fr) 44px;
+}
+#app .planet-choice {
+  border-radius: var(--nasa-radius);
+  transition: background 0.18s ease, border-color 0.18s ease, transform 0.18s ease;
+}
+#app .planet-choice:hover {
+  background: var(--nasa-surface-hover);
+  border-color: var(--nasa-border-subtle);
+}
+#app .planet-choice.selected {
+  background: var(--nasa-surface);
+  border-color: var(--nasa-border);
+  box-shadow: var(--nasa-highlight);
+}
+#app .planet-choice.selected::after {
+  content: "";
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  bottom: -1px;
+  height: 2px;
+  border-radius: 1px;
+  background: var(--nasa-signal);
+}
+#app .choice-name {
+  color: var(--nasa-text);
+}
+#app .choice-en {
+  color: var(--nasa-text-muted);
+}
+#app .bottom-meta {
+  color: var(--nasa-text-muted);
+}
+#app .bottom-meta b {
+  color: var(--nasa-signal);
+}
+
+/* =========================================================================
+   In-Scene Labels, Landmark Pins & Brief (Songbird 2077 Cyan Preserved!)
+   ========================================================================= */
+#app .planet-label {
+  color: var(--nasa-text);
+}
+#app .planet-label:hover {
+  background: var(--nasa-surface-solid);
+  border-color: var(--nasa-border);
+  color: #ffffff;
+}
+#app .planet-label .label-en {
+  font-family: var(--nasa-font-mono);
+  color: var(--nasa-text-muted);
+}
+#app .landmark-marker:not(.landmark-marker-2077) .landmark-dot {
+  border: 1.5px solid var(--nasa-text);
+  background: var(--nasa-bg-elevated);
+  box-shadow: 0 0 0 3px rgba(5, 7, 11, 0.72);
+}
+#app .landmark-marker:not(.landmark-marker-2077):hover .landmark-dot {
+  background: var(--nasa-text);
+}
+#app .landmark-marker:not(.landmark-marker-2077).active .landmark-dot {
+  background: var(--nasa-signal);
+  border-color: #ffffff;
+  box-shadow: 0 0 0 5px rgba(252, 61, 33, 0.24);
+}
+#app .landing-marker:not(.landing-marker-2077) {
+  color: var(--nasa-text);
+}
+#app .landing-marker:not(.landing-marker-2077):hover,
+#app .landing-marker:not(.landing-marker-2077):focus-visible {
+  color: #ffffff;
+}
+#app .landmark-marker:not(.landmark-marker-2077):not(.landing-marker-2077) .landmark-name {
+  background: var(--nasa-surface-solid);
+  border: 1px solid var(--nasa-border);
+  border-radius: 999px;
+  padding: 2px 9px;
+  color: var(--nasa-text);
+  backdrop-filter: blur(10px);
+}
+#app .landmark-brief:not(.easter-2077) {
+  color: var(--nasa-text);
+  background: var(--nasa-surface-solid);
+  border: 1px solid var(--nasa-border);
+  border-radius: var(--nasa-radius-lg);
+  box-shadow: var(--nasa-highlight), var(--nasa-shadow-lg);
+  backdrop-filter: blur(var(--nasa-blur-heavy));
+}
+#app .landmark-brief:not(.easter-2077) p {
+  color: var(--nasa-text-soft);
+}
+#app .landmark-brief:not(.easter-2077) small {
+  color: var(--nasa-text-muted);
+}
+#app .landmark-brief:not(.easter-2077) .landmark-brief-source {
+  color: var(--nasa-blue);
+}
+#app .landmark-brief:not(.easter-2077) .landmark-brief-close {
+  color: var(--nasa-text-soft);
+}
+#app .landmark-brief:not(.easter-2077) .landmark-brief-close:hover {
+  color: var(--nasa-text);
+}
+
+/* =========================================================================
+   Atlas Panel (The Solar Collection)
+   ========================================================================= */
+#app .atlas-panel {
+  top: calc(var(--safe-top) + var(--header-height));
+  padding-bottom: max(24px, var(--safe-bottom));
+  background: rgba(5, 7, 11, 0.92);
+  backdrop-filter: blur(var(--nasa-blur-heavy));
+  -webkit-backdrop-filter: blur(var(--nasa-blur-heavy));
+}
+#app .atlas-filters {
+  gap: 8px;
+}
+#app .atlas-filters input,
+#app .atlas-filters select,
+#atlas-reset,
+#explore-earth,
+#explore-moments {
+  min-height: 44px;
+}
+#app #atlas-search,
+#app #atlas-filter,
+#app #atlas-system,
+#app #atlas-reset {
+  border: 1px solid var(--nasa-border);
+  border-radius: var(--nasa-radius);
+  background: var(--nasa-surface-card);
+  color: var(--nasa-text);
+}
+#app #atlas-search::placeholder {
+  color: var(--nasa-text-muted);
+}
+#app #atlas-search:focus,
+#app #atlas-filter:focus,
+#app #atlas-system:focus {
+  border-color: var(--nasa-border-strong);
+}
+#app #atlas-count,
+#app .section-count,
+#app .atlas-section-heading small,
+#app .atlas-empty {
+  color: var(--nasa-text-muted);
+}
+#app .atlas-section-heading {
+  position: relative;
+  border-bottom: 1px solid var(--nasa-border);
+}
+#app .atlas-section-heading::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -1px;
+  width: 24px;
+  height: 1.5px;
+  background: var(--nasa-signal);
+}
+#app .atlas-section-heading h2 {
+  color: var(--nasa-text);
+  font-weight: 600;
+}
+#app .atlas-item {
+  position: relative;
+  background: var(--nasa-surface-card);
+  border: 1px solid var(--nasa-border);
+  border-radius: var(--nasa-radius);
+  overflow: hidden;
+  transition: border-color 0.18s ease, background 0.18s ease;
+}
+#app .atlas-item::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 2.5px;
+  background: var(--nasa-signal);
+  opacity: 0;
+  transition: opacity 0.18s ease;
+}
+#app .atlas-item:hover {
+  border-color: var(--nasa-border-strong);
+  background: var(--nasa-surface-card-hover);
+}
+#app .atlas-item:hover::before,
+#app .atlas-item.selected::before {
+  opacity: 1;
+}
+#app .atlas-item.selected {
+  border-color: var(--nasa-border-strong);
+  background: rgba(255, 255, 255, 0.08);
+}
+#app .atlas-item small {
+  font-family: var(--nasa-font-mono);
+  color: var(--nasa-text-muted);
+}
+#app .atlas-item p {
+  color: var(--nasa-text-soft);
+}
+#app.atlas-open .planet-info,
+#app.atlas-open .scene-toolbar {
+  display: none;
+}
+
+/* =========================================================================
+   Loading, Error, Toast & Resource Status
+   ========================================================================= */
+#app .loading-screen,
+#app .error-screen {
+  background: var(--nasa-bg);
+}
+#app .loading-screen > svg {
+  color: var(--nasa-text);
+}
+#app .loading-screen small,
+#app .error-screen p {
+  color: var(--nasa-text-muted);
+}
+#app .loading-track {
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 2px;
+  overflow: hidden;
+}
+#app .loading-track > div {
+  background: var(--nasa-signal);
+}
+#app .error-screen .primary-action {
+  background: var(--nasa-primary-bg);
+  color: var(--nasa-primary-text);
+  font-weight: 600;
+}
+#app .toast {
+  background: var(--nasa-surface-solid);
+  border: 1px solid var(--nasa-border);
+  border-radius: var(--nasa-radius);
+  color: var(--nasa-text);
+  box-shadow: var(--nasa-highlight), var(--nasa-shadow);
+  backdrop-filter: blur(var(--nasa-blur));
+  -webkit-backdrop-filter: blur(var(--nasa-blur));
+}
+#app .resource-status {
+  top: calc(var(--safe-top) + var(--header-height) + 8px);
+  width: min(440px, calc(100% - 48px));
+  max-width: none;
+  flex-wrap: nowrap;
+  border: 1px solid var(--nasa-border);
+  border-radius: var(--nasa-radius-lg);
+  background: var(--nasa-surface-solid);
+  color: var(--nasa-text);
+  box-shadow: var(--nasa-shadow);
+  backdrop-filter: blur(var(--nasa-blur));
+}
+#app .resource-status button {
+  border: 1px solid var(--nasa-border-strong);
+  border-radius: var(--nasa-radius);
+  background: var(--nasa-surface-card);
+  color: var(--nasa-text);
+}
+#app .resource-status button:hover {
+  background: var(--nasa-surface-hover);
+}
+#resource-message {
+  flex: 1;
+  min-width: 0;
+}
+#app.has-resource-notice .observation-tools {
+  top: calc(var(--safe-top) + var(--header-height) + 72px);
+}
+
+/* =========================================================================
+   Responsive Breakpoints (Phone Portrait & Short Landscape — All Contracts Preserved)
+   ========================================================================= */
+@media (max-width: 760px) and (min-height: 541px) {
+  #app.has-landmark-brief #planet-info {
+    display: none;
+  }
+  #app .landmark-brief {
+    top: auto;
+    bottom: calc(var(--explorer-height) + var(--safe-bottom) + 8px);
+    left: max(16px, var(--safe-left));
+    right: max(16px, var(--safe-right));
+    width: auto;
+    max-height: 220px;
+  }
+  #app .landmark-brief.easter-2077 {
+    max-height: min(312px, 40dvh);
+    padding: 9px 12px;
+  }
+  #app.has-landmark-brief .toast {
+    top: calc(var(--safe-top) + var(--header-height) + 64px);
+    bottom: auto;
+  }
+  #app {
+    --header-height: 108px;
+  }
+  #app .topbar {
+    left: max(16px, var(--safe-left));
+    right: max(16px, var(--safe-right));
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 8px;
+    align-content: center;
+  }
+  #app .view-switch {
+    grid-row: 2;
+    grid-column: 1 / -1;
+  }
+  #app .view-switch button {
+    flex: 1;
+    border: 1px solid var(--nasa-border-subtle);
+    background: var(--nasa-surface);
+  }
+  #app .view-switch button.active {
+    border-color: var(--nasa-border);
+    background: rgba(255, 255, 255, 0.08);
+  }
+  #app .display-settings {
+    grid-column: 2;
+    grid-row: 1;
+  }
+  #app .observation-tools {
+    left: max(16px, var(--safe-left));
+    right: max(16px, var(--safe-right));
+    width: auto;
+    top: calc(var(--safe-top) + var(--header-height) + 8px);
+    justify-content: flex-start;
+  }
+  #app #planet-info {
+    top: auto;
+    bottom: calc(var(--explorer-height) + var(--safe-bottom) + 8px);
+    left: max(16px, var(--safe-left));
+    right: max(16px, var(--safe-right));
+    width: auto;
+  }
+  #selected-name {
+    font-size: 21px;
+  }
+  .selected-identity {
+    padding-bottom: 6px;
+  }
+  #app .scene-toolbar {
+    top: calc(var(--safe-top) + var(--header-height) + 68px);
+    right: max(16px, var(--safe-right));
+  }
+  #app .explorer-bottom {
+    left: 0;
+    right: 0;
+    padding-left: max(16px, var(--safe-left));
+    padding-right: max(16px, var(--safe-right));
+  }
+  #app .observation-status,
+  #app .focus-caption {
+    display: none;
+  }
+  #app .intro {
+    top: calc(var(--safe-top) + var(--header-height) + 28px);
+  }
+  #app .time-settings-panel {
+    max-height: calc(100dvh - var(--safe-top) - var(--safe-bottom) - var(--header-height) - var(--explorer-height) - 24px);
+  }
+  #app.has-resource-notice .scene-toolbar {
+    top: calc(var(--safe-top) + var(--header-height) + 132px);
+  }
+}
+
+@media (min-width: 560px) and (max-height: 540px) {
+  #app.has-landmark-brief #planet-info {
+    display: none;
+  }
+  #app .landmark-brief {
+    top: calc(var(--safe-top) + var(--header-height) + 8px);
+    left: max(16px, var(--safe-left));
+    width: 220px;
+    max-height: calc(100dvh - var(--header-height) - var(--explorer-height) - 16px);
+    padding: 10px 12px;
+  }
+  #app .landmark-brief.easter-2077 {
+    width: 224px;
+    padding: 8px 10px;
+  }
+  #app.has-landmark-brief .toast {
+    left: calc(50% + 116px);
+  }
+  #app {
+    --header-height: 56px;
+    --explorer-height: 124px;
+  }
+  #app .topbar {
+    left: max(16px, var(--safe-left));
+    right: max(16px, var(--safe-right));
+    gap: 8px;
+  }
+  #app .view-switch button {
+    padding: 0 10px;
+    font-size: 11px;
+  }
+  #app .view-switch svg {
+    display: none;
+  }
+  #app .timeline-title {
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+    width: auto;
+  }
+  #app .timeline {
+    height: 48px;
+    min-height: 48px;
+  }
+  #app .timeline-title #catalog-filter {
+    width: auto;
+    max-width: 164px;
+    flex: none;
+  }
+  #app .display-settings summary {
+    min-width: 92px;
+  }
+  #app #planet-info {
+    left: max(16px, var(--safe-left));
+    top: calc(var(--safe-top) + var(--header-height) + 8px);
+    bottom: auto;
+    width: 220px;
+    gap: 8px;
+  }
+  #selected-name {
+    font-size: 17px;
+  }
+  #selected-english {
+    font-size: 10px;
+  }
+  .selected-identity {
+    min-height: 20px;
+    line-height: 20px;
+    padding-bottom: 0;
+    border-bottom: 0;
+    flex-wrap: nowrap;
+    align-items: center;
+  }
+  .selected-identity::after {
+    display: none;
+  }
+  #app #planet-info button {
+    font-size: 11px;
+    padding: 4px;
+    gap: 4px;
+  }
+  #app #planet-info button svg {
+    display: none;
+  }
+  #app .observation-tools {
+    left: max(252px, calc(var(--safe-left) + 236px));
+    right: max(16px, var(--safe-right));
+    width: auto;
+    top: calc(var(--safe-top) + var(--header-height) + 8px);
+    padding: 0;
+  }
+  #app .observation-settings-panel {
+    max-height: calc(100dvh - var(--safe-top) - var(--safe-bottom) - var(--header-height) - 76px);
+  }
+  #app .scene-toolbar {
+    top: auto;
+    bottom: calc(var(--explorer-height) + var(--safe-bottom) + 8px);
+    right: max(16px, var(--safe-right));
+    flex-direction: row;
+  }
+  #app .explorer-bottom {
+    left: 0;
+    right: 0;
+    padding-left: max(16px, var(--safe-left));
+    padding-right: max(16px, var(--safe-right));
+  }
+  #app .observation-status,
+  #app .focus-caption {
+    display: none;
+  }
+  #app .time-settings-panel {
+    top: calc(var(--safe-top) + var(--header-height) + 8px);
+    bottom: calc(var(--explorer-height) + var(--safe-bottom) + 8px);
+  }
+  #app.has-resource-notice .observation-tools {
+    top: calc(var(--safe-top) + var(--header-height) + 8px);
+  }
+  #app .resource-status {
+    top: calc(var(--safe-top) + var(--header-height) + 60px);
+    left: max(252px, calc(var(--safe-left) + 236px));
+    right: calc(max(16px, var(--safe-right)) + 104px);
+    transform: none;
+    width: auto;
+    font-size: 11px;
+    padding: 4px 8px;
+  }
 }

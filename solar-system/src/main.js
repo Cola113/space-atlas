@@ -1,3 +1,4 @@
+import "../../platform/tokens.css";
 import "./style.css";
 import "./controls-layout.css";
 import { mountNavigation } from "../../platform/navigation.ts";

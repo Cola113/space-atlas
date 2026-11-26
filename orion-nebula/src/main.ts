@@ -1,3 +1,4 @@
+import '../../platform/tokens.css';
 import './style.css';
 import { NebulaRenderer } from './Renderer';
 import { isQuality } from './Quality';

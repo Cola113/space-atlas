@@ -26,20 +26,29 @@ jobs:
     name: visual-gate (${{ matrix.shard.name }})
     runs-on: ubuntu-latest
     needs: test-and-build
-    timeout-minutes: 30
+    timeout-minutes: 40
     strategy:
       fail-fast: false
       matrix:
         shard:
-          - name: integration-sky-moments
-            only: integration,sky-bodies,moments-sunspots
+          - name: integration-desktop-compact
+            only: integration
+            viewports: desktop,compact
+          - name: integration-phone-short
+            only: integration
+            viewports: phone,short
+          - name: sky-moments
+            only: sky-bodies,moments-sunspots
             viewports: ""
           - name: saturn-shadows
             only: saturn-shadows
             viewports: ""
-          - name: controls
+          - name: controls-desktop-tablet
             only: controls
-            viewports: ""
+            viewports: desktop,tablet
+          - name: controls-phone-short
+            only: controls
+            viewports: phone,short
           - name: landings-desktop
             only: landings
             viewports: desktop
