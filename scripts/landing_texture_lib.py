@@ -183,5 +183,70 @@ def panorama_with_vacuum_skyline(source, size=(3840, 1920)):
     return wrap(ground.resize(size, Image.Resampling.LANCZOS))
 
 
+def panorama_with_dp_wrap(source, size=(3840, 1920), overlap=240):
+    """Reparameterize a vacuum panorama using a minimum-cost wavy overlap seam.
+
+    Rather than smearing edge columns across a fixed vertical seam, overlaps the
+    right and left edges by `overlap` source columns, finds a minimum-energy
+    wavy seam via dynamic programming, blends low frequencies across a wide band
+    and high frequencies narrowly along the seam, removes the top-connected pure
+    black vacuum sky, and fades the nadir smoothly.
+    """
+    original = Image.open(source).convert('RGB')
+    arr = np.asarray(original, dtype=np.float32)
+    height, width, _ = arr.shape
+    overlap = min(overlap, width // 6)
+    left_half = arr[:, -overlap:, :]
+    right_half = arr[:, :overlap, :]
+    diff = np.mean((left_half - right_half) ** 2, axis=2)
+    cols = np.arange(overlap, dtype=np.float32)
+    edge_pen = np.where((cols < 24) | (cols > overlap - 25), 5000.0, 0.0)
+    cost = diff + edge_pen[None, :]
+
+    dp = np.zeros_like(cost)
+    back = np.zeros((height, overlap), dtype=np.int16)
+    dp[0] = cost[0]
+    for y in range(1, height):
+        prev = dp[y - 1]
+        l = np.concatenate(([1e12], prev[:-1]))
+        r = np.concatenate((prev[1:], [1e12]))
+        stacked = np.stack([l, prev, r], axis=0)
+        choice = np.argmin(stacked, axis=0)
+        dp[y] = cost[y] + stacked[choice, np.arange(overlap)]
+        back[y] = choice - 1
+
+    seam = np.zeros(height, dtype=np.int32)
+    seam[-1] = int(np.argmin(dp[-1]))
+    for y in range(height - 2, -1, -1):
+        seam[y] = int(np.clip(seam[y + 1] + back[y + 1, seam[y + 1]], 0, overlap - 1))
+
+    xs = np.arange(overlap, dtype=np.float32)[None, :]
+    s = seam[:, None].astype(np.float32)
+    m_hi = np.clip((xs - (s - 14.0)) / 28.0, 0.0, 1.0)
+    m_hi = m_hi * m_hi * (3.0 - 2.0 * m_hi)
+    m_lo = np.clip((xs - (s - 72.0)) / 144.0, 0.0, 1.0)
+    m_lo = m_lo * m_lo * (3.0 - 2.0 * m_lo)
+
+    a_lo = np.asarray(Image.fromarray(np.uint8(left_half)).filter(ImageFilter.GaussianBlur(18)), dtype=np.float32)
+    b_lo = np.asarray(Image.fromarray(np.uint8(right_half)).filter(ImageFilter.GaussianBlur(18)), dtype=np.float32)
+    blended = np.clip(
+        a_lo * (1.0 - m_lo[..., None]) + b_lo * m_lo[..., None]
+        + (left_half - a_lo) * (1.0 - m_hi[..., None]) + (right_half - b_lo) * m_hi[..., None],
+        0, 255,
+    )
+    both_sky = (left_half.max(axis=2) < 16) & (right_half.max(axis=2) < 16)
+    blended[both_sky] = 0.0
+
+    seamless = np.concatenate([arr[:, overlap:width - overlap, :], blended], axis=1)
+    seamless = np.roll(seamless, overlap // 2, axis=1)
+    resized = Image.fromarray(np.uint8(np.clip(seamless, 0, 255))).resize(size, Image.Resampling.LANCZOS)
+    rgba = remove_black_sky(resized)
+    a = np.asarray(rgba, dtype=np.float32)
+    for y in range(size[1] - 64, size[1]):
+        t = ((y - (size[1] - 64)) / 63.0) ** 2
+        a[y, :, :3] = a[y, :, :3] * (1.0 - t) + a[y, :, :3].mean(axis=0) * t
+    return Image.fromarray(np.uint8(np.clip(a, 0, 255)))
+
+
 def sha256(path):
     return hashlib.sha256(Path(path).read_bytes()).hexdigest()

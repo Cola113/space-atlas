@@ -14,7 +14,7 @@ import json
 from datetime import date
 from pathlib import Path
 from PIL import Image
-from landing_texture_lib import dynamic_cloud_sea, panorama_from_frame, panorama_with_traced_skyline, panorama_with_vacuum_skyline, sha256
+from landing_texture_lib import dynamic_cloud_sea, panorama_from_frame, panorama_with_dp_wrap, panorama_with_traced_skyline, panorama_with_vacuum_skyline, sha256
 
 MODEL_NOTE = {
     'model': 'gpt-image-2.5-sunburst',
@@ -148,6 +148,28 @@ SITES = [
      'reference image was supplied.',
      {'generatedOn': '2026-09-25',
       'requestedSizeAccepted': True}),
+    ('moon-tycho', 'moon-tycho-4k-raw.png',
+     'iterative multi-reference edit easter-egg panorama (gpt-image-2.5-sunburst)',
+     'Provider frame 3840x2160 (requested 3840x2160 quality high; Image 1: pre-refinement moon-tycho '
+     'panorama edit target, SHA-256 95042905b4f82802d47014b0ddfbd6bed842c19f11b8796c06ef863d36065ec5; '
+     'Image 2: public/surface/moon-4k.webp for lunar regolith material only; no source pixels preserved) '
+     'was seamlessly wrapped across a 240-column minimum-cost wavy '
+     'overlap seam with two-band tone blending, reparameterized via Lanczos to 3840x1920 (not claimed as native '
+     '2:1), top-connected pure-black vacuum sky flood-filled transparent, nadir smoothed, and encoded to RGBA '
+     'WebP. Fictional commemorative tribute scene (Cyberpunk 2077: Phantom Liberty) at Tycho Crater rim; not '
+     'surveyed lunar terrain.',
+     {'generatedOn': '2026-11-22',
+      'model': 'gpt-image-2.5-sunburst',
+      'requestedQuality': 'high',
+      'requestedSize': '3840x2160',
+      'references': [
+          'public/surface/moon-tycho.webp before refinement (edit target; SHA-256 95042905b4f82802d47014b0ddfbd6bed842c19f11b8796c06ef863d36065ec5)',
+          'public/surface/moon-4k.webp (same body, regolith albedo and micro-texture only)',
+      ],
+      'editTargetSha256': '95042905b4f82802d47014b0ddfbd6bed842c19f11b8796c06ef863d36065ec5',
+      'requestedSizeAccepted': True,
+      'sourceNative2to1': False,
+      'aiUpscaled': False}),
 ]
 
 parser = argparse.ArgumentParser()
@@ -177,6 +199,8 @@ for site_id, filename, mode, processing, extra in SITES:
     # its transparent region needs the per-column skyline trace instead.
     if site_id in ('phobos-60e', 'phobos-311e'):
         image = panorama_with_vacuum_skyline(source)
+    elif site_id == 'moon-tycho':
+        image = panorama_with_dp_wrap(source)
     elif site_id == 'earth':
         image = panorama_with_traced_skyline(source)
     else:
@@ -211,4 +235,4 @@ for site_id, filename, mode, processing, extra in SITES:
     print(f'{site_id}: {image.size}, {entry["bytes"]} bytes', flush=True)
 
 published['updatedOn'] = date.today().isoformat()
-record_path.write_text(json.dumps(published, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+record_path.write_text(json.dumps(published, ensure_ascii=False, indent=2) + '\n', encoding='utf-8', newline='\n')

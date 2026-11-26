@@ -20,6 +20,13 @@ import { createSaturnRingShadowUniforms, patchSaturnRingShadow } from '../saturn
 import { createVenusWeatherUniforms, patchVenusWeather } from '../venus-weather.js';
 import { createNeptuneWeatherUniforms, patchNeptuneWeather } from '../neptune-weather.js';
 import { earthAtmosphereGLSL, earthCloudFragment } from './earth-atmosphere.js';
+import {
+  isSongbird2077Active,
+  computeEarthMoonL1,
+  computeTychoEchoOnMoon,
+  createCrystalPalaceMesh,
+  createEarthMoonEchoPoint,
+} from '../easter-eggs/songbird-2077.js';
 
 const { smoothstep, clamp, degToRad } = THREE.MathUtils;
 const HOURS = 3600000;
@@ -341,6 +348,30 @@ export function createSurfaceSky({scene,renderer,site,parentMap,cloudMap,cloudLa
     transparent:true,blending:THREE.AdditiveBlending,depthWrite:false}));
   halo.renderOrder=2;scene.add(halo);
   bindSkyDepth(halo.material,objects.get('Sun').physicalScale,depthRange);
+
+  const reducedMotion = typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const crystalPalacePhysicalScale = { value: 1 };
+  const crystalPalaceSunDir = new THREE.Vector3(1, 0, 0);
+  const crystalPalaceSky = site.id === 'moon' && site.siteId !== 'moon-farside'
+    ? createCrystalPalaceMesh({
+        scale: 1,
+        includeHalo: true,
+        withLighting: material => bindPhysicalSun(material, crystalPalaceSunDir),
+        withSkyDepth: material => bindSkyDepth(material, crystalPalacePhysicalScale, depthRange),
+      })
+    : null;
+  if (crystalPalaceSky) {
+    crystalPalaceSky.group.visible = false;
+    crystalPalaceSky.group.renderOrder = 4;
+    scene.add(crystalPalaceSky.group);
+  }
+  const tychoEchoPhysicalScale = { value: 1 };
+  const tychoEcho = site.id === 'earth'
+    ? createEarthMoonEchoPoint(material => bindSkyDepth(material, tychoEchoPhysicalScale, depthRange))
+    : null;
+  if (tychoEcho) scene.add(tychoEcho.sprite);
+  let easterTargets = { active: false, crystalPalace: null, tychoEcho: null };
+
   stars=makeStars(brightStars);
   fetch('/solar-system/sky/hyg-v41-mag65.json',{signal})
     .then(r=>{if(!r.ok)throw new Error('catalogue');return r.json();})
@@ -353,7 +384,11 @@ export function createSurfaceSky({scene,renderer,site,parentMap,cloudMap,cloudLa
 
   function update(time,camera,{resetExposure=false}={}) {
     frame=surfaceFrame(site,new Date(time),provider);
-    depthRange.value.fromArray(skyDepthParameters([...objects.keys()].map(name=>frame.targets[name]).filter(Boolean)));
+    const active2077 = isSongbird2077Active(frame.date);
+    const l1 = active2077 && crystalPalaceSky ? computeEarthMoonL1(frame, { halo: true }) : null;
+    const depthTargets = [...objects.keys()].map(name=>frame.targets[name]).filter(Boolean);
+    if (l1) depthTargets.push({ distanceKm: l1.distanceKm, radiusKm: 150 });
+    depthRange.value.fromArray(skyDepthParameters(depthTargets));
     for(const [name,{globe,radiusKm,sunlight,physicalScale}] of objects){
       const target=frame.targets[name];
       if(!target){globe.visible=false;continue;}
@@ -366,6 +401,54 @@ export function createSurfaceSky({scene,renderer,site,parentMap,cloudMap,cloudLa
       if(target.orientation){
         const basis=target.orientation;
         globe.setRotationFromMatrix(new THREE.Matrix4().makeBasis(frame.local(basis.prime),frame.local(basis.north),frame.local(basis.east).negate()));
+      }
+    }
+    easterTargets = { active: active2077, crystalPalace: null, tychoEcho: null };
+    if (crystalPalaceSky) {
+      const visible = Boolean(active2077 && l1 && horizonAngles(l1.direction).altitude > -1);
+      crystalPalaceSky.group.visible = visible;
+      if (visible && l1) {
+        const distance = surfaceSkyDistance(l1.distanceKm);
+        crystalPalacePhysicalScale.value = l1.distanceKm / distance;
+        crystalPalaceSunDir.copy(frame.targets.Sun.direction).normalize();
+        crystalPalaceSky.group.position.copy(l1.direction).multiplyScalar(distance);
+        // Subtle star-like specular glint at 1x, crisp sunlit twin-ring architecture under 4x/8x telescope
+        const zoom = camera?.zoom || 1;
+        const displayRadius = zoom >= 8 ? 0.00182 : zoom >= 4 ? 0.00168 : zoom >= 2 ? 0.00125 : 0.0009;
+        const glowStrength = zoom >= 8 ? 0.03 : zoom >= 4 ? 0.08 : zoom >= 2 ? 0.24 : 0.56;
+        crystalPalaceSky.group.scale.setScalar(distance * displayRadius);
+        crystalPalaceSky.group.lookAt(0, 0, 0);
+        crystalPalaceSky.group.rotateX(0.58);
+        crystalPalaceSky.group.rotateZ(0.24);
+        const spinTime = reducedMotion ? 0 : ((time - epoch) / 1000) * 0.0012;
+        crystalPalaceSky.step(spinTime, glowStrength);
+        easterTargets.crystalPalace = {
+          direction: l1.direction.clone(),
+          distanceKm: l1.distanceKm,
+          moonDistanceKm: l1.moonDistanceKm,
+          visible: true,
+        };
+      }
+    }
+    if (tychoEcho) {
+      const zoom = camera?.zoom || 1;
+      const echo = active2077 && zoom >= 4 ? computeTychoEchoOnMoon(frame) : null;
+      const visible = Boolean(echo && horizonAngles(echo.direction).altitude > 0);
+      tychoEcho.sprite.visible = visible;
+      if (visible && echo) {
+        const distance = surfaceSkyDistance(echo.distanceKm) * 0.996;
+        tychoEchoPhysicalScale.value = echo.distanceKm / distance;
+        tychoEcho.sprite.position.copy(echo.direction).multiplyScalar(distance);
+        const sunAlt = horizonAngles(frame.targets.Sun.direction).altitude;
+        const nightBoost = smoothstep(-sunAlt, -2, 8);
+        const pulse = reducedMotion ? 0.9 : 0.72 + 0.26 * Math.sin(((time - epoch) / 1000) * 0.004);
+        tychoEcho.sprite.scale.setScalar(distance * (zoom >= 8 ? 0.00095 : 0.00135));
+        tychoEcho.material.opacity = pulse * (0.55 + 0.45 * nightBoost);
+        easterTargets.tychoEcho = {
+          direction: echo.direction.clone(),
+          distanceKm: echo.distanceKm,
+          visible: true,
+        };
       }
     }
     windCycle.value.fromArray(surfaceWindCycle((time-epoch)/HOURS));
@@ -410,5 +493,10 @@ export function createSurfaceSky({scene,renderer,site,parentMap,cloudMap,cloudLa
     if(plume){plume.material.uniforms.time.value=((frame.date.getTime()-epoch)/3600000)%72;plume.material.uniforms.light.value=clamp(display.brightness,.035,1);}
     if(groundMaterial.uniforms.activityTime)groundMaterial.uniforms.activityTime.value=THREE.MathUtils.euclideanModulo((frame.date.getTime()-epoch)/1000,86400);
   }
-  return {update,advanceExposure,faceCamera:camera=>halo.quaternion.copy(camera.quaternion)};
+  return {
+    update,
+    advanceExposure,
+    faceCamera:camera=>halo.quaternion.copy(camera.quaternion),
+    getEasterEggTargets:()=>easterTargets,
+  };
 }

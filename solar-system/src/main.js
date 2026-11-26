@@ -32,7 +32,17 @@ import {
 import { bodies, ORBIT_SPACING, SYSTEM_RADIUS } from "./data.js";
 import { createDynamics, activityProfiles } from "./dynamics.js";
 import { createLandmarks, landmarks } from "./landmarks.js";
-import { landingSites, defaultSiteId } from "./surface/geometry.js";
+import { landingSites, defaultSiteId, resolveLandingSite } from "./surface/geometry.js";
+import {
+  SONGBIRD_DEFAULT_TIMESTAMP,
+  easterEggLandingSites,
+  isSongbird2077Active,
+  computeEarthMoonL1Display,
+  matchesSongbirdQuery,
+  createCrystalPalaceMesh,
+} from "./easter-eggs/songbird-2077.js";
+import { createSongbirdRadio } from "./easter-eggs/songbird-audio.js";
+import { createSongbirdBriefController } from "./easter-eggs/songbird-ui.js";
 import {
   cameraPath,
   occludedByBody,
@@ -141,7 +151,13 @@ let scene,
   dynamics,
   moonTransits,
   moonTransitDiscs,
-  landmarkView;
+  landmarkView,
+  crystalPalaceOrbit,
+  songbirdBrief,
+  songbirdRadio;
+const crystalPalaceSunDir = new THREE.Vector3(1, 0, 0);
+let songbird2077WasActive = false;
+let songbirdClock = 0;
 const rotationFollow = new RotationFollow();
 let observationGate = null, observationKey = null, sharedFrame = null, pendingArrival = null;
 let observedClouds;
@@ -254,6 +270,8 @@ function disposeScene() {
   controls?.dispose();
   dynamics?.dispose();
   moonTransitDiscs?.dispose();
+  songbirdRadio?.dispose();
+  crystalPalaceOrbit?.dispose();
   const textures = new Set(highTextures.values());
   scene?.traverse(object => {
     object.geometry?.dispose();
@@ -405,7 +423,9 @@ function filterAtlas() {
     section.querySelector('.section-count').textContent = `${matches} 个`;
   }
   $("atlas-count").textContent = `${count} / ${bodies.length} 个天体`;
-  $("atlas-empty").hidden = count !== 0;
+  const showEasterHint = matchesSongbirdQuery(filters.query);
+  $("atlas-easter-hint").hidden = !showEasterHint;
+  $("atlas-empty").hidden = count !== 0 || showEasterHint;
   $("atlas-reset").hidden = !filters.query.trim() && filters.type === 'all' && filters.system === 'all';
 }
 
@@ -928,6 +948,7 @@ function attachBodyDetails(body, textures) {
 function updatePositions() {
   sharedFrame = updateDisplayState(objects, physicalState.frame(new Date(state.date)));
   moonTransits?.update(sharedFrame);
+  updateSongbird2077Orbit(0);
   if(state.selected) $('physics-accuracy').textContent = (sharedFrame.bodies.get(state.selected)?.accuracy || '等待当前年份星历。') + ' ' + sharedFrame.accuracy;
 }
 
@@ -1170,6 +1191,9 @@ function currentFocusOffset(body) {
   const offset = focusedOffset(body, state.close);
   const frame = landmarkView?.frame;
   if (frame) {
+    if (landmarkView.active?.focusPoint) {
+      return frame.direction.clone().multiplyScalar(0.50);
+    }
     const zoom = frame.extent > 1 ? Math.max(2, landmarkView.active.zoom || 1) : (landmarkView.active.zoom || 1);
     return frame.direction.multiplyScalar(offset.length() * zoom * frame.extent);
   }
@@ -1209,7 +1233,9 @@ function flyTo(target, offset, duration = 1700, kind = "travel") {
 
 function applyDistanceLimits() {
   const body = objects.get(state.selected);
-  controls.minDistance = body ? (body.renderRadius || body.radius) * 1.09 : 20;
+  controls.minDistance = landmarkView?.active?.focusPoint
+    ? 0.2
+    : body ? (body.renderRadius || body.radius) * 1.09 : 20;
   controls.maxDistance = 600 * ORBIT_SPACING;
 }
 
@@ -1743,8 +1769,97 @@ function updateObservationTools() {
   $("landmark-clear").hidden = !landmarkView?.active;
 }
 
+function crystalPalaceAnchor() {
+  if (!isSongbird2077Active(state.date)) return null;
+  const moon = objects.get("moon");
+  const earth = objects.get("earth");
+  const l1 = computeEarthMoonL1Display(earth, moon, state.date);
+  if (!l1 || !moon?.mesh) return null;
+  moon.mesh.updateWorldMatrix(true, false);
+  const localPoint = moon.mesh.worldToLocal(l1.position.clone());
+  // Frame Crystal Palace from a sunlit 3/4 oblique angle so both sunlit hull
+  // rings and shadowed warm habitat windows read crisply with the Moon beyond.
+  const sunDir = moon.sunDirection.clone().normalize();
+  const fromMoon = l1.position.clone().sub(moon.root.position).normalize();
+  const worldView = sunDir
+    .multiplyScalar(0.58)
+    .addScaledVector(l1.side, 0.54)
+    .addScaledVector(l1.lift, 0.42)
+    .addScaledVector(fromMoon, 0.24)
+    .normalize();
+  const localView = worldView
+    .transformDirection(moon.mesh.matrixWorld.clone().invert())
+    .normalize();
+  return { point: localPoint, viewDirection: localView, extent: 1 };
+}
+
+function updateSongbird2077Orbit(dt = 0) {
+  const active = isSongbird2077Active(state.date);
+  if (active !== songbird2077WasActive) {
+    songbird2077WasActive = active;
+    if (!active) {
+      songbirdRadio?.stop();
+      if (landmarkView?.active?.id === "crystal-palace-l1") {
+        clearLandmark();
+        const moon = objects.get("moon");
+        if (moon && state.selected === "moon") flyTo(moon.root.position, focusedOffset(moon), 850);
+      }
+    }
+    if (!$("landmark-brief").hidden && landmarkView?.active) {
+      songbirdBrief?.update(landmarkView.active);
+    }
+  }
+  if (!crystalPalaceOrbit) return;
+  const earth = objects.get("earth");
+  const moon = objects.get("moon");
+  const l1 = active ? computeEarthMoonL1Display(earth, moon, state.date) : null;
+  const visible = Boolean(active && l1 && earth?.root.visible && moon?.root.visible);
+  crystalPalaceOrbit.group.visible = visible;
+  if (!visible || !l1) return;
+  if (!reducedMotion && state.playing && dt > 0) songbirdClock += dt;
+  crystalPalaceSunDir.copy(moon.sunDirection).normalize();
+  crystalPalaceOrbit.group.position.copy(l1.position);
+  crystalPalaceOrbit.group.lookAt(earth.root.position);
+  crystalPalaceOrbit.group.rotateX(0.18);
+  crystalPalaceOrbit.group.rotateZ(0.32);
+  const camDist = camera ? camera.position.distanceTo(l1.position) : 2;
+  const glowStrength = THREE.MathUtils.smoothstep(camDist, 0.60, 2.4) * 0.55;
+  crystalPalaceOrbit.step(songbirdClock, glowStrength);
+  if (!$("landmark-brief").hidden && landmarkView?.active?.id === "crystal-palace-l1") {
+    songbirdBrief?.update(landmarkView.active);
+  }
+}
+
+function tuneToSongbird2077({ selectMoonTycho = false } = {}) {
+  const focused = objects.get(state.selected);
+  const previous = focused?.root.position.clone();
+  state.date = SONGBIRD_DEFAULT_TIMESTAMP;
+  lastFrame = performance.now();
+  if (selectMoonTycho) {
+    setAtlas(false);
+    selectBody("moon");
+    updatePositions();
+    updateSimulationDate();
+    refreshObservationGate();
+    selectLandmark("tycho");
+    toast("已调频至 2077 年 · 检测到月球第谷与地月 L1 信号");
+    return;
+  }
+  updatePositions();
+  if (focused && previous && !flight) {
+    const delta = focused.root.position.clone().sub(previous);
+    camera.position.add(delta);
+    controls.target.add(delta);
+  }
+  updateSimulationDate();
+  refreshObservationGate();
+  if (landmarkView?.active) songbirdBrief?.update(landmarkView.active);
+  toast("已调频至 2077 年 · 月球第谷终端与地月 L1「水晶宫」已上线");
+}
+
 function closeLandmarkBrief(restoreFocus = false) {
   $("landmark-brief").hidden = true;
+  songbirdBrief?.clear();
   $("app").classList.remove("has-landmark-brief");
   if (restoreFocus) landmarkView?.focusActive();
 }
@@ -1755,6 +1870,7 @@ function clearLandmark() {
     return;
   }
   landmarkView.select("");
+  applyDistanceLimits();
   if (landmarkFollow !== null) state.followRotation = landmarkFollow;
   landmarkFollow = null;
   landmarkTrackingDirection = null;
@@ -1801,9 +1917,10 @@ function selectLandmark(id) {
   $("landmark-brief-title").textContent = feature.name;
   $("landmark-brief-text").textContent = feature.text;
   $("landmark-brief-location").textContent = feature.location;
-  document.querySelector('.landmark-brief-body').scrollTop = 0;
   $("landmark-brief-source").href = feature.source;
+  songbirdBrief?.update(feature);
   $("landmark-brief").hidden = false;
+  document.querySelector('.landmark-brief-body').scrollTop = 0;
   $("app").classList.add("has-landmark-brief");
   $("caption-title").textContent = feature.name;
   $("caption-detail").textContent = feature.location;
@@ -1814,8 +1931,10 @@ function selectLandmark(id) {
     `正在观测${feature.name}。${feature.text}`;
   updateActivityUi();
   updateObservationTools();
-  flyTo(body.root.position, currentFocusOffset(body), 1100);
+  const focusTarget = feature.focusPoint ? landmarkView.frame.point : body.root.position;
+  flyTo(focusTarget, currentFocusOffset(body), 1100);
   flight.landmark = feature.id;
+  flight.focusPoint = Boolean(feature.focusPoint);
   prioritizeObservation(body);
   loadHighTexture(body);
 }
@@ -1827,8 +1946,10 @@ async function landOnSurface(bodyId = state.selected, siteId = null) {
   const body = objects.get(id);
   if (state.system || !body?.physicalAvailable || observationGate?.blocked) return;
   // Several sites may share one body; a body's own-keyed site is the default.
-  const site = landingSites[siteId || defaultSiteId(bodyId)];
+  const site = resolveLandingSite(siteId || defaultSiteId(bodyId));
   if (!site || site.id !== bodyId) return;
+  if (site.easterEgg === "songbird-2077" && !isSongbird2077Active(state.date)) return;
+  songbirdRadio?.stop();
   const previousControls = controls.enabled;
   const pose = { position: camera.position.clone(), target: controls.target.clone(),
     quaternion: camera.quaternion.clone(), offset: viewOffset.clone(), width, height };
@@ -2011,6 +2132,25 @@ function bindEvents() {
     state.speed = simulationRates[Number(event.target.value)];lastFrame=performance.now();
     updateTimeRateUi();
   });
+  // The paths that may land outside the slider's window: they set the date itself and let the
+  // per-frame sync decide where the thumb rests and what the label has to admit.
+  const jumpToDate = time => {
+    if (!Number.isFinite(time)) return;
+    const focused = objects.get(state.selected);
+    const previous = focused?.root.position.clone();
+    state.date = time;
+    lastFrame = performance.now();
+    if (!state.playing) {
+      updatePositions();
+      if (focused && previous && !flight) {
+        const delta = focused.root.position.clone().sub(previous);
+        camera.position.add(delta);
+        controls.target.add(delta);
+      }
+      updateSimulationDate();
+      refreshObservationGate();
+    }
+  };
   // Jumping to a month changes the date and nothing else: direction, rate and whether the clock is
   // running all stay as they were, which is the rule the direction toggle already follows.
   const jumpToDay = (index, commit) => {
@@ -2018,8 +2158,7 @@ function bindEvents() {
     $("time-month").value = String(clamped);
     $("month-value").textContent = dateLabel(clamped);
     if (!commit) return;
-    state.date = dateFromIndex(clamped);
-    lastFrame = performance.now();
+    jumpToDate(dateFromIndex(clamped));
   };
   $("date-jump").addEventListener("click", () => {
     $("time-settings").open = true;
@@ -2051,14 +2190,8 @@ function bindEvents() {
   };
   $("time-jump-apply").addEventListener("click", jumpToYear);
   $("time-year-input").addEventListener("keydown", (event) => { if (event.key === "Enter") jumpToYear(); });
-  // The paths that may land outside the slider's window: they set the date itself and let the
-  // per-frame sync decide where the thumb rests and what the label has to admit.
-  const jumpToDate = time => {
-    if (!Number.isFinite(time)) return;
-    state.date = time;
-    lastFrame = performance.now();
-  };
   $("time-jump-today").addEventListener("click", () => jumpToDate(Date.now()));
+  $("atlas-easter-launch")?.addEventListener("click", () => tuneToSongbird2077({ selectMoonTycho: true }));
   $("orbit-toggle").addEventListener("click", () => {
     state.orbits = !state.orbits;
     updateDisplaySettings();
@@ -2433,7 +2566,9 @@ function animate(now) {
   lastFrame = now;
   if (document.hidden || surfaceView || landingBusy) return;
   const focused = objects.get(state.selected);
+  const focusPointActive = Boolean(landmarkView?.active?.focusPoint && landmarkView.frame);
   const previous = focused?.root.position.clone();
+  const previousFocusPoint = focusPointActive ? landmarkView.frame.point.clone() : null;
   if (state.playing && !state.atlas && !infoDialogOpen()) {
     const candidate=isEarthObservation()?Date.now():state.date+(elapsed<=1000?simulationElapsed(elapsed,state.speed,state.direction):0);
     if(!observationGate || observationGate.check(new Date(candidate))) state.date=candidate;
@@ -2444,16 +2579,24 @@ function animate(now) {
   }
   observedClouds?.update(dt);
   if (focused && !flight) {
-    const delta = focused.root.position.clone().sub(previous);
-    camera.position.add(delta);
-    controls.target.add(delta);
+    if (focusPointActive && landmarkView.frame && previousFocusPoint) {
+      const delta = landmarkView.frame.point.clone().sub(previousFocusPoint);
+      camera.position.add(delta);
+      controls.target.copy(landmarkView.frame.point);
+    } else {
+      const delta = focused.root.position.clone().sub(previous);
+      camera.position.add(delta);
+      controls.target.add(delta);
+    }
   }
   if (flight) {
     if (!state.atlas && !infoDialogOpen()) flight.elapsed += dt * 1000;
     const t =
       flight.duration === 0 ? 1 : Math.min(flight.elapsed / flight.duration, 1);
     const eased = smoothProgress(t);
-    const target = focused ? focused.root.position : flight.endTarget;
+    const target = flight.focusPoint && landmarkView.frame
+      ? landmarkView.frame.point
+      : (focused ? focused.root.position : flight.endTarget);
     flight.position(eased, camera.position);
     camera.position.addScaledVector(
       target.clone().sub(flight.endTarget),
@@ -2464,7 +2607,7 @@ function animate(now) {
       target,
       smoothProgress(Math.min(t * 1.5, 1)),
     );
-    if (flight.landmark && landmarkView.frame && focused)
+    if (flight.landmark && !flight.focusPoint && landmarkView.frame && focused)
       camera.position.addScaledVector(currentFocusOffset(focused).sub(flight.endOffset), eased);
     viewOffset.lerpVectors(flight.startOffset, flight.endViewOffset, eased);
     applyViewOffset();
@@ -2474,8 +2617,8 @@ function animate(now) {
       applyDistanceLimits();
     }
   }
-  const trackingShadow = landmarkView.active?.id === 'ring-shadow';
-  const following = state.followRotation && !state.system && !state.atlas && !flight && !infoDialogOpen();
+  const trackingShadow = landmarkView.active?.id === 'ring-shadow' || (Boolean(landmarkView.active?.trackDirection) && !landmarkView.active?.focusPoint);
+  const following = state.followRotation && !state.system && !state.atlas && !flight && !infoDialogOpen() && !landmarkView.active?.focusPoint;
   rotationFollow.update(focused,camera,controls.target,following && !trackingShadow);
   const landmarkFrame = landmarkView.frame;
   if (trackingShadow && landmarkFrame && following && landmarkTrackingDirection) {
@@ -2511,6 +2654,7 @@ function animate(now) {
   objects.get("sun").root.getWorldPosition(sunLight.position);
   dynamics.updateLighting(state, camera.position);
   moonTransits?.setEnabled(state.shadows);
+  updateSongbird2077Orbit(dt);
   camera.updateMatrixWorld();
   moonTransitDiscs?.update(sharedFrame, camera, { selected: state.selected });
   starfield.update({ camera, date: state.date, physicalTime: sharedFrame.time, dt, brightOccupancy: brightSkyOccupancy() });
@@ -2619,6 +2763,27 @@ async function init() {
     createBodies(textures);
     moonTransits = createMoonTransitSystem(objects);
     moonTransitDiscs = createMoonTransitDiscs(objects);
+    crystalPalaceOrbit = createCrystalPalaceMesh({
+      scale: 0.075,
+      includeHalo: true,
+      withLighting: material => bindPhysicalSun(material, crystalPalaceSunDir),
+    });
+    crystalPalaceOrbit.group.visible = false;
+    scene.add(crystalPalaceOrbit.group);
+    songbirdRadio = createSongbirdRadio({
+      onChange: () => songbirdBrief?.syncRadioButton(),
+    });
+    songbirdBrief = createSongbirdBriefController({
+      briefElement: $("landmark-brief"),
+      slotElement: $("landmark-brief-easter"),
+      getDate: () => state.date,
+      getMoonEarthDistanceKm: () => {
+        const earth = objects.get("earth")?.physical;
+        const moon = objects.get("moon")?.physical;
+        return earth && moon ? earth.positionKm.distanceTo(moon.positionKm) : 384400;
+      },
+      radio: songbirdRadio,
+    });
     dynamics = createDynamics(objects, { defer: true });
     // Prepare one main body per frame; secondary bodies retain small meshes.
     for (const id of firstScreenIds) {
@@ -2628,7 +2793,18 @@ async function init() {
       preparedCount++; preparationProgress();
     }
     textureResources.queue.setConcurrency(2);
-    landmarkView = createLandmarks(objects, camera, selectLandmark, (id, kind) => dynamics.featureAnchor(id, kind), { landingSites, onLanding: landOnSurface });
+    landmarkView = createLandmarks(
+      objects,
+      camera,
+      selectLandmark,
+      (id, kind) => (id === 'moon' && kind === 'crystal-palace-l1' ? crystalPalaceAnchor() : dynamics.featureAnchor(id, kind)),
+      {
+        landingSites: { ...landingSites, ...easterEggLandingSites },
+        onLanding: landOnSurface,
+        isLandingSiteActive: site => !site.easterEgg || isSongbird2077Active(state.date),
+        isEasterEggActive: () => isSongbird2077Active(state.date),
+      },
+    );
     observedClouds = createObservedClouds({ dynamics, reducedMotion,
       initialEnabled: state.observedEarth, autoStart: !window.__promoOffline, deferStart: true,
       resourceQueue: textureResources.queue,
@@ -2692,6 +2868,21 @@ async function init() {
         nightView: state.nightView,
         shadows: state.shadows,
         landmarks: landmarkView.snapshot(),
+        easterEgg: (() => {
+          const active = isSongbird2077Active(state.date);
+          const visible = Boolean(crystalPalaceOrbit?.group.visible);
+          let screen = null;
+          if (visible && crystalPalaceOrbit) {
+            const p = crystalPalaceOrbit.group.position.clone().project(camera);
+            if (p.z > -1 && p.z < 1) screen = { x: (p.x * 0.5 + 0.5) * width, y: (-p.y * 0.5 + 0.5) * height };
+          }
+          return {
+            songbird2077: active,
+            crystalPalaceVisible: visible,
+            crystalPalaceScreen: screen,
+            audioPlaying: Boolean(songbirdRadio?.isPlaying()),
+          };
+        })(),
         nightTextureWidth: objects.get("earth").nightMap?.image?.width || 0,
         lightDirection: state.selected
           ? objects.get(state.selected).sunDirection.toArray()

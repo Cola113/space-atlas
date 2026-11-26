@@ -1,0 +1,37 @@
+Use case: photorealistic-natural
+Asset type: Full 360x180 equirectangular planetary surface panorama for a realistic 3D astronomical viewer (Tycho Crater South Rim, Moon, 2077 hard-sci-fi tribute).
+
+Input images:
+- Image 1 (public/surface/moon-farside.webp): Equirectangular projection geometry reference ONLY. Match its true 360-degree full-circle horizon layout, low gently rolling skyline sitting tightly near the vertical midpoint (47%-49% from top edge, only 2 to 6 degrees above mathematical horizon), crisp uniform ground sharpness across the entire 3840px width, seamless left-right edge wrap, and clean fine-dust convergence near the bottom nadir edge. Do NOT copy its specific hills or crater layout.
+- Image 2 (public/surface/moon-4k.webp): Observed Apollo lunar regolith material reference ONLY. Match its authentic pale neutral silver-gray lunar dust albedo, crisp vacuum micro-texture, sharp angular highland rocks, and high-contrast airless lighting. Do NOT copy Hadley mountains, the Apollo lunar module, rover, or astronaut equipment.
+
+Primary request:
+Photorealistic hard-sci-fi artist reconstruction standing at 1.65 meters eye height on the broad southern rim plateau of Tycho Crater on the near side of the Moon (44.71 S, 11.08 W). Airless vacuum world: completely empty pure solid black (#000000) sky occupying the entire upper ~47% of the image with zero stars, zero Earth, zero Sun, zero haze, zero lens flare.
+
+Center horizon (x = 46% to 54%, low along the distant crater floor across the vast 85 km basin, beneath a distant low terraced rim and central peak): a very small, distant, realistic aerospace-grade lunar outpost silhouette—low regolith-covered matte white-titanium domes, tiny communications trusses, and a slender low-elevation mass-driver rail—appearing genuinely kilometers away at realistic scale, with only microscopic pinpricks of warm-white and faint ice-cyan operational lights. Keep the outpost restrained, crisp, tiny in angular scale, and strictly grounded in hard aerospace realism (Artemis/NASA style, never oversized domes, never neon cyberpunk buildings).
+
+Near foreground (lower-right ground around x = 57% to 63%, y = 66% to 82%, about 2.5 to 3 meters from the observer): resting flat in the pale lunar dust beside a small angular gray breccia rock, one small low-profile brushed dark-titanium circular micro-beacon disc (flat palm-sized relay puck, NOT a tall cylinder or post) emitting a single tiny crisp ice-cyan LED dot. Nearby, a faint, realistic true-to-scale single line of dusty astronaut bootprints leads away across the fine highland regolith toward the northern crater rim overlook.
+
+Full 360-degree surroundings (left, right, and rear sectors): continuous pale silver-gray highland ejecta regolith, scattered sharp angular stones, small crisp craterlets, and gentle crater-rim topography wrapping naturally and seamlessly between the left and right edges at the exact same horizon elevation. Bottom 8% of the frame transitions smoothly into uniform fine pale-gray lunar dust with tiny gravel so the nadir closes cleanly without large truncated rocks.
+
+Projection & technical requirements:
+True 360 by 180 degree equirectangular spherical panorama viewed from inside a sphere (not a rectilinear wide-angle lens photo, not a fisheye, not a globe map). Exact 2:1 aspect ratio, 3840x1920 pixels. Crisp low-angle neutral solar daylight (~15 degrees elevation) casting clean sharp airless shadows from right to left. Ultra-sharp micro-detail throughout, no blur, no overexposure, no borders, no letterboxing, no text, no watermarks.
+
+## Refinement used in the landing scene, 2026-11-22
+
+This edit used the previously published `moon-tycho.webp` as Image 1 and `moon-4k.webp` as Image 2 for lunar material only. The prior published target SHA-256 was `95042905b4f82802d47014b0ddfbd6bed842c19f11b8796c06ef863d36065ec5`. The accepted edited source was requested and returned at 3840x2160, then locally reparameterized to the delivered 3840x1920 texture. No original pixels are claimed as preserved.
+
+Prompt sent to RouteK
+
+Image 1 is the edit target: the current 360-degree Tycho southern-rim lunar landing panorama, with its existing composition, horizon, distant outpost, foreground beacon, and transparent vacuum sky.
+Image 2 is a lunar material reference only: use its neutral silver-gray regolith albedo, fine dust grain, and angular rock texture. Ignore and do not reproduce any Apollo hardware, vehicle, astronaut, equipment, or terrain layout from Image 2.
+
+Create a restrained photorealistic refinement of Image 1 for a 3D lunar surface viewer. It is a fictional commemorative artist reconstruction at the southern rim of Tycho Crater, not surveyed terrain.
+
+Preserve the full 360 by 180 degree equirectangular panorama framing, eye-level viewpoint, low continuous horizon, near-black solid vacuum sky, and existing scene layout. Keep the low aerospace outpost small and distant at the center horizon. Keep the existing flat dark-titanium beacon puck and its single tiny ice-cyan light in the lower-right foreground, beside the same angular rock. Do not move, enlarge, duplicate, redesign, or remove these existing scene elements. The upper sky must remain pure solid black with no stars, Earth, Sun, haze, gradients, or flare. No text, labels, borders, or watermark.
+
+Refine only the lunar terrain. Make the distant basin read more clearly as Tycho's broad 85 km impact crater, with a low far terraced rim and a modest central peak across the basin. Keep these features low on the horizon and geographically plausible from a southern-rim overlook. Do not turn the far rim into tall mountains or add dramatic planetary curvature. Reduce the overly uniform scatter of small foreground rocks, leaving a varied natural mix of fine dusty regolith, sparse sharp highland stones, and a few larger angular breccias. Retain crisp surface detail without making the ground look gravel-covered everywhere. Make one faint but legible single trail of dusty bootprints lead away from the beacon area toward the distant rim, at believable human scale and low contrast.
+
+Maintain pale neutral lunar silver-gray material, airless high-contrast sunlight from about 15 degrees elevation, and crisp shadows falling consistently from right to left. Preserve the exact low panoramic horizon height and seamless left-to-right wrap. Keep the overall composition and relative scales from Image 1. Add no people, rover, lander, buildings, signs, antennas, extra lights, or new props. No atmosphere, colored sky, lens effects, or cyberpunk neon styling.
+
+This image will be locally reparameterized and seam-processed into the project's 2:1 spherical ground texture. Make the complete panorama feel continuous across both horizontal edges and keep its terrain sharp from edge to edge.
