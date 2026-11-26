@@ -31,8 +31,14 @@ jobs:
       fail-fast: false
       matrix:
         shard:
-          - name: core
-            only: integration,saturn-shadows,controls,sky-bodies,moments-sunspots
+          - name: integration-sky-moments
+            only: integration,sky-bodies,moments-sunspots
+            viewports: ""
+          - name: saturn-shadows
+            only: saturn-shadows
+            viewports: ""
+          - name: controls
+            only: controls
             viewports: ""
           - name: landings-desktop
             only: landings

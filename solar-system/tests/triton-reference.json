@@ -1,0 +1,279 @@
+{
+  "source": "NEP098 original SPK (nep098_part-1.bsp) via jplephem 2.24; JPL Horizons independent service (same orbital solution NEP098)",
+  "query": {
+    "format": "json",
+    "COMMAND": "801",
+    "CENTER": "500@899",
+    "MAKE_EPHEM": "YES",
+    "EPHEM_TYPE": "VECTORS",
+    "TIME_TYPE": "TDB",
+    "REF_PLANE": "FRAME",
+    "REF_SYSTEM": "ICRF",
+    "VEC_TABLE": "2",
+    "VEC_CORR": "NONE",
+    "OUT_UNITS": "KM-S",
+    "CSV_FORMAT": "YES",
+    "TLIST": "'2415020.500000000000 2415202.024259259459 2424224.750000000000 2433448.250000000000 2442675.635416666511 2447763.881944444496 2451545.000000000000 2453866.000000000000 2461309.500000000000 2466154.500000000000 2468147.000000000000 2473774.966099536978 2482742.500000000000 2487889.187500000000 2488234.500000000000 2488434.499988425989'"
+  },
+  "horizonsHeader": "*******************************************************************************\n Revised: Jul 08, 2026             Triton / (Neptune)                       801\n\n SATELLITE PHYSICAL PROPERTIES:\n  Mean radius (km)        = 1352.6 +- 2.4    Mean dens (g cm^-3)= 2.065 +-0.011\n  GM (km^3/s^2)           = 1428.495 +- 0.62 Geometric Albedo   = 0.7  \n                                             V(1,0)             = -1.24\n\n SATELLITE ORBITAL DATA (mean values wrt Laplace plane):\n  Semi-major axis, a (km) = 354800           Orbital period      = 5.876994 d\n  Eccentricity, e         = 0.000            Rotational period   = Synchronous\n  Inclination, i  (deg)   = 157.3  \n\n Fit to all reported measurements (Voyager 2, ground, HST)\n*******************************************************************************\n\n\n*******************************************************************************\nEphemeris / API_USER Thu Nov 26 03:37:03 2026 Pasadena, USA      / Horizons\n*******************************************************************************\nTarget body name: Triton (801)                    {source: nep098_merged}\nCenter body name: Neptune (899)                   {source: nep098_merged}\nCenter-site name: BODY CENTER\n*******************************************************************************\nStart time      : A.D. 1900-Jan-01 00:00:00.0000 TDB\nStop  time      : A.D. 2100-Dec-31 23:59:59.0000 TDB\nStep-size       : DISCRETE TIME-LIST\n*******************************************************************************\nCenter geodetic : 0.0, 0.0, 0.0                   {W-lon(deg),Lat(deg),Alt(km)}\nCenter cylindric: 0.0, 0.0, 0.0                   {W-lon(deg),Dxy(km),Dz(km)}\nCenter radii    : 24764.0, 24764.0, 24341.0 km    {Equator_a, b, pole_c}\nOutput units    : KM-S\nCalendar mode   : Mixed Julian/Gregorian\nOutput type     : GEOMETRIC cartesian states\nOutput format   : 2 (position and velocity)\nReference frame : ICRF\n*******************************************************************************\n            JDTDB,            Calendar Date (TDB),                      X,                      Y,                      Z,                     VX,                     VY,                     VZ,\n**************************************************************************************************************************************************************************************************\n",
+  "excerptSha256": "87ae4096177f13452cbb871da0969ae5405a0a58a094288119ff06fba449d2d1",
+  "horizonsResponseSha256": "7fd2f446c39b1edb422913afd8137620263c3659d0dca73fa888df406e626bae",
+  "horizons": [
+    {
+      "tdbCalendar": "1900-01-01T00:00:00",
+      "tdbSeconds": -3155716800.0,
+      "positionKm": [
+        -209232.0964678398,
+        111124.8026417565,
+        264007.8627358615
+      ],
+      "velocityKmS": [
+        3.502171489676447,
+        1.620585341424142,
+        2.093807543585336
+      ],
+      "jplephemDifferenceKm": 3.253907165344266e-11,
+      "jplephemVelocityDiffKmS": 9.930136612989092e-16
+    },
+    {
+      "tdbCalendar": "1900-07-01T12:34:56",
+      "tdbSeconds": -3140033104.000023,
+      "positionKm": [
+        -342533.2065489267,
+        -466.1768389888966,
+        92159.99848342352
+      ],
+      "velocityKmS": [
+        0.9959251093445282,
+        2.122603803122296,
+        3.71198396366766
+      ],
+      "jplephemDifferenceKm": 0.0001758569012134418,
+      "jplephemVelocityDiffKmS": 2.176392562337262e-09
+    },
+    {
+      "tdbCalendar": "1925-03-15T06:00:00",
+      "tdbSeconds": -2360469600.0,
+      "positionKm": [
+        185114.3482042864,
+        162562.7738166175,
+        255262.5029961963
+      ],
+      "velocityKmS": [
+        3.640158860621875,
+        -0.324971384270498,
+        -2.43208182968426
+      ],
+      "jplephemDifferenceKm": 5.0409313045933295e-11,
+      "jplephemVelocityDiffKmS": 4.47545209131181e-16
+    },
+    {
+      "tdbCalendar": "1950-06-15T18:00:00",
+      "tdbSeconds": -1563559200.0,
+      "positionKm": [
+        -116459.5771308101,
+        -163885.1768433145,
+        -292312.2195457422
+      ],
+      "velocityKmS": [
+        -3.956054973406246,
+        -0.4737958600844472,
+        1.842362611329132
+      ],
+      "jplephemDifferenceKm": 4.3655745685100555e-11,
+      "jplephemVelocityDiffKmS": 4.996003610813204e-16
+    },
+    {
+      "tdbCalendar": "1975-09-20T03:15:00",
+      "tdbSeconds": -766313099.9999732,
+      "positionKm": [
+        -300693.1342762932,
+        -165705.1230182599,
+        -89302.11859249977
+      ],
+      "velocityKmS": [
+        -1.679807537839111,
+        0.9206347551450047,
+        3.950031113239324
+      ],
+      "jplephemDifferenceKm": 0.00017636161636706575,
+      "jplephemVelocityDiffKmS": 2.1823947632557912e-09
+    },
+    {
+      "tdbCalendar": "1989-08-25T09:10:00",
+      "tdbSeconds": -326688600.00003576,
+      "positionKm": [
+        9424.384414527103,
+        -132106.4129966261,
+        -329153.2554026962
+      ],
+      "velocityKmS": [
+        -3.994646531599908,
+        -1.724911008328797,
+        0.5781716570250967
+      ],
+      "jplephemDifferenceKm": 0.0001765991917307472,
+      "jplephemVelocityDiffKmS": 2.18504939165431e-09
+    },
+    {
+      "tdbCalendar": "2000-01-01T12:00:00",
+      "tdbSeconds": 0.0,
+      "positionKm": [
+        -205696.4744679369,
+        10004.0771266601,
+        288812.3684286066
+      ],
+      "velocityKmS": [
+        2.99043788247843,
+        2.481259537446611,
+        2.043662591682624
+      ],
+      "jplephemDifferenceKm": 2.9330322825621076e-11,
+      "jplephemVelocityDiffKmS": 6.280369834735101e-16
+    },
+    {
+      "tdbCalendar": "2006-05-10T12:00:00",
+      "tdbSeconds": 200534400.0,
+      "positionKm": [
+        -277381.9967138869,
+        -69819.09086113634,
+        209798.1040045677
+      ],
+      "velocityKmS": [
+        1.812767008711292,
+        2.403202265394089,
+        3.195839997269464
+      ],
+      "jplephemDifferenceKm": 6.507814330688532e-11,
+      "jplephemVelocityDiffKmS": 6.280369834735101e-16
+    },
+    {
+      "tdbCalendar": "2026-09-26T00:00:00",
+      "tdbSeconds": 843652800.0,
+      "positionKm": [
+        166781.6872404952,
+        -28493.65895814142,
+        -311857.6061981531
+      ],
+      "velocityKmS": [
+        -3.105686800800247,
+        -2.763536933496896,
+        -1.408666048367586
+      ],
+      "jplephemDifferenceKm": 5.832123694519905e-11,
+      "jplephemVelocityDiffKmS": 1.0877919644084146e-15
+    },
+    {
+      "tdbCalendar": "2040-01-01T00:00:00",
+      "tdbSeconds": 1262260800.0,
+      "positionKm": [
+        -259763.6437258886,
+        -87300.03188425017,
+        225251.132330081
+      ],
+      "velocityKmS": [
+        1.679628211790188,
+        2.734376236094599,
+        2.995996310964656
+      ],
+      "jplephemDifferenceKm": 6.507814330688532e-11,
+      "jplephemVelocityDiffKmS": 6.280369834735101e-16
+    },
+    {
+      "tdbCalendar": "2045-06-15T12:00:00",
+      "tdbSeconds": 1434412800.0,
+      "positionKm": [
+        -213581.958526006,
+        -27213.12300373683,
+        281909.8843119951
+      ],
+      "velocityKmS": [
+        2.422189737345443,
+        2.98364732327908,
+        2.122636014060221
+      ],
+      "jplephemDifferenceKm": 2.9330322825621076e-11,
+      "jplephemVelocityDiffKmS": 4.440892098500626e-16
+    },
+    {
+      "tdbCalendar": "2060-11-11T11:11:11",
+      "tdbSeconds": 1920669070.9999948,
+      "positionKm": [
+        -26938.43109905525,
+        -189951.0131458119,
+        -298460.5726877003
+      ],
+      "velocityKmS": [
+        -3.453387281179532,
+        -2.133701164641483,
+        1.669696810841938
+      ],
+      "jplephemDifferenceKm": 5.820766091346741e-11,
+      "jplephemVelocityDiffKmS": 2.220446049250313e-16
+    },
+    {
+      "tdbCalendar": "2085-06-01T00:00:00",
+      "tdbSeconds": 2695464000.0,
+      "positionKm": [
+        133895.1221993218,
+        -75288.6200606004,
+        -319815.5613851256
+      ],
+      "velocityKmS": [
+        -2.864584730423326,
+        -3.298894101430684,
+        -0.4230944822431663
+      ],
+      "jplephemDifferenceKm": 0.0,
+      "jplephemVelocityDiffKmS": 4.47545209131181e-16
+    },
+    {
+      "tdbCalendar": "2099-07-04T16:30:00",
+      "tdbSeconds": 3140137800.0,
+      "positionKm": [
+        227216.9200420454,
+        272085.4758804131,
+        13192.19760118945
+      ],
+      "velocityKmS": [
+        1.607045719717528,
+        -1.151455116154198,
+        -3.919977003736671
+      ],
+      "jplephemDifferenceKm": 2.9330322825621076e-11,
+      "jplephemVelocityDiffKmS": 5.438959822042073e-16
+    },
+    {
+      "tdbCalendar": "2100-06-15T00:00:00",
+      "tdbSeconds": 3169972800.0,
+      "positionKm": [
+        -118610.0327914192,
+        107237.2074349519,
+        316641.5071730108
+      ],
+      "velocityKmS": [
+        2.882619143696542,
+        3.31115103768596,
+        -0.04200250373999215
+      ],
+      "jplephemDifferenceKm": 5.246767651208195e-11,
+      "jplephemVelocityDiffKmS": 4.441434166503682e-16
+    },
+    {
+      "tdbCalendar": "2100-12-31T23:59:59",
+      "tdbSeconds": 3187252799.0000052,
+      "positionKm": [
+        -70265.62004335407,
+        158640.7654748152,
+        309390.2033410904
+      ],
+      "velocityKmS": [
+        3.113381670069826,
+        2.984051749842275,
+        -0.8233100947025592
+      ],
+      "jplephemDifferenceKm": 5.820766091346741e-11,
+      "jplephemVelocityDiffKmS": 1.1102230246251565e-16
+    }
+  ]
+}

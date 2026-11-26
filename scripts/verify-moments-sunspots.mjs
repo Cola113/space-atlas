@@ -25,7 +25,7 @@ const settle = (page) =>
   );
 
 async function canvasSample(page) {
-  const buf = await page.locator('#universe canvas').screenshot();
+  const buf = await page.locator('#universe canvas').screenshot({ animations: 'disabled', timeout: 60000 });
   const { data } = await sharp(buf).resize(96, 64, { fit: 'fill' }).removeAlpha().raw().toBuffer({ resolveWithObject: true });
   return data;
 }
@@ -153,6 +153,44 @@ try {
       assert.match(briefText, /Snodgrass & Ulrich/, 'sunspot landmark brief must cite differential rotation formula');
       await page.locator('#landmark-brief-close').click();
 
+      // Triton shadow & physical disc transit on Neptune (NEP098, 2046-07-07 03:30 UTC)
+      await page.locator('#display-settings summary').click();
+      await page.locator('#moments-button').click();
+      await page.locator('[data-moment-id="triton-shadow-transit"]').click();
+      await page.waitForFunction(
+        () => {
+          const s = window.solarAtlas.snapshot();
+          return s.selected === 'neptune' && !s.flight && !s.ephemeris.blocked
+            && s.moonTransits?.neptune?.[0]?.active === true
+            && s.moonTransitDiscs?.some((d) => d.id === 'triton' && d.visible);
+        },
+        null,
+        { timeout: 60000 },
+      );
+      await page.waitForTimeout(250);
+      const nepSnap = await snap(page);
+      const triShadow = nepSnap.moonTransits.neptune[0];
+      const triDisc = nepSnap.moonTransitDiscs.find((d) => d.id === 'triton' && d.visible);
+      assert.equal(new Date(nepSnap.date).toISOString(), '2046-07-07T03:30:00.000Z');
+      assert.ok(triShadow.shadowDiameterKm > 2550 && triShadow.shadowDiameterKm < 2650);
+      assert.ok(triShadow.screen && triShadow.screen.x > 0 && triShadow.screen.x < width && triShadow.screen.y > 0 && triShadow.screen.y < height);
+      assert.ok(triDisc.screen && Math.hypot(triDisc.screen.x - triShadow.screen.x, triDisc.screen.y - triShadow.screen.y) > 25,
+        `Triton disc and shadow too close: disc=${JSON.stringify(triDisc.screen)}, shadow=${JSON.stringify(triShadow.screen)}`);
+      // Pixel check: Neptune's weather-patched clouds must be markedly darker at the projected Triton umbra than 24px away.
+      const nepBuf = await page.locator('#universe canvas').screenshot({ animations: 'disabled', timeout: 60000 });
+      const { data: nepRgb, info: nepInfo } = await sharp(nepBuf).removeAlpha().raw().toBuffer({ resolveWithObject: true });
+      const lumAt = (x, y) => {
+        const px = Math.max(0, Math.min(nepInfo.width - 1, Math.round(x)));
+        const py = Math.max(0, Math.min(nepInfo.height - 1, Math.round(y)));
+        const idx = (py * nepInfo.width + px) * 3;
+        return 0.2126 * nepRgb[idx] + 0.7152 * nepRgb[idx + 1] + 0.0722 * nepRgb[idx + 2];
+      };
+      const umbraLum = lumAt(triShadow.screen.x, triShadow.screen.y);
+      const ringLum = (lumAt(triShadow.screen.x + 28, triShadow.screen.y) + lumAt(triShadow.screen.x - 28, triShadow.screen.y)
+        + lumAt(triShadow.screen.x, triShadow.screen.y + 28) + lumAt(triShadow.screen.x, triShadow.screen.y - 28)) / 4;
+      assert.ok(ringLum - umbraLum > 25, `Triton shadow not visibly darkening Neptune clouds (umbra=${umbraLum.toFixed(1)}, surrounding=${ringLum.toFixed(1)})`);
+      await page.screenshot({ path: fileURLToPath(new URL('desktop-triton-transit.png', out)), animations: 'disabled' });
+
       // Titan sea glint moment
       await page.locator('#display-settings summary').click();
       await page.locator('#moments-button').click();
@@ -160,7 +198,7 @@ try {
       await page.waitForFunction(() => window.solarAtlas.snapshot().selected === 'titan' && !window.solarAtlas.snapshot().flight && !window.solarAtlas.snapshot().ephemeris.blocked, null, { timeout: 30000 });
       await page.waitForTimeout(200);
       assert.equal(new Date((await snap(page)).date).toISOString(), '2014-08-19T14:00:00.000Z');
-      const titanBuf = await page.locator('#universe canvas').screenshot();
+      const titanBuf = await page.locator('#universe canvas').screenshot({ animations: 'disabled', timeout: 60000 });
       const { data: titanRgb } = await sharp(titanBuf).removeAlpha().raw().toBuffer({ resolveWithObject: true });
       let brightGlintPixels = 0;
       for (let i = 0; i < titanRgb.length; i += 3) {

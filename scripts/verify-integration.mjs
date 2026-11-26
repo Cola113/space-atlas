@@ -19,7 +19,7 @@ async function screenshot(page, name) {
   await page.screenshot({ path: fileURLToPath(new URL(name + '.png', output)), animations: 'disabled' });
 }
 async function canvasPixels(page) {
-  const data = await page.locator('canvas').first().screenshot();
+  const data = await page.locator('canvas').first().screenshot({ animations: 'disabled', timeout: 60000 });
   const { data: pixels } = await sharp(data).resize(96, 64).removeAlpha().raw().toBuffer({ resolveWithObject: true });
   const active = [...pixels].filter(value => value > 25).length;
   assert.ok(active > 90, `Canvas appears empty: ${active}`);

@@ -104,3 +104,56 @@ test('sparse available moons compact slots and clear stale state',()=>{
   system.setEnabled(false);assert.equal(objects.get('jupiter').moonTransitUniforms.uMoonTransitEnabled.value,0);
   provider.dispose();
 });
+
+test('Neptune/Triton NEP098 shadow transit is scale-invariant, deterministic, and renders physical disc transit', async () => {
+  const provider = localPhysics();
+  const peak = new Date('2046-07-07T03:30:00Z');
+  await provider.ensure(peak, ['triton'], { prefetch: false });
+  const objects = objectsFor(['neptune', 'triton']);
+  const tritonObj = objects.get('triton');
+  tritonObj.mesh.material.map = new THREE.Texture();
+
+  const frame = provider.frame(peak);
+  updateDisplayState(objects, frame, { guides: false });
+  const transits = createMoonTransitSystem(objects);
+  transits.update(frame);
+  const first = transits.snapshot().neptune[0];
+  assert.equal(first.id, 'triton');
+  assert.equal(first.available, true);
+  assert.equal(first.active, true);
+  assert.ok(first.shadowDiameterKm > 2550 && first.shadowDiameterKm < 2650, `unexpected Triton umbra ${first.shadowDiameterKm}`);
+  assert.ok(first.penumbraRadiusKm > first.umbraRadiusKm);
+
+  // Scale invariance: multiplying display orbits by 23x must not move Triton's shadow on Neptune.
+  for (const b of objects.values()) b.orbit *= 23;
+  updateDisplayState(objects, frame, { guides: false });
+  transits.update(frame);
+  assert.deepEqual(transits.snapshot().neptune[0], first);
+
+  // Motion, pause, rewind, and post-transit exit.
+  const later = new Date('2046-07-07T04:00:00Z');
+  transits.update(provider.frame(later));
+  const moved = transits.snapshot().neptune[0];
+  assert.equal(moved.active, true);
+  assert.ok(vector(first.center).distanceTo(vector(moved.center)) > 0.05);
+  transits.update(provider.frame(peak));
+  assert.deepEqual(transits.snapshot().neptune[0], first);
+  transits.update(provider.frame(new Date('2046-07-07T10:00:00Z')));
+  assert.equal(transits.snapshot().neptune[0].active, false);
+
+  // Physical foreground disc transit on Neptune shares Triton's mesh, texture, and dated attitude.
+  const neptuneObj = objects.get('neptune');
+  const bearing = tritonObj.root.position.clone().sub(neptuneObj.root.position).normalize();
+  const camera = new THREE.PerspectiveCamera(42, 1, 0.01, 2400);
+  camera.position.copy(neptuneObj.root.position).addScaledVector(bearing, neptuneObj.radius * 10);
+  camera.lookAt(neptuneObj.root.position);
+  camera.updateMatrixWorld();
+  const disks = createMoonTransitDiscs(objects);
+  disks.update(frame, camera, { selected: 'neptune' });
+  const proxy = neptuneObj.root.children.find(c => c.name === 'triton-physical-transit');
+  assert.ok(proxy && proxy.visible);
+  assert.equal(proxy.material.map, tritonObj.mesh.material.map);
+  assert.ok(proxy.quaternion.angleTo(tritonObj.displayOrientation) < 1e-7);
+  disks.dispose();
+  provider.dispose();
+});

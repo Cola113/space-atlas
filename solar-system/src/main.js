@@ -1221,7 +1221,7 @@ function flyTo(target, offset, duration = 1700, kind = "travel") {
   // Flush residual drag inertia so it cannot pull the camera off its flight path.
   controls.enableDamping = false;
   controls.update();
-  controls.enableDamping = true;
+  controls.enableDamping = !reducedMotion;
   camera.position.copy(startPosition);
   controls.target.copy(startTarget);
   controls.minDistance = 0.025;
@@ -2092,7 +2092,7 @@ async function landOnSurface(bodyId = state.selected, siteId = null) {
   // Orbiting to a landing site must not carry residual drag into the return view.
   controls.enableDamping = false;
   controls.update();
-  controls.enableDamping = true;
+  controls.enableDamping = !reducedMotion;
   camera.position.copy(pose.position); camera.quaternion.copy(pose.quaternion);
   controls.target.copy(pose.target);
   const center = body.root.position.clone();
@@ -2885,7 +2885,7 @@ async function init() {
     renderer.toneMappingExposure = 1.12;
     $("universe").append(renderer.domElement);
     controls = new OrbitControls(camera, renderer.domElement);
-    controls.enableDamping = true;
+    controls.enableDamping = !reducedMotion;
     controls.dampingFactor = 0.075;
     controls.enablePan = false;
     controls.rotateSpeed = 0.45;

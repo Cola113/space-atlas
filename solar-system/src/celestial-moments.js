@@ -39,6 +39,20 @@ export const CELESTIAL_MOMENTS = Object.freeze([
     provenance: '本地 JPL SAT441 星历 · 实测扁球体求交 + 有限太阳盘本影/半影',
   },
   {
+    id: 'triton-shadow-transit',
+    category: 'orbit',
+    title: '海卫一影凌海王星',
+    subtitle: '海王星 · 2046-07-07 03:30 UTC',
+    bodyId: 'neptune',
+    date: '2046-07-07T03:30:00Z',
+    playing: false,
+    speed: 1000,
+    cameraMode: 'shadow-transit',
+    transitMoon: 'triton',
+    summary: '海卫一逆行倾角约 157°，每约九十年才迎来一次影凌季；2046 年峰期其约 2,602 km 本影近直射海王星赤道云顶，同时可见近侧凌星本体。',
+    provenance: '本地 JPL NEP098 星历（16 历元与 Horizons 最大差 16 m）· 实测扁球体求交 + 有限太阳盘本影/半影',
+  },
+  {
     id: 'titan-sea-glint',
     category: 'orbit',
     title: '土卫六北极海面日镜反光',
@@ -182,7 +196,17 @@ export function computeMomentCameraOffset({ moment, body, frame, baseDistance })
         const worldHit = transit.centerGeometry.clone().applyMatrix4(body.mesh.matrixWorld);
         const outDir = worldHit.sub(body.root.position).normalize();
         // Frame slightly toward sunlight so both shadow umbra and foreground transit moon sit cleanly in view.
-        const viewDir = outDir.multiplyScalar(0.84).addScaledVector(sun, 0.24).normalize();
+        let viewDir = outDir.clone().multiplyScalar(0.84).addScaledVector(sun, 0.24).normalize();
+        // When a central transit sits nearly dead-subsolar (such as Triton on Neptune in 2046),
+        // offset the distant sightline by ~1.7 deg so the foreground moon disc and its dark umbra
+        // sit cleanly side-by-side inside the sunlit globe instead of occulting each other.
+        if (body.id === 'neptune' && viewDir.dot(sun) > 0.9994) {
+          const north = new THREE.Vector3(0, 1, 0).applyQuaternion(
+            body.tilted.getWorldQuaternion(new THREE.Quaternion()),
+          );
+          const side = new THREE.Vector3().crossVectors(north, sun).normalize();
+          viewDir = sun.clone().addScaledVector(side, 0.028).addScaledVector(north, 0.010).normalize();
+        }
         return viewDir.multiplyScalar(baseDistance * (body.id === 'saturn' ? 0.72 : 0.80));
       }
     }

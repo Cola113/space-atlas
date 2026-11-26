@@ -1082,7 +1082,7 @@ export function createDynamics(objects, { defer = false } = {}) {
               // lift the ray off a flattened globe and slide the band in latitude.
               "ringTransmission(vActivityPosition,normalize(vActivityViewToLocal * directLight.direction))",
             )) }
-          : body.id === 'jupiter' ? { lights_fragment_begin: moonTransitDirectLighting() } : {}),
+          : body.id === 'jupiter' || body.id === 'neptune' ? { lights_fragment_begin: moonTransitDirectLighting() } : {}),
       });
       if (body.id === 'saturn') {
         record.weather = createSaturnWeatherUniforms();

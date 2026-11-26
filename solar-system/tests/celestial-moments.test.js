@@ -82,6 +82,28 @@ test('orbital moments verify real shadow transits, Titan specular glint alignmen
     });
     assert.ok(titanShadow && titanShadow.shadowDiameterKm > 3800 && titanShadow.shadowDiameterKm < 4200);
 
+    // 2b. Triton shadow transit on Neptune (NEP098) + non-occulting camera offset
+    const tritonTransit = momentById('triton-shadow-transit');
+    await provider.ensure(new Date(tritonTransit.date), ['triton'], { prefetch: false });
+    const nepFrame = provider.frame(new Date(tritonTransit.date));
+    const tritonShadow = computeMoonTransit({
+      sunPositionKm: nepFrame.bodies.get('sun').positionKm,
+      parentPositionKm: nepFrame.bodies.get('neptune').positionKm,
+      moonPositionKm: nepFrame.bodies.get('triton').positionKm,
+      parentAxesKm: physicalAxes('neptune'),
+      parentRotation: physicalGeometryRotation(nepFrame.bodies.get('neptune').orientation),
+      moonRadiusKm: physicalData.triton.radiusKm,
+      sunRadiusKm: physicalData.sun.radiusKm,
+    });
+    assert.ok(tritonShadow && tritonShadow.shadowDiameterKm > 2550 && tritonShadow.shadowDiameterKm < 2650);
+    const nepObjs = mockObjects(['sun', 'neptune', 'triton']);
+    updateDisplayState(nepObjs, nepFrame, { guides: false });
+    const nepOffset = computeMomentCameraOffset({ moment: tritonTransit, body: nepObjs.get('neptune'), frame: nepFrame, baseDistance: 8 });
+    assert.ok(nepOffset && Math.abs(nepOffset.length() - 8 * 0.80) < 1e-6);
+    const nepSun = nepObjs.get('neptune').sunDirection.clone().normalize();
+    const sepDeg = THREE.MathUtils.radToDeg(nepOffset.clone().normalize().angleTo(nepSun));
+    assert.ok(sepDeg > 1.0 && sepDeg < 3.0, `expected 1-3 deg Triton parallax separation, got ${sepDeg}`);
+
     // 3. Titan sea glint exact mirror camera direction (finite-distance ray from surface point to camera)
     const glintMoment = momentById('titan-sea-glint');
     await provider.ensure(new Date(glintMoment.date), ['titan'], { prefetch: false });

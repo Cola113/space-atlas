@@ -7,10 +7,11 @@ import { orbitalElements } from '../solar-system/src/physics/kepler.js';
 
 const root = new URL('../public/ephemeris/', import.meta.url);
 const GM = { sun:1.3271244004127942e11, saturn:3.793120623436167e7, uranus:5.793951256527211e6,
-  enceladus:7.210366688598896, titan:8978.137095521046, miranda:4.3195168992321,
+  neptune:6.835103145462294e6, enceladus:7.210366688598896, titan:8978.137095521046,
+  miranda:4.3195168992321, triton:1428.495462910464,
   pluto:869.6138177608748, charon:105.8799888601881, ceres:62.628888644409933,
   marsSystem:42828.3758157561 };
-const result = { source:'JPL SAT441 / URA184 / PLU060 yearly polynomial bundles and the Horizons-generated Ceres bundle; see public/ephemeris/manifest.json; Phobos: original MAR099 yearly records',
+const result = { source:'JPL SAT441 / URA184 / NEP098 / PLU060 yearly polynomial bundles and the Horizons-generated Ceres bundle; see public/ephemeris/manifest.json; Phobos: original MAR099 yearly records',
   gmSource:'https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/gm_de440.tpc',
   frame:'J2000', units:'km, s', timescale:'TDB', derivative:'central difference at ±1 second',
   limitations:'Only outside 1900–2100: two-body extrapolation from the nearest range boundary; no perturbations, secular evolution or accuracy guarantee.',
@@ -18,7 +19,7 @@ const result = { source:'JPL SAT441 / URA184 / PLU060 yearly polynomial bundles 
 for (const [boundary,date] of [['first','1900-01-01T00:00:00Z'],['last','2101-01-01T00:00:00Z']]) {
   const epoch = physicalTime(new Date(date)).tdbSeconds, year = boundary === 'first' ? 1900 : 2100;
   const bundles = {}, hashes = {};
-  for (const system of ['saturn','uranus','pluto','ceres','phobos']) {
+  for (const system of ['saturn','uranus','neptune','pluto','ceres','phobos']) {
     const bytes = await readFile(new URL(`${system}/${year}.bin`,root));
     hashes[system] = createHash('sha256').update(bytes).digest('hex');
     bundles[system] = decodeEphemeris(bytes.buffer.slice(bytes.byteOffset,bytes.byteOffset+bytes.byteLength));
@@ -29,6 +30,7 @@ for (const [boundary,date] of [['first','1900-01-01T00:00:00Z'],['last','2101-01
     enceladus:[relative('saturn',602,699,6),GM.saturn+GM.enceladus],
     titan:[relative('saturn',606,699,6),GM.saturn+GM.titan],
     miranda:[relative('uranus',705,799,7),GM.uranus+GM.miranda],
+    triton:[relative('neptune',801,899,8),GM.neptune+GM.triton],
     charon:[relative('pluto',901,999,9),GM.pluto+GM.charon],
     plutoBarycenter:[relative('pluto',9,10,0),GM.sun+GM.pluto+GM.charon],
     // Ceres is heliocentric, so its track is already the Sun-relative position.

@@ -34,10 +34,10 @@ export async function aimAtLanding(page, id, { back = false } = {}) {
         let previous = window.solarAtlas.snapshot().camera, stable = 0, attempts = 0;
         const poll = () => {
           const camera = window.solarAtlas.snapshot().camera;
-          stable = camera.every((value, index) => Math.abs(value - previous[index]) < 1e-10) ? stable + 1 : 0;
+          stable = camera.every((value, index) => Math.abs(value - previous[index]) < 1e-8) ? stable + 1 : 0;
           previous = camera;
           if (stable >= 3) resolve();
-          else if (++attempts > 100) reject(new Error('Orbit gesture did not settle'));
+          else if (++attempts > 450) reject(new Error('Orbit gesture did not settle'));
           else setTimeout(poll, 100);
         };
         poll();

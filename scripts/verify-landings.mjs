@@ -20,7 +20,7 @@ assert.ok(viewports.length>0,`Unknown ATLAS_VIEWPORTS: ${process.env.ATLAS_VIEWP
 // Sites whose parent cannot be looked at: haze hides it, or it never rises here.
 const parentNotice={titan:/雾霾/,pluto:/地平线下/,'moon-farside':/地平线下/};
 async function pixels(page,checkBrightness=true){
-  const buffer=await page.locator('.surface-canvas canvas').screenshot();
+  const buffer=await page.locator('.surface-canvas canvas').screenshot({animations:'disabled',timeout:60000});
   // fit:'fill' keeps the whole frame; the default 'cover' crops a portrait phone to
   // its middle band, which is sky, and reports a lit surface as blank.
   const {data,info}=await sharp(buffer).resize(120,80,{fit:'fill'}).removeAlpha().raw().toBuffer({resolveWithObject:true});

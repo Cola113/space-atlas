@@ -1,10 +1,10 @@
 export const EPHEMERIS_YEARS = Object.freeze({ first: 1900, last: 2100 });
 export const EPHEMERIS_SYSTEMS = Object.freeze({
-  enceladus: 'saturn', titan: 'saturn', miranda: 'uranus', pluto: 'pluto', charon: 'pluto',
+  enceladus: 'saturn', titan: 'saturn', miranda: 'uranus', triton: 'neptune', pluto: 'pluto', charon: 'pluto',
   ceres: 'ceres', phobos: 'phobos',
 });
-export const EPHEMERIS_SYSTEM_IDS = Object.freeze(Object.keys(EPHEMERIS_SYSTEMS).concat(['saturn','uranus']));
-const SYSTEM_NAMES = Object.freeze({ saturn:'土星', uranus:'天王星', pluto:'冥王星', ceres:'谷神星', phobos:'火卫一' });
+export const EPHEMERIS_SYSTEM_IDS = Object.freeze(Object.keys(EPHEMERIS_SYSTEMS).concat(['saturn','uranus','neptune']));
+const SYSTEM_NAMES = Object.freeze({ saturn:'土星', uranus:'天王星', neptune:'海王星', pluto:'冥王星', ceres:'谷神星', phobos:'火卫一' });
 
 export class MissingEphemerisError extends Error {
   constructor(system, year, cause) {
@@ -60,7 +60,7 @@ export function inEphemerisRange(date) {
 }
 
 export class EphemerisStore {
-  constructor({fetcher = (...args) => globalThis.fetch(...args), maxEntries = 9, timeoutMs = 15000} = {}) {
+  constructor({fetcher = (...args) => globalThis.fetch(...args), maxEntries = 24, timeoutMs = 15000} = {}) {
     this.fetcher = fetcher; this.maxEntries = maxEntries; this.timeoutMs = timeoutMs;
     this.cache = new Map(); this.pending = new Map(); this.failures = new Map();
     this.disposed = false; this.revision = 0;
