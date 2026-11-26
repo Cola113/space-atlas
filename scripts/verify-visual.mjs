@@ -26,6 +26,8 @@ const CHECKS=[
    what:'phone, tablet and short-landscape layout, hit targets, safe area'},
   {id:'sky-bodies',script:'verify-sky-bodies.mjs',reports:['test-results/sky-bodies/report.json'],
    what:'ring and sky pixel levels in the landing view'},
+  {id:'moments-sunspots',script:'verify-moments-sunspots.mjs',reports:['test-results/moments-sunspots/report.json'],
+   what:'curated celestial moments, live transit finder, and solar sunspots'},
   {id:'landings',script:'verify-landings.mjs',reports:['test-results/landings/report.json'],
    what:'every landing site across four viewports, canvas pixels'},
 ];
@@ -121,7 +123,12 @@ for(const check of selected){
 }
 
 stopServer();
-const summary={base,browserChannel,built:!skipBuild,passed:results.every(r=>r.passed),checks:results};
+const summary={
+  base,browserChannel,built:!skipBuild,
+  viewports:process.env.ATLAS_VIEWPORTS||null,
+  landingIds:process.env.ATLAS_LANDING_IDS||null,
+  passed:results.every(r=>r.passed),checks:results,
+};
 await writeFile(new URL('../test-results/visual/report.json',import.meta.url),JSON.stringify(summary,null,2));
 console.log(`\n${results.filter(r=>r.passed).length}/${results.length} visual checks passed`);
 for(const r of results)console.log(`  ${r.passed?'pass':'FAIL'}  ${r.id.padEnd(16)} ${String(r.seconds).padStart(4)}s  ${r.what}`);

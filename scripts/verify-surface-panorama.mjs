@@ -1,4 +1,4 @@
-import {chromium} from 'playwright';
+import {launchBrowser} from './browser-launch.mjs';
 import sharp from 'sharp';
 import assert from 'node:assert/strict';
 import {mkdir,writeFile} from 'node:fs/promises';
@@ -29,14 +29,21 @@ for(const file of files){
 }
 await sharp({create:{width:960,height:Math.ceil(tiles.length/3)*160,channels:3,background:'#142333'}}).composite(tiles).png().toFile(out+'/panoramas.png');
 await writeFile(out+'/assets.json',JSON.stringify(assets,null,2));
-const browser=await chromium.launch({channel:'msedge',headless:true}),report=[];
-try{for(const [name,width,height,dpr] of [['desktop',1440,900,1],['phone',390,844,3],['tablet',800,450,2],['short',640,360,2]]){
+const browser=await launchBrowser(),report=[];
+const siteIds=(process.env.ATLAS_LANDING_IDS?process.env.ATLAS_LANDING_IDS.split(','):Object.keys(landingSites)).filter(Boolean);
+const allViewports=[['desktop',1440,900,1],['phone',390,844,3],['tablet',800,450,2],['short',640,360,2]];
+const selectedViewports=process.env.ATLAS_VIEWPORTS?allViewports.filter(([n])=>process.env.ATLAS_VIEWPORTS.split(',').includes(n)):allViewports;
+try{for(const [name,width,height,dpr] of selectedViewports){
  const context=await browser.newContext({viewport:{width,height},deviceScaleFactor:dpr,reducedMotion:'reduce'});
  await context.addInitScript(()=>sessionStorage.setItem('space-atlas:scene:solar-system',JSON.stringify({version:1,value:{playing:false,date:Date.UTC(1971,7,1),speed:1000,speedUnit:'realtime'}})));
  const page=await context.newPage();await page.goto(base+'/solar-system/');await page.waitForFunction(()=>window.solarAtlas?.snapshot().ready);
- for(const id of Object.keys(landingSites)){
-  await page.locator('#atlas-tab').click();await page.locator('#atlas-search').fill(id);await page.locator(`.atlas-item[data-body="${id}"]`).click();
-  await page.waitForFunction(()=>{const s=window.solarAtlas.snapshot();return !s.flight&&!s.ephemeris.blocked;});
+ for(const id of siteIds){
+  const body=landingSites[id]?.id;
+  assert.ok(body,`Unknown landing site id: ${id}`);
+  if(!await page.locator('#atlas-search').isVisible())await page.locator('#atlas-tab').click();
+  await page.locator('#atlas-search').fill(body);
+  await page.locator(`.atlas-item[data-body="${body}"]`).click();
+  await page.waitForFunction(expected=>{const s=window.solarAtlas.snapshot();return s.selected===expected&&!s.flight&&!s.ephemeris.blocked;},body,{timeout:30000});
   await revealLanding(page,id);
   await page.locator(`[data-landing-site="${id}"]`).click();await page.waitForFunction(()=>document.querySelector('.surface-view')?.dataset.ready==='true',null,{timeout:60000});
   const before=await page.evaluate(()=>window.solarAtlas.snapshot().surface);
@@ -57,7 +64,7 @@ try{for(const [name,width,height,dpr] of [['desktop',1440,900,1],['phone',390,84
    await page.screenshot({path:`${out}/${name}-${id}-wrap.png`});
   }
   await page.locator('.surface-exit').click();await page.waitForFunction(()=>!document.querySelector('.surface-view'));
-  report.push({name,id,dpr,nadirPitch:-85,nonblank:true,datePreserved:true});
+  report.push({name,id,body,dpr,nadirPitch:-85,nonblank:true,datePreserved:true});
  }
- console.log(name,'nine nadir views passed');await context.close();
+ console.log(name,`${siteIds.length} nadir views passed`);await context.close();
 }await writeFile(out+'/report.json',JSON.stringify({assets,report},null,2));}finally{await browser.close();}

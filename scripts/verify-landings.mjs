@@ -12,7 +12,11 @@ const output=new URL(process.env.ATLAS_OUTPUT||'../test-results/landings/',impor
 await mkdir(output,{recursive:true});
 const browser=await launchBrowser();
 const report=[];
-const ids=(process.env.ATLAS_LANDING_IDS||'moon,moon-farside,europa,europa-subjovian,mars,mars-phoenix,io,io-subjovian,titan,enceladus,pluto,pluto-charonface,miranda,mercury,mercury-pole,charon,venus,ceres,phobos-60e,phobos-311e').split(',');
+const ids=(process.env.ATLAS_LANDING_IDS||'earth,moon,moon-farside,europa,europa-subjovian,mars,mars-phoenix,io,io-subjovian,titan,enceladus,pluto,pluto-charonface,miranda,mercury,mercury-pole,charon,venus,ceres,phobos-60e,phobos-311e').split(',').filter(Boolean);
+const allViewports=[['desktop',{width:1440,height:900}],['phone',{width:390,height:844}],['tablet',{width:800,height:450}],['short',{width:640,height:360}]];
+const viewportFilter=(process.env.ATLAS_VIEWPORTS||'').split(',').filter(Boolean);
+const viewports=viewportFilter.length?allViewports.filter(([name])=>viewportFilter.includes(name)):allViewports;
+assert.ok(viewports.length>0,`Unknown ATLAS_VIEWPORTS: ${process.env.ATLAS_VIEWPORTS}`);
 // Sites whose parent cannot be looked at: haze hides it, or it never rises here.
 const parentNotice={titan:/雾霾/,pluto:/地平线下/,'moon-farside':/地平线下/};
 async function pixels(page,checkBrightness=true){
@@ -25,7 +29,7 @@ async function pixels(page,checkBrightness=true){
   return {data,lit,channels:info.channels};
 }
 try{
-  for(const [name,viewport] of [['desktop',{width:1440,height:900}],['phone',{width:390,height:844}],['tablet',{width:800,height:450}],['short',{width:640,height:360}]]){
+  for(const [name,viewport] of viewports){
     const context=await browser.newContext({viewport,deviceScaleFactor:name==='phone'?3:name==='desktop'?1:2,reducedMotion:'reduce',acceptDownloads:true});
     await configureDeploymentAccess(context,base);
     const page=await context.newPage();

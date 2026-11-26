@@ -112,7 +112,48 @@ button:focus-visible, summary:focus-visible, a:focus-visible, input:focus-visibl
 #app .dock-scroll { min-width: 44px; min-height: 44px; }
 #app .dock-strip { gap: 8px; grid-template-columns: 44px minmax(0, 1fr) 44px; }
 #app .atlas-filters { gap: 8px; }
-#app .atlas-filters input, #app .atlas-filters select, #atlas-reset, #explore-earth { min-height: 44px; }
+#app .atlas-filters input, #app .atlas-filters select, #atlas-reset, #explore-earth, #explore-moments { min-height: 44px; }
+.intro-actions { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; margin-top: 20px; }
+.intro-actions .text-action { margin-top: 0; }
+.intro-actions .text-action-secondary { color: #b7d7c5; border-color: #3a5547; }
+.intro-actions .text-action-secondary:hover { color: #e4f5ea; border-color: #85b69b; }
+#time-moments-button { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; background: #193125; border-color: #5b826d; color: #d8f2e2; }
+#time-moments-button svg { width: 15px; height: 15px; flex: none; }
+#moments-dialog {
+  width: min(680px, calc(100vw - 32px)); padding: 0;
+  max-height: calc(100dvh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px) - 32px);
+  border: 1px solid #536b5f; border-radius: 10px; background: #101b17; color: #e4eee8;
+  overscroll-behavior: contain;
+}
+#moments-dialog[open] { display: flex; flex-direction: column; }
+.moments-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 20px; flex: none; border-bottom: 1px solid #344c3d; }
+.moments-heading h2 { margin: 4px 0 0; font-size: 20px; font-weight: 500; }
+#close-moments { min-width: 44px; min-height: 44px; font-size: 24px; color: #dce9e2; border: 1px solid #456051; border-radius: 6px; background: #16261f; }
+.moments-content { min-height: 0; padding: 16px 20px 20px; overflow: auto; overscroll-behavior: contain; scrollbar-width: thin; display: flex; flex-direction: column; gap: 14px; }
+.moments-intro { margin: 0; font-size: 12px; line-height: 1.75; color: #aebfb4; }
+.moments-live-bar { display: flex; flex-direction: column; gap: 6px; padding: 12px; border: 1px solid #395747; border-radius: 8px; background: #15251e; }
+.moments-live-button { display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; width: 100%; padding: 8px 14px; border: 1px solid #75a88d; border-radius: 6px; background: #214031; color: #e7f7ed; font-size: 13px; cursor: pointer; }
+.moments-live-button:hover { background: #2a513e; }
+.moments-live-button svg { width: 16px; height: 16px; flex: none; }
+#moments-live-status { font-size: 11px; color: #a8c7b4; min-height: 0; }
+.moments-section + .moments-section { margin-top: 16px; }
+.moments-section h3 { margin: 0 0 10px; font-size: 13px; font-weight: 500; color: #bce2cb; letter-spacing: 0.04em; }
+.moments-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.moment-card {
+  display: flex; flex-direction: column; align-items: flex-start; gap: 6px;
+  width: 100%; min-height: 44px; padding: 12px 14px; text-align: left;
+  border: 1px solid #30473b; border-radius: 7px; background: #14211b; color: #e3f0e8; cursor: pointer;
+}
+.moment-card:hover { border-color: #85b69b; background: #1b2e25; }
+.moment-card-header { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; width: 100%; }
+.moment-card strong { font-size: 14px; font-weight: 500; color: #eef7f1; }
+.moment-card-tag { font-size: 10px; padding: 2px 6px; border-radius: 999px; background: #1d3529; color: #a9d9bc; border: 1px solid #3f6350; flex: none; }
+.moment-card-sub { font-size: 11px; color: #8fb49e; }
+.moment-card p { margin: 2px 0 0; font-size: 12px; line-height: 1.65; color: #b9cabf; }
+.moment-card small { font-size: 10px; line-height: 1.5; color: #7e9788; }
+@media (max-width: 620px) {
+  .moments-grid { grid-template-columns: minmax(0, 1fr); }
+}
 #app .atlas-panel { top: calc(var(--safe-top) + var(--header-height)); padding-bottom: max(20px, var(--safe-bottom)); }
 #app.atlas-open .planet-info, #app.atlas-open .scene-toolbar { display: none; }
 #app .resource-status { top: calc(var(--safe-top) + var(--header-height) + 8px); width: min(440px, calc(100% - 48px)); max-width: none; flex-wrap: nowrap; }

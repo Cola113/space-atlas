@@ -15,6 +15,12 @@ import { createNeptuneWeatherUniforms, patchNeptuneWeather, neptuneVortexOrigin,
 import { shapeSurfacePoint, shapeSurfaceNormal } from './body-geometry.js';
 import { saturnShadowFunctions, saturnDirectLighting } from './saturn-ring-shadow.js';
 import { MOON_TRANSIT_GLSL, moonTransitDirectLighting } from './moon-transits.js';
+import {
+  SOLAR_SUNSPOT_GLSL,
+  createSolarSunspotUniforms,
+  updateSolarSunspotUniforms,
+  primarySunspotAnchor,
+} from './solar-sunspots.js';
 export { saturnShadowFunctions, saturnDirectLighting };
 
 const simplex = simplexSource.replace("#pragma glslify: export(snoise)", "");
@@ -23,10 +29,10 @@ const FLOW_PERIOD = 24;
 
 export const activityProfiles = {
   sun: {
-    title: "光球对流与磁场活动",
-    text: "细密的光球持续变化，日珥沿磁场拱起，耀斑与物质喷发间歇发生。",
+    title: "光球对流、黑子与差动自转",
+    text: "细密的光球持续变化，太阳黑子群按纬度差动自转（赤道约 24.5 天、中纬约 26.7 天），日珥沿磁场拱起，耀斑与物质喷发间歇发生。差动自转取自 Snodgrass & Ulrich (1990) 经验公式，黑子位置与 11 年活动周为程序示意，非实时观测或 MHD 模拟。",
     trigger: "模拟喷发",
-    idle: "光球对流",
+    idle: "光球对流与黑子",
     active: "耀斑与物质喷发",
     duration: 13,
     interval: 34,
@@ -346,7 +352,7 @@ function patchMaterial(material, key, uniforms, snippets) {
       );
     shader.fragmentShader = shader.fragmentShader.replace(
       "#include <common>",
-      `#include <common>\n${common}${ringSurface ? ringSurfaceVaryings : ""}${saturnShadow ? saturnShadowFunctions : ""}`,
+      `#include <common>\n${common}${key === "sun" ? SOLAR_SUNSPOT_GLSL : ""}${ringSurface ? ringSurfaceVaryings : ""}${saturnShadow ? saturnShadowFunctions : ""}`,
     );
     for (const [chunk, source] of Object.entries(snippets)) {
       shader.fragmentShader = shader.fragmentShader.replace(
@@ -430,6 +436,8 @@ function gasMap(id) {
 }
 
 function attachSolarSurface(record) {
+  record.sunspots = createSolarSunspotUniforms();
+  Object.assign(record.uniforms, record.sunspots);
   patchMaterial(record.body.mesh.material, "sun", record.uniforms, {
     map_fragment: /* glsl */ `
       #ifdef USE_MAP
@@ -437,9 +445,30 @@ function attachSolarSurface(record) {
         vec3 p = vActivityDir * 37.0;
         float boil = snoise(p + vec3(uActivityTime * .21, 0.0, uActivityTime * .12));
         float fine = snoise(p * 3.4 + vec3(0.0, uActivityTime * .40, 0.0));
-        vec2 solarUv = vMapUv + a * vec2(boil, fine) * .0027;
-        vec4 solarColor = sampleGlobe(map, solarUv);
+        // Differential shear of photospheric granulation relative to the Carrington frame.
+        float solarDrift = solarDiffDriftTurnsPerDay(clamp(vActivityDir.y, -1.0, 1.0));
+        float solarPhase = fract(uSolarDays / 18.0);
+        vec2 solarAges = (vec2(solarPhase, fract(solarPhase + .5)) - .5) * 18.0;
+        float solarBlend = .5 - .5 * cos(solarPhase * 6.2831853);
+        vec2 jitterUv = a * vec2(boil, fine) * .0027;
+        vec2 shearA = vec2(-solarDrift * solarAges.x * uActivityEnabled, 0.0);
+        vec2 shearB = vec2(-solarDrift * solarAges.y * uActivityEnabled, 0.0);
+        vec4 solarColor = mix(
+          sampleGlobe(map, vMapUv + jitterUv + shearB),
+          sampleGlobe(map, vMapUv + jitterUv + shearA),
+          solarBlend
+        );
         solarColor.rgb *= 1.0 + a * (boil * .22 + fine * .14);
+        if (uActivityEnabled > .5) {
+          vec2 activeRegion = evaluateSolarActiveRegions(vActivityDir);
+          float spotDark = activeRegion.x;
+          float faculae = activeRegion.y;
+          // Cooler umbra (~3,800 K vs 5,778 K) shifts darker and warmer amber-brown;
+          // surrounding faculae brighten gently around active belts.
+          vec3 umbraTint = vec3(1.0, .52, .22);
+          solarColor.rgb = mix(solarColor.rgb, solarColor.rgb * umbraTint * .06, spotDark);
+          solarColor.rgb += vec3(1.0, .94, .76) * faculae * .26;
+        }
         float flare = pow(max(dot(vActivityDir, normalize(vec3(.88,.32,.26))), 0.0), 105.0);
         solarColor.rgb += vec3(1.0,.34,.045) * flare * uActivityEvent * a * .30;
         diffuseColor *= solarColor;
@@ -1229,6 +1258,10 @@ export function createDynamics(objects, { defer = false } = {}) {
         : 0;
       const layerAvailable = id !== "venus" || record.body.layerVisible;
       record.uniforms.uActivityTime.value = record.time;
+      if (id === "sun" && record.sunspots) {
+        record.lastSunDate = date;
+        record.activeSunspots = updateSolarSunspotUniforms(record.sunspots, date, enabled);
+      }
       if (id === "mars") updateMarsFrost(date);
       if (id === "ganymede") { maintainGanymedeAurora(record); updateGanymedeAurora(date); }
       if (id === "mars") maintainMarsFrost(record);
@@ -1295,6 +1328,9 @@ export function createDynamics(objects, { defer = false } = {}) {
       const progress = record.uniforms.uActivityProgress.value;
       const strength = record.uniforms.uActivityEvent.value;
       let point;
+      if (kind === 'sunspot-group' && record.lastSunDate != null) {
+        return primarySunspotAnchor(record.lastSunDate);
+      }
       if (kind === 'saturn-storm' && record.weather?.uSaturnProgress.value >= 0 && record.weather.uSaturnProgress.value < .98) {
         const local = shapeSurfacePoint(record.body, uvDirection(record.weather.uSaturnStorm.value.toArray()));
         return { point: local.clone().multiplyScalar(1.017), viewDirection: shapeSurfaceNormal(record.body, local.clone()), extent: 1 };
@@ -1462,6 +1498,14 @@ export function createDynamics(objects, { defer = false } = {}) {
             cloudVisible: r.weather.uVenusCloudVisible.value } } : {}),
           ...(id === 'neptune' && r.weather ? { weather: { time: r.weather.uNeptuneTime.value, progress: r.weather.uNeptuneProgress.value,
             activity: r.weather.uNeptuneActivity.value, spotUv: r.weather.uNeptuneSpot.value.toArray() } } : {}),
+          ...(id === 'sun' && r.sunspots ? { sunspots: { count: r.sunspots.uSunspotCount.value,
+            groups: (r.activeSunspots || []).map((g) => ({
+              slot: g.slot,
+              latitudeDeg: Number(g.latitudeDeg.toFixed(2)),
+              longitudeDeg: Number(g.longitudeDeg.toFixed(2)),
+              periodDays: Number(g.rotationPeriodDays.toFixed(2)),
+              strength: Number(g.strength.toFixed(3)),
+            })) } } : {}),
           sunDirection: r.uniforms.uSurfaceSun.value.toArray(),
           cloudTransform: r.uniforms.uSurfaceToCloud.value.toArray(),
           observedClouds: r.uniforms.uObservedClouds.value,

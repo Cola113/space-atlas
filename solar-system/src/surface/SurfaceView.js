@@ -614,7 +614,7 @@ export function createSurfaceView(siteId, {renderOrbit,onClosed,initialDate,init
   load();
   return { dispose, getTime:()=>clock.time, snapshot:()=>{
     const easterTargets = sky?.getEasterEggTargets?.() || { active: isSongbird2077Active(clock.time), crystalPalace: null, tychoEcho: null };
-    return {date:clock.time,playing:clock.playing,rate:clock.rate,direction:clock.direction,magnification,fieldOfView:camera.getEffectiveFOV(),cameraZoom:camera.zoom,ephemeris:root.dataset.ephemeris,
+    return {siteId:site.siteId,body:site.id,date:clock.time,playing:clock.playing,rate:clock.rate,direction:clock.direction,magnification,fieldOfView:camera.getEffectiveFOV(),cameraZoom:camera.zoom,ephemeris:root.dataset.ephemeris,
       observerKm:frame?.observerKm.toArray(),centerKm:frame?.centerKm.toArray(),
       targets:frame&&Object.fromEntries(Object.entries(frame.targets).map(([name,target])=>[name,{direction:target.direction.toArray(),distanceKm:target.distanceKm,angularDiameter:target.angularDiameter}])),
       easterEgg:{

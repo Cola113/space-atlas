@@ -34,6 +34,7 @@ export function patchEarthNightMaterial(material, nightTexture) {
     uNightEnabled: { value: 1 },
   };
   const previous = material.onBeforeCompile;
+  const previousKey = material.customProgramCacheKey();
   material.onBeforeCompile = (shader, renderer) => {
     if (previous) previous(shader, renderer);
     Object.assign(shader.uniforms, uniforms);
@@ -47,7 +48,7 @@ export function patchEarthNightMaterial(material, nightTexture) {
         '#include <emissivemap_fragment>\n  totalEmissiveRadiance += earthNightLights(texture2D(uNightTexture, vMapUv).rgb, earthNightFactor(vEarthSurface, uSurfaceSun), uNightEnabled);'),
     ].join('\n');
   };
-  material.customProgramCacheKey = () => 'earth-night';
+  material.customProgramCacheKey = () => `${previousKey}-earth-night-v1`;
   material.needsUpdate = true;
   return uniforms;
 }

@@ -28,6 +28,7 @@ import {
   SunMoon,
   MoonStar,
   Layers,
+  Sparkles,
 } from "lucide";
 import { bodies, ORBIT_SPACING, SYSTEM_RADIUS } from "./data.js";
 import { createDynamics, activityProfiles } from "./dynamics.js";
@@ -66,6 +67,12 @@ import { createObservedClouds } from "./observed-clouds.js";
 import { physicalSubsolarPoint } from './earth-observation.js';
 import { createStarfield } from "./starfield.js";
 import { bindTitanGlint } from './titan-glint.js';
+import {
+  CELESTIAL_MOMENTS,
+  momentById,
+  computeMomentCameraOffset,
+  findNextJupiterShadowTransit,
+} from './celestial-moments.js';
 import { FrameWorkQueue } from './resource-queue.js';
 import { createTextureResources, firstScreenTextures, firstScreenIds, textureRoot } from './texture-resources.js';
 import { simulationElapsed, simulationRates, defaultSimulationRate, restoreSimulationRate,
@@ -95,6 +102,7 @@ const icons = {
   SunMoon,
   MoonStar,
   Layers,
+  Sparkles,
 };
 const $ = (id) => document.getElementById(id);
 const refreshIcons = () =>
@@ -186,6 +194,8 @@ let landmarkTrackingDirection = null;
 let landmarkTrackingExtent = 1;
 let manualCatalogZone = null;
 let surfaceOrbitPose = null;
+let momentsOpener = null;
+let momentBusy = false;
 
 function saveObservation() {
   const body = objects.get(state.selected);
@@ -1374,7 +1384,7 @@ function arrivalOffset(body) {
 }
 
 function infoDialogOpen() {
-  return $('credits-dialog').open || $('body-details-dialog').open;
+  return $('credits-dialog').open || $('body-details-dialog').open || $('moments-dialog').open;
 }
 function closeSettings() {
   for (const id of ['display-settings','observation-settings','time-settings']) {
@@ -1830,6 +1840,132 @@ function updateSongbird2077Orbit(dt = 0) {
   }
 }
 
+function renderMomentsDialog() {
+  const container = $("moments-list");
+  if (!container) return;
+  const sections = [
+    { key: "orbit", heading: "总览天象与物理奇观", tag: "轨道视图" },
+    { key: "surface", heading: "精选地表观测时刻", tag: "地表着陆" },
+  ];
+  container.innerHTML = sections.map((section) => {
+    const items = CELESTIAL_MOMENTS.filter((m) => m.category === section.key);
+    return `<section class="moments-section">
+      <h3>${section.heading}</h3>
+      <div class="moments-grid">${items.map((m) => `
+        <button type="button" class="moment-card" data-moment-id="${m.id}">
+          <span class="moment-card-header"><strong>${m.title}</strong><span class="moment-card-tag">${section.tag}</span></span>
+          <span class="moment-card-sub">${m.subtitle}</span>
+          <p>${m.summary}</p>
+          <small>${m.provenance}</small>
+        </button>`).join("")}</div>
+    </section>`;
+  }).join("");
+  container.querySelectorAll("[data-moment-id]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const moment = momentById(button.dataset.momentId);
+      if (moment) void applyCelestialMoment(moment);
+    });
+  });
+}
+
+function openMomentsDialog(opener) {
+  if (!state.ready) return;
+  momentsOpener = opener || null;
+  closeSettings();
+  $("moments-live-status").textContent = "";
+  $("moments-dialog").showModal();
+}
+
+async function applyCelestialMoment(moment) {
+  if (!state.ready || !moment || momentBusy) return;
+  const targetBody = objects.get(moment.bodyId);
+  if (!targetBody) return;
+  momentBusy = true;
+  try {
+    if ($("moments-dialog").open) {
+      momentsOpener = null;
+      $("moments-dialog").close();
+    }
+    closeSettings();
+    setAtlas(false);
+    clearLandmark();
+    if (state.observedEarth) {
+      $("cloud-mode").value = "simulation";
+      state.observedEarth = false;
+      updateCloudUi();
+    }
+    const targetMs = Date.parse(moment.date);
+    if (!Number.isFinite(targetMs)) return;
+    state.date = targetMs;
+    state.direction = 1;
+    state.playing = Boolean(moment.playing);
+    if (moment.speed && simulationRates.includes(moment.speed)) state.speed = moment.speed;
+    state.shadows = true;
+    state.dynamics = true;
+    dynamics.setEnabled(true);
+    $("activity-toggle").classList.add("active");
+    $("activity-toggle").setAttribute("aria-pressed", "true");
+    updateDisplaySettings();
+    updatePlayButton();
+    updateTimeRateUi();
+    lastFrame = performance.now();
+
+    const site = moment.siteId ? resolveLandingSite(moment.siteId) : null;
+    const needed = new Set([moment.bodyId]);
+    if (moment.transitMoon) needed.add(moment.transitMoon);
+    if (site?.parent) needed.add(site.parent.toLowerCase());
+    if (targetBody.parent) needed.add(targetBody.parent);
+    try {
+      await physicalState.ensure(new Date(state.date), [...needed]);
+    } catch {
+      toast("该时刻所需星历未能加载，请稍后重试。");
+      return;
+    }
+    if (disposed) return;
+
+    selectBody(moment.bodyId);
+    await prepareBody(targetBody, 100);
+    if (disposed) return;
+    updatePositions();
+    updateSimulationDate();
+    refreshObservationGate();
+    dynamics.update({
+      date: state.date,
+      dt: 0,
+      moving: false,
+      selected: state.selected,
+      isMobile: mobile,
+      pixelScale: height * renderer.getPixelRatio(),
+    });
+    dynamics.updateLighting(state, camera.position);
+    moonTransits?.setEnabled(state.shadows);
+
+    if (moment.category === "surface" && site) {
+      if (!targetBody.physicalAvailable || observationGate?.blocked) {
+        toast("当前年份星历暂未就绪，请稍后重试。");
+        return;
+      }
+      await landOnSurface(moment.bodyId, site.siteId);
+      return;
+    }
+
+    const offset = computeMomentCameraOffset({
+      moment,
+      body: targetBody,
+      frame: sharedFrame,
+      baseDistance: focusedOffset(targetBody).length(),
+    });
+    if (offset) {
+      flyTo(targetBody.root.position, offset, 1100);
+    }
+    toast(moment.playing
+      ? `已跳转至「${moment.title}」（${formatSimulationRate(state.speed)} 播放中）`
+      : `已定位至「${moment.title}」（已暂停，按播放可观察演变）`);
+  } finally {
+    momentBusy = false;
+  }
+}
+
 function tuneToSongbird2077({ selectMoonTycho = false } = {}) {
   const focused = objects.get(state.selected);
   const previous = focused?.root.position.clone();
@@ -2065,6 +2201,32 @@ function bindEvents() {
     if (state.ready) setAtlas(!state.atlas);
   });
   $("explore-earth").addEventListener("click", () => selectBody("earth"));
+  $("explore-moments").addEventListener("click", () => openMomentsDialog($("explore-moments")));
+  $("moments-button").addEventListener("click", () => openMomentsDialog($("display-settings").querySelector("summary")));
+  $("time-moments-button").addEventListener("click", () => openMomentsDialog($("time-settings-toggle")));
+  $("close-moments").addEventListener("click", () => $("moments-dialog").close());
+  $("moments-dialog").addEventListener("close", () => {
+    lastFrame = performance.now();
+    if (momentsOpener?.checkVisibility?.()) momentsOpener.focus();
+    momentsOpener = null;
+  });
+  $("moments-dialog").addEventListener("click", (event) => {
+    if (event.target === $("moments-dialog")) {
+      const rect = event.target.getBoundingClientRect();
+      if (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom) {
+        event.target.close();
+      }
+    }
+  });
+  $("find-next-jupiter-transit").addEventListener("click", () => {
+    const found = findNextJupiterShadowTransit(state.date, physicalState);
+    if (!found) {
+      $("moments-live-status").textContent = "未来 96 小时内未检出中心影凌，可先选择下方推荐时刻。";
+      return;
+    }
+    $("moments-live-status").textContent = `已找到：${found.title}（${found.subtitle}，本影约 ${found.umbraKm} km）`;
+    void applyCelestialMoment(found);
+  });
   $("surface-button").addEventListener("click", toggleClose);
   $("landmark-brief-close").addEventListener("click", () => closeLandmarkBrief(true));
   $("event-trigger").addEventListener("click", () => {triggerActivity();$("body-details-dialog").close();});
@@ -2703,6 +2865,7 @@ function animate(now) {
 async function init() {
   mountNavigation("solar-system");
   makeNavigation();
+  renderMomentsDialog();
   $('ephemeris-retry').addEventListener('click',()=>void observationGate?.retry().catch(()=>{}));
   $("reload-button").addEventListener("click", () => location.reload());
   try {
@@ -2895,6 +3058,7 @@ async function init() {
           cameraLightsVisible: keyLight.visible || fillLight.visible,
         },
         dynamics: dynamics.snapshot(),
+        moments: CELESTIAL_MOMENTS.map((m) => ({ id: m.id, bodyId: m.bodyId, category: m.category, date: m.date, siteId: m.siteId || null })),
         moonTransits: moonTransits?.snapshot({ camera, width: innerWidth, height: innerHeight }) || null,
         moonTransitDiscs: moonTransitDiscs?.snapshot({ camera, width: innerWidth, height: innerHeight }) || [],
         cameraWorldMatrix: camera.matrixWorld.toArray(),

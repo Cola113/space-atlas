@@ -78,6 +78,16 @@
         </button>
           <button
             class="icon-button"
+            id="moments-button"
+            aria-label="推荐观测时刻"
+            aria-haspopup="dialog"
+            aria-controls="moments-dialog"
+            data-tip="推荐观测时刻"
+          >
+            <i data-lucide="sparkles"></i><span>推荐观测时刻</span>
+          </button>
+          <button
+            class="icon-button"
             id="info-button"
             aria-label="资料来源"
             data-tip="资料来源"
@@ -109,9 +119,14 @@
             ><span>太阳系年龄 · 约</span>
           </div>
         </div>
-        <button class="text-action" id="explore-earth">
-          从地球出发<i data-lucide="arrow-up-right"></i>
-        </button>
+        <div class="intro-actions">
+          <button class="text-action" id="explore-earth">
+            从地球出发<i data-lucide="arrow-up-right"></i>
+          </button>
+          <button class="text-action text-action-secondary" id="explore-moments" aria-haspopup="dialog" aria-controls="moments-dialog">
+            推荐天象与观景<i data-lucide="sparkles"></i>
+          </button>
+        </div>
       </section>
 
       <aside id="planet-info" class="planet-info" hidden aria-labelledby="selected-name">
@@ -313,6 +328,9 @@
                   <button type="button" id="time-jump-apply">跳转</button>
                   <button type="button" id="time-jump-today">回到今天</button>
                 </div>
+                <button type="button" id="time-moments-button" class="time-moments-button" aria-haspopup="dialog" aria-controls="moments-dialog">
+                  <i data-lucide="sparkles"></i><span>推荐观测与天象时刻…</span>
+                </button>
               </div>
             </details>
           </div>
@@ -370,6 +388,28 @@
           <button id="atlas-easter-launch" type="button" class="atlas-easter-action">调频至 2077 · 前往第谷</button>
         </section>
       </section>
+
+      <dialog id="moments-dialog" aria-labelledby="moments-title">
+        <div class="moments-heading">
+          <div>
+            <span class="eyebrow">CURATED MOMENTS</span>
+            <h2 id="moments-title">推荐观测时刻</h2>
+          </div>
+          <button type="button" id="close-moments" aria-label="关闭推荐观测时刻">×</button>
+        </div>
+        <div class="moments-content">
+          <p class="moments-intro">
+            以下日期与镜头方向均由当前星历实时求解。瞬态天象到达后默认暂停，便于直接观察细节；按空格或播放键即可继续演变。
+          </p>
+          <div class="moments-live-bar">
+            <button type="button" id="find-next-jupiter-transit" class="moments-live-button">
+              <i data-lucide="sparkles"></i><span>从当前日期查找下一场木卫影凌</span>
+            </button>
+            <small id="moments-live-status" role="status"></small>
+          </div>
+          <div id="moments-list"></div>
+        </div>
+      </dialog>
 
       <dialog id="credits-dialog" aria-labelledby="credits-title">
         <button

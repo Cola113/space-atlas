@@ -278,6 +278,12 @@ export function createSurfaceSky({scene,renderer,site,parentMap,cloudMap,cloudLa
   // worlds for a reason the user can see.
   // Only a globe that already carries its day map can take the night patch: the term is
   // sampled with the map's own coordinates, and without a map that varying does not exist.
+  function syncEarthNightEntry(entry){
+    if(!frame?.targets?.Sun)return;
+    entry.globe.updateWorldMatrix(true,false);
+    entry.uniforms.uSurfaceSun.value.copy(frame.targets.Sun.direction)
+      .applyMatrix3(new THREE.Matrix3().setFromMatrix4(entry.globe.matrixWorld).invert()).normalize();
+  }
   function enableEarthNight(globe){
     if(!globe||!globe.material.map||globe.userData.earthNight)return;
     globe.userData.earthNight=true;
@@ -285,7 +291,9 @@ export function createSurfaceSky({scene,renderer,site,parentMap,cloudMap,cloudLa
       if(signal.aborted){nightMap.dispose();return;}
       nightMap.colorSpace=THREE.SRGBColorSpace;
       const uniforms=patchEarthNightMaterial(globe.material,nightMap);
-      earthNight.push({globe,uniforms});
+      const entry={globe,uniforms};
+      syncEarthNightEntry(entry);
+      earthNight.push(entry);
     },undefined,()=>{});
   }
   if(objects.has('Earth'))enableEarthNight(objects.get('Earth').globe);

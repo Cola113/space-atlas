@@ -10,6 +10,7 @@ const geographic = (latitude, longitude) => [
 
 export const landmarks = {
   sun: [
+    { id: 'sunspot-group', name: '太阳黑子群', dynamic: 'sunspot-group', zoom: 1.05, location: '中低纬活动带 / 差动自转示意', text: '黑子群在南北纬活动带内浮现并按纬度差动自转（赤道约 24.5 天，高纬更慢）。自转率采用 Snodgrass & Ulrich (1990) 经验公式，黑子位置与 11 年活动周为程序示意，非实时太阳观测或 MHD 模拟。', source: 'https://ui.adsabs.harvard.edu/abs/1990ApJ...351..309S/abstract' },
     { id: 'prominence', name: '日珥', dynamic: 'prominence', zoom: 1.5, location: '太阳边缘 / 磁场活动示意', text: '等离子体沿磁场形成拱环。标记对应当前模拟日珥，不代表实时太阳活动。', source: 'https://science.nasa.gov/blogs/the-sun-spot/2019/07/03/fridays-solar-prominence/' },
     { id: 'solar-eruption', name: '物质喷发', dynamic: 'solar-eruption', zoom: 2, location: '活动区域 / 喷发示意', text: '标记随当前模拟喷发出现和消失，位置与演示时间不代表实时观测。', source: 'https://science.nasa.gov/blogs/the-sun-spot/2019/07/03/fridays-solar-prominence/' },
   ],

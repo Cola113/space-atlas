@@ -2,7 +2,7 @@
 // This checks shader illumination and depth with pixels; full UI/terrain QA
 // remains in verify-landings.mjs. No diagnostic controls ship in the product.
 import {createServer} from 'vite';
-import {chromium} from 'playwright';
+import {launchBrowser} from './browser-launch.mjs';
 import {mkdir,readFile,writeFile} from 'node:fs/promises';
 import assert from 'node:assert/strict';
 
@@ -20,8 +20,8 @@ let previous,controller;
 window.inspectSky=async sample=>{
   controller?.abort();controller=new AbortController();
   if(previous)previous.traverse(o=>{o.geometry?.dispose();for(const m of [o.material].flat())m?.dispose();});
-  const scene=new THREE.Scene(),site=landingSites[sample.id],date=new Date(sample.date);
-  await physicalState.ensure(date,[site.id],{prefetch:false});
+  const scene=new THREE.Scene(),site=landingSites[sample.siteId||sample.id],date=new Date(sample.date);
+  await physicalState.ensure(date,[site.id,site.parent.toLowerCase(),...(site.id==='mars'?['phobos']:[])],{prefetch:false});
   const frame=surfaceFrame(site,date),target=frame.targets[site.parent];
   const camera=new THREE.PerspectiveCamera(THREE.MathUtils.radToDeg(target.angularDiameter)*1.5,1,10,3000);
   camera.lookAt(target.direction);camera.updateMatrixWorld();
@@ -34,28 +34,46 @@ window.inspectSky=async sample=>{
   for(const o of scene.children)if(o.material?.depthTest===false)o.visible=false;
   renderer.render(scene,camera);scene.updateMatrixWorld(true);
   const globe=scene.getObjectByName('surface-'+site.parent);
-  const sphere=new THREE.Sphere(globe.position.clone(),globe.scale.x);
+  const normalMatrix=new THREE.Matrix3().getNormalMatrix(globe.matrixWorld);
+  const invWorld=globe.matrixWorld.clone().invert();
+  const invLinear=new THREE.Matrix3().setFromMatrix4(invWorld);
   const foregroundSpheres=scene.children.filter(o=>o.name.startsWith('surface-')&&o!==globe).map(o=>{
     const t=frame.targets[o.name.slice(8)];return new THREE.Sphere(t.direction.clone().multiplyScalar(t.distanceKm),t.radiusKm);
   });
   const gl=renderer.getContext(),pixels=new Uint8Array(640*640*4);gl.readPixels(0,0,640,640,gl.RGBA,gl.UNSIGNED_BYTE,pixels);
   const light=new THREE.Vector3().fromArray(sample.targets[sample.parent].sunDirection||[1,0,0]);
-  const ray=new THREE.Raycaster(),point=new THREE.Vector3(),groups={day:[],night:[]};
+  const localLight=light.clone().applyMatrix3(invLinear).normalize();
+  const hasSaturnRing=site.parent==='Saturn';
+  const ray=new THREE.Raycaster(),groups={day:[],night:[],ringShadow:[]};
   for(let y=40;y<600;y+=4)for(let x=40;x<600;x+=4){
     ray.setFromCamera(new THREE.Vector2(2*(x+.5)/640-1,2*(y+.5)/640-1),camera);
-    if(!ray.ray.intersectSphere(sphere,point))continue;
+    const hit=ray.intersectObject(globe,false)[0];
+    if(!hit)continue;
+    const point=hit.point;
     const physicalHitDistance=point.length()*target.distanceKm/globe.position.length();
-    if(foregroundSpheres.some(s=>{const hit=ray.ray.intersectSphere(s,new THREE.Vector3());return hit&&hit.length()<physicalHitDistance;}))continue;
-    const normal=point.clone().sub(sphere.center).normalize();
+    if(foregroundSpheres.some(s=>{const fg=ray.ray.intersectSphere(s,new THREE.Vector3());return fg&&fg.length()<physicalHitDistance;}))continue;
+    const normal=hit.face.normal.clone().applyMatrix3(normalMatrix).normalize();
     if(normal.dot(ray.ray.direction.clone().negate())<.25)continue;
     const cosine=normal.dot(light),value=pixels[(y*640+x)*4];
-    if(cosine>.15)groups.day.push(value);else if(cosine<-.15)groups.night.push(value);
+    if(cosine>.15){
+      let inRingShadow=false;
+      if(hasSaturnRing&&Math.abs(localLight.y)>1e-4){
+        const lp=point.clone().applyMatrix4(invWorld);
+        const travel=-lp.y/localLight.y;
+        if(travel>0){
+          const r=Math.hypot(lp.x+localLight.x*travel,lp.z+localLight.z*travel);
+          if(r>1.08&&r<2.38)inRingShadow=true;
+        }
+      }
+      if(inRingShadow)groups.ringShadow.push(value);
+      else groups.day.push(value);
+    }else if(cosine<-.15)groups.night.push(value);
   }
   const stats=v=>{v.sort((a,b)=>a-b);return {count:v.length,min:v[0]??null,max:v.at(-1)??null,
     p01:v[Math.floor(v.length*.01)]??null,p99:v[Math.floor(v.length*.99)]??null,
     mean:v.length?v.reduce((s,n)=>s+n,0)/v.length:null};};
-  const snapshot={id:sample.id,date:sample.date,referencePhase:sample.targets[sample.parent].illuminatedFraction,
-    day:stats(groups.day),night:stats(groups.night),renderer:gl.getParameter(gl.RENDERER),glError:gl.getError(),
+  const snapshot={id:sample.siteId||sample.id,date:sample.date,referencePhase:sample.targets[sample.parent].illuminatedFraction,
+    day:stats(groups.day),night:stats(groups.night),ringShadow:stats(groups.ringShadow),renderer:gl.getParameter(gl.RENDERER),glError:gl.getError(),
     objects:scene.children.filter(o=>o.name.startsWith('surface-')).map(o=>o.name),image:renderer.domElement.toDataURL()};
   previous=scene;return snapshot;
 };
@@ -88,7 +106,7 @@ window.ready=true;
 
 const server=await createServer({server:{host:'127.0.0.1',port:5192,strictPort:true}});
 await server.listen();
-const browser=await chromium.launch({channel:'msedge',headless:true});
+const browser=await launchBrowser();
 const report=[];
 try{
   const page=await browser.newPage({viewport:{width:640,height:640}}),errors=[];
@@ -96,8 +114,8 @@ try{
   await page.goto('http://127.0.0.1:5192/data/science-audit/sky-render.html');
   await page.waitForFunction(()=>window.ready);
   const data=JSON.parse(await readFile('solar-system/tests/ground-audit-reference.json','utf8'));
-  for(const id of ['moon','io','europa','enceladus','titan','miranda','pluto']){
-    const samples=data.fixtures.filter(f=>f.id===id);
+  for(const id of ['moon','moon-farside','io','europa','enceladus','titan','miranda','pluto','charon']){
+    const samples=data.fixtures.filter(f=>(f.siteId||f.id)===id);
     for(const phase of [.1,.5,.9]){
       const sample=samples.reduce((best,f)=>Math.abs(f.targets[f.parent].illuminatedFraction-phase)<Math.abs(best.targets[best.parent].illuminatedFraction-phase)?f:best);
       const result=await page.evaluate(f=>window.inspectSky(f),sample);
@@ -116,8 +134,8 @@ try{
     }
     console.log(id,'independent phase pixel checks passed');
   }
-  const mars=await page.evaluate(f=>window.inspectSky(f),data.fixtures.find(f=>f.id==='mars'));
-  assert.ok(mars.objects.includes('surface-phobos')&&mars.objects.includes('surface-deimos'),'Mars must render both local moons');
+  const mars=await page.evaluate(f=>window.inspectSky(f),data.fixtures.find(f=>(f.siteId||f.id)==='mars'));
+  assert.ok(mars.objects.some(n=>/^surface-phobos$/i.test(n))&&mars.objects.some(n=>/^surface-deimos$/i.test(n)),`Mars must render both local moons: ${JSON.stringify(mars.objects)}`);
   assert.ok(report.find(f=>f.id==='pluto').objects.includes('surface-nix'),'Pluto must render its other satellites');
   const depth=[];
   for(const satellite of [false,true])for(const foreground of [true,false]){
