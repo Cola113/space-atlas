@@ -92,3 +92,28 @@ test('uploads wait for visibility while allowing another body to prepare in the 
   await Promise.all([hidden, normal]);
   queue.dispose();
 });
+
+test('thumbnail queue stays independent from a saturated heavy-texture queue and retries cleanly after failure', async () => {
+  const heavy = new ResourceQueue(2);
+  const thumbs = new ResourceQueue(4);
+  const releaseHeavy = [];
+  const h1 = heavy.run('8k_mars.jpg', () => new Promise(r => releaseHeavy.push(r)), { priority: 65 });
+  const h2 = heavy.run('2k_mars.jpg', () => new Promise(r => releaseHeavy.push(r)), { priority: 90 });
+  await turn();
+  assert.equal(heavy.snapshot().active, 2);
+
+  let thumbAttempts = 0;
+  await assert.rejects(
+    thumbs.run('phobos.webp', () => { thumbAttempts++; return Promise.reject(new Error('transient')); }),
+    /transient/,
+  );
+  const recovered = await thumbs.run('phobos.webp', () => { thumbAttempts++; return 'blob:phobos'; });
+  assert.equal(recovered, 'blob:phobos');
+  assert.equal(thumbAttempts, 2);
+  assert.equal(heavy.snapshot().active, 2, 'heavy queue remained busy while thumbnail loaded independently');
+
+  for (const r of releaseHeavy) r('done');
+  await Promise.all([h1, h2]);
+  heavy.dispose();
+  thumbs.dispose();
+});

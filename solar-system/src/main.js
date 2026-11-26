@@ -272,6 +272,8 @@ function disposeScene() {
   contextLost = true;
   observationGate?.dispose(); physicalState.dispose();
   thumbnailObserver?.disconnect();
+  for (const timer of thumbnailRetryTimers) clearTimeout(timer);
+  thumbnailRetryTimers.clear();
   frameWork.dispose();
   textureResources.dispose();
   detailSphere.dispose();
@@ -307,15 +309,53 @@ function landingBadge(body) {
     ? '<span class="landing-badge" title="可降落" aria-hidden="true"><i data-lucide="map-pin"></i></span>' : '';
 }
 
+const thumbnailRetryTimers = new Set();
+
+function applyThumbnailPreview(id, url) {
+  const body = objects.get(id);
+  if (!body || disposed || firstScreenIds.has(id)) return;
+  if (body.lowMap || body.mesh.material.map || highTextures.has(id) || body.thumbPreviewLoading) return;
+  body.thumbPreviewLoading = true;
+  const image = new Image();
+  image.src = url;
+  void image.decode().then(() => {
+    body.thumbPreviewLoading = false;
+    if (disposed || body.lowMap || body.mesh.material.map || highTextures.has(id)) return;
+    const preview = configureTexture(new THREE.Texture(image), true, true);
+    body.thumbPreviewMap = preview;
+    body.mesh.material.map = preview;
+    body.mesh.material.color.set('#ffffff');
+    body.mesh.material.needsUpdate = true;
+    dynamics?.refreshTextures(body.id);
+    if (state.selected === body.id) updateResolution(body);
+  }).catch(() => { body.thumbPreviewLoading = false; });
+}
+
 function startThumbnails() {
+  const attempts = new WeakMap();
   thumbnailObserver = new IntersectionObserver(entries => {
     for (const entry of entries) {
       if (!entry.isIntersecting) continue;
       const element = entry.target;
+      const id = element.dataset.thumbnail;
       thumbnailObserver.unobserve(element);
-      void textureResources.thumbnail(element.dataset.thumbnail).then(url => {
-        if (!disposed) element.style.setProperty('--texture', `url("${url}")`);
-      }).catch(() => { /* The named, coloured navigation button remains usable. */ });
+      void textureResources.thumbnail(id).then(url => {
+        if (disposed) return;
+        element.style.setProperty('--texture', `url("${url}")`);
+        // Reuse the already-fetched 2 KB equirectangular thumbnail as an instant
+        // temporary 3D map for moons/dwarf planets until their 2K texture arrives.
+        applyThumbnailPreview(id, url);
+      }).catch(() => {
+        // Retry transiently failed thumbnails with bounded backoff instead of leaving grey circles.
+        const count = (attempts.get(element) || 0) + 1;
+        attempts.set(element, count);
+        if (disposed || count > 3) return;
+        const timer = setTimeout(() => {
+          thumbnailRetryTimers.delete(timer);
+          if (!disposed && !element.style.getPropertyValue('--texture')) thumbnailObserver?.observe(element);
+        }, 1500 * count);
+        thumbnailRetryTimers.add(timer);
+      });
     }
   }, { rootMargin: '0px' });
   document.querySelectorAll('[data-thumbnail]').forEach(element => thumbnailObserver.observe(element));
@@ -602,7 +642,7 @@ function bodiesForTexture(key) {
 function usefulToUpload(body) {
   if (!body) return false;
   if (body.transitVisible) return true;
-  if (body.id === state.selected || (state.system && body.parent === state.selected)) return true;
+  if (body.id === state.selected || body.parent === state.selected) return true;
   const projected = projectBody(body);
   return projected.onScreen && !projected.occluded && projected.radius >= 2;
 }
@@ -613,6 +653,8 @@ function applyTexture(key, texture) {
     clearTextureFailure(preview.file);
   for (const body of bodiesForTexture(key)) {
     if (baseKey(body) === key) {
+      const tempPreview = body.thumbPreviewMap;
+      body.thumbPreviewMap = null;
       body.lowMap = texture;
       if (!highTextures.has(body.id) || (body.id === 'venus' && body.layerVisible)) {
         if (body.id !== 'venus' || body.layerVisible) body.mesh.material.map = texture;
@@ -620,6 +662,7 @@ function applyTexture(key, texture) {
       body.mesh.material.color.set('#ffffff');
       if (['mercury', 'mars'].includes(body.id)) body.mesh.material.bumpMap = body.mesh.material.map;
       body.mesh.material.needsUpdate = true;
+      tempPreview?.dispose();
     }
     if (key === '2k_venus_surface.jpg') {
       body.surfaceMap = texture;
@@ -705,19 +748,30 @@ function requestBody(body, priority = 0) {
   return promise;
 }
 
+function highTexturePriority(body, retry = false) {
+  if (retry) return 100;
+  // When viewing a primary planet with satellites from orbital range, its first-screen
+  // preview / 2K map is already visible; let nearby satellites fetch their base textures
+  // (priority 80) before multi-megabyte 8K upgrades occupy the queue.
+  const hasSatellites = !state.close && !body.parent && systemMembers(body.id).length > 1;
+  return hasSatellites ? 65 : 85;
+}
+
 function prioritizeObservation(body) {
   const family = familyOf(body);
   const members = family ? systemMembers(family.id).map(item => objects.get(item.id)) : [body];
   textureResources.queue.setPaused(true);
   for (const item of objects.values()) {
-    const priority = item.id === body.id ? 90 : members.includes(item) ? 60 : 0;
-    for (const key of [baseKey(item), item.high].filter(Boolean)) textureResources.queue.reprioritize(textureRoot + key, priority);
+    const priority = item.id === body.id ? 90 : members.includes(item) ? 80 : 0;
+    const highPriority = item.id === body.id ? highTexturePriority(item) : 0;
+    textureResources.queue.reprioritize(textureRoot + baseKey(item), priority);
+    if (item.high) textureResources.queue.reprioritize(textureRoot + item.high, highPriority);
     frameWork.reprioritize(`body:${item.id}`, priority);
     frameWork.reprioritize(`upload:${baseKey(item)}`, priority);
-    frameWork.reprioritize(`high:${item.id}`, priority);
+    frameWork.reprioritize(`high:${item.id}`, highPriority);
   }
   void requestBody(body, 90);
-  for (const member of members) if (member !== body) void requestBody(member, 60);
+  for (const member of members) if (member !== body) void requestBody(member, 80);
   for (const key of body.id === 'earth' ? ['2k_earth_clouds.jpg', 'earth_night_2016.jpg']
     : body.id === 'saturn' ? ['2k_saturn_ring_alpha.png']
       : body.id === 'titan' ? ['2k_titan-haze.png'] : []) void requestBaseTexture(key, 75);
@@ -734,7 +788,7 @@ function startBackgroundResources() {
   startThumbnails();
   const family = familyOf(selected);
   const related = new Set(family ? systemMembers(family.id).map(body => body.id) : []);
-  for (const body of objects.values()) void requestBody(body, body.id === state.selected ? 90 : related.has(body.id) ? 60 : 0);
+  for (const body of objects.values()) void requestBody(body, body.id === state.selected ? 90 : related.has(body.id) ? 80 : 0);
   for (const key of ['2k_earth_clouds.jpg', 'earth_night_2016.jpg', '2k_saturn_ring_alpha.png', '2k_titan-haze.png'])
     void requestBaseTexture(key, -5);
   starfield.loadBackground();
@@ -1441,7 +1495,7 @@ async function loadHighTexture(body, retry = false) {
   if (highInFlight.has(body.id)) return highInFlight.get(body.id);
   const promise = (async () => {
     try {
-      const loaded = await textureResources.texture(textureRoot + body.high, { priority: retry ? 100 : 85, timeout: 30000, preempt: retry });
+      const loaded = await textureResources.texture(textureRoot + body.high, { priority: highTexturePriority(body, retry), timeout: 30000, preempt: retry });
       if (disposed) return;
       highTextures.set(body.id, loaded);
       clearTextureFailure(body.high);
@@ -1482,17 +1536,20 @@ function queueHighTexture(body, texture) {
     if (!current) return;
     renderer.initTexture(current);
     applyHighTexture(body);
-  }, { priority: body.id === state.selected ? 85 : 0,
+  }, { priority: body.id === state.selected ? highTexturePriority(body) : 0,
     visible: () => highTextures.get(body.id) !== texture || usefulToUpload(body) }).catch(() => {});
 }
 
 function applyHighTexture(body) {
   if (body.id !== "venus" || !body.layerVisible) {
+    const tempPreview = body.thumbPreviewMap;
+    body.thumbPreviewMap = null;
     body.mesh.material.map = highTextures.get(body.id);
     body.mesh.material.color.set('#ffffff');
     if (body.mesh.material.bumpMap)
       body.mesh.material.bumpMap = body.mesh.material.map;
     body.mesh.material.needsUpdate = true;
+    tempPreview?.dispose();
   }
   if (state.selected === body.id) updateResolution(body);
 }
@@ -2992,12 +3049,18 @@ async function init() {
       const retries = [...textureFailures.values()];
       $('resource-retry').disabled = true;
       $('resource-retry').textContent = '正在重试';
+      document.querySelectorAll('[data-thumbnail]').forEach(element => {
+        if (!element.style.getPropertyValue('--texture')) thumbnailObserver?.observe(element);
+      });
       await Promise.allSettled(retries.map(retry => retry()));
       $('resource-retry').disabled = false;
       $('resource-retry').textContent = '重试纹理';
       updateResourceStatus();
     });
-    document.addEventListener('visibilitychange', () => textureResources.queue.setPaused(document.hidden));
+    document.addEventListener('visibilitychange', () => {
+      textureResources.queue.setPaused(document.hidden);
+      textureResources.thumbQueue.setPaused(document.hidden);
+    });
     requestAnimationFrame(animate);
     window.solarAtlas = {
       snapshot: () => ({

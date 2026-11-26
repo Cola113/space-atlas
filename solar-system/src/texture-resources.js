@@ -13,6 +13,7 @@ export const firstScreenIds = new Set(firstScreenTextures.slice(0, 9).map(item =
 
 export function createTextureResources(configure) {
   const queue = new ResourceQueue(4);
+  const thumbQueue = new ResourceQueue(4);
   const textures = new Set();
   const urls = new Set();
   let disposed = false;
@@ -43,20 +44,22 @@ export function createTextureResources(configure) {
     }, { priority, timeout, preempt });
   }
   return {
-    queue, texture,
+    queue, thumbQueue, texture,
+    // Small 1–5 KB dock/atlas thumbnails use their own lightweight queue so they
+    // never stall behind 2K–8K planet maps or live cloud requests.
     thumbnail(id) {
       const url = `${textureRoot}thumbnails/${id}.webp`;
-      return queue.run(url, async signal => {
+      return thumbQueue.run(url, async signal => {
         const value = await blob(url, signal);
         signal.throwIfAborted();
         const imageUrl = URL.createObjectURL(value);
         urls.add(imageUrl);
         return imageUrl;
-      }, { priority: 5, timeout: 8000 });
+      }, { priority: 10, timeout: 12000 });
     },
     release(url, value) { queue.forget(url); textures.delete(value); value?.dispose(); },
     dispose() {
-      disposed = true; queue.dispose();
+      disposed = true; queue.dispose(); thumbQueue.dispose();
       for (const value of textures) value.dispose();
       for (const url of urls) URL.revokeObjectURL(url);
       textures.clear(); urls.clear();
