@@ -2810,7 +2810,7 @@ function animate(now) {
     }
   }
   if (flight) {
-    if (!state.atlas && !infoDialogOpen()) flight.elapsed += dt * 1000;
+    if (!state.atlas && !infoDialogOpen()) flight.elapsed += Math.min(elapsed, 250);
     const t =
       flight.duration === 0 ? 1 : Math.min(flight.elapsed / flight.duration, 1);
     const eased = smoothProgress(t);

@@ -46,7 +46,7 @@ test('overview preserves physical latitude, eccentricity, orientation and Sun di
 test('missing required data hides bodies and never produces a placeholder physical orbit',()=>{
   const provider=localPhysics(),objects=scene();
   updateDisplayState(objects,provider.frame(new Date('1971-08-01')));
-  for(const id of ['pluto','charon','nix','enceladus','titan','miranda','triton','phobos']){
+  for(const id of ['pluto','charon','nix','enceladus','titan','iapetus','miranda','triton','phobos']){
     assert.equal(objects.get(id).root.visible,false,id);
     assert.equal(objects.get(id).physicalAvailable,false,id);
   }

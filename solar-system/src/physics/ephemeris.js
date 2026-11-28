@@ -1,6 +1,6 @@
 export const EPHEMERIS_YEARS = Object.freeze({ first: 1900, last: 2100 });
 export const EPHEMERIS_SYSTEMS = Object.freeze({
-  enceladus: 'saturn', titan: 'saturn', miranda: 'uranus', triton: 'neptune', pluto: 'pluto', charon: 'pluto',
+  enceladus: 'saturn', titan: 'saturn', iapetus: 'saturn', miranda: 'uranus', triton: 'neptune', pluto: 'pluto', charon: 'pluto',
   ceres: 'ceres', phobos: 'phobos',
 });
 export const EPHEMERIS_SYSTEM_IDS = Object.freeze(Object.keys(EPHEMERIS_SYSTEMS).concat(['saturn','uranus','neptune']));

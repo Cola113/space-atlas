@@ -28,7 +28,7 @@ CACHE = ROOT / 'data' / 'jpl'
 DEST = ROOT / 'public' / 'ephemeris'
 BASE = 'https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/'
 SOURCES = {
-    'saturn': ('sat441.bsp', {602, 606, 699}),
+    'saturn': ('sat441.bsp', {602, 606, 608, 699}),
     'uranus': ('ura184_part-3.bsp', {705, 799}),
     'neptune': ('nep098_part-1.bsp', {801, 899}),
     'pluto': ('plu060.bsp', {9, 10, 901, 999}),
@@ -96,7 +96,7 @@ def excerpt(system, filename, targets):
         return path
     print(f'Extracting {filename}: targets {sorted(targets)}', flush=True)
     remote = RangeFile(BASE + filename)
-    if system in ('phobos', 'neptune'):
+    if system in ('saturn', 'phobos', 'neptune'):
         remote.BLOCK = 4 * 1024 * 1024
     source = SPK(DAF(remote))
     summaries = [summary for summary, segment in zip(source.daf.summaries(), source.segments) if segment.target in targets]

@@ -8,6 +8,7 @@ import { orbitalElements } from '../solar-system/src/physics/kepler.js';
 const root = new URL('../public/ephemeris/', import.meta.url);
 const GM = { sun:1.3271244004127942e11, saturn:3.793120623436167e7, uranus:5.793951256527211e6,
   neptune:6.835103145462294e6, enceladus:7.210366688598896, titan:8978.137095521046,
+  iapetus:120.5151060137642,
   miranda:4.3195168992321, triton:1428.495462910464,
   pluto:869.6138177608748, charon:105.8799888601881, ceres:62.628888644409933,
   marsSystem:42828.3758157561 };
@@ -29,6 +30,7 @@ for (const [boundary,date] of [['first','1900-01-01T00:00:00Z'],['last','2101-01
   const tracks = {
     enceladus:[relative('saturn',602,699,6),GM.saturn+GM.enceladus],
     titan:[relative('saturn',606,699,6),GM.saturn+GM.titan],
+    iapetus:[relative('saturn',608,699,6),GM.saturn+GM.iapetus],
     miranda:[relative('uranus',705,799,7),GM.uranus+GM.miranda],
     triton:[relative('neptune',801,899,8),GM.neptune+GM.triton],
     charon:[relative('pluto',901,999,9),GM.pluto+GM.charon],

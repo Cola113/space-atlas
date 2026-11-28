@@ -290,7 +290,7 @@
   .surface-location p { font-size: 9px; }
   .surface-bearing { display: none; }
   .surface-hint { display: none; }
-  .surface-view .surface-footer { row-gap: 6px; }
+  .surface-view .surface-footer { row-gap: 8px; }
   .surface-actions { flex-wrap: nowrap; }
   .surface-view .surface-actions button { font-size: 11px; padding: 8px; gap: 5px; }
   .surface-actions svg { display: none; }

@@ -1,5 +1,5 @@
 {
-  "source": "JPL SAT441 / URA184 / PLU060 yearly polynomial bundles and the Horizons-generated Ceres bundle; see public/ephemeris/manifest.json; Phobos: original MAR099 yearly records; Triton: original NEP098 yearly records",
+  "source": "JPL SAT441 / URA184 / NEP098 / PLU060 yearly polynomial bundles and the Horizons-generated Ceres bundle; see public/ephemeris/manifest.json; Phobos: original MAR099 yearly records",
   "gmSource": "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/gm_de440.tpc",
   "frame": "J2000",
   "units": "km, s",
@@ -11,12 +11,12 @@
     "first": {
       "date": "1900-01-01T00:00:00Z",
       "sourceSha256": {
-        "saturn": "6f84c566e18bdc0f2c3c4221a913c7ba8fe398a02776203c521e347c3ad14345",
+        "saturn": "38f1cb36a86044cebf4f6dd59518e5af3f4ba4dba5bb51966d56d6f6db1957c8",
         "uranus": "89dc848c28154ecc764edaef3eb3ec785bcfb33c3d38ea91b78c42dcd41be518",
+        "neptune": "d1abb1cded3ad9b8c2e4fc1120c2306f745ed2519cbaead2a0f7cf514e662bb3",
         "pluto": "81cb1a69a4de1658a924661f4ff0eec0199adaa1b7cdbb277ada19e0d5398ac2",
         "ceres": "0f897dc1f9b443bf691dedf07c46b5ade857d5b106244afcf37f1da5742b5e01",
-        "phobos": "3260a08480facc483192b13e880431a4ed5e2865ee6f8a24236367bccf03cc5f",
-        "neptune": "d1abb1cded3ad9b8c2e4fc1120c2306f745ed2519cbaead2a0f7cf514e662bb3"
+        "phobos": "3260a08480facc483192b13e880431a4ed5e2865ee6f8a24236367bccf03cc5f"
       },
       "elements": {
         "enceladus": {
@@ -55,6 +55,24 @@
           "epochTdbSeconds": -3155716802.7589946,
           "gmKm3S2": 37940184.37145719
         },
+        "iapetus": {
+          "aKm": 3558879.7789330003,
+          "e": 0.02796017500501563,
+          "p": [
+            0.9816537420838538,
+            -0.002630543832349025,
+            -0.1906541656820347
+          ],
+          "q": [
+            0.030614734720681047,
+            0.9891063125005682,
+            0.14398416784324108
+          ],
+          "meanAnomaly": 1.2944575841496833,
+          "meanMotion": 9.17337274049285e-7,
+          "epochTdbSeconds": -3155716802.7589946,
+          "gmKm3S2": 37931326.749467686
+        },
         "miranda": {
           "aKm": 129871.74036368645,
           "e": 0.0011995154422362931,
@@ -72,6 +90,24 @@
           "meanMotion": 0.000051429889346370024,
           "epochTdbSeconds": -3155716802.7589946,
           "gmKm3S2": 5793955.57604411
+        },
+        "triton": {
+          "aKm": 354767.78922538285,
+          "e": 0.00014746704627916505,
+          "p": [
+            -0.8832172799228275,
+            0.11629731694723176,
+            0.4543150564493731
+          ],
+          "q": [
+            0.45190862570258433,
+            0.4699474254073659,
+            0.7582400750214869
+          ],
+          "meanAnomaly": 0.4610074665029472,
+          "meanMotion": 0.00001237375867190327,
+          "epochTdbSeconds": -3155716802.7589946,
+          "gmKm3S2": 6836531.640925204
         },
         "charon": {
           "aKm": 19594.42489883057,
@@ -127,11 +163,6 @@
           "epochTdbSeconds": -3155716802.7589946,
           "gmKm3S2": 132712440103.90831
         },
-        "plutoResidualKm": [
-          -3.361902225055246,
-          -3.2261210152646527,
-          -0.6035265562764494
-        ],
         "phobos": {
           "aKm": 9377.87436752721,
           "e": 0.014716132341760096,
@@ -150,35 +181,22 @@
           "epochTdbSeconds": -3155716802.7589946,
           "gmKm3S2": 42828.3758157561
         },
-        "triton": {
-          "aKm": 354767.78922538285,
-          "e": 0.00014746704627916505,
-          "p": [
-            -0.8832172799228275,
-            0.11629731694723176,
-            0.4543150564493731
-          ],
-          "q": [
-            0.45190862570258433,
-            0.4699474254073659,
-            0.7582400750214869
-          ],
-          "meanAnomaly": 0.4610074665029472,
-          "meanMotion": 0.00001237375867190327,
-          "epochTdbSeconds": -3155716802.7589946,
-          "gmKm3S2": 6836531.640925204
-        }
+        "plutoResidualKm": [
+          -3.361902225055246,
+          -3.2261210152646527,
+          -0.6035265562764494
+        ]
       }
     },
     "last": {
       "date": "2101-01-01T00:00:00Z",
       "sourceSha256": {
-        "saturn": "0f2de4f937fb2836face60beafb55caf703af6cc748508c4cf37e959f879f4ef",
+        "saturn": "ac74a5f978ad65e4d60f5abdacc2774be8415ff183809bb6e92885e69745b186",
         "uranus": "264f805cea5388e1a8bc2bcd6f68ab7172ae9d3f82f5688bf75e937df1c7a453",
+        "neptune": "2ebec2bf11e66ade7cad0fed44396f5e5d028aac549169af438617ab7a029001",
         "pluto": "5aefac35fefd1cf4d88253a5c0918ffa4357cd698145eb72a5816a63ae2df9ea",
         "ceres": "92eccb76808c63bacb412d37cd17a46945adbc3fbe587392679839fc6f223d7c",
-        "phobos": "be8b15761a8659e4155e8d62ab4cec3e5d093f4cc7bc6196954eaaf53c91c49a",
-        "neptune": "2ebec2bf11e66ade7cad0fed44396f5e5d028aac549169af438617ab7a029001"
+        "phobos": "be8b15761a8659e4155e8d62ab4cec3e5d093f4cc7bc6196954eaaf53c91c49a"
       },
       "elements": {
         "enceladus": {
@@ -217,6 +235,24 @@
           "epochTdbSeconds": 3187252869.183877,
           "gmKm3S2": 37940184.37145719
         },
+        "iapetus": {
+          "aKm": 3562169.7821140545,
+          "e": 0.028789589322414492,
+          "p": [
+            0.9290405756576471,
+            0.3523827803993865,
+            -0.11273856864314571
+          ],
+          "q": [
+            -0.3163052823537423,
+            0.9145618366669993,
+            0.25204685133404076
+          ],
+          "meanAnomaly": -2.7552931158115466,
+          "meanMotion": 9.160666949790068e-7,
+          "epochTdbSeconds": 3187252869.183877,
+          "gmKm3S2": 37931326.749467686
+        },
         "miranda": {
           "aKm": 129870.98346762067,
           "e": 0.0015730285979715926,
@@ -234,6 +270,24 @@
           "meanMotion": 0.00005143033895185449,
           "epochTdbSeconds": 3187252869.183877,
           "gmKm3S2": 5793955.57604411
+        },
+        "triton": {
+          "aKm": 354766.69138512143,
+          "e": 0.00014462855776660772,
+          "p": [
+            0.12130626566894513,
+            0.6932548381603161,
+            0.7104101064010626
+          ],
+          "q": [
+            0.7262084882010621,
+            0.4259218520857085,
+            -0.5396404428697013
+          ],
+          "meanAnomaly": -0.43691927936711283,
+          "meanMotion": 0.00001237381610861292,
+          "epochTdbSeconds": 3187252869.183877,
+          "gmKm3S2": 6836531.640925204
         },
         "charon": {
           "aKm": 19594.42823793458,
@@ -289,11 +343,6 @@
           "epochTdbSeconds": 3187252869.183877,
           "gmKm3S2": 132712440103.90831
         },
-        "plutoResidualKm": [
-          -1.9506133852626135,
-          -2.3676134259817445,
-          -3.655022006714944
-        ],
         "phobos": {
           "aKm": 9378.701737556723,
           "e": 0.014902410843401681,
@@ -312,24 +361,11 @@
           "epochTdbSeconds": 3187252869.183877,
           "gmKm3S2": 42828.3758157561
         },
-        "triton": {
-          "aKm": 354766.69138512143,
-          "e": 0.00014462855776660772,
-          "p": [
-            0.12130626566894513,
-            0.6932548381603161,
-            0.7104101064010626
-          ],
-          "q": [
-            0.7262084882010621,
-            0.4259218520857085,
-            -0.5396404428697013
-          ],
-          "meanAnomaly": -0.43691927936711283,
-          "meanMotion": 0.00001237381610861292,
-          "epochTdbSeconds": 3187252869.183877,
-          "gmKm3S2": 6836531.640925204
-        }
+        "plutoResidualKm": [
+          -1.9506133852626135,
+          -2.3676134259817445,
+          -3.655022006714944
+        ]
       }
     }
   }

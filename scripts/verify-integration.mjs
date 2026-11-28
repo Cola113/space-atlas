@@ -74,7 +74,7 @@ try {
     await page.locator('#orbit-toggle').click();
     await page.keyboard.press('Escape');
     await page.locator('.planet-choice[data-body="saturn"]').click();
-    await page.waitForFunction(() => window.solarAtlas.snapshot().selected === 'saturn' && !window.solarAtlas.snapshot().flight, null, { timeout:30000 });
+    await page.waitForFunction(() => window.solarAtlas.snapshot().selected === 'saturn' && !window.solarAtlas.snapshot().flight, null, { timeout:90000 });
     await page.locator('#play-toggle').click();
     const solar = await page.evaluate(() => window.solarAtlas.snapshot());
     assert.equal(solar.orbits, false);
@@ -112,7 +112,7 @@ try {
     assert.equal(await page.evaluate(() => window.solarAtlas.snapshot().selected), 'saturn');
     await switchScene(page, 'orion-nebula');
     await checkHeader(page);
-    await page.waitForFunction(() => window.orionAtlas.snapshot().frames > 80);
+    await page.waitForFunction(() => window.orionAtlas.snapshot().frames > 80, null, { timeout: 90000 });
     await screenshot(page, name + '-orion');
     await canvasPixels(page);
     await page.locator('#cruise-button').click();

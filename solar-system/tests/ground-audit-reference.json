@@ -200,6 +200,102 @@
           "header": "*******************************************************************************\n Revised: April 12, 2021               Jupiter                              599\n \n PHYSICAL DATA (revised 2025-Jan-30):\n  Mass x 10^26 (kg)     = 18.9819           Density (g/cm^3)  = 1.3262 +- .0003\n  Equat. radius (1 bar) = 71492+-4 km       Polar radius (km)     = 66854+-10\n  Vol. Mean Radius (km) = 69911+-6          Flattening            = 0.06487\n  Geometric Albedo      = 0.52              Rocky core mass (Mc/M)= 0.0261\n  Sid. rot. period (III)= 9h 55m 29.711 s   Sid. rot. rate (rad/s)= 0.00017585\n  Mean solar day, hrs   = ~9.9259         \n  GM (km^3/s^2)         = 126686531.900     GM 1-sigma (km^3/s^2) =  +- 1.2732\n  Equ. grav, ge (m/s^2) = 24.79             Pol. grav, gp (m/s^2) =  28.34\n  Vis. magnitude V(1,0) = -9.40\n  Vis. mag. (opposition)= -2.70             Obliquity to orbit    =  3.13 deg\n  Sidereal orbit period = 11.861982204 y    Sidereal orbit period = 4332.589 d\n  Mean daily motion     = 0.0831294 deg/d   Mean orbit speed, km/s= 13.0697\n  Atmos. temp. (1 bar)  = 165+-5 K          Escape speed, km/s    =  59.5           \n  A_roche(ice)/Rp       =  2.76             Hill's sphere rad. Rp = 740\n                                 Perihelion   Aphelion     Mean\n  Solar Constant (W/m^2)         56           46           51\n  Maximum Planetary IR (W/m^2)   13.7         13.4         13.6\n  Minimum Planetary IR (W/m^2)   13.7         13.4         13.6\n*******************************************************************************\n\n\n*******************************************************************************\nEphemeris / API_USER Sat Sep 26 19:10:17 2026 Pasadena, USA      / Horizons\n*******************************************************************************\nTarget body name: Jupiter (599)                   {source: jup365_merged}\nCenter body name: Sun (10)                        {source: jup365_merged}\nCenter-site name: BODY CENTER\n*******************************************************************************\nStart time      : A.D. 2026-Sep-24 14:21:02.5424 TDB\nStop  time      : A.D. 2101-Jan-01 00:01:08.1839 TDB\nStep-size       : DISCRETE TIME-LIST\n*******************************************************************************\nCenter geodetic : 0.0, 0.0, 0.0                   {E-lon(deg),Lat(deg),Alt(km)}\nCenter cylindric: 0.0, 0.0, 0.0                   {E-lon(deg),Dxy(km),Dz(km)}\nCenter radii    : 695700.0, 695700.0, 695700.0 km {Equator_a, b, pole_c}\nOutput units    : KM-S\nCalendar mode   : Mixed Julian/Gregorian\nOutput type     : GEOMETRIC cartesian states\nOutput format   : 2 (position and velocity)\nReference frame : ICRF\n*******************************************************************************\n            JDTDB,            Calendar Date (TDB),                      X,                      Y,                      Z,                     VX,                     VY,                     VZ,\n**************************************************************************************************************************************************************************************************\n"
         }
       ]
+    },
+    "triton": {
+      "requests": [
+        {
+          "url": "https://ssd.jpl.nasa.gov/api/horizons.api",
+          "query": {
+            "format": "json",
+            "COMMAND": "801",
+            "CENTER": "500@10",
+            "MAKE_EPHEM": "YES",
+            "EPHEM_TYPE": "VECTORS",
+            "TIME_TYPE": "TDB",
+            "REF_PLANE": "FRAME",
+            "REF_SYSTEM": "ICRF",
+            "VEC_TABLE": "2",
+            "VEC_CORR": "NONE",
+            "OUT_UNITS": "KM-S",
+            "CSV_FORMAT": "YES",
+            "TLIST": "'2415020.499968067277 2415385.499972161371 2441165.208816804923 2451545.000742869452 2461310.417467388324 2461311.152074136306 2461311.886680883821 2461312.621287631337 2461313.355894378852 2461314.090501138475 2461314.825107885990 2461315.559714633506 2461316.294321381487 2461317.028928129002 2461317.763534888159 2461318.498141636141 2461319.232748383656 2461319.967355131172 2461320.701961879153 2461321.436568638310 2461322.171175385825 2461322.905782133806 2461323.640388881322 2461324.374995628837 2461325.109602388460 2461325.844209135976 2461326.578815883957 2461327.313422631472 2461328.048029378988 2461328.782636138611 2461329.517242886126 2461330.251849634107 2461330.986456381623 2461331.721063129604 2461332.455669888761 2461333.190276636276 2461333.924883384258 2488434.500789165031'"
+          },
+          "sha256": "2a72271772618a83fb844251796c3f3ed0ddc03bd92f7eb0a724a2f9f6da24fe",
+          "header": "*******************************************************************************\n Revised: Jul 08, 2026             Triton / (Neptune)                       801\n\n SATELLITE PHYSICAL PROPERTIES:\n  Mean radius (km)        = 1352.6 +- 2.4    Mean dens (g cm^-3)= 2.065 +-0.011\n  GM (km^3/s^2)           = 1428.495 +- 0.62 Geometric Albedo   = 0.7  \n                                             V(1,0)             = -1.24\n\n SATELLITE ORBITAL DATA (mean values wrt Laplace plane):\n  Semi-major axis, a (km) = 354800           Orbital period      = 5.876994 d\n  Eccentricity, e         = 0.000            Rotational period   = Synchronous\n  Inclination, i  (deg)   = 157.3  \n\n Fit to all reported measurements (Voyager 2, ground, HST)\n*******************************************************************************\n\n\n*******************************************************************************\nEphemeris / API_USER Fri Nov 27 20:12:31 2026 Pasadena, USA      / Horizons\n*******************************************************************************\nTarget body name: Triton (801)                    {source: nep098_merged}\nCenter body name: Sun (10)                        {source: nep098_merged}\nCenter-site name: BODY CENTER\n*******************************************************************************\nStart time      : A.D. 1899-Dec-31 23:59:57.2410 TDB\nStop  time      : A.D. 2101-Jan-01 00:01:08.1839 TDB\nStep-size       : DISCRETE TIME-LIST\n*******************************************************************************\nCenter geodetic : 0.0, 0.0, 0.0                   {E-lon(deg),Lat(deg),Alt(km)}\nCenter cylindric: 0.0, 0.0, 0.0                   {E-lon(deg),Dxy(km),Dz(km)}\nCenter radii    : 695700.0, 695700.0, 695700.0 km {Equator_a, b, pole_c}\nOutput units    : KM-S\nCalendar mode   : Mixed Julian/Gregorian\nOutput type     : GEOMETRIC cartesian states\nOutput format   : 2 (position and velocity)\nReference frame : ICRF\n*******************************************************************************\n            JDTDB,            Calendar Date (TDB),                      X,                      Y,                      Z,                     VX,                     VY,                     VZ,\n**************************************************************************************************************************************************************************************************\n"
+        }
+      ]
+    },
+    "neptune": {
+      "requests": [
+        {
+          "url": "https://ssd.jpl.nasa.gov/api/horizons.api",
+          "query": {
+            "format": "json",
+            "COMMAND": "899",
+            "CENTER": "500@10",
+            "MAKE_EPHEM": "YES",
+            "EPHEM_TYPE": "VECTORS",
+            "TIME_TYPE": "TDB",
+            "REF_PLANE": "FRAME",
+            "REF_SYSTEM": "ICRF",
+            "VEC_TABLE": "2",
+            "VEC_CORR": "NONE",
+            "OUT_UNITS": "KM-S",
+            "CSV_FORMAT": "YES",
+            "TLIST": "'2415020.499968067277 2415385.499972161371 2441165.208816804923 2451545.000742869452 2461310.417467388324 2461311.152074136306 2461311.886680883821 2461312.621287631337 2461313.355894378852 2461314.090501138475 2461314.825107885990 2461315.559714633506 2461316.294321381487 2461317.028928129002 2461317.763534888159 2461318.498141636141 2461319.232748383656 2461319.967355131172 2461320.701961879153 2461321.436568638310 2461322.171175385825 2461322.905782133806 2461323.640388881322 2461324.374995628837 2461325.109602388460 2461325.844209135976 2461326.578815883957 2461327.313422631472 2461328.048029378988 2461328.782636138611 2461329.517242886126 2461330.251849634107 2461330.986456381623 2461331.721063129604 2461332.455669888761 2461333.190276636276 2461333.924883384258 2488434.500789165031'"
+          },
+          "sha256": "d545e4bb8c8a30e846cf590ea68338e53b9bc559f32784969ad14907c14db46e",
+          "header": "*******************************************************************************\n Revised: July 08, 2026               Neptune                               899\n \n PHYSICAL DATA:\n  Mass x10^24 (kg)      = 102.409         Density (g/cm^3)       =  1.638\n  Equat. radius (1 bar) = 24766+-15 km    Volume, 10^10 km^3     = 6254     \n  Vol. mean radius (km) = 24624+-21       Polar radius (km)      = 24342+-30\n  Geometric Albedo      = 0.41            Flattening             =  0.0171\n  Sid. rot. period (III)= 16.11+-0.01 hr  Sid. rot. rate (rad/s) =  0.000108338 \n  Mean solar day, h     =~16.11 h         \n  GM (km^3/s^2)         = 6835099.97      GM 1-sigma (km^3/s^2)  = +-10 \n  Equ. grav, ge (m/s^2) = 11.15           Pol. grav, gp (m/s^2)  = 11.41+-0.03\n  Visual magnitude V(1,0)= -6.87\n  Vis. mag. (opposition)=  +7.84          Obliquity to orbit     = 28.32 deg\n  Sidereal orbit period = 164.788501027 y Sidereal orbit period  = 60189 d\n  Mean daily motion     = 0.006020076dg/d Mean orbit velocity    =  5.43 km/s \n  Atmos. temp. (1 bar)  =  72+-2 K        Escape speed (1 bar)  =  23.5 km/s     \n  Aroche(ice)/Rp        =  2.98           Hill's sphere rad., Rp = 4700\n                                 Perihelion  Aphelion    Mean\n  Solar Constant (W/m^2)         1.54        1.49        1.51\n  Maximum Planetary IR (W/m^2)   0.52        0.52        0.52\n  Minimum Planetary IR (W/m^2)   0.52        0.52        0.52\n*******************************************************************************\n\n\n*******************************************************************************\nEphemeris / API_USER Fri Nov 27 20:12:32 2026 Pasadena, USA      / Horizons\n*******************************************************************************\nTarget body name: Neptune (899)                   {source: nep098_merged}\nCenter body name: Sun (10)                        {source: nep098_merged}\nCenter-site name: BODY CENTER\n*******************************************************************************\nStart time      : A.D. 1899-Dec-31 23:59:57.2410 TDB\nStop  time      : A.D. 2101-Jan-01 00:01:08.1839 TDB\nStep-size       : DISCRETE TIME-LIST\n*******************************************************************************\nCenter geodetic : 0.0, 0.0, 0.0                   {E-lon(deg),Lat(deg),Alt(km)}\nCenter cylindric: 0.0, 0.0, 0.0                   {E-lon(deg),Dxy(km),Dz(km)}\nCenter radii    : 695700.0, 695700.0, 695700.0 km {Equator_a, b, pole_c}\nOutput units    : KM-S\nCalendar mode   : Mixed Julian/Gregorian\nOutput type     : GEOMETRIC cartesian states\nOutput format   : 2 (position and velocity)\nReference frame : ICRF\n*******************************************************************************\n            JDTDB,            Calendar Date (TDB),                      X,                      Y,                      Z,                     VX,                     VY,                     VZ,\n**************************************************************************************************************************************************************************************************\n"
+        }
+      ]
+    },
+    "iapetus": {
+      "requests": [
+        {
+          "url": "https://ssd.jpl.nasa.gov/api/horizons.api",
+          "query": {
+            "format": "json",
+            "COMMAND": "608",
+            "CENTER": "500@10",
+            "MAKE_EPHEM": "YES",
+            "EPHEM_TYPE": "VECTORS",
+            "TIME_TYPE": "TDB",
+            "REF_PLANE": "FRAME",
+            "REF_SYSTEM": "ICRF",
+            "VEC_TABLE": "2",
+            "VEC_CORR": "NONE",
+            "OUT_UNITS": "KM-S",
+            "CSV_FORMAT": "YES",
+            "TLIST": "'2415020.499968067277 2415385.499972161371 2441165.208816804923 2451545.000742869452 2462988.000800757669 2462997.917073626537 2463007.833346494939 2463017.749619374052 2463027.665892241988 2463037.582165120635 2463047.498437988106 2463057.414710855111 2463067.330983733758 2463077.247256601229 2463087.163529480342 2463097.079802348278 2463106.996075216215 2463116.912348096725 2463126.828620965593 2463136.744893846568 2463146.661166716833 2463156.577439587563 2463166.493712470401 2463176.409985342063 2463186.326258226298 2463196.242531098891 2463206.158803971950 2463216.075076857116 2463225.991349730641 2463235.907622615807 2463245.823895489331 2463255.740168362856 2463265.656441248022 2463275.572714121081 2463285.488987005316 2463295.405259877443 2463305.321532749571 2488434.500789165031'"
+          },
+          "sha256": "6cdcfbcb5293cd2ce8eb02a4bcf36f783c215b221b1f01e71a2d43a2979f7e09",
+          "header": "*******************************************************************************\n Revised: Jan 26, 2022             Iapetus / (Saturn)                       608\n                          http://ssd.jpl.nasa.gov/?sat_phys_par\n                            http://ssd.jpl.nasa.gov/?sat_elem\n\n SATELLITE PHYSICAL PROPERTIES:\n  Radius (km)            = 734.5    +- 4.0    Density (g/cm^3)=  1.088 +- 0.018 \n  Mass (10^19 kg)        = 180.59             Geometric Albedo=  0.6\n  GM (km^3/s^2)          = 120.52   +- 0.03   V(1,0)          =   +1.5 (.7-2.5)\n\n SATELLITE ORBITAL DATA (mean values with respect to local Laplace plane):\n  Semi-major axis, a (km)= 3560.84 (10^3)     Orbital period    = 79.33 d\n  Eccentricity, e        =     0.0283         Rotational period = Synchronous\n  Inclination, i  (deg)  =     7.489\n*******************************************************************************\n\n\n*******************************************************************************\nEphemeris / API_USER Fri Nov 27 20:12:33 2026 Pasadena, USA      / Horizons\n*******************************************************************************\nTarget body name: Iapetus (608)                   {source: sat441l}\nCenter body name: Sun (10)                        {source: DE441}\nCenter-site name: BODY CENTER\n*******************************************************************************\nStart time      : A.D. 1899-Dec-31 23:59:57.2410 TDB\nStop  time      : A.D. 2101-Jan-01 00:01:08.1839 TDB\nStep-size       : DISCRETE TIME-LIST\n*******************************************************************************\nCenter geodetic : 0.0, 0.0, 0.0                   {E-lon(deg),Lat(deg),Alt(km)}\nCenter cylindric: 0.0, 0.0, 0.0                   {E-lon(deg),Dxy(km),Dz(km)}\nCenter radii    : 695700.0, 695700.0, 695700.0 km {Equator_a, b, pole_c}\nOutput units    : KM-S\nCalendar mode   : Mixed Julian/Gregorian\nOutput type     : GEOMETRIC cartesian states\nOutput format   : 2 (position and velocity)\nReference frame : ICRF\n*******************************************************************************\n            JDTDB,            Calendar Date (TDB),                      X,                      Y,                      Z,                     VX,                     VY,                     VZ,\n**************************************************************************************************************************************************************************************************\n"
+        }
+      ]
+    },
+    "saturn": {
+      "requests": [
+        {
+          "url": "https://ssd.jpl.nasa.gov/api/horizons.api",
+          "query": {
+            "format": "json",
+            "COMMAND": "699",
+            "CENTER": "500@10",
+            "MAKE_EPHEM": "YES",
+            "EPHEM_TYPE": "VECTORS",
+            "TIME_TYPE": "TDB",
+            "REF_PLANE": "FRAME",
+            "REF_SYSTEM": "ICRF",
+            "VEC_TABLE": "2",
+            "VEC_CORR": "NONE",
+            "OUT_UNITS": "KM-S",
+            "CSV_FORMAT": "YES",
+            "TLIST": "'2415020.499968067277 2415385.499972161371 2441165.208816804923 2451545.000742869452 2462988.000800757669 2462997.917073626537 2463007.833346494939 2463017.749619374052 2463027.665892241988 2463037.582165120635 2463047.498437988106 2463057.414710855111 2463067.330983733758 2463077.247256601229 2463087.163529480342 2463097.079802348278 2463106.996075216215 2463116.912348096725 2463126.828620965593 2463136.744893846568 2463146.661166716833 2463156.577439587563 2463166.493712470401 2463176.409985342063 2463186.326258226298 2463196.242531098891 2463206.158803971950 2463216.075076857116 2463225.991349730641 2463235.907622615807 2463245.823895489331 2463255.740168362856 2463265.656441248022 2463275.572714121081 2463285.488987005316 2463295.405259877443 2463305.321532749571 2488434.500789165031'"
+          },
+          "sha256": "9824ef14f68e6462925d2424b88a9ccd9a57aa2f7f4d7cdcdd7209d0c9b5ea78",
+          "header": "*******************************************************************************\n Revised: January 26, 2022             Saturn                               699\n \n PHYSICAL DATA:\n  Mass x10^26 (kg)      = 5.6834          Density (g/cm^3)       =  0.687+-.001\n  Equat. radius (1 bar) = 60268+-4 km     Polar radius (km)      = 54364+-10\n  Vol. Mean Radius (km) = 58232+-6        Flattening             =  0.09796\n  Geometric Albedo      = 0.47            Rocky core mass (Mc/M) =  0.1027\n  Sid. rot. period (III)= 10h 39m 22.4s   Sid. rot. rate (rad/s) =  0.000163785 \n  Mean solar day, hrs   =~10.656         \n  GM (km^3/s^2)         = 37931206.234    GM 1-sigma (km^3/s^2)  = +- 98\n  Equ. grav, ge (m/s^2) = 10.44           Pol. grav, gp (m/s^2)  = 12.14+-0.01\n  Vis. magnitude V(1,0) = -8.88          \n  Vis. mag. (opposition)= +0.67           Obliquity to orbit     = 26.73 deg\n  Sidereal orbit period = 29.447498 yr    Sidereal orbit period  = 10755.698 d\n  Mean daily motion     = 0.0334979 deg/d Mean orbit velocity    =  9.68 km/s\n  Atmos. temp. (1 bar)  = 134+-4 K        Escape speed, km/s    =  35.5          \n  Aroche(ice)/Rp        =  2.71           Hill's sphere rad. Rp  = 1100\n                                 Perihelion  Aphelion    Mean\n  Solar Constant (W/m^2)         16.8        13.6        15.1\n  Maximum Planetary IR (W/m^2)    4.7         4.5         4.6\n  Minimum Planetary IR (W/m^2)    4.7         4.5         4.6\n*******************************************************************************\n\n\n*******************************************************************************\nEphemeris / API_USER Fri Nov 27 20:12:34 2026 Pasadena, USA      / Horizons\n*******************************************************************************\nTarget body name: Saturn (699)                    {source: sat441l}\nCenter body name: Sun (10)                        {source: DE441}\nCenter-site name: BODY CENTER\n*******************************************************************************\nStart time      : A.D. 1899-Dec-31 23:59:57.2410 TDB\nStop  time      : A.D. 2101-Jan-01 00:01:08.1839 TDB\nStep-size       : DISCRETE TIME-LIST\n*******************************************************************************\nCenter geodetic : 0.0, 0.0, 0.0                   {E-lon(deg),Lat(deg),Alt(km)}\nCenter cylindric: 0.0, 0.0, 0.0                   {E-lon(deg),Dxy(km),Dz(km)}\nCenter radii    : 695700.0, 695700.0, 695700.0 km {Equator_a, b, pole_c}\nOutput units    : KM-S\nCalendar mode   : Mixed Julian/Gregorian\nOutput type     : GEOMETRIC cartesian states\nOutput format   : 2 (position and velocity)\nReference frame : ICRF\n*******************************************************************************\n            JDTDB,            Calendar Date (TDB),                      X,                      Y,                      Z,                     VX,                     VY,                     VZ,\n**************************************************************************************************************************************************************************************************\n"
+        }
+      ]
     }
   },
   "fixtures": [
@@ -29972,6 +30068,3126 @@
             -0.7200955800560525,
             0.3009514760528323,
             -0.6252124156199705
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "triton",
+      "id": "triton",
+      "parent": "neptune",
+      "date": "1900-01-01T00:00:00Z",
+      "tdbSeconds": -3155716802.7589946,
+      "latitude": -60,
+      "longitude": 0,
+      "radiusKm": 1352.6,
+      "parentRadiusKm": 24622,
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.5355905103555867,
+            -0.2610141808000438,
+            -0.8031278868513557
+          ],
+          "distanceKm": 4468841162.405647,
+          "angularDiameter": 0.0003113558873663857,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "neptune": {
+          "direction": [
+            0.04599902419091548,
+            0.4955713867306102,
+            -0.8673483097506925
+          ],
+          "distanceKm": 354048.6805869644,
+          "angularDiameter": 0.13920057649815426,
+          "illuminatedFraction": 0.22872604460959656,
+          "sunDirection": [
+            -0.5356171787964967,
+            -0.2610646651331319,
+            -0.8030936921661177
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "triton",
+      "id": "triton",
+      "parent": "neptune",
+      "date": "1900-12-31T23:59:59Z",
+      "tdbSeconds": -3124180802.4052444,
+      "latitude": -60,
+      "longitude": 0,
+      "radiusKm": 1352.6,
+      "parentRadiusKm": 24622,
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.02526701937195539,
+            -0.1625138490912025,
+            -0.9863826978336648
+          ],
+          "distanceKm": 4469834431.712467,
+          "angularDiameter": 0.0003112866990656464,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "neptune": {
+          "direction": [
+            0.0459003023722376,
+            0.4952148210147013,
+            -0.8675571700409804
+          ],
+          "distanceKm": 354071.85791075934,
+          "angularDiameter": 0.13919144977437967,
+          "illuminatedFraction": 0.11296369869121686,
+          "sunDirection": [
+            -0.025272204952330703,
+            -0.16256304496037377,
+            -0.9863744583422964
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "triton",
+      "id": "triton",
+      "parent": "neptune",
+      "date": "1971-08-01T17:00:00Z",
+      "tdbSeconds": -896813958.2280614,
+      "latitude": -60,
+      "longitude": 0,
+      "radiusKm": 1352.6,
+      "parentRadiusKm": 24622,
+      "targets": {
+        "sun": {
+          "direction": [
+            0.26235500858972,
+            0.8057580650057863,
+            -0.5309649613166757
+          ],
+          "distanceKm": 4536159090.523443,
+          "angularDiameter": 0.00030673527486314595,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "neptune": {
+          "direction": [
+            0.047754666519380075,
+            0.49686586672635896,
+            -0.8665124363261537
+          ],
+          "distanceKm": 354080.8444221619,
+          "angularDiameter": 0.1391879114047373,
+          "illuminatedFraction": 0.06352423802427942,
+          "sunDirection": [
+            0.2623691590973113,
+            0.8057741872509644,
+            -0.5309335019704611
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "triton",
+      "id": "triton",
+      "parent": "neptune",
+      "date": "2000-01-01T12:00:00Z",
+      "tdbSeconds": 64.18392728473108,
+      "latitude": -60,
+      "longitude": 0,
+      "radiusKm": 1352.6,
+      "parentRadiusKm": 24622,
+      "targets": {
+        "sun": {
+          "direction": [
+            0.17273746822564823,
+            0.3528483869144465,
+            0.9195976201159212
+          ],
+          "distanceKm": 4505757509.8730135,
+          "angularDiameter": 0.00030880490183497186,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "neptune": {
+          "direction": [
+            0.04799017189615383,
+            0.4966877325663396,
+            -0.8666015461095635
+          ],
+          "distanceKm": 354042.59804978553,
+          "angularDiameter": 0.13920297186684502,
+          "illuminatedFraction": 0.8067142812843177,
+          "sunDirection": [
+            0.17272537224942158,
+            0.3527923552833503,
+            0.9196213893961609
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "triton",
+      "id": "triton",
+      "parent": "neptune",
+      "date": "2100-12-31T23:59:59Z",
+      "tdbSeconds": 3187252868.183877,
+      "latitude": -60,
+      "longitude": 0,
+      "radiusKm": 1352.6,
+      "parentRadiusKm": 24622,
+      "targets": {
+        "sun": {
+          "direction": [
+            0.5859551001420693,
+            -0.4557257602993915,
+            -0.6700527233114117
+          ],
+          "distanceKm": 4520169146.863482,
+          "angularDiameter": 0.00030782034040890044,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "neptune": {
+          "direction": [
+            0.049955660686407916,
+            0.4959147842905276,
+            -0.8669330762449109
+          ],
+          "distanceKm": 354047.50031974236,
+          "angularDiameter": 0.13920104129365424,
+          "illuminatedFraction": 0.30795263454173577,
+          "sunDirection": [
+            0.5859688175153855,
+            -0.455778316531357,
+            -0.6700049783990136
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "triton",
+      "id": "triton",
+      "parent": "neptune",
+      "date": "2026-09-26T22:00:00Z",
+      "tdbSeconds": 843732069.1823617,
+      "latitude": -60,
+      "longitude": 0,
+      "radiusKm": 1352.6,
+      "parentRadiusKm": 24622,
+      "targets": {
+        "sun": {
+          "direction": [
+            0.7819843347820473,
+            0.22561699842234115,
+            0.5810313848479892
+          ],
+          "distanceKm": 4469582548.151762,
+          "angularDiameter": 0.00031130424164416446,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "neptune": {
+          "direction": [
+            0.04843702309081274,
+            0.49639744247802464,
+            -0.8667430033726123
+          ],
+          "distanceKm": 354123.2259760424,
+          "angularDiameter": 0.139171226420865,
+          "illuminatedFraction": 0.6769007531219711,
+          "sunDirection": [
+            0.7819585797715551,
+            0.22557134655749217,
+            0.5810837694634844
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "triton",
+      "id": "triton",
+      "parent": "neptune",
+      "date": "2026-09-26T22:00:00.000Z",
+      "tdbSeconds": 843732069.1823617,
+      "latitude": -60,
+      "longitude": 0,
+      "radiusKm": 1352.6,
+      "parentRadiusKm": 24622,
+      "targets": {
+        "sun": {
+          "direction": [
+            0.7819843347820473,
+            0.22561699842234115,
+            0.5810313848479892
+          ],
+          "distanceKm": 4469582548.151762,
+          "angularDiameter": 0.00031130424164416446,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "neptune": {
+          "direction": [
+            0.04843702309081274,
+            0.49639744247802464,
+            -0.8667430033726123
+          ],
+          "distanceKm": 354123.2259760424,
+          "angularDiameter": 0.139171226420865,
+          "illuminatedFraction": 0.6769007531219711,
+          "sunDirection": [
+            0.7819585797715551,
+            0.22557134655749217,
+            0.5810837694634844
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "triton",
+      "id": "triton",
+      "parent": "neptune",
+      "date": "2026-09-27T15:37:50.023Z",
+      "tdbSeconds": 843795539.2053589,
+      "latitude": -60,
+      "longitude": 0,
+      "radiusKm": 1352.6,
+      "parentRadiusKm": 24622,
+      "targets": {
+        "sun": {
+          "direction": [
+            0.27681587009001035,
+            0.00627144893737082,
+            0.9609025148237131
+          ],
+          "distanceKm": 4469416177.238358,
+          "angularDiameter": 0.0003113158297284675,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "neptune": {
+          "direction": [
+            0.04854561196826124,
+            0.4963997400471541,
+            -0.8667356123061664
+          ],
+          "distanceKm": 354095.08458203555,
+          "angularDiameter": 0.13918230482015642,
+          "illuminatedFraction": 0.9081617600531575,
+          "sunDirection": [
+            0.27679412284030264,
+            0.006231718022162048,
+            0.9609090379695469
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "triton",
+      "id": "triton",
+      "parent": "neptune",
+      "date": "2026-09-28T09:15:40.046Z",
+      "tdbSeconds": 843859009.228356,
+      "latitude": -60,
+      "longitude": 0,
+      "radiusKm": 1352.6,
+      "parentRadiusKm": 24622,
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.3905892433724122,
+            0.029790601281722815,
+            0.9200829109580506
+          ],
+          "distanceKm": 4469418784.025023,
+          "angularDiameter": 0.0003113156481536365,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "neptune": {
+          "direction": [
+            0.04850894798277343,
+            0.4964893224716815,
+            -0.8666863530927527
+          ],
+          "distanceKm": 354060.9512572761,
+          "angularDiameter": 0.13919574442704633,
+          "illuminatedFraction": 0.9008039880260021,
+          "sunDirection": [
+            -0.39056828466073973,
+            0.029749380990258832,
+            0.9200931416698335
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "triton",
+      "id": "triton",
+      "parent": "neptune",
+      "date": "2026-09-29T02:53:30.069Z",
+      "tdbSeconds": 843922479.2513535,
+      "latitude": -60,
+      "longitude": 0,
+      "radiusKm": 1352.6,
+      "parentRadiusKm": 24622,
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.8291516041562984,
+            0.28238381250281436,
+            0.4824593244631225
+          ],
+          "distanceKm": 4469587346.208153,
+          "angularDiameter": 0.0003113039074622362,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "neptune": {
+          "direction": [
+            0.04834909258150217,
+            0.49661380950277767,
+            -0.8666239608144263
+          ],
+          "distanceKm": 354041.1946119193,
+          "angularDiameter": 0.13920352456751584,
+          "illuminatedFraction": 0.6590175188220386,
+          "sunDirection": [
+            -0.829134548787508,
+            0.28233736332207965,
+            0.4825158166104734
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "triton",
+      "id": "triton",
+      "parent": "neptune",
+      "date": "2026-09-29T20:31:20.092Z",
+      "tdbSeconds": 843985949.2743514,
+      "latitude": -60,
+      "longitude": 0,
+      "radiusKm": 1352.6,
+      "parentRadiusKm": 24622,
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.7819145186399253,
+            0.6160196274461074,
+            -0.09554843871698325
+          ],
+          "distanceKm": 4469821553.339904,
+          "angularDiameter": 0.0003112875959395079,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "neptune": {
+          "direction": [
+            0.04815918221191634,
+            0.4967000625374136,
+            -0.8665851031745289
+          ],
+          "distanceKm": 354047.7409881647,
+          "angularDiameter": 0.1392009465168993,
+          "illuminatedFraction": 0.3244739843640402,
+          "sunDirection": [
+            -0.781940078262693,
+            0.6159974148928261,
+            -0.09548245310992458
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "triton",
+      "id": "triton",
+      "parent": "neptune",
+      "date": "2026-09-30T14:09:10.116Z",
+      "tdbSeconds": 844049419.2983494,
+      "latitude": -60,
+      "longitude": 0,
+      "radiusKm": 1352.6,
+      "parentRadiusKm": 24622,
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.27658874678259626,
+            0.8352095716192433,
+            -0.47531425039528624
+          ],
+          "distanceKm": 4469982610.614065,
+          "angularDiameter": 0.00031127637998265654,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "neptune": {
+          "direction": [
+            0.04804988650604103,
+            0.49669765094369944,
+            -0.8665925524453619
+          ],
+          "distanceKm": 354076.4448671062,
+          "angularDiameter": 0.13918964367315523,
+          "illuminatedFraction": 0.09328321738775919,
+          "sunDirection": [
+            -0.2766103762448237,
+            0.8352240446740598,
+            -0.47527623015673903
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "triton",
+      "id": "triton",
+      "parent": "neptune",
+      "date": "2026-10-01T07:47:00.139Z",
+      "tdbSeconds": 844112889.3213477,
+      "latitude": -60,
+      "longitude": 0,
+      "radiusKm": 1352.6,
+      "parentRadiusKm": 24622,
+      "targets": {
+        "sun": {
+          "direction": [
+            0.3907887162004304,
+            0.8115352370524846,
+            -0.43439007621328896
+          ],
+          "distanceKm": 4469974629.643517,
+          "angularDiameter": 0.0003112769357548582,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "neptune": {
+          "direction": [
+            0.04808572830804647,
+            0.4966081018056357,
+            -0.8666418844909864
+          ],
+          "distanceKm": 354110.0828133555,
+          "angularDiameter": 0.13917640025916578,
+          "illuminatedFraction": 0.10088088666988432,
+          "sunDirection": [
+            0.3908096206229069,
+            0.8115472159889572,
+            -0.4343488881638268
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "triton",
+      "id": "triton",
+      "parent": "neptune",
+      "date": "2026-10-02T01:24:50.162Z",
+      "tdbSeconds": 844176359.3443463,
+      "latitude": -60,
+      "longitude": 0,
+      "radiusKm": 1352.6,
+      "parentRadiusKm": 24622,
+      "targets": {
+        "sun": {
+          "direction": [
+            0.8292752160236174,
+            0.5588309021959894,
+            0.003261723439990852
+          ],
+          "distanceKm": 4469800775.786822,
+          "angularDiameter": 0.00031128904293791453,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "neptune": {
+          "direction": [
+            0.048246263278022776,
+            0.4964837097019133,
+            -0.8667042310271329
+          ],
+          "distanceKm": 354129.2994668882,
+          "angularDiameter": 0.13916883570631658,
+          "illuminatedFraction": 0.3427192332229789,
+          "sunDirection": [
+            0.8292920634040629,
+            0.5588054952532886,
+            0.0033304729031632036
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "triton",
+      "id": "triton",
+      "parent": "neptune",
+      "date": "2026-10-02T19:02:40.185Z",
+      "tdbSeconds": 844239829.3673451,
+      "latitude": -60,
+      "longitude": 0,
+      "radiusKm": 1352.6,
+      "parentRadiusKm": 24622,
+      "targets": {
+        "sun": {
+          "direction": [
+            0.7819472638074939,
+            0.22509119457833632,
+            0.5812851544184406
+          ],
+          "distanceKm": 4469561341.041675,
+          "angularDiameter": 0.0003113057187160453,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "neptune": {
+          "direction": [
+            0.0484371575138079,
+            0.49639742828194594,
+            -0.8667430039908328
+          ],
+          "distanceKm": 354123.1916680142,
+          "angularDiameter": 0.1391712399258035,
+          "illuminatedFraction": 0.677142067112324,
+          "sunDirection": [
+            0.7819214798061073,
+            0.22504554863431786,
+            0.5813375099352408
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "triton",
+      "id": "triton",
+      "parent": "neptune",
+      "date": "2026-10-03T12:40:30.208Z",
+      "tdbSeconds": 844303299.3903443,
+      "latitude": -60,
+      "longitude": 0,
+      "radiusKm": 1352.6,
+      "parentRadiusKm": 24622,
+      "targets": {
+        "sun": {
+          "direction": [
+            0.276448324892686,
+            0.005829423214350894,
+            0.9610111037282639
+          ],
+          "distanceKm": 4469395026.728616,
+          "angularDiameter": 0.0003113173029677993,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "neptune": {
+          "direction": [
+            0.048545956091844866,
+            0.4963998300740327,
+            -0.8667355414713305
+          ],
+          "distanceKm": 354095.0402708091,
+          "angularDiameter": 0.13918232226551217,
+          "illuminatedFraction": 0.9083273478410272,
+          "sunDirection": [
+            0.27642659403157,
+            0.005789720542568046,
+            0.9610175946610678
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "triton",
+      "id": "triton",
+      "parent": "neptune",
+      "date": "2026-10-04T06:18:20.232Z",
+      "tdbSeconds": 844366769.4143435,
+      "latitude": -60,
+      "longitude": 0,
+      "radiusKm": 1352.6,
+      "parentRadiusKm": 24622,
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.39107189653572794,
+            0.02952466449617449,
+            0.9198864418646124
+          ],
+          "distanceKm": 4469397759.03366,
+          "angularDiameter": 0.00031131711264823273,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "neptune": {
+          "direction": [
+            0.04850936055703785,
+            0.4964893780653852,
+            -0.8666862981532558
+          ],
+          "distanceKm": 354060.98837789695,
+          "angularDiameter": 0.13919572980981482,
+          "illuminatedFraction": 0.9007966289568916,
+          "sunDirection": [
+            -0.39105090756468747,
+            0.029483460922756183,
+            0.9198966861690778
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "triton",
+      "id": "triton",
+      "parent": "neptune",
+      "date": "2026-10-04T23:56:10.255Z",
+      "tdbSeconds": 844430239.4373431,
+      "latitude": -60,
+      "longitude": 0,
+      "radiusKm": 1352.6,
+      "parentRadiusKm": 24622,
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.8294665318172807,
+            0.2822830618195942,
+            0.4819767064960373
+          ],
+          "distanceKm": 4469566443.878871,
+          "angularDiameter": 0.0003113053633029569,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "neptune": {
+          "direction": [
+            0.04834930509049988,
+            0.49661376694928305,
+            -0.8666239733435194
+          ],
+          "distanceKm": 354041.2435566361,
+          "angularDiameter": 0.13920350529207642,
+          "illuminatedFraction": 0.6588411312117683,
+          "sunDirection": [
+            -0.8294494916286607,
+            0.28223662284314516,
+            0.48203322454272013
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "triton",
+      "id": "triton",
+      "parent": "neptune",
+      "date": "2026-10-05T17:34:00.278Z",
+      "tdbSeconds": 844493709.4603431,
+      "latitude": -60,
+      "longitude": 0,
+      "radiusKm": 1352.6,
+      "parentRadiusKm": 24622,
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.7818772434873573,
+            0.6159763608845696,
+            -0.0961306348050104
+          ],
+          "distanceKm": 4469800700.698692,
+          "angularDiameter": 0.0003112890481672556,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "neptune": {
+          "direction": [
+            0.04815929761208422,
+            0.4967000614766467,
+            -0.8665850973693272
+          ],
+          "distanceKm": 354047.7379371273,
+          "angularDiameter": 0.1392009477184164,
+          "illuminatedFraction": 0.3242316032095253,
+          "sunDirection": [
+            -0.7819028322247638,
+            0.6159541706757772,
+            -0.09606466877061763
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "triton",
+      "id": "triton",
+      "parent": "neptune",
+      "date": "2026-10-06T11:11:50.301Z",
+      "tdbSeconds": 844557179.4833432,
+      "latitude": -60,
+      "longitude": 0,
+      "radiusKm": 1352.6,
+      "parentRadiusKm": 24622,
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.2762211788862532,
+            0.8350824353000836,
+            -0.47575118138368305
+          ],
+          "distanceKm": 4469961707.352092,
+          "angularDiameter": 0.0003112778356308691,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "neptune": {
+          "direction": [
+            0.048050138111751454,
+            0.4966975819216518,
+            -0.8665925780553544
+          ],
+          "distanceKm": 354076.378649911,
+          "angularDiameter": 0.1391896697456568,
+          "illuminatedFraction": 0.09311667624662057,
+          "sunDirection": [
+            -0.2762427920681857,
+            0.8350969222661857,
+            -0.4757132016792441
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "triton",
+      "id": "triton",
+      "parent": "neptune",
+      "date": "2026-10-07T04:49:40.324Z",
+      "tdbSeconds": 844620649.5063436,
+      "latitude": -60,
+      "longitude": 0,
+      "radiusKm": 1352.6,
+      "parentRadiusKm": 24622,
+      "targets": {
+        "sun": {
+          "direction": [
+            0.39127123626822163,
+            0.8112320289931115,
+            -0.43452205330093086
+          ],
+          "distanceKm": 4469953606.908608,
+          "angularDiameter": 0.00031127839972811867,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "neptune": {
+          "direction": [
+            0.04808611517867214,
+            0.4966080007346991,
+            -0.8666419209415782
+          ],
+          "distanceKm": 354110.0749150452,
+          "angularDiameter": 0.1391764033684708,
+          "illuminatedFraction": 0.1008873431337104,
+          "sunDirection": [
+            0.3912921708729858,
+            0.8112439879884251,
+            -0.4344808729577658
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "triton",
+      "id": "triton",
+      "parent": "neptune",
+      "date": "2026-10-07T22:27:30.348Z",
+      "tdbSeconds": 844684119.5303442,
+      "latitude": -60,
+      "longitude": 0,
+      "radiusKm": 1352.6,
+      "parentRadiusKm": 24622,
+      "targets": {
+        "sun": {
+          "direction": [
+            0.8295900295918988,
+            0.5583625302904824,
+            0.003415782388029716
+          ],
+          "distanceKm": 4469779636.47781,
+          "angularDiameter": 0.0003112905151436739,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "neptune": {
+          "direction": [
+            0.048246560011459994,
+            0.49648374236927467,
+            -0.8667041957958092
+          ],
+          "distanceKm": 354129.34833529044,
+          "angularDiameter": 0.1391688164705297,
+          "illuminatedFraction": 0.3428945468591734,
+          "sunDirection": [
+            0.8296068618317842,
+            0.5583370960369709,
+            0.0034845359262264354
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "triton",
+      "id": "triton",
+      "parent": "neptune",
+      "date": "2026-10-08T16:05:20.371Z",
+      "tdbSeconds": 844747589.5533453,
+      "latitude": -60,
+      "longitude": 0,
+      "radiusKm": 1352.6,
+      "parentRadiusKm": 24622,
+      "targets": {
+        "sun": {
+          "direction": [
+            0.7819099055041427,
+            0.22456532018709666,
+            0.5815387490475327
+          ],
+          "distanceKm": 4469540158.103045,
+          "angularDiameter": 0.00031130719411838075,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "neptune": {
+          "direction": [
+            0.04843722281462894,
+            0.49639745053625695,
+            -0.8667429875961561
+          ],
+          "distanceKm": 354123.2313000342,
+          "angularDiameter": 0.13917122432514054,
+          "illuminatedFraction": 0.6773833477286193,
+          "sunDirection": [
+            0.7818840925268651,
+            0.22451968019517488,
+            0.5815910754632477
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "triton",
+      "id": "triton",
+      "parent": "neptune",
+      "date": "2026-10-09T09:43:10.394Z",
+      "tdbSeconds": 844811059.5763465,
+      "latitude": -60,
+      "longitude": 0,
+      "radiusKm": 1352.6,
+      "parentRadiusKm": 24622,
+      "targets": {
+        "sun": {
+          "direction": [
+            0.27608065875282134,
+            0.005387411567479191,
+            0.961119371180922
+          ],
+          "distanceKm": 4469373900.429918,
+          "angularDiameter": 0.0003113187745346299,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "neptune": {
+          "direction": [
+            0.04854608862019348,
+            0.49639985147180715,
+            -0.8667355217933833
+          ],
+          "distanceKm": 354095.0018446737,
+          "angularDiameter": 0.13918233739390767,
+          "illuminatedFraction": 0.9084928499023978,
+          "sunDirection": [
+            0.2760589443278318,
+            0.00534773716673081,
+            0.9611258299326882
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "triton",
+      "id": "triton",
+      "parent": "neptune",
+      "date": "2026-10-10T03:21:00.417Z",
+      "tdbSeconds": 844874529.599348,
+      "latitude": -60,
+      "longitude": 0,
+      "radiusKm": 1352.6,
+      "parentRadiusKm": 24622,
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.391554413960215,
+            0.029258737951683822,
+            0.9196896580704536
+          ],
+          "distanceKm": 4469376758.237002,
+          "angularDiameter": 0.000311318575471303,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "neptune": {
+          "direction": [
+            0.04850970808131147,
+            0.4964894748746324,
+            -0.8666862232437861
+          ],
+          "distanceKm": 354060.94358614035,
+          "angularDiameter": 0.13919574744776042,
+          "illuminatedFraction": 0.900789105400657,
+          "sunDirection": [
+            -0.3915333947492865,
+            0.02921755110244917,
+            0.9196999160072133
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "triton",
+      "id": "triton",
+      "parent": "neptune",
+      "date": "2026-10-10T20:58:50.440Z",
+      "tdbSeconds": 844937999.6223499,
+      "latitude": -60,
+      "longitude": 0,
+      "radiusKm": 1352.6,
+      "parentRadiusKm": 24622,
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.8297811671328424,
+            0.28218223274578713,
+            0.48149392747391984
+          ],
+          "distanceKm": 4469545565.667441,
+          "angularDiameter": 0.00031130681747746996,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "neptune": {
+          "direction": [
+            0.04834976534684131,
+            0.49661374102714806,
+            -0.8666239625200343
+          ],
+          "distanceKm": 354041.2694698328,
+          "angularDiameter": 0.13920349508692703,
+          "illuminatedFraction": 0.6586647810738291,
+          "sunDirection": [
+            -0.829764142165385,
+            0.2821358039703403,
+            0.48155047138856827
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "triton",
+      "id": "triton",
+      "parent": "neptune",
+      "date": "2026-10-11T14:36:40.464Z",
+      "tdbSeconds": 845001469.6463518,
+      "latitude": -60,
+      "longitude": 0,
+      "radiusKm": 1352.6,
+      "parentRadiusKm": 24622,
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.7818396858953492,
+            0.6159329027493035,
+            -0.0967127957918649
+          ],
+          "distanceKm": 4469779872.081126,
+          "angularDiameter": 0.0003112904987354658,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "neptune": {
+          "direction": [
+            0.0481595304373086,
+            0.4966999882020688,
+            -0.8665851264290904
+          ],
+          "distanceKm": 354047.7932298268,
+          "angularDiameter": 0.13920092594381767,
+          "illuminatedFraction": 0.3239893444902954,
+          "sunDirection": [
+            -0.7818653037351482,
+            0.615910734866784,
+            -0.09664684935890332
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "triton",
+      "id": "triton",
+      "parent": "neptune",
+      "date": "2026-10-12T08:14:30.487Z",
+      "tdbSeconds": 845064939.669354,
+      "latitude": -60,
+      "longitude": 0,
+      "radiusKm": 1352.6,
+      "parentRadiusKm": 24622,
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.2758534902718374,
+            0.8349550277738257,
+            -0.47618793926353803
+          ],
+          "distanceKm": 4469940828.044832,
+          "angularDiameter": 0.00031127928962452936,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "neptune": {
+          "direction": [
+            0.04805024043013707,
+            0.4966975690791892,
+            -0.8665925797428861
+          ],
+          "distanceKm": 354076.3737245152,
+          "angularDiameter": 0.1391896716849932,
+          "illuminatedFraction": 0.09295023611164926,
+          "sunDirection": [
+            -0.27587508713352876,
+            0.8349695286117604,
+            -0.4761500000933767
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "triton",
+      "id": "triton",
+      "parent": "neptune",
+      "date": "2026-10-13T01:52:20.510Z",
+      "tdbSeconds": 845128409.6923565,
+      "latitude": -60,
+      "longitude": 0,
+      "radiusKm": 1352.6,
+      "parentRadiusKm": 24622,
+      "targets": {
+        "sun": {
+          "direction": [
+            0.3917536397784755,
+            0.8109285488767703,
+            -0.4346538557713853
+          ],
+          "distanceKm": 4469932608.115284,
+          "angularDiameter": 0.0003112798620478913,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "neptune": {
+          "direction": [
+            0.04808630531345502,
+            0.4966079130588693,
+            -0.8666419606323106
+          ],
+          "distanceKm": 354110.0111977788,
+          "angularDiameter": 0.13917642845186823,
+          "illuminatedFraction": 0.10089397781671572,
+          "sunDirection": [
+            0.391774604558558,
+            0.8109404878882477,
+            -0.4346126831174588
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "triton",
+      "id": "triton",
+      "parent": "neptune",
+      "date": "2026-10-13T19:30:10.533Z",
+      "tdbSeconds": 845191879.7153593,
+      "latitude": -60,
+      "longitude": 0,
+      "radiusKm": 1352.6,
+      "parentRadiusKm": 24622,
+      "targets": {
+        "sun": {
+          "direction": [
+            0.8299045507482324,
+            0.5578939798835708,
+            0.0035698539248352466
+          ],
+          "distanceKm": 4469758521.167707,
+          "angularDiameter": 0.00031129198569197785,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "neptune": {
+          "direction": [
+            0.0482469399286578,
+            0.49648370970598243,
+            -0.8667041933578644
+          ],
+          "distanceKm": 354129.33222713514,
+          "angularDiameter": 0.13916882281108925,
+          "illuminatedFraction": 0.3430699009833464,
+          "sunDirection": [
+            0.8299213678075561,
+            0.5578685183469719,
+            0.003638611519438981
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "triton",
+      "id": "triton",
+      "parent": "neptune",
+      "date": "2026-10-14T13:08:00.556Z",
+      "tdbSeconds": 845255349.7383624,
+      "latitude": -60,
+      "longitude": 0,
+      "radiusKm": 1352.6,
+      "parentRadiusKm": 24622,
+      "targets": {
+        "sun": {
+          "direction": [
+            0.7818722695932775,
+            0.22403938538564386,
+            0.5817921517493
+          ],
+          "distanceKm": 4469518999.243771,
+          "angularDiameter": 0.00031130866785753836,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "neptune": {
+          "direction": [
+            0.04843753723752463,
+            0.49639753414187077,
+            -0.8667429221425658
+          ],
+          "distanceKm": 354123.2785208801,
+          "angularDiameter": 0.1391712057372331,
+          "illuminatedFraction": 0.6776244483537717,
+          "sunDirection": [
+            0.7818464276526458,
+            0.22399375138858402,
+            0.5818444490632061
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "triton",
+      "id": "triton",
+      "parent": "neptune",
+      "date": "2026-10-15T06:45:50.580Z",
+      "tdbSeconds": 845318819.7623657,
+      "latitude": -60,
+      "longitude": 0,
+      "radiusKm": 1352.6,
+      "parentRadiusKm": 24622,
+      "targets": {
+        "sun": {
+          "direction": [
+            0.2757128822551454,
+            0.0049454160933433,
+            0.9612273141240962
+          ],
+          "distanceKm": 4469352798.267078,
+          "angularDiameter": 0.00031132024443414883,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "neptune": {
+          "direction": [
+            0.048546200292939226,
+            0.4963998665849982,
+            -0.8667355068828749
+          ],
+          "distanceKm": 354095.0538207354,
+          "angularDiameter": 0.13918231693089778,
+          "illuminatedFraction": 0.9086582152465623,
+          "sunDirection": [
+            0.27569118429506484,
+            0.004905769976722,
+            0.9612337407326691
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "triton",
+      "id": "triton",
+      "parent": "neptune",
+      "date": "2026-10-16T00:23:40.603Z",
+      "tdbSeconds": 845382289.7853693,
+      "latitude": -60,
+      "longitude": 0,
+      "radiusKm": 1352.6,
+      "parentRadiusKm": 24622,
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.39203681457961315,
+            0.028992826719944024,
+            0.9194925513635535
+          ],
+          "distanceKm": 4469355781.580515,
+          "angularDiameter": 0.0003113200366265987,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "neptune": {
+          "direction": [
+            0.048509844293678675,
+            0.49648951924881635,
+            -0.8666861901995911
+          ],
+          "distanceKm": 354060.90815211646,
+          "angularDiameter": 0.13919576140085305,
+          "illuminatedFraction": 0.900781414094268,
+          "sunDirection": [
+            -0.3920157651303246,
+            0.028951656597497127,
+            0.9195028229807379
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "triton",
+      "id": "triton",
+      "parent": "neptune",
+      "date": "2026-10-16T18:01:30.626Z",
+      "tdbSeconds": 845445759.8083731,
+      "latitude": -60,
+      "longitude": 0,
+      "radiusKm": 1352.6,
+      "parentRadiusKm": 24622,
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.8300955166663285,
+            0.2820813356337916,
+            0.48101097003864385
+          ],
+          "distanceKm": 4469524711.544142,
+          "angularDiameter": 0.0003113082699877987,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "neptune": {
+          "direction": [
+            0.04835009978279828,
+            0.4966137924553753,
+            -0.866623914390829
+          ],
+          "distanceKm": 354041.21853395115,
+          "angularDiameter": 0.13920351514652543,
+          "illuminatedFraction": 0.6584882916463459,
+          "sunDirection": [
+            -0.830078506957068,
+            0.2820349170659405,
+            0.4810675397940844
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "triton",
+      "id": "triton",
+      "parent": "neptune",
+      "date": "2026-10-17T11:39:20.649Z",
+      "tdbSeconds": 845509229.8313773,
+      "latitude": -60,
+      "longitude": 0,
+      "radiusKm": 1352.6,
+      "parentRadiusKm": 24622,
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.7818018507513448,
+            0.6158892482469789,
+            -0.09729491279374934
+          ],
+          "distanceKm": 4469759067.46752,
+          "angularDiameter": 0.000311291947645463,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "neptune": {
+          "direction": [
+            0.04815996053863354,
+            0.4966998915364383,
+            -0.8665851579323338
+          ],
+          "distanceKm": 354047.80342584406,
+          "angularDiameter": 0.13920092192856526,
+          "illuminatedFraction": 0.3237472310693894,
+          "sunDirection": [
+            -0.7818274976774097,
+            0.6158671026727454,
+            -0.09722898601218588
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "triton",
+      "id": "triton",
+      "parent": "neptune",
+      "date": "2026-10-18T05:17:10.672Z",
+      "tdbSeconds": 845572699.8543817,
+      "latitude": -60,
+      "longitude": 0,
+      "radiusKm": 1352.6,
+      "parentRadiusKm": 24622,
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.27548570180167453,
+            0.8348273457409502,
+            -0.4766245177348298
+          ],
+          "distanceKm": 4469919972.6912365,
+          "angularDiameter": 0.00031128074196366384,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "neptune": {
+          "direction": [
+            0.04805048023186653,
+            0.49669750518305755,
+            -0.8665926030692932
+          ],
+          "distanceKm": 354076.4268795466,
+          "angularDiameter": 0.13918965075561485,
+          "illuminatedFraction": 0.0927839745552988,
+          "sunDirection": [
+            -0.2755072823236594,
+            0.8348418604091453,
+            -0.47658661908957195
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "triton",
+      "id": "triton",
+      "parent": "neptune",
+      "date": "2026-10-18T22:55:00.696Z",
+      "tdbSeconds": 845636169.8783863,
+      "latitude": -60,
+      "longitude": 0,
+      "radiusKm": 1352.6,
+      "parentRadiusKm": 24622,
+      "targets": {
+        "sun": {
+          "direction": [
+            0.39223591662718293,
+            0.8106247993943339,
+            -0.43478548770000336
+          ],
+          "distanceKm": 4469911633.285692,
+          "angularDiameter": 0.00031128132271258675,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "neptune": {
+          "direction": [
+            0.04808639145720949,
+            0.49660789628859775,
+            -0.8666419654623457
+          ],
+          "distanceKm": 354110.00814036874,
+          "angularDiameter": 0.1391764296554705,
+          "illuminatedFraction": 0.1009007554600575,
+          "sunDirection": [
+            0.39225691157667025,
+            0.8106367183833968,
+            -0.434744322710406
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "triton",
+      "id": "triton",
+      "parent": "neptune",
+      "date": "2026-10-19T16:32:50.719Z",
+      "tdbSeconds": 845699639.9013913,
+      "latitude": -60,
+      "longitude": 0,
+      "radiusKm": 1352.6,
+      "parentRadiusKm": 24622,
+      "targets": {
+        "sun": {
+          "direction": [
+            0.8302187860482834,
+            0.5574252411279191,
+            0.0037239556919765444
+          ],
+          "distanceKm": 4469737429.889224,
+          "angularDiameter": 0.00031129345458050115,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "neptune": {
+          "direction": [
+            0.04824712159103003,
+            0.49648364314045945,
+            -0.8667042213766801
+          ],
+          "distanceKm": 354129.278558326,
+          "angularDiameter": 0.13916884393643475,
+          "illuminatedFraction": 0.34324541352202165,
+          "sunDirection": [
+            0.8302355878953185,
+            0.5573997523208729,
+            0.0037927173298687943
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "triton",
+      "id": "triton",
+      "parent": "neptune",
+      "date": "2026-10-20T10:10:40.742Z",
+      "tdbSeconds": 845763109.9243964,
+      "latitude": -60,
+      "longitude": 0,
+      "radiusKm": 1352.6,
+      "parentRadiusKm": 24622,
+      "targets": {
+        "sun": {
+          "direction": [
+            0.7818343464193327,
+            0.2235133809649564,
+            0.5820453790630667
+          ],
+          "distanceKm": 4469497864.514503,
+          "angularDiameter": 0.00031131013992994255,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "neptune": {
+          "direction": [
+            0.04843791968456192,
+            0.49639758612691853,
+            -0.8667428709969298
+          ],
+          "distanceKm": 354123.25577212154,
+          "angularDiameter": 0.1391712146920026,
+          "illuminatedFraction": 0.6778654783309574,
+          "sunDirection": [
+            0.781808475534651,
+            0.22346775301923347,
+            0.5820976472575026
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "iapetus",
+      "id": "iapetus",
+      "parent": "saturn",
+      "date": "1900-01-01T00:00:00Z",
+      "tdbSeconds": -3155716802.7589946,
+      "latitude": -1,
+      "longitude": 55,
+      "radiusKm": 734.3,
+      "parentRadiusKm": 58232,
+      "targets": {
+        "sun": {
+          "direction": [
+            0.6779266440113969,
+            -0.6986995143050911,
+            -0.22854858137664047
+          ],
+          "distanceKm": 1502669022.9683793,
+          "angularDiameter": 0.0009259524409164223,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "saturn": {
+          "direction": [
+            -0.86061987094743,
+            0.5091785181837184,
+            -0.008406803831553662
+          ],
+          "distanceKm": 3533960.4658647547,
+          "angularDiameter": 0.03295715165226034,
+          "illuminatedFraction": 0.9687816911257492,
+          "sunDirection": [
+            0.678454907337315,
+            -0.6983573843933775,
+            -0.22802610020161374
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "iapetus",
+      "id": "iapetus",
+      "parent": "saturn",
+      "date": "1900-12-31T23:59:59Z",
+      "tdbSeconds": -3124180802.4052444,
+      "latitude": -1,
+      "longitude": 55,
+      "radiusKm": 734.3,
+      "parentRadiusKm": 58232,
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.9164655354675332,
+            0.33809590341965085,
+            -0.21396747975114805
+          ],
+          "distanceKm": 1509489535.5023968,
+          "angularDiameter": 0.0009217685956304374,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "saturn": {
+          "direction": [
+            -0.9098683923165352,
+            0.41483235816596586,
+            -0.007322791939378168
+          ],
+          "distanceKm": 3529359.182367905,
+          "angularDiameter": 0.03300012232897642,
+          "illuminatedFraction": 0.012214865646311857,
+          "sunDirection": [
+            -0.9164286490422873,
+            0.3378967632786527,
+            -0.21443952196444283
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "iapetus",
+      "id": "iapetus",
+      "parent": "saturn",
+      "date": "1971-08-01T17:00:00Z",
+      "tdbSeconds": -896813958.2280614,
+      "latitude": -1,
+      "longitude": 55,
+      "radiusKm": 734.3,
+      "parentRadiusKm": 58232,
+      "targets": {
+        "sun": {
+          "direction": [
+            0.9607617457891428,
+            0.08520542514244842,
+            0.26396382963294956
+          ],
+          "distanceKm": 1357321286.528112,
+          "angularDiameter": 0.0010251073748955976,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "saturn": {
+          "direction": [
+            -0.8905327557841165,
+            0.4548401045846789,
+            -0.008478805160234448
+          ],
+          "distanceKm": 3566637.4903030326,
+          "angularDiameter": 0.03265517596608633,
+          "illuminatedFraction": 0.9099675507090297,
+          "sunDirection": [
+            0.9610323004673206,
+            0.08382972019054823,
+            0.26341885936899795
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "iapetus",
+      "id": "iapetus",
+      "parent": "saturn",
+      "date": "2000-01-01T12:00:00Z",
+      "tdbSeconds": 64.18392728473108,
+      "latitude": -1,
+      "longitude": 55,
+      "radiusKm": 734.3,
+      "parentRadiusKm": 58232,
+      "targets": {
+        "sun": {
+          "direction": [
+            0.7450277721313059,
+            -0.6103753299988903,
+            0.2690270902377836
+          ],
+          "distanceKm": 1370406943.8488414,
+          "angularDiameter": 0.001015318891961413,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "saturn": {
+          "direction": [
+            -0.8675570802657047,
+            0.4972482077060793,
+            -0.00943039839759601
+          ],
+          "distanceKm": 3650415.9826238984,
+          "angularDiameter": 0.03190566241667694,
+          "illuminatedFraction": 0.9763229042847144,
+          "sunDirection": [
+            0.7454473164452339,
+            -0.6101517480656241,
+            0.268371277779613
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "iapetus",
+      "id": "iapetus",
+      "parent": "saturn",
+      "date": "2100-12-31T23:59:59Z",
+      "tdbSeconds": 3187252868.183877,
+      "latitude": -1,
+      "longitude": 55,
+      "radiusKm": 734.3,
+      "parentRadiusKm": 58232,
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.8833714345147078,
+            0.4068150718099798,
+            -0.23271528963879556
+          ],
+          "distanceKm": 1464868583.7209992,
+          "angularDiameter": 0.0009498463328165152,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "saturn": {
+          "direction": [
+            -0.8337397341838566,
+            0.5520597733484486,
+            -0.010395301510370698
+          ],
+          "distanceKm": 3657163.4763958314,
+          "angularDiameter": 0.03184679125222058,
+          "illuminatedFraction": 0.018336145033740148,
+          "sunDirection": [
+            -0.8834147691504025,
+            0.4064143379280387,
+            -0.23325036242941738
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "iapetus",
+      "id": "iapetus",
+      "parent": "saturn",
+      "date": "2031-05-01T12:00:00Z",
+      "tdbSeconds": 988675269.1854814,
+      "latitude": -1,
+      "longitude": 55,
+      "radiusKm": 734.3,
+      "parentRadiusKm": 58232,
+      "targets": {
+        "sun": {
+          "direction": [
+            0.9037765381726115,
+            0.35753589820918025,
+            0.23527866571468967
+          ],
+          "distanceKm": 1351398053.949497,
+          "angularDiameter": 0.0010296004625665756,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "saturn": {
+          "direction": [
+            -0.8710491644836269,
+            0.49111728918913533,
+            -0.008784151176435084
+          ],
+          "distanceKm": 3524188.023810409,
+          "angularDiameter": 0.03304854891295111,
+          "illuminatedFraction": 0.8076650859593918,
+          "sunDirection": [
+            0.9045984032255987,
+            0.3556851546215431,
+            0.23492509372892878
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "iapetus",
+      "id": "iapetus",
+      "parent": "saturn",
+      "date": "2031-05-01T12:00:00.000Z",
+      "tdbSeconds": 988675269.1854814,
+      "latitude": -1,
+      "longitude": 55,
+      "radiusKm": 734.3,
+      "parentRadiusKm": 58232,
+      "targets": {
+        "sun": {
+          "direction": [
+            0.9037765381726115,
+            0.35753589820918025,
+            0.23527866571468967
+          ],
+          "distanceKm": 1351398053.949497,
+          "angularDiameter": 0.0010296004625665756,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "saturn": {
+          "direction": [
+            -0.8710491644836269,
+            0.49111728918913533,
+            -0.008784151176435084
+          ],
+          "distanceKm": 3524188.023810409,
+          "angularDiameter": 0.03304854891295111,
+          "illuminatedFraction": 0.8076650859593918,
+          "sunDirection": [
+            0.9045984032255987,
+            0.3556851546215431,
+            0.23492509372892878
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "iapetus",
+      "id": "iapetus",
+      "parent": "saturn",
+      "date": "2031-05-11T09:59:25.976Z",
+      "tdbSeconds": 989532035.1613355,
+      "latitude": -1,
+      "longitude": 55,
+      "radiusKm": 734.3,
+      "parentRadiusKm": 58232,
+      "targets": {
+        "sun": {
+          "direction": [
+            0.3946857804194967,
+            0.890844419273104,
+            0.2249874560605968
+          ],
+          "distanceKm": 1353813745.402899,
+          "angularDiameter": 0.001027763284250565,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "saturn": {
+          "direction": [
+            -0.855676909122599,
+            0.5174345344290435,
+            -0.008861702691623615
+          ],
+          "distanceKm": 3467790.608488045,
+          "angularDiameter": 0.03358607460942527,
+          "illuminatedFraction": 0.44064431462667414,
+          "sunDirection": [
+            0.3969995979907544,
+            0.8897924570263216,
+            0.2250793251594659
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "iapetus",
+      "id": "iapetus",
+      "parent": "saturn",
+      "date": "2031-05-21T07:58:51.952Z",
+      "tdbSeconds": 990388801.1371517,
+      "latitude": -1,
+      "longitude": 55,
+      "radiusKm": 734.3,
+      "parentRadiusKm": 58232,
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.34106288135640944,
+            0.9130461522167583,
+            0.2236578522722502
+          ],
+          "distanceKm": 1355966646.0443625,
+          "angularDiameter": 0.0010261314797849485,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "saturn": {
+          "direction": [
+            -0.8316394367687434,
+            0.5552384666475163,
+            -0.009278597193657083
+          ],
+          "distanceKm": 3468195.0022374643,
+          "angularDiameter": 0.033582158083599295,
+          "illuminatedFraction": 0.10622294202417176,
+          "sunDirection": [
+            -0.33962030918143427,
+            0.9134671799749797,
+            0.2241333458012558
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "iapetus",
+      "id": "iapetus",
+      "parent": "saturn",
+      "date": "2031-05-31T05:58:17.929Z",
+      "tdbSeconds": 991245567.1139357,
+      "latitude": -1,
+      "longitude": 55,
+      "radiusKm": 734.3,
+      "parentRadiusKm": 58232,
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.880570156961923,
+            0.41339966303908743,
+            0.23172595294274514
+          ],
+          "distanceKm": 1356437599.8551254,
+          "angularDiameter": 0.0010257752079054446,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "saturn": {
+          "direction": [
+            -0.8143800021405655,
+            0.5802513475384403,
+            -0.009673975054561565
+          ],
+          "distanceKm": 3524450.368139997,
+          "angularDiameter": 0.033046088702810776,
+          "illuminatedFraction": 0.022738972404032,
+          "sunDirection": [
+            -0.8806385201101649,
+            0.41291620510333693,
+            0.23232736485665478
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "iapetus",
+      "id": "iapetus",
+      "parent": "saturn",
+      "date": "2031-06-10T03:57:43.905Z",
+      "tdbSeconds": 992102333.0896938,
+      "latitude": -1,
+      "longitude": 55,
+      "radiusKm": 734.3,
+      "parentRadiusKm": 58232,
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.9149006732706857,
+            -0.32140939615866637,
+            0.24423914123204596
+          ],
+          "distanceKm": 1354918889.2641258,
+          "angularDiameter": 0.0010269249858156978,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "saturn": {
+          "direction": [
+            -0.8152031545805358,
+            0.5790899960361647,
+            -0.009929413516318684
+          ],
+          "distanceKm": 3601984.2543061445,
+          "angularDiameter": 0.03233469819786241,
+          "illuminatedFraction": 0.22227855939042795,
+          "sunDirection": [
+            -0.9140854842479849,
+            -0.3234272465336942,
+            0.24462735678325176
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "iapetus",
+      "id": "iapetus",
+      "parent": "saturn",
+      "date": "2031-06-20T01:57:09.882Z",
+      "tdbSeconds": 992959099.0664326,
+      "latitude": -1,
+      "longitude": 55,
+      "radiusKm": 734.3,
+      "parentRadiusKm": 58232,
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.42293637636318204,
+            -0.8699234160961624,
+            0.2536889269880808
+          ],
+          "distanceKm": 1352272279.3324318,
+          "angularDiameter": 0.0010289348400053123,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "saturn": {
+          "direction": [
+            -0.832699403751994,
+            0.5536381786287617,
+            -0.009821922199886608
+          ],
+          "distanceKm": 3653980.7070382684,
+          "angularDiameter": 0.031874533481415515,
+          "illuminatedFraction": 0.5672946500805512,
+          "sunDirection": [
+            -0.4205349054301679,
+            -0.871105727930645,
+            0.2536241393898865
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "iapetus",
+      "id": "iapetus",
+      "parent": "saturn",
+      "date": "2031-06-29T23:56:35.858Z",
+      "tdbSeconds": 993815865.0421594,
+      "latitude": -1,
+      "longitude": 55,
+      "radiusKm": 734.3,
+      "parentRadiusKm": 58232,
+      "targets": {
+        "sun": {
+          "direction": [
+            0.3139362434555575,
+            -0.9147566296120078,
+            0.25429184734452837
+          ],
+          "distanceKm": 1349882816.6441038,
+          "angularDiameter": 0.0010307561844924683,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "saturn": {
+          "direction": [
+            -0.855109485109545,
+            0.5183616868559564,
+            -0.009430274414671355
+          ],
+          "distanceKm": 3653755.5880929744,
+          "angularDiameter": 0.03187649753424455,
+          "illuminatedFraction": 0.8731116936787762,
+          "sunDirection": [
+            0.3156138157097997,
+            -0.9143144251829791,
+            0.25380514422568173
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "iapetus",
+      "id": "iapetus",
+      "parent": "saturn",
+      "date": "2031-07-09T21:56:01.834Z",
+      "tdbSeconds": 994672631.0178818,
+      "latitude": -1,
+      "longitude": 55,
+      "radiusKm": 734.3,
+      "parentRadiusKm": 58232,
+      "targets": {
+        "sun": {
+          "direction": [
+            0.869941454440914,
+            -0.4277950549646153,
+            0.24534314091298554
+          ],
+          "distanceKm": 1348964125.983671,
+          "angularDiameter": 0.0010314581647346134,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "saturn": {
+          "direction": [
+            -0.8704824709850996,
+            0.4921160039779811,
+            -0.009061254682380239
+          ],
+          "distanceKm": 3600537.5370765426,
+          "angularDiameter": 0.0323476916031973,
+          "illuminatedFraction": 0.9850868722165833,
+          "sunDirection": [
+            0.8700121532386365,
+            -0.42800034942805043,
+            0.2447336390987929
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "iapetus",
+      "id": "iapetus",
+      "parent": "saturn",
+      "date": "2031-07-19T19:55:27.811Z",
+      "tdbSeconds": 995529396.9946073,
+      "latitude": -1,
+      "longitude": 55,
+      "radiusKm": 734.3,
+      "parentRadiusKm": 58232,
+      "targets": {
+        "sun": {
+          "direction": [
+            0.9222749924277448,
+            0.30941355075140564,
+            0.231672382803412
+          ],
+          "distanceKm": 1350005011.0983567,
+          "angularDiameter": 0.0010306628865420558,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "saturn": {
+          "direction": [
+            -0.8709691991994783,
+            0.4912583052229777,
+            -0.00882788736149563
+          ],
+          "distanceKm": 3524229.1784506612,
+          "angularDiameter": 0.03304816294913421,
+          "illuminatedFraction": 0.8274043943492349,
+          "sunDirection": [
+            0.9229727524921227,
+            0.30760588375190223,
+            0.23130049381340573
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "iapetus",
+      "id": "iapetus",
+      "parent": "saturn",
+      "date": "2031-07-29T17:54:53.787Z",
+      "tdbSeconds": 996386162.9703438,
+      "latitude": -1,
+      "longitude": 55,
+      "radiusKm": 734.3,
+      "parentRadiusKm": 58232,
+      "targets": {
+        "sun": {
+          "direction": [
+            0.4415387220719958,
+            0.8696383001633762,
+            0.22084561077816922
+          ],
+          "distanceKm": 1352405675.660982,
+          "angularDiameter": 0.0010288333496429514,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "saturn": {
+          "direction": [
+            -0.8555981939304015,
+            0.5175632004800792,
+            -0.008947851801035547
+          ],
+          "distanceKm": 3467871.101338764,
+          "angularDiameter": 0.03358529496884482,
+          "illuminatedFraction": 0.4661076326094322,
+          "sunDirection": [
+            0.443811261046403,
+            0.8684649466967057,
+            0.22090767512128057
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "iapetus",
+      "id": "iapetus",
+      "parent": "saturn",
+      "date": "2031-08-08T15:54:19.764Z",
+      "tdbSeconds": 997242928.9470986,
+      "latitude": -1,
+      "longitude": 55,
+      "radiusKm": 734.3,
+      "parentRadiusKm": 58232,
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.2929389782414048,
+            0.9307709587534769,
+            0.21875140540809113
+          ],
+          "distanceKm": 1354652929.1154022,
+          "angularDiameter": 0.0010271266028794449,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "saturn": {
+          "direction": [
+            -0.8316027702220571,
+            0.5552922740113084,
+            -0.00934467668519963
+          ],
+          "distanceKm": 3468378.8182299854,
+          "angularDiameter": 0.03358037814023228,
+          "illuminatedFraction": 0.12133810045107463,
+          "sunDirection": [
+            -0.29137517498510646,
+            0.9311560415904794,
+            0.2192006697342594
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "iapetus",
+      "id": "iapetus",
+      "parent": "saturn",
+      "date": "2031-08-18T13:53:45.740Z",
+      "tdbSeconds": 998099694.9228784,
+      "latitude": -1,
+      "longitude": 55,
+      "radiusKm": 734.3,
+      "parentRadiusKm": 58232,
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.8587608619297706,
+            0.4597333545496421,
+            0.22621897518150558
+          ],
+          "distanceKm": 1355283212.6942966,
+          "angularDiameter": 0.0010266489306984187,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "saturn": {
+          "direction": [
+            -0.8143624344462046,
+            0.5802758254049444,
+            -0.009684617362690964
+          ],
+          "distanceKm": 3524473.825310407,
+          "angularDiameter": 0.03304586874422331,
+          "illuminatedFraction": 0.018130525914697382,
+          "sunDirection": [
+            -0.8587956361029739,
+            0.45937574072350534,
+            0.2268126633264101
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "iapetus",
+      "id": "iapetus",
+      "parent": "saturn",
+      "date": "2031-08-28T11:53:11.716Z",
+      "tdbSeconds": 998956460.8986895,
+      "latitude": -1,
+      "longitude": 55,
+      "radiusKm": 734.3,
+      "parentRadiusKm": 58232,
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.9319378938985659,
+            -0.2730664450336747,
+            0.23859270423166032
+          ],
+          "distanceKm": 1353905635.5958176,
+          "angularDiameter": 0.0010276935294816255,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "saturn": {
+          "direction": [
+            -0.8151940615203804,
+            0.5791035799265198,
+            -0.00988361159672392
+          ],
+          "distanceKm": 3601961.2320492235,
+          "angularDiameter": 0.032334904885982646,
+          "illuminatedFraction": 0.20124546167744733,
+          "sunDirection": [
+            -0.9312515945676546,
+            -0.2750449499692525,
+            0.23899946257598997
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "iapetus",
+      "id": "iapetus",
+      "parent": "saturn",
+      "date": "2031-09-07T09:52:37.693Z",
+      "tdbSeconds": 999813226.8755376,
+      "latitude": -1,
+      "longitude": 55,
+      "radiusKm": 734.3,
+      "parentRadiusKm": 58232,
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.46916733177416586,
+            -0.8474546326960016,
+            0.24840020192824788
+          ],
+          "distanceKm": 1351316338.3211572,
+          "angularDiameter": 0.0010296627236773051,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "saturn": {
+          "direction": [
+            -0.832662184107013,
+            0.5536956167779412,
+            -0.00973915391777349
+          ],
+          "distanceKm": 3653844.5222597052,
+          "angularDiameter": 0.031875721598160385,
+          "illuminatedFraction": 0.5418392569223879,
+          "sunDirection": [
+            -0.46681195784141244,
+            -0.8487628188540937,
+            0.24837124098236443
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "iapetus",
+      "id": "iapetus",
+      "parent": "saturn",
+      "date": "2031-09-17T07:52:03.669Z",
+      "tdbSeconds": 1000669992.8514272,
+      "latitude": -1,
+      "longitude": 55,
+      "radiusKm": 734.3,
+      "parentRadiusKm": 58232,
+      "targets": {
+        "sun": {
+          "direction": [
+            0.2651201800501735,
+            -0.9313467045943915,
+            0.24960890603368072
+          ],
+          "distanceKm": 1348884096.3110259,
+          "angularDiameter": 0.0010315193614429264,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "saturn": {
+          "direction": [
+            -0.8550629451602494,
+            0.5184396730311954,
+            -0.0093629718138774
+          ],
+          "distanceKm": 3653686.1808177917,
+          "angularDiameter": 0.03187710312763524,
+          "illuminatedFraction": 0.8566053716103065,
+          "sunDirection": [
+            0.26692109442469275,
+            -0.9309541978601806,
+            0.2491533881720898
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "iapetus",
+      "id": "iapetus",
+      "parent": "saturn",
+      "date": "2031-09-27T05:51:29.646Z",
+      "tdbSeconds": 1001526758.8283616,
+      "latitude": -1,
+      "longitude": 55,
+      "radiusKm": 734.3,
+      "parentRadiusKm": 58232,
+      "targets": {
+        "sun": {
+          "direction": [
+            0.8468716912311065,
+            -0.4739944720184112,
+            0.24111735542543009
+          ],
+          "distanceKm": 1347857627.4506679,
+          "angularDiameter": 0.0010323049211161486,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "saturn": {
+          "direction": [
+            -0.870411979244806,
+            0.49224105087306513,
+            -0.009040698121280999
+          ],
+          "distanceKm": 3600421.2396812835,
+          "angularDiameter": 0.0323487365588038,
+          "illuminatedFraction": 0.9863851748324561,
+          "sunDirection": [
+            0.8469960100877768,
+            -0.4740775641635473,
+            0.2405165733419304
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "iapetus",
+      "id": "iapetus",
+      "parent": "saturn",
+      "date": "2031-10-07T03:50:55.622Z",
+      "tdbSeconds": 1002383524.8043435,
+      "latitude": -1,
+      "longitude": 55,
+      "radiusKm": 734.3,
+      "parentRadiusKm": 58232,
+      "targets": {
+        "sun": {
+          "direction": [
+            0.9383369760441554,
+            0.26037206046647443,
+            0.2274425411323758
+          ],
+          "distanceKm": 1348796804.3851335,
+          "angularDiameter": 0.001031586119696911,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "saturn": {
+          "direction": [
+            -0.8708939015640466,
+            0.49139111371643535,
+            -0.00886485076434832
+          ],
+          "distanceKm": 3524251.2943543987,
+          "angularDiameter": 0.03304795554152956,
+          "illuminatedFraction": 0.8463121587174959,
+          "sunDirection": [
+            0.9389149899865395,
+            0.25862053321493966,
+            0.22705519456334095
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "iapetus",
+      "id": "iapetus",
+      "parent": "saturn",
+      "date": "2031-10-17T01:50:21.598Z",
+      "tdbSeconds": 1003240290.7803733,
+      "latitude": -1,
+      "longitude": 55,
+      "radiusKm": 734.3,
+      "parentRadiusKm": 58232,
+      "targets": {
+        "sun": {
+          "direction": [
+            0.4873003766502573,
+            0.8460704966564172,
+            0.21610890218609943
+          ],
+          "distanceKm": 1351175840.2114532,
+          "angularDiameter": 0.0010297697901854436,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "saturn": {
+          "direction": [
+            -0.8555186723571181,
+            0.5176931816869514,
+            -0.009031660044258202
+          ],
+          "distanceKm": 3467945.2284028945,
+          "angularDiameter": 0.03358457701824769,
+          "illuminatedFraction": 0.4917036588045374,
+          "sunDirection": [
+            0.48951862087548403,
+            0.8447805370977899,
+            0.21614199952099433
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "iapetus",
+      "id": "iapetus",
+      "parent": "saturn",
+      "date": "2031-10-26T23:49:47.575Z",
+      "tdbSeconds": 1004097056.7574509,
+      "latitude": -1,
+      "longitude": 55,
+      "radiusKm": 734.3,
+      "parentRadiusKm": 58232,
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.24394949815505,
+            0.9460500342504565,
+            0.2132556565360207
+          ],
+          "distanceKm": 1353511399.812352,
+          "angularDiameter": 0.0010279928646770944,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "saturn": {
+          "direction": [
+            -0.8315641734963721,
+            0.5553488964189774,
+            -0.009414276579714392
+          ],
+          "distanceKm": 3468563.2468503118,
+          "angularDiameter": 0.03357859245423979,
+          "illuminatedFraction": 0.1374872856711814,
+          "sunDirection": [
+            -0.2422690062618653,
+            0.9463867158475288,
+            0.21367712248206944
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "iapetus",
+      "id": "iapetus",
+      "parent": "saturn",
+      "date": "2031-11-05T21:49:13.551Z",
+      "tdbSeconds": 1004953822.7335743,
+      "latitude": -1,
+      "longitude": 55,
+      "radiusKm": 734.3,
+      "parentRadiusKm": 58232,
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.8346314974338862,
+            0.5049206863718079,
+            0.22010307577380972
+          ],
+          "distanceKm": 1354299308.624748,
+          "angularDiameter": 0.001027394795473878,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "saturn": {
+          "direction": [
+            -0.8143426075052959,
+            0.5803033264302262,
+            -0.00970396493655814
+          ],
+          "distanceKm": 3524521.7151610097,
+          "angularDiameter": 0.03304541968875567,
+          "illuminatedFraction": 0.014802172474538744,
+          "sunDirection": [
+            -0.8346201311314126,
+            0.504685108859601,
+            0.22068569868832882
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "iapetus",
+      "id": "iapetus",
+      "parent": "saturn",
+      "date": "2031-11-15T19:48:39.528Z",
+      "tdbSeconds": 1005810588.71074,
+      "latitude": -1,
+      "longitude": 55,
+      "radiusKm": 734.3,
+      "parentRadiusKm": 58232,
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.9465166397385987,
+            -0.2239215950339598,
+            0.2323044768733458
+          ],
+          "distanceKm": 1353066439.586424,
+          "angularDiameter": 0.0010283309234480743,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "saturn": {
+          "direction": [
+            -0.8151871051852205,
+            0.5791140362220628,
+            -0.009844622406753902
+          ],
+          "distanceKm": 3601955.182745326,
+          "angularDiameter": 0.03233495919557307,
+          "illuminatedFraction": 0.18097595728401605,
+          "sunDirection": [
+            -0.9459552743973507,
+            -0.22584731846329134,
+            0.23272646515335
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "iapetus",
+      "id": "iapetus",
+      "parent": "saturn",
+      "date": "2031-11-25T17:48:05.504Z",
+      "tdbSeconds": 1006667354.6869435,
+      "latitude": -1,
+      "longitude": 55,
+      "radiusKm": 734.3,
+      "parentRadiusKm": 58232,
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.5142103492975413,
+            -0.8226840915896253,
+            0.2424429873612621
+          ],
+          "distanceKm": 1350541140.6705494,
+          "angularDiameter": 0.001030253740249002,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "saturn": {
+          "direction": [
+            -0.832627653706221,
+            0.5537489616471021,
+            -0.009658041127972606
+          ],
+          "distanceKm": 3653729.9444186203,
+          "angularDiameter": 0.03187672127813345,
+          "illuminatedFraction": 0.5162294398452331,
+          "sunDirection": [
+            -0.5119146915699463,
+            -0.8241128384966948,
+            0.24244871206044208
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "iapetus",
+      "id": "iapetus",
+      "parent": "saturn",
+      "date": "2031-12-05T15:47:31.480Z",
+      "tdbSeconds": 1007524120.663179,
+      "latitude": -1,
+      "longitude": 55,
+      "radiusKm": 734.3,
+      "parentRadiusKm": 58232,
+      "targets": {
+        "sun": {
+          "direction": [
+            0.2155188882723928,
+            -0.9454585738649939,
+            0.24425333959437226
+          ],
+          "distanceKm": 1348072263.7338116,
+          "angularDiameter": 0.0010321405604086613,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "saturn": {
+          "direction": [
+            -0.8550212060038523,
+            0.5185097882629558,
+            -0.009291757595979671
+          ],
+          "distanceKm": 3653618.7942705965,
+          "angularDiameter": 0.03187769111175649,
+          "illuminatedFraction": 0.8391185773786305,
+          "sunDirection": [
+            0.21743695292709425,
+            -0.9451284111951281,
+            0.2438307975903638
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "iapetus",
+      "id": "iapetus",
+      "parent": "saturn",
+      "date": "2031-12-15T13:46:57.457Z",
+      "tdbSeconds": 1008380886.6404393,
+      "latitude": -1,
+      "longitude": 55,
+      "radiusKm": 734.3,
+      "parentRadiusKm": 58232,
+      "targets": {
+        "sun": {
+          "direction": [
+            0.8214863063723568,
+            -0.5189898244339696,
+            0.23624100104914023
+          ],
+          "distanceKm": 1346940324.1831021,
+          "angularDiameter": 0.0010330079491155638,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "saturn": {
+          "direction": [
+            -0.8703447516297911,
+            0.49236043598113766,
+            -0.009011902737009463
+          ],
+          "distanceKm": 3600304.507742469,
+          "angularDiameter": 0.03234978548676822,
+          "illuminatedFraction": 0.9863895294483094,
+          "sunDirection": [
+            0.8216763376039303,
+            -0.5189565931805308,
+            0.2356523936145114
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "iapetus",
+      "id": "iapetus",
+      "parent": "saturn",
+      "date": "2031-12-25T11:46:23.433Z",
+      "tdbSeconds": 1009237652.6167166,
+      "latitude": -1,
+      "longitude": 55,
+      "radiusKm": 734.3,
+      "parentRadiusKm": 58232,
+      "targets": {
+        "sun": {
+          "direction": [
+            0.9519023264338315,
+            0.21055136700566948,
+            0.22259847884004724
+          ],
+          "distanceKm": 1347774893.915611,
+          "angularDiameter": 0.0010323682894452005,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "saturn": {
+          "direction": [
+            -0.8708212876014205,
+            0.4915192348383711,
+            -0.008895327093819646
+          ],
+          "distanceKm": 3524250.4134717216,
+          "angularDiameter": 0.03304796380258311,
+          "illuminatedFraction": 0.8643272765548433,
+          "sunDirection": [
+            0.9523663585761607,
+            0.2088684809515457,
+            0.2221987324837327
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "iapetus",
+      "id": "iapetus",
+      "parent": "saturn",
+      "date": "2032-01-04T09:45:49.410Z",
+      "tdbSeconds": 1010094418.5940026,
+      "latitude": -1,
+      "longitude": 55,
+      "radiusKm": 734.3,
+      "parentRadiusKm": 58232,
+      "targets": {
+        "sun": {
+          "direction": [
+            0.5318302746311084,
+            0.820198061323091,
+            0.21078828047982825
+          ],
+          "distanceKm": 1350125768.5538094,
+          "angularDiameter": 0.0010305707023607572,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "saturn": {
+          "direction": [
+            -0.855436904958029,
+            0.517826848155848,
+            -0.009113559392925455
+          ],
+          "distanceKm": 3468003.027647213,
+          "angularDiameter": 0.033584017230488,
+          "illuminatedFraction": 0.517356684794452,
+          "sunDirection": [
+            0.5339817403668473,
+            0.818797633024272,
+            0.21079358886987706
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "iapetus",
+      "id": "iapetus",
+      "parent": "saturn",
+      "date": "2032-01-14T07:45:15.386Z",
+      "tdbSeconds": 1010951184.5702885,
+      "latitude": -1,
+      "longitude": 55,
+      "radiusKm": 734.3,
+      "parentRadiusKm": 58232,
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.19423406857187864,
+            0.9588263367604155,
+            0.20718393407940075
+          ],
+          "distanceKm": 1352543464.59647,
+          "angularDiameter": 0.00102872853832394,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "saturn": {
+          "direction": [
+            -0.8315221303565038,
+            0.5554106074273025,
+            -0.009487037715567517
+          ],
+          "distanceKm": 3468731.312861934,
+          "angularDiameter": 0.033576965360677766,
+          "illuminatedFraction": 0.15462653892746892,
+          "sunDirection": [
+            -0.19244278906813148,
+            0.9591026200362942,
+            0.20757634059592442
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "iapetus",
+      "id": "iapetus",
+      "parent": "saturn",
+      "date": "2032-01-24T05:44:41.362Z",
+      "tdbSeconds": 1011807950.5465655,
+      "latitude": -1,
+      "longitude": 55,
+      "radiusKm": 734.3,
+      "parentRadiusKm": 58232,
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.8082424359270342,
+            0.5488236028946903,
+            0.21339357458092637
+          ],
+          "distanceKm": 1353487099.6331887,
+          "angularDiameter": 0.0010280113210133217,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "saturn": {
+          "direction": [
+            -0.8143197660038725,
+            0.5803349297484001,
+            -0.009730776398516203
+          ],
+          "distanceKm": 3524577.9126350116,
+          "angularDiameter": 0.033044892749596565,
+          "illuminatedFraction": 0.012769164566704183,
+          "sunDirection": [
+            -0.808172820569282,
+            0.5487048387967869,
+            0.21396189374298188
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "iapetus",
+      "id": "iapetus",
+      "parent": "saturn",
+      "date": "2032-02-03T03:44:07.339Z",
+      "tdbSeconds": 1012664716.5238255,
+      "latitude": -1,
+      "longitude": 55,
+      "radiusKm": 734.3,
+      "parentRadiusKm": 58232,
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.9585836110070947,
+            -0.17411661815753812,
+            0.22539047005137783
+          ],
+          "distanceKm": 1352402470.8866751,
+          "angularDiameter": 0.0010288357876590353,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "saturn": {
+          "direction": [
+            -0.8151823425899061,
+            0.5791212967504119,
+            -0.009811828563237892
+          ],
+          "distanceKm": 3601950.5612933254,
+          "angularDiameter": 0.032335000686282284,
+          "illuminatedFraction": 0.16153365700433991,
+          "sunDirection": [
+            -0.9581417746795304,
+            -0.17597664402132773,
+            0.22582418022202805
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "iapetus",
+      "id": "iapetus",
+      "parent": "saturn",
+      "date": "2032-02-13T01:43:33.315Z",
+      "tdbSeconds": 1013521482.5000604,
+      "latitude": -1,
+      "longitude": 55,
+      "radiusKm": 734.3,
+      "parentRadiusKm": 58232,
+      "targets": {
+        "sun": {
+          "direction": [
+            -0.5579268029257674,
+            -0.7956762737542028,
+            0.23583246163677124
+          ],
+          "distanceKm": 1349948131.715325,
+          "angularDiameter": 0.0010307063130063122,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "saturn": {
+          "direction": [
+            -0.8325971963521047,
+            0.5537961135987561,
+            -0.009579832437417208
+          ],
+          "distanceKm": 3653627.1769501353,
+          "angularDiameter": 0.03187761796715603,
+          "illuminatedFraction": 0.4905394139630756,
+          "sunDirection": [
+            -0.5557038753973302,
+            -0.7972188643180199,
+            0.23587133196697546
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "iapetus",
+      "id": "iapetus",
+      "parent": "saturn",
+      "date": "2032-02-22T23:42:59.292Z",
+      "tdbSeconds": 1014378248.4772633,
+      "latitude": -1,
+      "longitude": 55,
+      "radiusKm": 734.3,
+      "parentRadiusKm": 58232,
+      "targets": {
+        "sun": {
+          "direction": [
+            0.16527756379124434,
+            -0.9570400699600766,
+            0.23823860182187687
+          ],
+          "distanceKm": 1347449379.8595955,
+          "angularDiameter": 0.0010326176868801463,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "saturn": {
+          "direction": [
+            -0.8549860207764975,
+            0.5185691108965678,
+            -0.009218541138035318
+          ],
+          "distanceKm": 3653549.424966921,
+          "angularDiameter": 0.031878296419161165,
+          "illuminatedFraction": 0.8206975107484704,
+          "sunDirection": [
+            0.16730521970297446,
+            -0.956784260273831,
+            0.23785046300648058
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "iapetus",
+      "id": "iapetus",
+      "parent": "saturn",
+      "date": "2032-03-03T21:42:25.268Z",
+      "tdbSeconds": 1015235014.4534285,
+      "latitude": -1,
+      "longitude": 55,
+      "radiusKm": 734.3,
+      "parentRadiusKm": 58232,
+      "targets": {
+        "sun": {
+          "direction": [
+            0.793851659611239,
+            -0.5626410973599155,
+            0.2307261105599262
+          ],
+          "distanceKm": 1346215099.660179,
+          "angularDiameter": 0.001033564444703777,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "saturn": {
+          "direction": [
+            -0.8702831047321806,
+            0.4924700561693714,
+            -0.00897559993832398
+          ],
+          "distanceKm": 3600192.370470452,
+          "angularDiameter": 0.032350793192115715,
+          "illuminatedFraction": 0.9850938830835174,
+          "sunDirection": [
+            0.7941188258261386,
+            -0.5624987835704309,
+            0.23015301203829722
+          ]
+        }
+      },
+      "visibleSolarFraction": 1.0
+    },
+    {
+      "siteId": "iapetus",
+      "id": "iapetus",
+      "parent": "saturn",
+      "date": "2032-03-13T19:41:51.244Z",
+      "tdbSeconds": 1016091780.429551,
+      "latitude": -1,
+      "longitude": 55,
+      "radiusKm": 734.3,
+      "parentRadiusKm": 58232,
+      "targets": {
+        "sun": {
+          "direction": [
+            0.9629194413970562,
+            0.16009713082733865,
+            0.2171521542155067
+          ],
+          "distanceKm": 1346942938.3917754,
+          "angularDiameter": 0.0010330059442061475,
+          "illuminatedFraction": 1.0,
+          "sunDirection": null
+        },
+        "saturn": {
+          "direction": [
+            -0.8707533674463983,
+            0.49163913733395087,
+            -0.008918055970121496
+          ],
+          "distanceKm": 3524235.207350244,
+          "angularDiameter": 0.03304810640858563,
+          "illuminatedFraction": 0.881393544911367,
+          "sunDirection": [
+            0.9632766035365545,
+            0.1584946737155337,
+            0.21674322015437142
           ]
         }
       },

@@ -86,6 +86,50 @@ try {
   }
   await exit();
 
+  // 3. Saturn's rings from Iapetus (inclined orbit, sunlit south face in 2031): wide open rings.
+  await page.locator('#display-settings summary').click();
+  await page.locator('#moments-button').click();
+  await page.locator('[data-moment-id="iapetus-open-rings"]').click();
+  await page.waitForFunction(() => document.querySelector('.surface-view')?.dataset.ready === 'true', null, { timeout: 90000 });
+  await page.locator('.surface-parent').click();
+  await page.waitForTimeout(800);
+  {
+    const shot = await capture();
+    const width = shot.info.width;
+    const value = (x, y) => shot.data[y * width + x];
+    const skySamples = [];
+    for (let y = 30; y < 140; y++) for (let x = 200; x < 800; x++) skySamples.push(value(x, y));
+    skySamples.sort((a, b) => a - b);
+    const skyP95 = skySamples[Math.floor(skySamples.length * 0.95)];
+    let centerPeak = 0, litPixels = 0;
+    for (let y = 270; y < 430; y++) for (let x = 420; x < 580; x++) {
+      const v = value(x, y);
+      if (v > centerPeak) centerPeak = v;
+      if (v > 60) litPixels++;
+    }
+    report.push({ check: 'iapetus-saturn-rings', skyP95, centerPeak, litPixels });
+    assert.ok(skyP95 < 20, `Iapetus upper sky is not clear black (skyP95=${skyP95})`);
+    assert.ok(centerPeak > 100 && litPixels >= 15, `Iapetus Saturn rings not lit clearly above horizon (centerPeak=${centerPeak}, litPixels=${litPixels})`);
+    await page.screenshot({ path: fileURLToPath(new URL('iapetus-rings.png', output)) });
+
+    for (let k = 0; k < 3; k++) await page.locator('.surface-telescope').click();
+    await page.waitForFunction(() => window.solarAtlas.snapshot().surface?.magnification === 8);
+    await page.waitForTimeout(300);
+    const shot8x = await capture();
+    const val8x = (x, y) => shot8x.data[y * shot8x.info.width + x];
+    const skySamples8x = [];
+    for (let y = 20; y < 90; y++) for (let x = 100; x < 900; x++) skySamples8x.push(val8x(x, y));
+    skySamples8x.sort((a, b) => a - b);
+    const skyP958x = skySamples8x[Math.floor(skySamples8x.length * 0.95)];
+    let litPixels8x = 0;
+    for (let y = 200; y < 500; y++) for (let x = 300; x < 700; x++) if (val8x(x, y) > 60) litPixels8x++;
+    report.push({ check: 'iapetus-saturn-rings-8x', skyP95: skyP958x, litPixels8x });
+    assert.ok(skyP958x < 20, `Iapetus 8x upper sky is not clear black (skyP95=${skyP958x})`);
+    assert.ok(litPixels8x >= 400, `Iapetus 8x Saturn+rings too small or occluded (litPixels8x=${litPixels8x})`);
+    await page.screenshot({ path: fileURLToPath(new URL('iapetus-rings-8x.png', output)) });
+  }
+  await exit();
+
   assert.deepEqual(errors, []);
   await writeFile(new URL('report.json', output), JSON.stringify({ base, report }, null, 2));
   console.log(JSON.stringify(report, null, 1));

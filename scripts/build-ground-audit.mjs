@@ -30,6 +30,7 @@ for (const [siteId, site] of Object.entries(landingSites)) {
 const root = fileURLToPath(new URL('../', import.meta.url));
 await mkdir(root + 'data/science-audit', {recursive:true});
 await writeFile(root + 'data/science-audit/ground-input.json', JSON.stringify(requests));
+if (process.argv.includes('--input-only')) process.exit(0);
 const result = spawnSync(root + 'data/ephemeris-tools/Scripts/python.exe',
   ['scripts/build-ground-audit.py', ...process.argv.slice(2)], {cwd:root, stdio:'inherit'});
 if (result.status !== 0) process.exit(result.status || 1);

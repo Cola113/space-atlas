@@ -217,6 +217,30 @@ export const additionalLandingSites = Object.freeze({
     atmosphere:'earth', solarDay:1, moonlight:.15, initialHeading:88,
     coordinateNote:'坐标定位冒纳凯阿山顶附近；全景朝向、圆顶与云海形态为艺术重建，不能用于测量。',
   },
+  triton: {
+    ...common, id:'triton', body:'Triton', name:'海卫一', title:'南极氮冰原 · 喷流带', english:'SOUTH POLAR NITROGEN PLAINS',
+    radiusKm:physicalData.triton.radiusKm, latitude:-60, longitude:0,
+    parent:'Neptune', parentName:'海王星', parentRadiusKm:physicalData.neptune.radiusKm, texture:'/surface/triton.webp',
+    date:'2026-09-26T22:00:00Z',
+    provenance:'南极氮冰原 · AI 艺术重建', credit:'地貌依据 NASA/JPL 旅行者 2 号海卫一观测资料 · 地表艺术重建 gemini-nano-banana-2.1',
+    source:'https://science.nasa.gov/neptune/moons/triton/',
+    description:'淡粉白色的固态氮与甲烷冰霜向南极延伸，暗色条纹顺风铺开，蔚蓝色的海王星悬在北方低空。',
+    notes:'海卫一没有真实着陆全景。近地地貌依据旅行者 2 号 1989 年飞掠影像与南极 55°S–60°S 喷流带资料进行艺术重建，不代表实测高程；全幅由 gemini-nano-banana-2.1 生成并降采样至 4096×2048（非原生 2:1）。1900—2100 年轨道采用随站发布的 NAIF NEP098（DE442）真实星历，姿态独立采用 IAU PCK00011；在 60°S / 0°E 处海王星仰角约 29.8°、视直径约 8.0°。约 14 微巴的稀薄氮气近地霾借用稀薄大气着色分支作展示近似；向南可见的氮气喷流依据旅行者 2 号历史观测动画重建，不表示当前时刻正在喷发。',
+    atmosphere:'pluto', activity:'ice', solarDay:5.876854, initialHeading:3, initialPitch:8, referenceSolarAltitude:18,
+    coordinateNote:'拟定南纬 60° / 0°E 观景坐标；地貌、风纹与历史观测喷流位置为艺术重建，不能用于测量。',
+  },
+  iapetus: {
+    ...common, id:'iapetus', body:'Iapetus', name:'土卫八', title:'赤道山脊 · 明暗交界', english:'EQUATORIAL RIDGE · CASSINI BOUNDARY',
+    radiusKm:physicalData.iapetus.radiusKm, latitude:-1, longitude:55,
+    parent:'Saturn', parentName:'土星', parentRadiusKm:physicalData.saturn.radiusKm, texture:'/surface/iapetus.webp',
+    date:'2031-05-01T12:00:00Z',
+    provenance:'赤道山脊 · AI 艺术重建', credit:'地貌依据 NASA/JPL-Caltech 卡西尼号土卫八影像资料 · 地表艺术重建 gemini-nano-banana-2.1',
+    source:'https://science.nasa.gov/saturn/moons/iapetus/',
+    description:'深炭色的卡西尼区域与亮白水冰在此交界，锯齿状赤道山脊延向远方，土星带着大张角光环斜悬西方。',
+    notes:'土卫八没有真实着陆全景。近地地貌依据卡西尼号关于卡西尼暗区与赤道山脊的观测资料进行艺术重建，山脊高度与边界位置非实测地形；全幅由 gemini-nano-banana-2.1 生成并降采样至 4096×2048（非原生 2:1）。1900—2100 年轨道采用随站发布的 JPL SAT441（NAIF 608）真实星历，姿态独立采用 IAU PCK00011；按真实星历，土卫八的次土星经度接近 354°E（早期平均椭圆估算曾误作 210°E）。土卫八轨道对土星赤道面倾角约 15°，从地表所见环面张开角在一个公转周期内可在 ±16° 间变化（图鉴所有土星卫星落点中唯一能看清大张角光环的位置）；默认 2031 年 5 月土星南至点前后，环面张开角约 −15.6° 且受太阳南纬直射（−26.0°）照亮反射面，土星高度角约 29.4°、视直径约 1.89°。',
+    solarDay:79.330183, initialHeading:271, initialPitch:10, referenceSolarAltitude:20,
+    coordinateNote:'拟定 1°S / 55°E 观景坐标；山脊轮廓与明暗过渡为艺术重建，不能用于测量。',
+  },
 });
 
 // A body is landable when it owns at least one site; several sites may share one.

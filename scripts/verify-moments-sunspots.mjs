@@ -233,6 +233,43 @@ try {
       await page.screenshot({ path: fileURLToPath(new URL('desktop-phobos-moment.png', out)), animations: 'disabled' });
       await page.locator('.surface-exit').click();
       await page.waitForFunction(() => !document.querySelector('.surface-view'), null, { timeout: 10000 });
+
+      // Triton overview nitrogen plume close-up visibility check
+      await page.locator('.planet-choice[data-body="triton"]').click().catch(async () => {
+        if (!await page.locator('#atlas-search').isVisible()) await page.locator('#atlas-tab').click();
+        await page.locator('#atlas-search').fill('triton');
+        await page.locator('.atlas-item[data-body="triton"]').click();
+      });
+      await settle(page);
+      await page.locator('#observation-settings summary').click();
+      await page.locator('#landmark-select').selectOption('nitrogen-plume');
+      await settle(page);
+      await page.waitForTimeout(200);
+      const plumeOn = await canvasSample(page);
+      await page.screenshot({ path: fileURLToPath(new URL('desktop-triton-plume-on.png', out)), animations: 'disabled' });
+      await page.locator('#display-settings summary').click();
+      await page.locator('#activity-toggle').click();
+      await page.keyboard.press('Escape');
+      await page.waitForTimeout(150);
+      const plumeOff = await canvasSample(page);
+      let plumeDiff = 0;
+      for (let i = 0; i < plumeOn.length; i++) plumeDiff = Math.max(plumeDiff, Math.abs(plumeOn[i] - plumeOff[i]));
+      assert.ok(plumeDiff >= 8, `Triton nitrogen plume close-up barely changed pixels (maxDiff=${plumeDiff})`);
+      await page.locator('#display-settings summary').click();
+      await page.locator('#activity-toggle').click();
+      await page.keyboard.press('Escape');
+
+      // Surface moment: Triton south-polar Neptune sky
+      await page.locator('#display-settings summary').click();
+      await page.locator('#moments-button').click();
+      await page.locator('[data-moment-id="triton-neptune-sky"]').click();
+      await page.waitForFunction(() => document.querySelector('.surface-view')?.dataset.ready === 'true', null, { timeout: 90000 });
+      const tritonMomentSnap = (await snap(page)).surface;
+      assert.equal(tritonMomentSnap.siteId, 'triton');
+      assert.equal(new Date(tritonMomentSnap.date).toISOString(), '2026-09-26T22:00:00.000Z');
+      await page.screenshot({ path: fileURLToPath(new URL('desktop-triton-moment.png', out)), animations: 'disabled' });
+      await page.locator('.surface-exit').click();
+      await page.waitForFunction(() => !document.querySelector('.surface-view'), null, { timeout: 10000 });
     }
 
     assert.deepEqual(errors, [], `${name} browser errors: ${errors.join('; ')}`);

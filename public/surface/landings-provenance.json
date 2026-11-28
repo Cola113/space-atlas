@@ -548,7 +548,69 @@
       "requestedSizeAccepted": true,
       "sourceNative2to1": false,
       "aiUpscaled": false
+    },
+    {
+      "id": "triton",
+      "generatedOn": "2026-11-28",
+      "mode": "text-to-image (gemini-nano-banana-2.1)",
+      "sourceFile": "triton.png",
+      "sourceDimensions": [
+        5504,
+        3072
+      ],
+      "deliveredDimensions": [
+        4096,
+        2048
+      ],
+      "sourceSha256": "acb67cc8a2d823374ed5d0d23ca027becd679cca2a82bf2fde817eef59904ead",
+      "file": "triton.webp",
+      "sha256": "41c671cc02da4dec887cf3151b68e4d9e9715765b7621cda6a98a012e2ae5b57",
+      "bytes": 673164,
+      "processing": "Provider frame 5504x3072 (requested 4K 16:9 via GCP Vertex AI gemini-nano-banana-2.1; no input reference images) was seamlessly wrapped across a 280-column minimum-cost wavy overlap seam with two-band tone blending, per-column vacuum skyline traced above terrain to avoid punching dark wind-streak shadows, downsampled via Lanczos to 4096x2048 (not claimed as native 2:1; no AI upscaling), nadir smoothed, and encoded to RGBA WebP. Artistic surface reconstruction informed by Voyager 2 Triton observations; no surveyed ground panorama exists.",
+      "model": "gemini-nano-banana-2.1",
+      "requestedQuality": null,
+      "requestedSize": "4K",
+      "qualityExecutionVerified": false,
+      "provider": "gcp-vertex-ai",
+      "requestedAspectRatio": "16:9",
+      "references": [
+        "NASA/JPL Voyager 2 Triton observations (text description only; no image input)"
+      ],
+      "requestedSizeAccepted": true,
+      "sourceNative2to1": false,
+      "aiUpscaled": false
+    },
+    {
+      "id": "iapetus",
+      "generatedOn": "2026-11-28",
+      "mode": "text-to-image (gemini-nano-banana-2.1)",
+      "sourceFile": "iapetus.png",
+      "sourceDimensions": [
+        5504,
+        3072
+      ],
+      "deliveredDimensions": [
+        4096,
+        2048
+      ],
+      "sourceSha256": "5bd832e445e33537de512c9d8bcc08a9a1c959d8654faacfd36c7dd0d41ee10b",
+      "file": "iapetus.webp",
+      "sha256": "aa57c42fd9f68599d28eaa39ae2d65eec868fcdf81e68e6776f690b4f061a8c5",
+      "bytes": 1290310,
+      "processing": "Provider frame 5504x3072 (requested 4K 16:9 via GCP Vertex AI gemini-nano-banana-2.1; no input reference images) was seamlessly wrapped across a 280-column minimum-cost wavy overlap seam with two-band tone blending, per-column vacuum skyline traced above terrain so dark Cassini Regio carbonaceous slopes stay opaque, and the terrain band below the skyline (y >= 925, 2147 rows) was vertically placed starting at row 887 (+12.0 deg peak ridge) and downsampled via Lanczos to 4096x1161 on a transparent 4096x2048 canvas (not claimed as native 2:1; zero upscaling) so the equatorial ridge does not occlude Saturn (27-36 deg altitude), nadir smoothed, and encoded to RGBA WebP. Artistic surface reconstruction informed by Cassini Iapetus observations; no surveyed ground panorama exists.",
+      "model": "gemini-nano-banana-2.1",
+      "requestedQuality": null,
+      "requestedSize": "4K",
+      "qualityExecutionVerified": false,
+      "provider": "gcp-vertex-ai",
+      "requestedAspectRatio": "16:9",
+      "references": [
+        "NASA/JPL-Caltech Cassini Iapetus observations (text description only; no image input)"
+      ],
+      "requestedSizeAccepted": true,
+      "sourceNative2to1": false,
+      "aiUpscaled": false
     }
   ],
-  "updatedOn": "2026-11-22"
+  "updatedOn": "2026-11-28"
 }

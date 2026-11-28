@@ -12,8 +12,8 @@ const altitudeOf=(site,target,offsetMs=0)=>
   horizonAngles(surfaceFrame(site,new Date(Date.parse(site.date)+offsetMs)).targets[target].direction).altitude;
 
 test('every landing site has a decodable local image and never draws the observer body in the sky',async()=>{
-  assert.equal(landableBodyIds.length,14);
-  assert.equal(Object.keys(landingSites).length,21);
+  assert.equal(landableBodyIds.length,16);
+  assert.equal(Object.keys(landingSites).length,23);
   for(const [siteId,site] of Object.entries(landingSites)){
     assert.equal(site.siteId,siteId,'a site id must match its key');
     const frame=surfaceFrame(site);
@@ -183,4 +183,27 @@ test('the daylight jump never lands inside the parent\'s shadow',()=>{
     if(sunHiddenByParent(surfaceFrame(site,new Date(time)),site))hidden++;
   }
   assert.ok(hidden>0,'the parent must still be able to occult the Sun');
+});
+
+test('Triton and Iapetus sites honor NEP098/SAT441 sky scale, daylight, and sunlit wide-open Saturn rings',()=>{
+  const triton=landingSites.triton,tf=surfaceFrame(triton);
+  const nepAlt=horizonAngles(tf.targets.Neptune.direction).altitude;
+  const nepDiam=MathUtils.radToDeg(angularDiameter(triton.parentRadiusKm,tf.targets.Neptune.distanceKm));
+  assert.ok(nepAlt>28&&nepAlt<32,`Triton Neptune altitude ${nepAlt}`);
+  assert.ok(nepDiam>7.8&&nepDiam<8.2,`Triton Neptune diameter ${nepDiam}`);
+  assert.ok(horizonAngles(tf.targets.Sun.direction).altitude>10,'Triton default instant is sunlit');
+  assert.equal(sunHiddenByParent(tf,triton),false);
+
+  const iapetus=landingSites.iapetus,ifrm=surfaceFrame(iapetus);
+  const sat=ifrm.targets.Saturn;
+  const satAlt=horizonAngles(sat.direction).altitude;
+  const satDiam=MathUtils.radToDeg(angularDiameter(iapetus.parentRadiusKm,sat.distanceKm));
+  assert.ok(satAlt>27&&satAlt<35,`Iapetus Saturn altitude ${satAlt}`);
+  assert.ok(satDiam>1.8&&satDiam<2.0,`Iapetus Saturn diameter ${satDiam}`);
+  assert.ok(horizonAngles(ifrm.targets.Sun.direction).altitude>15,'Iapetus default instant is sunlit');
+  assert.equal(sunHiddenByParent(ifrm,iapetus),false);
+  const los=sat.positionKm.clone().sub(ifrm.observerKm).normalize();
+  const bObs=-MathUtils.radToDeg(Math.asin(MathUtils.clamp(los.dot(sat.orientation.north),-1,1)));
+  const bSun=-MathUtils.radToDeg(Math.asin(MathUtils.clamp(sat.positionKm.clone().normalize().dot(sat.orientation.north),-1,1)));
+  assert.ok(Math.abs(bObs)>14&&bObs*bSun>0,`expected sunlit wide-open Saturn rings on Iapetus, got B_obs=${bObs}, B_sun=${bSun}`);
 });

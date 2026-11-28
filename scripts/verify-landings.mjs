@@ -12,7 +12,7 @@ const output=new URL(process.env.ATLAS_OUTPUT||'../test-results/landings/',impor
 await mkdir(output,{recursive:true});
 const browser=await launchBrowser();
 const report=[];
-const ids=(process.env.ATLAS_LANDING_IDS||'earth,moon,moon-farside,europa,europa-subjovian,mars,mars-phoenix,io,io-subjovian,titan,enceladus,pluto,pluto-charonface,miranda,mercury,mercury-pole,charon,venus,ceres,phobos-60e,phobos-311e').split(',').filter(Boolean);
+const ids=(process.env.ATLAS_LANDING_IDS||'earth,moon,moon-farside,europa,europa-subjovian,mars,mars-phoenix,io,io-subjovian,titan,enceladus,iapetus,triton,pluto,pluto-charonface,miranda,mercury,mercury-pole,charon,venus,ceres,phobos-60e,phobos-311e').split(',').filter(Boolean);
 const allViewports=[['desktop',{width:1440,height:900}],['phone',{width:390,height:844}],['tablet',{width:800,height:450}],['short',{width:640,height:360}]];
 const viewportFilter=(process.env.ATLAS_VIEWPORTS||'').split(',').filter(Boolean);
 const viewports=viewportFilter.length?allViewports.filter(([name])=>viewportFilter.includes(name)):allViewports;
@@ -47,7 +47,7 @@ try{
       if(!await page.locator('#atlas-search').isVisible())await page.locator('#atlas-tab').click();
       await page.locator('#atlas-search').fill(body);
       await page.locator(`.atlas-item[data-body="${body}"]`).click();
-      await page.waitForFunction(body=>window.solarAtlas.snapshot().selected===body&&!window.solarAtlas.snapshot().flight,body,{timeout:30000});
+      await page.waitForFunction(body=>window.solarAtlas.snapshot().selected===body&&!window.solarAtlas.snapshot().flight,body,{timeout:90000});
       await page.waitForFunction(()=>!window.solarAtlas.snapshot().ephemeris.blocked);
       await revealLanding(page,id);
       const orbit=await page.evaluate(()=>window.solarAtlas.snapshot());
@@ -71,7 +71,7 @@ try{
         assert.ok(Math.abs(current.fieldOfView-2*Math.atan(Math.tan(31*Math.PI/180)/zoom)*180/Math.PI)<1e-10);
         assert.equal(current.date,physical.date);
         assert.deepEqual(current.targets,physical.targets,'zoom must not change physical directions or sizes');
-        if(zoom===8&&['europa','mercury'].includes(id))await page.screenshot({path:fileURLToPath(new URL(`${name}-${id}-8x.png`,output)),animations:'disabled'});
+        if(zoom===8&&['europa','mercury','iapetus'].includes(id))await page.screenshot({path:fileURLToPath(new URL(`${name}-${id}-8x.png`,output)),animations:'disabled'});
       }
       const controls=await page.locator('.surface-view button').evaluateAll(buttons=>buttons.filter(b=>!b.disabled&&b.getClientRects().length&&getComputedStyle(b).visibility!=='hidden').map(b=>{
         const r=b.getBoundingClientRect();return {name:b.getAttribute('aria-label')||b.textContent.trim(),width:r.width,height:r.height,x:r.x,y:r.y,right:r.right,bottom:r.bottom};

@@ -9,8 +9,8 @@ jobs:
   test-and-build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
         with:
           node-version: 22
           cache: npm
@@ -62,8 +62,8 @@ jobs:
             only: landings
             viewports: short
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
         with:
           node-version: 22
           cache: npm
@@ -80,7 +80,7 @@ jobs:
           ATLAS_VIEWPORTS: ${{ matrix.shard.viewports }}
       - name: Keep the failure evidence
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: visual-evidence-${{ matrix.shard.name }}
           path: test-results/

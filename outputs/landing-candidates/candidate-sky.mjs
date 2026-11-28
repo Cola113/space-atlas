@@ -36,16 +36,16 @@ const candidates = [
   ['火卫一 · 斯蒂克尼坑 49°W', site('phobos', 'Mars', 1, 311, '2026-09-15T00:00:00Z', 0.31891)],
   ['冥王星 · 朝冥卫一（现落点为背侧）', site('pluto', 'Charon', 0, 0, '2026-09-15T00:00:00Z', 6.3872)],
   ['冥卫一 · 朝冥王星侧', site('charon', 'Pluto', 0, 0, '2026-09-15T00:00:00Z', 6.3872)],
-  ['海卫一 · 南半球高纬', site('triton', 'Neptune', -70, 0, '2026-09-15T00:00:00Z', 5.877)],
+  ['海卫一 · 南极氮冰原', site('triton', 'Neptune', -60, 0, '2026-09-26T22:00:00Z', 5.876854)],
   ['水星 · 北极', site('mercury', 'Sun', 88, 0, '2026-09-15T00:00:00Z', 175.94)],
-  ['土卫八 · 次土星点', site('iapetus', 'Saturn', 0, 210, '2026-09-15T00:00:00Z', 79.33)],
+  ['土卫八 · 赤道山脊（SAT441）', site('iapetus', 'Saturn', -1, 55, '2031-05-01T12:00:00Z', 79.330183)],
   ['谷神星 · 奥卡托撞击坑', site('ceres', 'Sun', 19.8, 239.6, '2026-09-15T00:00:00Z', 0.3781)],
   ['木卫一 · 次木星点', site('io', 'Jupiter', 0, 0, '2026-09-15T00:00:00Z', 1.769)],
   ['木卫二 · 次木星点', site('europa', 'Jupiter', 0, 0, '2026-09-15T00:00:00Z', 3.551)],
 ];
 
 for (const year of new Set(candidates.map(([, s]) => new Date(s.date).getUTCFullYear()).concat(2026))) {
-  await physicalState.ephemeris.ensure(new Date(`${year}-01-01T00:00:00Z`), ['saturn', 'uranus', 'pluto', 'ceres', 'phobos'], { prefetch: false });
+  await physicalState.ephemeris.ensure(new Date(`${year}-01-01T00:00:00Z`), ['saturn', 'uranus', 'neptune', 'pluto', 'ceres', 'phobos'], { prefetch: false });
 }
 
 const range = values => [Math.min(...values), Math.max(...values)];

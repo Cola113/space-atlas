@@ -20,7 +20,7 @@ provider.ephemeris.maxEntries = 64;
 // its system warmed here failed with a MissingEphemerisError instead of a check.
 const siteBodies = Object.values(landingSites).flatMap(site => [site.id, site.parent.toLowerCase()]);
 const siteSystems = systemsForBodies(siteBodies);
-for (const year of [1900, 1971, 2000, 2008, 2019, 2026, 2040, 2100]) {
+for (const year of [1900, 1971, 2000, 2008, 2019, 2026, 2031, 2040, 2100]) {
   try { await provider.ephemeris.ensure(new Date(`${year}-01-01T00:00:00Z`), siteSystems, { prefetch: false }); } catch { /* out of covered range */ }
 }
 const deg = MathUtils.radToDeg;

@@ -1,5 +1,14 @@
 # 本地 JPL 星历
 
+## 2026-11-28 土卫八 SAT441（NAIF 608）
+
+将土卫八由固定平均椭圆升级为 NASA/JPL `SAT441` 原始 Chebyshev 多项式年份包（与既有土卫二 `602`、泰坦 `606` 同属 `saturn` 系统包，覆盖 1900—2100 共 201 年，合计 27.96 MiB / `29,316,200` 字节）：
+
+- 从 [SAT441](https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/sat441.bsp) 提取 NAIF `608/6`（土卫八相对土星系统质心）并保留 `699/6`（土星中心相对系统质心），两者相减得土卫八相对土星中心 J2000 位置；土星日心平移与 IAU `PCK00011` 姿态继续独立计算。
+- 土卫八 `608/6` 保留原始 9 天一段（`777600s`）、10 阶双精度（`precision: 8`，`encodingBoundKm: 0`）Chebyshev 多项式，全 `saturn` 组合包最大轨道编码上界仍为 `0.085810 km`（< 0.1 km）。
+- 边界外推：`scripts/build-kepler-anchors.mjs` 使用 [DE440 GM](https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/gm_de440.tpc)（`BODY608_GM = 120.5151060137642`）写入 1900-01-01 与 2101-01-01 边界状态，范围外走二体椭圆外推并标注近似。
+- 独立验证：`scripts/build-iapetus-reference.py` 向 JPL Horizons 拉取 1900—2100 跨度 16 个离散 TDB 历元（含 2007-09-10 卡西尼号近掠）相对土星中心的几何状态向量，摘要存于 `solar-system/tests/iapetus-reference.json`。`jplephem 2.24` 原始切片相对 Horizons 最大位置差 `0.000132 km`；浏览器已发布年份包相对 Horizons 最大位置差 `0.000129 km`、最大速度差 `0.0000039 km/s`。Horizons 与本包共用 `SAT441` 轨道解，因此这是独立求值/服务一致性核验，不代表轨道解相对真实天体的全部观测误差。
+
 ## 2026-11-26 海卫一 NEP098
 
 新增海卫一 1900—2100 共 201 个年份包（31.83 MiB）。来源为 [NAIF NEP098 第 1 部分](https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/nep098_part-1.bsp)，[内核说明](https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/nep098_part-1.cmt)载明其 2026-07-13 版本、DE442 行星基线及 1799-12-31 至 2199-12-30 覆盖，与当前 JPL Horizons 在线服务（`nep098_merged`）采用同一轨道解（早先 2022 年的 `nep097.bsp` 相对 Horizons 在 1900—2100 存在最高约 696 km 的漂移，本轮未采用）。
@@ -24,7 +33,7 @@
 
 | 系统 | JPL 原始来源 | 保留的 NAIF 目标 | 用途 |
 | --- | --- | --- | --- |
-| 土星 | [SAT441](https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/sat441.bsp) | 602、606、699，相对6 | 土卫二、泰坦相对土星的位置 |
+| 土星 | [SAT441](https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/sat441.bsp) | 602、606、608、699，相对6 | 土卫二、泰坦、土卫八相对土星中心的位置 |
 | 天王星 | [URA184 第3部分](https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/ura184_part-3.bsp) | 705、799，相对7 | 米兰达相对天王星的位置 |
 | 海王星 | [NEP098 第1部分](https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/nep098_part-1.bsp) | 801、899，相对8 | 海卫一相对海王星中心的位置 |
 | 冥王星 | [PLU060](https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/plu060.bsp) | 9、10相对0；901、999相对9 | 冥王星系统相对太阳、冥王星与卡戎相对系统质心的位置 |
@@ -33,15 +42,15 @@
 
 除谷神星外，其余五个系统均保留原始 J2000 赤道坐标、公里单位、TDB 秒及原生 Chebyshev 多项式阶数和时间段，没有从少量位置点重新拟合。谷神星不同：它没有覆盖 1900—2100 的现行 NAIF 原始多项式内核（`ceres_1900_2100.bsp` 已归档、止于 2100-01-01，且早于黎明号的轨道解），Horizons 能生成的 SPK 又是 MDA 记录（数据类型 1 与 21），本项目与 jplephem 的解算器都不读。因此它是**换一种表示**而非重新拟合轨道：由 CSPICE 在源文件上密集采样，再按与 NAIF 小行星星历相同的 32 天窗口、19 阶 Chebyshev 重新表达，逐窗记录源残差（最大 0.000063 公里）。数据说明与适用范围见各源同目录 `.cmt` 及 [NAIF 汇总](https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/aa_summaries.txt)。年份按民用日历请求，文件两端多保留一天以覆盖时标偏移和边界计算。
 
-1900—2100（包含完整2100年），每系统每年一个二进制包，共1206包，合计约165.6 MiB（土星25.8、天王星15.4、海王星31.83、冥王星10.2、谷神星1.2、火卫一81.24 MiB）；每次仅需加载当前系统与年份，并缓存、预取邻年。原始内核的所需段通过经验证的 HTTP Range 提取，私有缓存保留在忽略提交的 `data/jpl/`。`manifest.json` 记录源URL、提取文件SHA-256、每年包SHA-256、字节数及每个源段的编码误差界，谷神星条目另记 Horizons 查询与响应摘要。
+1900—2100（包含完整2100年），每系统每年一个二进制包，共 1,206 包，合计约 167.78 MiB（土星 27.96、天王星 15.36、海王星 31.83、冥王星 10.18、谷神星 1.21、火卫一 81.24 MiB）；每次仅需加载当前系统与年份，并缓存、预取邻年。原始内核的所需段通过经验证的 HTTP Range 提取，私有缓存保留在忽略提交的 `data/jpl/`。`manifest.json` 记录源URL、提取文件SHA-256、每年包SHA-256、字节数及每个源段的编码误差界，谷神星条目另记 Horizons 查询与响应摘要。
 
 重建：卫星系统用 `scripts/build-ephemeris.py --download-only` 配合 `scripts/build-ephemeris.py`（单系统追加用 `--system <name> --merge`）；谷神星用 `scripts/build-small-body-ephemeris.py --refresh`，两者都只写年份包与清单，不调用浏览器。
 
 ## 精度界限
 
-只量化误差满足保守上界小于0.1公里的源段使用32位浮点数，其余保留64位。由每个原始多项式系数的量化差求和，并使用 `|Tₙ(x)| ≤ 1`，计算全时间段的误差上界；位置相加/相减时累加各段上界。当前单段最大界约0.086公里，组合位置的编码误差小于1公里。谷神星的源多项式系数按同一界判断后需保留64位（界约23.7公里，远超阈值），故该系统的年份包为双精度；表格中各系统仍按段分别记录实际精度。
+只量化误差满足保守上界小于0.1公里的源段使用32位浮点数，其余保留64位。由每个原始多项式系数的量化差求和，并使用 `|Tₙ(x)| ≤ 1`，计算全时间段的误差上界；位置相加/相减时累加各段上界。当前单段最大界约 0.0858 公里，组合位置的编码误差小于1公里。谷神星的源多项式系数按同一界判断后需保留64位（界约23.7公里，远超阈值），故该系统的年份包为双精度；表格中各系统仍按段分别记录实际精度。
 
-浏览器所用的 JavaScript 解算器在全部1206包、9652个历史/未来/年份边界/非中点时刻，与参考解算结果对照，最大差约0.067公里。对土星、天王星、海王星、冥王星和火卫一参考实现是 jplephem 对原始 SPK 的记录解算；对谷神星是 CSPICE 对 Horizons 源 SPK 的采样值。这是**编码与解算误差**，不是对 JPL 轨道解绝对精度作1公里承诺，也不包括时间转换、卫星姿态、地形或地球观测资料的不确定性。
+浏览器所用的 JavaScript 解算器在全部 1,206 包、10,255 个历史/未来/年份边界/非中点时刻，与参考解算结果对照，最大差 `0.066720 km`（另对土卫八 16 个 Horizons TDB 历元最大位置差 `0.000129 km`、海卫一 16 个 Horizons TDB 历元最大位置差 `0.015995 km`）。对土星、天王星、海王星、冥王星和火卫一参考实现是 jplephem 对原始 SPK 的记录解算；对谷神星是 CSPICE 对 Horizons 源 SPK 的采样值。这是**编码与解算误差**，不是对 JPL 轨道解绝对精度作1公里承诺，也不包括时间转换、卫星姿态、地形或地球观测资料的不确定性。
 
 卫星姿态独立取自 [NAIF PCK00011](https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/pck00011.tpc)，提取所有适用极轴、零经线和周期项；代码未用主星方向强制设置姿态。34个适用卫星及小天体、170组姿态矩阵与 CSPICE 独立输出对照。月球及主要行星继续保留 Astronomy Engine 模型；尚未额外加入非刚体物理天平动。
 

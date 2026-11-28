@@ -12,7 +12,7 @@ import { AU_KM } from './definitions.js';
 export { AU_KM } from './definitions.js';
 export const physicalNames = Object.freeze({ sun:'Sun', mercury:'Mercury', venus:'Venus', earth:'Earth',
   moon:'Moon', mars:'Mars', jupiter:'Jupiter', io:'Io', europa:'Europa', ganymede:'Ganymede', callisto:'Callisto',
-  saturn:'Saturn', enceladus:'Enceladus', titan:'Titan', uranus:'Uranus', miranda:'Miranda',
+  saturn:'Saturn', enceladus:'Enceladus', titan:'Titan', iapetus:'Iapetus', uranus:'Uranus', miranda:'Miranda',
   neptune:'Neptune', triton:'Triton', pluto:'Pluto', charon:'Charon', phobos:'Phobos' });
 const vectorKm = value => new Vector3(value.x,value.y,value.z).multiplyScalar(AU_KM);
 const velocityKmS = value => new Vector3(value.vx,value.vy,value.vz).multiplyScalar(AU_KM/86400);
@@ -62,7 +62,7 @@ export class PhysicalState {
     }
     const inRange = inEphemerisRange(date);
     const extrapolation = inRange ? null : anchors.anchors[date.getUTCFullYear()<1900?'first':'last'].elements;
-    for (const [system,ids] of [['saturn',['enceladus','titan']],['uranus',['miranda']],['neptune',['triton']],['pluto',['pluto','charon']],['ceres',['ceres']],['phobos',['phobos']]]) {
+    for (const [system,ids] of [['saturn',['enceladus','titan','iapetus']],['uranus',['miranda']],['neptune',['triton']],['pluto',['pluto','charon']],['ceres',['ceres']],['phobos',['phobos']]]) {
       let bundle;
       try { bundle = this.ephemeris.require(system,date); }
       catch (error) { for (const id of ids) missing.set(id,error); continue; }
@@ -97,7 +97,7 @@ export class PhysicalState {
             .sub(keplerPosition(extrapolation.ceres,time.tdbSeconds-1)).multiplyScalar(.5);
         add('ceres',heliocentric,'sun',heliocentric.clone(),model,{velocityKmS:v,relativeVelocityKmS:v.clone()});
       } else for (const id of ids) {
-        const target = {enceladus:602,titan:606,miranda:705,triton:801,phobos:401}[id];
+        const target = {enceladus:602,titan:606,iapetus:608,miranda:705,triton:801,phobos:401}[id];
         const parentId = system === 'phobos' ? 'mars' : system;
         const parent = {saturn:699,uranus:799,neptune:899,phobos:499}[system], center = {saturn:6,uranus:7,neptune:8,phobos:4}[system];
         const relative = inRange ? at(target,center).sub(at(parent,center)) : keplerPosition(extrapolation[id],time.tdbSeconds);

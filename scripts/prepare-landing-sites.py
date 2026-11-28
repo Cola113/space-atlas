@@ -14,7 +14,7 @@ import json
 from datetime import date
 from pathlib import Path
 from PIL import Image
-from landing_texture_lib import dynamic_cloud_sea, panorama_from_frame, panorama_with_dp_wrap, panorama_with_traced_skyline, panorama_with_vacuum_skyline, sha256
+from landing_texture_lib import dynamic_cloud_sea, panorama_from_frame, panorama_with_dp_wrap, panorama_with_traced_skyline, panorama_with_vacuum_dp_wrap, panorama_with_vacuum_skyline, sha256
 
 MODEL_NOTE = {
     'model': 'gpt-image-2.5-sunburst',
@@ -170,6 +170,44 @@ SITES = [
       'requestedSizeAccepted': True,
       'sourceNative2to1': False,
       'aiUpscaled': False}),
+    ('triton', 'triton.png',
+     'text-to-image (gemini-nano-banana-2.1)',
+     'Provider frame 5504x3072 (requested 4K 16:9 via GCP Vertex AI gemini-nano-banana-2.1; no input reference images) '
+     'was seamlessly wrapped across a 280-column minimum-cost wavy overlap seam with two-band tone blending, '
+     'per-column vacuum skyline traced above terrain to avoid punching dark wind-streak shadows, '
+     'downsampled via Lanczos to 4096x2048 (not claimed as native 2:1; no AI upscaling), '
+     'nadir smoothed, and encoded to RGBA WebP. Artistic surface reconstruction informed by Voyager 2 Triton observations; '
+     'no surveyed ground panorama exists.',
+     {'generatedOn': '2026-11-28',
+      'model': 'gemini-nano-banana-2.1',
+      'provider': 'gcp-vertex-ai',
+      'requestedQuality': None,
+      'requestedSize': '4K',
+      'requestedAspectRatio': '16:9',
+      'references': ['NASA/JPL Voyager 2 Triton observations (text description only; no image input)'],
+      'requestedSizeAccepted': True,
+      'sourceNative2to1': False,
+      'aiUpscaled': False}),
+    ('iapetus', 'iapetus.png',
+     'text-to-image (gemini-nano-banana-2.1)',
+     'Provider frame 5504x3072 (requested 4K 16:9 via GCP Vertex AI gemini-nano-banana-2.1; no input reference images) '
+     'was seamlessly wrapped across a 280-column minimum-cost wavy overlap seam with two-band tone blending, '
+     'per-column vacuum skyline traced above terrain so dark Cassini Regio carbonaceous slopes stay opaque, '
+     'and the terrain band below the skyline (y >= 925, 2147 rows) was vertically placed starting at row 887 '
+     '(+12.0 deg peak ridge) and downsampled via Lanczos to 4096x1161 on a transparent 4096x2048 canvas '
+     '(not claimed as native 2:1; zero upscaling) so the equatorial ridge does not occlude Saturn (27-36 deg altitude), '
+     'nadir smoothed, and encoded to RGBA WebP. Artistic surface reconstruction informed by Cassini Iapetus observations; '
+     'no surveyed ground panorama exists.',
+     {'generatedOn': '2026-11-28',
+      'model': 'gemini-nano-banana-2.1',
+      'provider': 'gcp-vertex-ai',
+      'requestedQuality': None,
+      'requestedSize': '4K',
+      'requestedAspectRatio': '16:9',
+      'references': ['NASA/JPL-Caltech Cassini Iapetus observations (text description only; no image input)'],
+      'requestedSizeAccepted': True,
+      'sourceNative2to1': False,
+      'aiUpscaled': False}),
 ]
 
 parser = argparse.ArgumentParser()
@@ -199,6 +237,10 @@ for site_id, filename, mode, processing, extra in SITES:
     # its transparent region needs the per-column skyline trace instead.
     if site_id in ('phobos-60e', 'phobos-311e'):
         image = panorama_with_vacuum_skyline(source)
+    elif site_id == 'triton':
+        image = panorama_with_vacuum_dp_wrap(source, size=(4096, 2048), overlap=280)
+    elif site_id == 'iapetus':
+        image = panorama_with_vacuum_dp_wrap(source, size=(4096, 2048), overlap=280, max_horizon_deg=12.0)
     elif site_id == 'moon-tycho':
         image = panorama_with_dp_wrap(source)
     elif site_id == 'earth':

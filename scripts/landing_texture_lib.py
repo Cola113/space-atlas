@@ -248,5 +248,79 @@ def panorama_with_dp_wrap(source, size=(3840, 1920), overlap=240):
     return Image.fromarray(np.uint8(np.clip(a, 0, 255)))
 
 
+def panorama_with_vacuum_dp_wrap(source, size=(4096, 2048), overlap=280, max_horizon_deg=None):
+    """DP wavy seam wrap followed by per-column vacuum skyline trace at source resolution."""
+    original = Image.open(source).convert('RGB')
+    arr = np.asarray(original, dtype=np.float32)
+    height, width, _ = arr.shape
+    overlap = min(overlap, width // 6)
+    left_half = arr[:, -overlap:, :]
+    right_half = arr[:, :overlap, :]
+    diff = np.mean((left_half - right_half) ** 2, axis=2)
+    cols = np.arange(overlap, dtype=np.float32)
+    edge_pen = np.where((cols < 24) | (cols > overlap - 25), 5000.0, 0.0)
+    cost = diff + edge_pen[None, :]
+
+    dp = np.zeros_like(cost)
+    back = np.zeros((height, overlap), dtype=np.int16)
+    dp[0] = cost[0]
+    for y in range(1, height):
+        prev = dp[y - 1]
+        l = np.concatenate(([1e12], prev[:-1]))
+        r = np.concatenate((prev[1:], [1e12]))
+        stacked = np.stack([l, prev, r], axis=0)
+        choice = np.argmin(stacked, axis=0)
+        dp[y] = cost[y] + stacked[choice, np.arange(overlap)]
+        back[y] = choice - 1
+
+    seam = np.zeros(height, dtype=np.int32)
+    seam[-1] = int(np.argmin(dp[-1]))
+    for y in range(height - 2, -1, -1):
+        seam[y] = int(np.clip(seam[y + 1] + back[y + 1, seam[y + 1]], 0, overlap - 1))
+
+    xs = np.arange(overlap, dtype=np.float32)[None, :]
+    s = seam[:, None].astype(np.float32)
+    m_hi = np.clip((xs - (s - 14.0)) / 28.0, 0.0, 1.0)
+    m_hi = m_hi * m_hi * (3.0 - 2.0 * m_hi)
+    m_lo = np.clip((xs - (s - 72.0)) / 144.0, 0.0, 1.0)
+    m_lo = m_lo * m_lo * (3.0 - 2.0 * m_lo)
+
+    a_lo = np.asarray(Image.fromarray(np.uint8(left_half)).filter(ImageFilter.GaussianBlur(18)), dtype=np.float32)
+    b_lo = np.asarray(Image.fromarray(np.uint8(right_half)).filter(ImageFilter.GaussianBlur(18)), dtype=np.float32)
+    blended = np.clip(
+        a_lo * (1.0 - m_lo[..., None]) + b_lo * m_lo[..., None]
+        + (left_half - a_lo) * (1.0 - m_hi[..., None]) + (right_half - b_lo) * m_hi[..., None],
+        0, 255,
+    )
+    both_sky = (left_half.max(axis=2) < 16) & (right_half.max(axis=2) < 16)
+    blended[both_sky] = 0.0
+
+    seamless = np.concatenate([arr[:, overlap:width - overlap, :], blended], axis=1)
+    seamless = np.roll(seamless, overlap // 2, axis=1)
+    rgb = np.uint8(np.clip(seamless, 0, 255))
+
+    solid = rgb.max(axis=2) > 12
+    if not solid.any(axis=0).all():
+        raise ValueError('Vacuum skyline requires terrain in every source column')
+    boundary = solid.argmax(axis=0)
+    padded = np.pad(boundary, 4, mode='wrap')
+    boundary = np.median(np.lib.stride_tricks.sliding_window_view(padded, 9), axis=1)
+    rows = np.arange(height)[:, None]
+    coverage = np.clip((rows - boundary[None, :] + 1) / 2, 0, 1)
+    coverage = coverage * coverage * (3 - 2 * coverage)
+    alpha = np.uint8(np.round(coverage * 255))
+    rgba = np.dstack([rgb, alpha])
+    if max_horizon_deg is None:
+        resized = Image.fromarray(rgba).resize(size, Image.Resampling.LANCZOS)
+        return wrap(resized)
+
+    src_top = max(0, int(np.floor(boundary.min())) - 4)
+    dst_top = round(size[1] * (0.5 - max_horizon_deg / 180.0))
+    terrain = Image.fromarray(rgba[src_top:, :, :]).resize((size[0], size[1] - dst_top), Image.Resampling.LANCZOS)
+    canvas = Image.new('RGBA', size, (0, 0, 0, 0))
+    canvas.paste(terrain, (0, dst_top))
+    return wrap(canvas)
+
+
 def sha256(path):
     return hashlib.sha256(Path(path).read_bytes()).hexdigest()

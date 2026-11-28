@@ -114,7 +114,7 @@ try{
   await page.goto('http://127.0.0.1:5192/data/science-audit/sky-render.html');
   await page.waitForFunction(()=>window.ready);
   const data=JSON.parse(await readFile('solar-system/tests/ground-audit-reference.json','utf8'));
-  for(const id of ['moon','moon-farside','io','europa','enceladus','titan','miranda','pluto','charon']){
+  for(const id of ['moon','moon-farside','io','europa','enceladus','titan','iapetus','miranda','triton','pluto','charon']){
     const samples=data.fixtures.filter(f=>(f.siteId||f.id)===id);
     for(const phase of [.1,.5,.9]){
       const sample=samples.reduce((best,f)=>Math.abs(f.targets[f.parent].illuminatedFraction-phase)<Math.abs(best.targets[best.parent].illuminatedFraction-phase)?f:best);

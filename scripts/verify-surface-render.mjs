@@ -28,7 +28,7 @@ provider.ephemeris.maxEntries = 64;
 // synchronously, so a site added without its system warmed here fails outright
 // rather than reporting a check.
 const siteBodies = Object.values(landingSites).flatMap(site => [site.id, site.parent.toLowerCase()]);
-for (const year of [1900, 1971, 2000, 2008, 2019, 2026, 2040, 2100]) {
+for (const year of [1900, 1971, 2000, 2008, 2019, 2026, 2031, 2040, 2100]) {
   try { await provider.ephemeris.ensure(new Date(`${year}-01-01T00:00:00Z`), siteBodies, { prefetch: false }); } catch { /* outside the covered range */ }
 }
 

@@ -18,11 +18,12 @@ test('all adopted mean ellipses agree with independent CSPICE conics across peri
   // Ceres left this set on 2026-09-18 when its Horizons bundle was published: it now
   // supplies dated states like the Pluto system, so asserting a fixed ellipse for it
   // would be asserting the model the project deliberately replaced.
-  assert.equal(new Set(fixtures.map(f=>f.id)).size,36);
+  assert.equal(new Set(fixtures.map(f=>f.id)).size,35);
   assert.ok(!fixtures.some(f=>f.id==='ceres'),'ceres is no longer a fixed mean ellipse');
   assert.ok(!fixtures.some(f=>f.id==='phobos'),'Phobos now uses MAR099 dated states');
   assert.ok(!fixtures.some(f=>f.id==='triton'),'Triton now uses NEP098 dated states');
-  assert.equal(Object.keys(meanElements.bodies).length,36,'mean-element registry matches the fixtures');
+  assert.ok(!fixtures.some(f=>f.id==='iapetus'),'Iapetus now uses SAT441 dated states');
+  assert.equal(Object.keys(meanElements.bodies).length,35,'mean-element registry matches the fixtures');
   let directionError=0,relativePositionError=0;
   for(const f of fixtures){
     const actual=atTdb(f.id,f.tdbSeconds),expected=new Vector3().fromArray(f.positionKm);

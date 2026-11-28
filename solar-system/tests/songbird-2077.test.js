@@ -37,8 +37,8 @@ test('Earth-Moon L1 ratio satisfies the restricted three-body Euler quintic to h
   assert.ok(Math.abs(residual) < 1e-11, `L1 quintic residual too large: ${residual}`);
 });
 
-test('easter-egg Tycho site resolves cleanly without mutating the 21 scientific landingSites', async () => {
-  assert.equal(Object.keys(landingSites).length, 21);
+test('easter-egg Tycho site resolves cleanly without mutating the 23 scientific landingSites', async () => {
+  assert.equal(Object.keys(landingSites).length, 23);
   assert.equal(landingSites['moon-tycho'], undefined);
   const site = resolveLandingSite('moon-tycho');
   assert.ok(site && site.siteId === 'moon-tycho' && site.id === 'moon');

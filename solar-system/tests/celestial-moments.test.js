@@ -155,6 +155,18 @@ test('surface moments verify real Phobos daylight/Mars sky and Miranda 2085 summ
       maxAlt = Math.max(maxAlt, horizonAngles(f.targets.Sun.direction).altitude);
     }
     assert.ok(maxAlt > 65, `expected high summer Sun on Miranda in 2085, maxAlt=${maxAlt}`);
+
+    const tritonMoment = momentById('triton-neptune-sky');
+    await provider.ensure(new Date(tritonMoment.date), ['triton', 'neptune'], { prefetch: false });
+    const tritonFrame = surfaceFrame(resolveLandingSite(tritonMoment.siteId), new Date(tritonMoment.date), provider);
+    assert.ok(horizonAngles(tritonFrame.targets.Neptune.direction).altitude > 28);
+    assert.ok(horizonAngles(tritonFrame.targets.Sun.direction).altitude > 10);
+
+    const iapetusMoment = momentById('iapetus-open-rings');
+    await provider.ensure(new Date(iapetusMoment.date), ['iapetus', 'saturn'], { prefetch: false });
+    const iapetusFrame = surfaceFrame(resolveLandingSite(iapetusMoment.siteId), new Date(iapetusMoment.date), provider);
+    assert.ok(horizonAngles(iapetusFrame.targets.Saturn.direction).altitude > 27);
+    assert.ok(horizonAngles(iapetusFrame.targets.Sun.direction).altitude > 15);
   } finally {
     provider.dispose();
   }

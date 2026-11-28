@@ -51,7 +51,7 @@ test('every landing sky and its physical illumination agree with independent DE4
         // growing with distance from J2000. Sun and moon directions inherit that
         // frame rotation almost equally (2.6′ at J2000, 14.3′ by 2100), so the
         // earth gate bounds the two realizations, not a body-position error.
-        const jplParent=['enceladus','titan','miranda','pluto','charon'].includes(sample.id)&&name!=='sun';
+        const jplParent=['enceladus','titan','iapetus','miranda','triton','pluto','charon'].includes(sample.id)&&name!=='sun';
         const earthSite=sample.siteId==='earth';
         const directionGate=jplParent ? .001 : earthSite ? 16 : name==='sun' ? 1 : 6;
         const diameterGate=jplParent ? .01 : earthSite ? 1 : name==='sun' ? 1 : 10;
