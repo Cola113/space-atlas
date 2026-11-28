@@ -2,6 +2,19 @@
 
 分支维护说明：用户于 2026-09-14 安排将已完成的工作合入 `main` 并清理其余远端分支，后续维护及文档链接使用 `main`。以下记录保留各次发布当时的提交与分支，不能据此判断当前分支状态。
 
+## 2026-11-28：视觉门槛修复、海卫一/土卫八落点与文档同步
+
+2026-11-28 推进 `main` 基线，完成四项主线任务（CI 视觉门槛修复、全仓库文档与发布状态同步、海卫一南极落点与喷泉近景确认、土卫八 `SAT441` 真实星历与赤道山脊落点），应用实现提交 `dd9bb8772e9e3db04d1cf5f54ea3cf58d70efae6`（`main`）：
+
+- **单测与构建**：`npm test` **186/186 通过**；`npm run build`（`tsc --noEmit && vite build`）通过（保留既有 Three.js 分包体积提示）。
+- **土卫八 `SAT441`（NAIF 608）真实星历与边界锚点**：`saturn` 201 个年份包纳入 `602/606/608/699`（`27.96 MiB`，最大编码上界 `0.085810 km`），`gm_de440.tpc`（`BODY608_GM = 120.5151060137642`）写入边界开普勒锚点；全部 1,206 个星历包、10,255 个参考检查最大差 `0.066720 km`；土卫八 16 个 Horizons TDB 历元最大位置差 `0.000129 km`、最大速度差 `0.0000039 km/s`。实测次土星经度接近 `354°E`（更正早年平均椭圆估算的 `210°E`）。
+- **二十三处科学落点与 905 样本独立核验**：`ground-audit.test.js` 全覆盖 23 处科学落点 / 905 样本（`triton`：太阳方向 `0.2557'` / 海王星 `0.000115'` / 相位 `0.000034`；`iapetus`：太阳 `0.3016'` / 土星 `0.000051'` / 相位 `0.000015`）；`verify-ground-rendering.mjs` 11 处主星落点 × 3 相位 + 深度遮挡全通过。
+- **全景素材与渲染专项**：`triton.webp` 与 `iapetus.webp` 均由 `gemini-nano-banana-2.1`（GCP Vertex AI，请求 `4K 16:9`，原始返回 `5504×3072`）经 `panorama_with_vacuum_dp_wrap` 降采样交付 `4096×2048` RGBA WebP（诚实记为 `sourceNative2to1: false`、`aiUpscaled: false`；土卫八将天际线以下地形垂直重排至 `+11.87°` 峰值、中位 `+8.53°` 而不上采样，避免山脊遮挡土星）；`verify-surface-panorama.mjs`（23 资产 2:1 / 天顶 `0` / 脚下 `255` + `triton`/`iapetus` 四屏低头与接缝）及 `verify-surface-render.mjs`（`triton` 时钟差 `0.000°` / 地平中位差 `0.01°`、`iapetus` `0.000°` / `0.54°`，0 列离群）全通过。
+- **视觉门槛修复、光环像素与推荐时刻**：修正 `surface.css`（`max-height: 500px` 下 `row-gap: 6px → 8px`）、`main.js`（相机飞行步进上限放宽至 `250ms`）及 `.github/workflows/checks.yml`（`checkout@v6`、`setup-node@v6`、`upload-artifact@v7` 全转 Node 24）。`verify-sky-bodies.mjs` 实测土卫八推荐时刻 `2031-05-01T12:00:00Z` 上方天空清黑（`skyP95 = 3`），1×（`centerPeak = 199, litPixels = 338`）与 8×（`litPixels8x = 19288`）清楚亮出大张角受光土星环；`verify-moments-sunspots.mjs` 四屏通过并包含海卫一 `2026-09-26T22:00:00Z` 推荐时刻及南极氮气喷泉近景开关像素差分确认；`integration` / `saturn-shadows` / `controls` 与 `landings`（四屏验证覆盖桌面/手机/平板/短横屏及 `iapetus`/`triton` 人工看图）通过。
+- **保留限制**：全站两处新全景与早先各 AI 地表同属依据探测器资料的艺术重建（非实测地形高程），星历近似、极轴外推、简化大气与非精密食相边界继续按 [REALISM_STANDARD.md](REALISM_STANDARD.md)、[GROUND_AUDIT.md](solar-system/GROUND_AUDIT.md) 与 [surface/README.md](public/surface/README.md) 公开保留。
+
+---
+
 ## 最新追加：土星环影标注
 
 2026-09-14 按用户要求加深土星云层上的环影，并增加“土星环投影（阴影）”常驻图例；关闭投影、返回总览或切换其它天体时隐藏图例。观测设置同步显示“土星环投影”。亮度属于展示增强，限制记录在[天体模型](solar-system/BODY_MODELS.md)。
